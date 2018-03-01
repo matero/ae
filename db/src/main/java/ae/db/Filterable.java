@@ -1,0 +1,60 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2018 ActiveEngine.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package ae.db;
+
+import com.google.appengine.api.datastore.PropertyProjection;
+import com.google.appengine.api.datastore.Query;
+import java.util.Collection;
+
+public interface Filterable<T> extends java.io.Serializable {
+  PropertyProjection projection();
+
+  Query.SortPredicate asc();
+
+  Query.SortPredicate desc();
+
+  Query.FilterPredicate isNull();
+
+  Query.FilterPredicate isNotNull();
+
+  Query.FilterPredicate eq(T value);
+
+  Query.FilterPredicate ne(T value);
+
+  Query.FilterPredicate lt(T value);
+
+  Query.FilterPredicate le(T value);
+
+  Query.FilterPredicate gt(T value);
+
+  Query.FilterPredicate ge(T value);
+
+  Query.FilterPredicate in(T... values);
+
+  Query.FilterPredicate in(Iterable<T> values);
+
+  Query.FilterPredicate in(java.util.Iterator<T> values);
+
+  Query.FilterPredicate in(Collection<T> values);
+}

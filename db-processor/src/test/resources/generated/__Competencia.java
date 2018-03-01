@@ -1,0 +1,59 @@
+package processor.test;
+
+import ae.db.RootWithName;
+import ae.db.Validation;
+import argo.jdom.JsonNode;
+import argo.jdom.JsonNodeFactories;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
+import com.google.common.collect.ImmutableList;
+import java.lang.Override;
+import java.lang.String;
+import java.util.logging.Logger;
+import javax.annotation.Generated;
+
+@Generated(
+    value = "ae-db",
+    date = "2017-02-23"
+)
+abstract class __Competencia extends RootWithName {
+  protected static final Logger LOGGER = Logger.getLogger("processor.test.Competencia");
+
+  final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), field("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints());
+
+  __Competencia() {
+    super("Competencia");
+  }
+
+  @Override
+  protected final Logger logger() {
+    return LOGGER;
+  }
+
+  @Override
+  public final Name modelName() {
+    return nombre;
+  }
+
+  @Override
+  public JsonNode toJson(final Entity data) {
+    return JsonNodeFactories.object(ImmutableList.of(nombre.makeJsonFieldFrom(data)));
+  }
+
+  @Override
+  public final void updatePropertiesWithJsonContents(final Entity data, final JsonNode json) {
+  }
+
+  @Override
+  protected final void doValidate(final Entity data, final Validation validation) {
+    nombre.validate(data, validation);
+  }
+
+  final String nombre(final Entity data) {
+    return nombre.read(data);
+  }
+
+  final String nombre(final Key key) {
+    return nombre.read(key);
+  }
+}
