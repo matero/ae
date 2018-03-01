@@ -94,23 +94,23 @@ Contact GitHub API Training Shop Blog About
 ######################
 # Windows
 ######################
- 
+
 # Windows image file caches
-Thumbs.db 
- 
+Thumbs.db
+
 # Folder config file
 Desktop.ini
- 
+
 ######################
 # OSX
 ######################
- 
+
 .DS_Store
 .svn
- 
+
 # Thumbnails
 ._*
- 
+
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
@@ -125,7 +125,7 @@ dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
- 
+
 ######################
 # IDEA
 ######################
