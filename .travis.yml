@@ -1,0 +1,24 @@
+language: java
+
+sudo: false
+
+cache:
+ directories:
+   - $HOME/.m2
+
+before_install:
+  - rm -rf ~/.m2/repository/ae
+
+before_script:
+  - echo $HOME
+  - echo $JAVA_OPTS
+  - echo $MAVEN_OPTS
+
+jdk:
+  - openjdk8
+  - oraclejdk8
+
+os:
+  - linux
+
+script: mvn -PcheckVersions clean install
