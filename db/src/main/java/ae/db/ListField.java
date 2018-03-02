@@ -28,9 +28,119 @@ import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Query;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Spliterator;
+import java.util.function.UnaryOperator;
 
 public interface ListField<E> extends Field<List<E>> {
+  default int sizeAt(final PropertyContainer data) {
+    return read(data).size();
+  }
+
+  default boolean isEmptyAt(final PropertyContainer data) {
+    return read(data).isEmpty();
+  }
+
+  default boolean containsAt(final PropertyContainer data, final E element) {
+    return read(data).contains(element);
+  }
+
+  default Iterator<E> iteratorAt(final PropertyContainer data, final E element) {
+    return read(data).iterator();
+  }
+
+  default E[] toArrayAt(final PropertyContainer data) {
+    return (E[]) read(data).toArray();
+  }
+
+  default E[] toArrayAt(final PropertyContainer data, final E[] array) {
+    return read(data).toArray(array);
+  }
+
+  default boolean addAt(final PropertyContainer data, final E e) {
+    return read(data).add(e);
+  }
+
+  default boolean removeAt(final PropertyContainer data, final E e) {
+    return read(data).remove(e);
+  }
+
+  default boolean containsAllAt(final PropertyContainer data, final Collection<?> c) {
+    return read(data).containsAll(c);
+  }
+
+  default boolean addAllAt(final PropertyContainer data, final Collection<? extends E> c) {
+    return read(data).addAll(c);
+  }
+
+  default boolean addAllAt(final PropertyContainer data, final int index, final Collection<? extends E> c) {
+    return read(data).addAll(index, c);
+  }
+
+  default boolean removeAllAt(final PropertyContainer data, final Collection<?> c) {
+    return read(data).removeAll(c);
+  }
+
+  default boolean retainAllAt(final PropertyContainer data, final Collection<?> c) {
+    return read(data).removeAll(c);
+  }
+
+  default void replaceAllAt(final PropertyContainer data, final UnaryOperator<E> operator) {
+    read(data).replaceAll(operator);
+  }
+
+  default void sortAt(final PropertyContainer data, final Comparator<? super E> c) {
+    read(data).sort(c);
+  }
+
+  default void clearAt(final PropertyContainer data) {
+    read(data).clear();
+  }
+
+  // Positional Access Operations
+  default E getAt(final PropertyContainer data, final int index) {
+    return read(data).get(index);
+  }
+
+  default E setAt(final PropertyContainer data, final int index, final E element) {
+    return read(data).set(index, element);
+  }
+
+  default void addAt(final PropertyContainer data, final int index, final E element) {
+    read(data).add(index, element);
+  }
+
+  default E removeAt(final PropertyContainer data, final int index) {
+    return read(data).remove(index);
+  }
+
+  default int indexOfAt(final PropertyContainer data, final Object o) {
+    return read(data).indexOf(o);
+  }
+
+  default int lastIndexOfAt(final PropertyContainer data, final Object o) {
+    return read(data).lastIndexOf(o);
+  }
+
+  default ListIterator<E> listIteratorAt(final PropertyContainer data) {
+    return read(data).listIterator();
+  }
+
+  default ListIterator<E> listIteratorAt(final PropertyContainer data, final int index) {
+    return read(data).listIterator(index);
+  }
+
+  default List<E> subListAt(final PropertyContainer data, final int fromIndex, final int toIndex) {
+    return read(data).subList(fromIndex, toIndex);
+  }
+
+  default Spliterator<E> spliteratorAt(final PropertyContainer data) {
+    return read(data).spliterator();
+  }
+
   @Override default Class<List<E>> type() {
     return (Class<List<E>>) (Class<?>) List.class;
   }
