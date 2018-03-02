@@ -28,14 +28,22 @@ import static com.google.testing.compile.CompilationSubject.assertThat;
 import com.google.testing.compile.Compiler;
 import static com.google.testing.compile.Compiler.javac;
 import com.google.testing.compile.JavaFileObjects;
+import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import org.junit.Test;
 
 public class RoutesProcessingTest {
-  final Compiler compiler = javac().withProcessors(
-          new RoutesCompiler(new GregorianCalendar(2017, Calendar.FEBRUARY, 23).getTime())
-  );
+  static final Date GENERATION_DATE;
+  static {
+    final GregorianCalendar calendar = new GregorianCalendar(2017, Calendar.FEBRUARY, 23, 12, 0);
+    calendar.setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC-3")));
+    GENERATION_DATE = calendar.getTime();
+  }
+
+  final Compiler compiler = javac().withProcessors(new RoutesCompiler(GENERATION_DATE));
 
   @Test
   public void should_compile_simple_routes() {

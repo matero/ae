@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
     date = "2017-02-23"
 )
 abstract class RouterDefs extends RouterServlet {
-  private static final long serialVersionUID = 1487818800000L;
+  private static final long serialVersionUID = 1487851200000L;
 
   private final ParameterizedRoute entrename_gyms_Show_route = new ParameterizedRoute("/gyms/{id: [0-9]+}", Pattern.compile("/gyms/(?<p0>[0-9]+)"), ImmutableList.of("id"));
 
