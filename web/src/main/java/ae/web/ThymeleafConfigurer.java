@@ -37,7 +37,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
   @Override public void contextInitialized(final ServletContextEvent event) {
     OgnlRuntime.setSecurityManager(null);
     OgnlRuntime.setPropertyAccessor(Entity.class, AppEngineEntityPropertyAccessor.INSTANCE);
-    
+
     final ServletContext servletContext = event.getServletContext();
     ThymeleafTemplateEngine.set(servletContext, templateEngine(servletContext));
   }
@@ -59,7 +59,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
     resolver.setSuffix(".html");
 
     // Set template cache TTL to 1 hour.
-    resolver.setCacheTTLMs(Long.valueOf(3600000L));
+    resolver.setCacheTTLMs(3600000L);
 
     // Cache is set to true by default. Set to false if you want templates to
     // be automatically updated when modified.
