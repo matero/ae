@@ -23,6 +23,7 @@
  */
 package ae.db.processor;
 
+import ae.db.Attr;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.*;
@@ -45,9 +46,14 @@ import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 import ae.db.ChildWithId;
 import ae.db.ChildWithName;
+import ae.db.Field;
 import ae.db.RootWithId;
 import ae.db.RootWithName;
 import ae.db.Validation;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.WildcardTypeName;
+import java.util.List;
 
 class ModelBaseClassCodeGenerator implements CodeGenerator {
 
@@ -95,6 +101,8 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
     defineIdField();
     defineParentField();
     defineFields();
+
+    defineMetadataInfo();
 
     defineConstructor();
 
@@ -154,6 +162,20 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
     return new FieldGenerator(field, modelClass);
   }
 
+  static final ParameterizedTypeName META_FIELDS_TYPE = ParameterizedTypeName.get(ClassName.get(ImmutableList.class), ParameterizedTypeName.get(ClassName.get(Field.class), WildcardTypeName.subtypeOf(Object.class)));
+  static final ParameterizedTypeName META_ATTRS_TYPE = ParameterizedTypeName.get(ClassName.get(ImmutableList.class), ClassName.get(Attr.class));
+
+  void defineMetadataInfo() {
+    baseModelClass.addField(FieldSpec.builder(META_ATTRS_TYPE, "_attrs", Modifiers.PRIVATE_FINAL)
+            .initializer(initImmutableList(model.attributesNames()))
+            .build()
+    );
+    baseModelClass.addField(FieldSpec.builder(META_FIELDS_TYPE, "_fields", Modifiers.PRIVATE_FINAL)
+            .initializer(initImmutableList(model.fieldsNames()))
+            .build()
+    );
+  }
+
   void defineConstructor() {
     MethodSpec.Builder ctor = MethodSpec.constructorBuilder().addStatement("super($S)", model.kind);
     baseModelClass.addMethod(ctor.build());
@@ -161,7 +183,9 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
 
   void defineOverridenMethods() {
     baseModelClass.addMethod(logger());
-    baseModelClass.addMethod(modelId());
+    baseModelClass.addMethod(modelIdentifier());
+    baseModelClass.addMethod(modelFields());
+    baseModelClass.addMethod(modelAttributes());
     baseModelClass.addMethod(toJson());
     baseModelClass.addMethod(updatePropertiesWithJsonContents());
     baseModelClass.addMethod(doValidate());
@@ -176,12 +200,30 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
             .build();
   }
 
-  MethodSpec modelId() {
+  MethodSpec modelIdentifier() {
     return methodBuilder(modelIdReader())
             .addAnnotation(Override.class)
             .addModifiers(Modifiers.PUBLIC_FINAL)
             .returns(IdGenerator.getIdClassName(model))
             .addStatement("return $L", model.id.name)
+            .build();
+  }
+
+  MethodSpec modelFields() {
+    return methodBuilder("modelFields")
+            .addAnnotation(Override.class)
+            .addModifiers(Modifiers.PUBLIC_FINAL)
+            .returns(META_FIELDS_TYPE)
+            .addStatement("return _fields")
+            .build();
+  }
+
+  MethodSpec modelAttributes() {
+    return methodBuilder("modelAttributes")
+            .addAnnotation(Override.class)
+            .addModifiers(Modifiers.PUBLIC_FINAL)
+            .returns(META_ATTRS_TYPE)
+            .addStatement("return _attrs")
             .build();
   }
 
@@ -243,11 +285,7 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
   }
 
   String modelIdReader() {
-    if (model.useId()) {
-      return "modelId";
-    } else {
-      return "modelName";
-    }
+    return "modelIdentifier";
   }
 
   void defineIdReaders() {
@@ -407,6 +445,14 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
                     .addStatement("return new Wrapper(data)")
                     .build()
     );
+  }
+
+  private CodeBlock initImmutableList(final List<String> values) {
+    if (values.isEmpty()) {
+      return CodeBlock.of("$T.of()", ImmutableList.class);
+    } else {
+      return CodeBlock.of("$T.of($L)", ImmutableList.class, String.join(", ", values));
+    }
   }
 }
 

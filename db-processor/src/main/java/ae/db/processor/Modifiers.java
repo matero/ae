@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright (c) 2018 ActiveEngine.
@@ -34,4 +34,5 @@ interface Modifiers {
   Modifier[] PROTECTED_STATIC_FINAL = {Modifier.PROTECTED, Modifier.STATIC, Modifier.FINAL};
   Modifier[] PROTECTED_FINAL = {Modifier.PROTECTED, Modifier.FINAL};
   Modifier[] PRIVATE_STATIC_FINAL = {Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL};
+  Modifier[] PRIVATE_FINAL = {Modifier.PRIVATE, Modifier.FINAL};
 }

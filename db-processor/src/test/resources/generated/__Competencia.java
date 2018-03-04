@@ -1,5 +1,7 @@
 package processor.test;
 
+import ae.db.Attr;
+import ae.db.Field;
 import ae.db.RootWithName;
 import ae.db.Validation;
 import argo.jdom.JsonNode;
@@ -21,6 +23,10 @@ abstract class __Competencia extends RootWithName {
 
   final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), field("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints());
 
+  private final ImmutableList<Attr> _attrs = ImmutableList.of(nombre);
+
+  private final ImmutableList<Field<?>> _fields = ImmutableList.of();
+
   __Competencia() {
     super("Competencia");
   }
@@ -31,8 +37,18 @@ abstract class __Competencia extends RootWithName {
   }
 
   @Override
-  public final Name modelName() {
+  public final Name modelIdentifier() {
     return nombre;
+  }
+
+  @Override
+  public final ImmutableList<Field<?>> modelFields() {
+    return _fields;
+  }
+
+  @Override
+  public final ImmutableList<Attr> modelAttributes() {
+    return _attrs;
   }
 
   @Override

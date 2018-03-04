@@ -30,7 +30,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 
 public interface WithId extends java.io.Serializable {
-  Id modelId();
+  Id modelIdentifier();
 
   Entity make();
 

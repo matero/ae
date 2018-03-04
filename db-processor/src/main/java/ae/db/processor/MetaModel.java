@@ -25,8 +25,10 @@ package ae.db.processor;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import javax.lang.model.element.Modifier;
 
 abstract class MetaModel extends MetaData {
@@ -87,6 +89,16 @@ abstract class MetaModel extends MetaData {
     return id.isName();
   }
 
+  List<String> fieldsNames() {
+    final ArrayList<String> result = new ArrayList<>(fields.size());
+    for (final MetaField field : fields) {
+      result.add(field.name);
+    }
+    return result;
+  }
+
+  abstract List<String> attributesNames();
+
   static final Fields NO_FIELDS = new Fields();
 
   final static Fields fields(final MetaField... fields) {
@@ -127,6 +139,10 @@ abstract class MetaModel extends MetaData {
 
     boolean isEmpty() {
       return data.isEmpty();
+    }
+
+    int size() {
+      return data.size();
     }
   }
 
@@ -187,6 +203,15 @@ final class RootModel extends MetaModel {
   MetaParent parent() {
     throw new UnsupportedOperationException();
   }
+
+  @Override List<String> attributesNames() {
+    final ArrayList<String> result = new ArrayList<>(fields.size()+1);
+    result.add(this.id.name);
+    for (final MetaField field : fields) {
+      result.add(field.name);
+    }
+    return result;
+  }
 }
 
 final class ChildModel extends MetaModel {
@@ -214,5 +239,15 @@ final class ChildModel extends MetaModel {
   @Override
   MetaParent parent() {
     return parent;
+  }
+
+  @Override List<String> attributesNames() {
+    final ArrayList<String> result = new ArrayList<>(fields.size()+2);
+    result.add(this.id.name);
+    result.add(this.parent.name);
+    for (final MetaField field : fields) {
+      result.add(field.name);
+    }
+    return result;
   }
 }

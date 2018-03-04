@@ -39,8 +39,6 @@ public interface Field<T> extends Attr {
     return data.hasProperty(property());
   }
 
-  String property();
-
   Class<T> type();
 
   boolean indexed();

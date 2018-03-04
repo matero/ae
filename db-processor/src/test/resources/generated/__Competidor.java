@@ -1,8 +1,10 @@
 package processor.test;
 
+import ae.db.Attr;
 import ae.db.ChildWithId;
 import ae.db.DateField;
 import ae.db.EmailField;
+import ae.db.Field;
 import ae.db.PhoneNumberField;
 import ae.db.StringField;
 import ae.db.TextField;
@@ -58,6 +60,10 @@ abstract class __Competidor extends ChildWithId {
 
   final TextField info = new TextField(canonicalName("processor.test.Competidor.info"), description("Info"), property("info"), field("info"), required(false), jsonName("info"), jsonPath("info"), ae.db.NotBlankConstraint.ForText.INSTANCE);
 
+  private final ImmutableList<Attr> _attrs = ImmutableList.of(personId, competencia, nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info);
+
+  private final ImmutableList<Field<?>> _fields = ImmutableList.of(nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info);
+
   __Competidor() {
     super("competidores");
   }
@@ -68,8 +74,18 @@ abstract class __Competidor extends ChildWithId {
   }
 
   @Override
-  public final Id modelId() {
+  public final Id modelIdentifier() {
     return personId;
+  }
+
+  @Override
+  public final ImmutableList<Field<?>> modelFields() {
+    return _fields;
+  }
+
+  @Override
+  public final ImmutableList<Attr> modelAttributes() {
+    return _attrs;
   }
 
   @Override

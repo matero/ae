@@ -30,7 +30,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 
 public interface WithName extends java.io.Serializable {
-  Name modelName();
+  Name modelIdentifier();
 
   final class Name extends ActiveEntity.Identifier {
     public Name(final String canonicalName,

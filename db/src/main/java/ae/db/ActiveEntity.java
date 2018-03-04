@@ -33,6 +33,7 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
+import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -76,6 +77,13 @@ public abstract class ActiveEntity extends ae.HasLogger implements Serializable 
   public boolean isKindOf(final Key key) {
     return kind.equals(key.getKind());
   }
+
+  /* **************************************************************************
+   * metadata
+   */
+  public abstract ImmutableList<Attr> modelAttributes();
+  public abstract Identifier modelIdentifier();
+  public abstract ImmutableList<Field<?>> modelFields();
 
   /* **************************************************************************
    * json serialization methods
@@ -233,7 +241,7 @@ public abstract class ActiveEntity extends ae.HasLogger implements Serializable 
 
   protected abstract void doValidate(Entity data, Validation validation);
 
-  protected static abstract class Identifier extends AttrData {
+  public static abstract class Identifier extends AttrData {
     protected Identifier(final String canonicalName,
                          final String description,
                          final String field,
@@ -241,6 +249,10 @@ public abstract class ActiveEntity extends ae.HasLogger implements Serializable 
                          final String jsonPath,
                          final Constraint... constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
+    }
+
+    @Override public final String property() {
+      return field();
     }
 
     @Override public final boolean isDefinedAt(final Entity data) {

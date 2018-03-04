@@ -101,14 +101,14 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
    * JSON Serialization
    */
   @Override protected final Iterable<JsonField> jsonKeyFields(final Key key) {
-    return ImmutableList.of(modelId().makeJsonFieldFrom(key));
+    return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
   }
 
   @Override public final Key keyFromJson(final JsonNode json) {
     if (json == null || json.isNullNode()) {
       return null;
     }
-    final Long id = modelId().interpretJson(json);
+    final Long id = modelIdentifier().interpretJson(json);
     if (id == null) {
       return newEntity().getKey();
     } else {
@@ -120,7 +120,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     if (json.isNullNode()) {
       return null;
     }
-    final Long id = modelId().interpretJson(json);
+    final Long id = modelIdentifier().interpretJson(json);
     final Entity data;
     if (id == null) {
       data = make();

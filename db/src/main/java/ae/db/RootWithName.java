@@ -81,14 +81,14 @@ public abstract class RootWithName extends RootActiveEntity implements WithName 
    * JSON Serialization
    */
   @Override protected final Iterable<JsonField> jsonKeyFields(final Key key) {
-    return ImmutableList.of(modelName().makeJsonFieldFrom(key));
+    return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
   }
 
   @Override public final Key keyFromJson(final JsonNode json) {
     if (json == null || json.isNullNode()) {
       return null;
     }
-    final String name = modelName().interpretJson(json);
+    final String name = modelIdentifier().interpretJson(json);
     return makeKey(name);
   }
 
@@ -96,7 +96,7 @@ public abstract class RootWithName extends RootActiveEntity implements WithName 
     if (json.isNullNode()) {
       return null;
     }
-    final String name = modelName().interpretJson(json);
+    final String name = modelIdentifier().interpretJson(json);
     final Entity data = make(name);
     updatePropertiesWithJsonContents(data, json);
     return data;

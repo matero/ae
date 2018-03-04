@@ -208,14 +208,14 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
    * JSON Serialization
    */
   @Override protected final Iterable<JsonField> jsonKeyFields(final Key key) {
-    return ImmutableList.of(modelId().makeJsonFieldFrom(key), modelParent().makeJsonFieldFrom(key));
+    return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key), modelParent().makeJsonFieldFrom(key));
   }
 
   @Override public final Key keyFromJson(final JsonNode json) {
     if (json == null || json.isNullNode()) {
       return null;
     }
-    final Long id = modelId().interpretJson(json);
+    final Long id = modelIdentifier().interpretJson(json);
     final Key parentKey = modelParent().interpretJson(json);
     if (id == null) {
       return makeKey(parentKey);
@@ -228,7 +228,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     if (json.isNullNode()) {
       return null;
     }
-    final Long id = modelId().interpretJson(json);
+    final Long id = modelIdentifier().interpretJson(json);
     final Key parentKey = modelParent().interpretJson(json);
     final Entity data;
     if (id == null) {

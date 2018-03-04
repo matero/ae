@@ -28,6 +28,7 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PropertyContainer;
 
 public interface Attr extends java.io.Serializable {
   String canonicalName();
@@ -35,6 +36,8 @@ public interface Attr extends java.io.Serializable {
   String description();
 
   String field();
+
+  String property();
 
   JsonStringNode jsonName();
 
