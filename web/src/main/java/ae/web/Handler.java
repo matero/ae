@@ -50,6 +50,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import ae.db.ActiveEntity;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.function.Supplier;
 
 abstract class Handler extends ae.HasLogger implements RequestHandler {
   protected final HttpServletRequest request;
@@ -138,7 +141,7 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
   }
 
   /**
-   * Trigger a browser redirect with specific http 3XX status code.
+   * Trigger a browser redirect named specific http 3XX status code.
    *
    * @param location Where to redirect permanently
    * @param httpStatusCode the http status code
@@ -155,6 +158,10 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     } catch (final IOException e) {
       log(Level.WARNING, "Exception when trying to redirect permanently", e);
     }
+  }
+
+  protected String format(final JsonNode json) {
+    return JSON_FORMATTER.format(json);
   }
 
   /* contents updaters */
@@ -504,31 +511,135 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     response.addDateHeader(header.name, timestamp);
   }
 
-  public static class UrlParameter {
-    protected final String name;
+  protected static String name(final String value) {
+    return value;
+  }
 
-    protected UrlParameter(final String name) {
+  protected static boolean trimmed(final boolean value) {
+    return value;
+  }
+
+  public static abstract class HttpParameter<T, C extends HttpParameter<T, C>> {
+
+    private final String name;
+    private boolean required;
+    private Supplier<T> defaultValue;
+
+    protected HttpParameter(final String name, final boolean required, final Supplier<T> defaultValue) {
       this.name = name;
+      this.required = required;
+      this.defaultValue = defaultValue;
     }
 
     public final boolean isDefinedAt(final HttpServletRequest request) {
       return request.getParameterMap().containsKey(name);
     }
 
-    protected String read(final HttpServletRequest request) {
-      return request.getParameter(name);
-    }
-
     public final boolean isDefinedAt(final Map<String, String> parameters) {
       return parameters.containsKey(name);
+    }
+
+    public final T of(final HttpServletRequest request) {
+      if (isDefinedAt(request)) {
+        return interpret(read(request));
+      } else {
+        if (required) {
+          throw new ParameterNotDefinedException(name);
+        }
+        return defaultValue.get();
+      }
+    }
+
+    public final T of(final Map<String, String> parameters) {
+      if (isDefinedAt(parameters)) {
+        return interpret(read(parameters));
+      } else {
+        if (required) {
+          throw new ParameterNotDefinedException(name);
+        }
+        return defaultValue.get();
+      }
+    }
+
+    protected abstract T interpret(String value);
+
+    protected String read(final HttpServletRequest request) {
+      return request.getParameter(name);
     }
 
     protected String read(final Map<String, String> parameters) {
       return parameters.get(name);
     }
+
+    public final C required(final boolean value) {
+      required = value;
+      return (C) this;
+    }
+
+    public final C defaultValue(final T value) {
+      return defaultValue(() -> value);
+    }
+
+    public final C defaultValue(final Supplier<T> valueSupplier) {
+      defaultValue = valueSupplier;
+      return (C) this;
+    }
   }
 
-  public static final class CursorParameter extends UrlParameter {
+  public static final class StringParameter extends HttpParameter<String, StringParameter> {
+    public static StringParameter named(final String name) {
+      if (name == null) {
+        throw new NullPointerException("name");
+      }
+      return new StringParameter(name);
+    }
+
+    private boolean trimmed;
+
+    StringParameter(final String name) {
+      super(name, false, () -> null);
+      this.trimmed = true;
+    }
+
+    public StringParameter trimmed(final boolean value) {
+      this.trimmed = value;
+      return this;
+    }
+
+    @Override protected String interpret(final String value) {
+      if (trimmed) {
+        return value == null ? null : value.trim();
+      } else {
+        return value;
+      }
+    }
+  }
+
+  public static final class UrlParameter extends HttpParameter<URL, UrlParameter> {
+    public static UrlParameter named(final String name) {
+      if (name == null) {
+        throw new NullPointerException("name");
+      }
+      return new UrlParameter(name);
+    }
+
+    UrlParameter(final String name) {
+      super(name, false, () -> null);
+    }
+
+    @Override protected URL interpret(final String value) {
+      if (value == null) {
+        return null;
+      }
+      try {
+        return new URL(value);
+      } catch (final MalformedURLException ex) {
+        throw new IllegalArgumentException("malformed URL", ex);
+      }
+    }
+  }
+
+  public static final class CursorParameter extends HttpParameter<Cursor, CursorParameter> {
     public static CursorParameter named(final String name) {
       if (name == null) {
         throw new NullPointerException("name");
@@ -537,73 +648,54 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     }
 
     CursorParameter(final String name) {
-      super(name);
+      super(name, false, () -> null);
     }
 
-    public Cursor of(final HttpServletRequest request) {
-      if (isDefinedAt(request)) {
-        final String rep = read(request);
-        return Cursor.fromWebSafeString(rep);
+    @Override protected Cursor interpret(final String value) {
+      if (value == null) {
+        return null;
       }
-      throw new ParameterNotDefinedException(name);
-    }
-
-    public Cursor of(final Map<String, String> parameters) {
-      if (isDefinedAt(parameters)) {
-        final String rep = read(parameters);
-        return Cursor.fromWebSafeString(rep);
-      }
-      throw new ParameterNotDefinedException(name);
+      return Cursor.fromWebSafeString(value);
     }
   }
 
-  public static class intParameter extends UrlParameter {
-    public static intParameter named(final String name) {
+  public static final class IntegerParameter extends HttpParameter<Integer, IntegerParameter> {
+    public static IntegerParameter named(final String name) {
       if (name == null) {
         throw new NullPointerException("name");
       }
-      return new intParameter(name);
+      return new IntegerParameter(name);
     }
 
-    intParameter(final String name) {
-      super(name);
+    IntegerParameter(final String name) {
+      super(name, false, () -> null);
     }
 
-    public int of(final HttpServletRequest request) {
-      if (isDefinedAt(request)) {
-        final String rep = read(request);
-        return Integer.parseInt(rep);
+    @Override protected Integer interpret(final String value) {
+      if (value == null) {
+        return null;
       }
-      throw new ParameterNotDefinedException(name);
+      return Integer.valueOf(value);
+    }
+  }
+
+  public static final class LongParameter extends HttpParameter<Long, LongParameter> {
+    public static LongParameter named(final String name) {
+      if (name == null) {
+        throw new NullPointerException("name");
+      }
+      return new LongParameter(name);
     }
 
-    public int of(final Map<String, String> parameters) {
-      if (isDefinedAt(parameters)) {
-        final String rep = read(parameters);
-        return Integer.parseInt(rep);
-      }
-      throw new ParameterNotDefinedException(name);
+    LongParameter(final String name) {
+      super(name, false, () -> null);
     }
 
-    public intParameter.WithDefaultValue withDefaultValue(final int defaultValue) {
-      return new intParameter.WithDefaultValue(name, defaultValue);
-    }
-
-    public static class WithDefaultValue extends intParameter {
-      private final int defaultValue;
-
-      private WithDefaultValue(final String name, final int defaultValue) {
-        super(name);
-        this.defaultValue = defaultValue;
+    @Override protected Long interpret(final String value) {
+      if (value == null) {
+        return null;
       }
-
-      @Override public int of(final Map<String, String> parameters) {
-        if (isDefinedAt(parameters)) {
-          final String rep = read(parameters);
-          return Integer.parseInt(rep);
-        }
-        return defaultValue;
-      }
+      return Long.valueOf(value);
     }
   }
 
