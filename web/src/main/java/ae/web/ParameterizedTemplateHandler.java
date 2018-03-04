@@ -30,7 +30,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 public abstract class ParameterizedTemplateHandler extends TemplateHandler {
-  private final ImmutableMap<String, String> parameters;
+  protected final ImmutableMap<String, String> parameters;
 
   protected ParameterizedTemplateHandler(final HttpServletRequest request,
                                          final HttpServletResponse response,

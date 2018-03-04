@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class ParameterizedHandler extends Handler {
-  private final ImmutableMap<String, String> parameters;
+  protected final ImmutableMap<String, String> parameters;
 
   protected ParameterizedHandler(final HttpServletRequest request,
                                  final HttpServletResponse response,
