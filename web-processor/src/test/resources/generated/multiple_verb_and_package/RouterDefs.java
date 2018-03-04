@@ -20,50 +20,50 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Generated(
-    value = "ae-routes",
+    value = "AE/web-processor",
     comments = "Build from specs at: src/test/resources/routes/multiple_verb_and_package.csv",
     date = "2017-02-23"
 )
 abstract class RouterDefs extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 
-  private final ParameterizedRoute entrename_gyms_Show_route = new ParameterizedRoute("/gyms/{id: [0-9]+}", Pattern.compile("/gyms/(?<p0>[0-9]+)"), ImmutableList.of("id"));
+  private final ParameterizedRoute GET_entrename_gyms_Show_route = new ParameterizedRoute("/gyms/{id: [0-9]+}", Pattern.compile("/gyms/(?<p0>[0-9]+)"), ImmutableList.of("id"));
 
-  private final Route entrename_gyms_List_route = new Route("/gyms");
+  private final Route GET_entrename_gyms_List_route = new Route("/gyms");
 
-  private final ParameterizedRoute entrename_trainees_Show_route = new ParameterizedRoute("/trainees/{id: [0-9]+}", Pattern.compile("/trainees/(?<p0>[0-9]+)"), ImmutableList.of("id"));
+  private final ParameterizedRoute GET_entrename_trainees_Show_route = new ParameterizedRoute("/trainees/{id: [0-9]+}", Pattern.compile("/trainees/(?<p0>[0-9]+)"), ImmutableList.of("id"));
 
-  private final Route entrename_trainees_List_route = new Route("/trainees");
+  private final Route GET_entrename_trainees_List_route = new Route("/trainees");
 
-  private final Route entrename_gyms_Create_route = new Route("/gyms");
+  private final Route POST_entrename_gyms_Create_route = new Route("/gyms");
 
-  private final Route entrename_trainees_Create_route = new Route("/trainees");
+  private final Route POST_entrename_trainees_Create_route = new Route("/trainees");
 
-  private final ParameterizedRoute entrename_gyms_Update_route = new ParameterizedRoute("/gyms/{id: :digit:+}", Pattern.compile("/gyms/(?<p0>\\p{Digit}+)"), ImmutableList.of("id"));
+  private final ParameterizedRoute PUT_entrename_gyms_Update_route = new ParameterizedRoute("/gyms/{id: :digit:+}", Pattern.compile("/gyms/(?<p0>\\p{Digit}+)"), ImmutableList.of("id"));
 
-  private final ParameterizedRoute entrename_trainees_Update_route = new ParameterizedRoute("/trainees/{id: :digit:+}", Pattern.compile("/trainees/(?<p0>\\p{Digit}+)"), ImmutableList.of("id"));
+  private final ParameterizedRoute PUT_entrename_trainees_Update_route = new ParameterizedRoute("/trainees/{id: :digit:+}", Pattern.compile("/trainees/(?<p0>\\p{Digit}+)"), ImmutableList.of("id"));
 
-  private final ParameterizedRoute entrename_gyms_Destroy_route = new ParameterizedRoute("/gyms/{id: [0-9]+}", Pattern.compile("/gyms/(?<p0>[0-9]+)"), ImmutableList.of("id"));
+  private final ParameterizedRoute DELETE_entrename_gyms_Destroy_route = new ParameterizedRoute("/gyms/{id: [0-9]+}", Pattern.compile("/gyms/(?<p0>[0-9]+)"), ImmutableList.of("id"));
 
-  private final ParameterizedRoute entrename_trainees_Destroy_route = new ParameterizedRoute("/trainees/{id: [0-9]+}", Pattern.compile("/trainees/(?<p0>[0-9]+)"), ImmutableList.of("id"));
+  private final ParameterizedRoute DELETE_entrename_trainees_Destroy_route = new ParameterizedRoute("/trainees/{id: [0-9]+}", Pattern.compile("/trainees/(?<p0>[0-9]+)"), ImmutableList.of("id"));
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
     final ImmutableMap.Builder<String, String> routeParameters = ImmutableMap.builder();
-    if (entrename_gyms_Show_route.matches(request, routeParameters)) {
+    if (GET_entrename_gyms_Show_route.matches(request, routeParameters)) {
       new Show(request, response, routeParameters.build()).handle();
       return;
     }
-    if (entrename_gyms_List_route.matches(request)) {
+    if (GET_entrename_gyms_List_route.matches(request)) {
       new List(request, response).handle();
       return;
     }
-    if (entrename_trainees_Show_route.matches(request, routeParameters)) {
+    if (GET_entrename_trainees_Show_route.matches(request, routeParameters)) {
       new entrename.trainees.Show(request, response, routeParameters.build()).handle();
       return;
     }
-    if (entrename_trainees_List_route.matches(request)) {
+    if (GET_entrename_trainees_List_route.matches(request)) {
       new entrename.trainees.List(request, response).handle();
       return;
     }
@@ -73,11 +73,11 @@ abstract class RouterDefs extends RouterServlet {
   @Override
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
-    if (entrename_gyms_Create_route.matches(request)) {
+    if (POST_entrename_gyms_Create_route.matches(request)) {
       new Create(request, response).handle();
       return;
     }
-    if (entrename_trainees_Create_route.matches(request)) {
+    if (POST_entrename_trainees_Create_route.matches(request)) {
       new entrename.trainees.Create(request, response).handle();
       return;
     }
@@ -88,11 +88,11 @@ abstract class RouterDefs extends RouterServlet {
   public void doPut(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
     final ImmutableMap.Builder<String, String> routeParameters = ImmutableMap.builder();
-    if (entrename_gyms_Update_route.matches(request, routeParameters)) {
+    if (PUT_entrename_gyms_Update_route.matches(request, routeParameters)) {
       new Update(request, response, routeParameters.build()).handle();
       return;
     }
-    if (entrename_trainees_Update_route.matches(request, routeParameters)) {
+    if (PUT_entrename_trainees_Update_route.matches(request, routeParameters)) {
       new entrename.trainees.Update(request, response, routeParameters.build()).handle();
       return;
     }
@@ -103,11 +103,11 @@ abstract class RouterDefs extends RouterServlet {
   public void doDelete(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
     final ImmutableMap.Builder<String, String> routeParameters = ImmutableMap.builder();
-    if (entrename_gyms_Destroy_route.matches(request, routeParameters)) {
+    if (DELETE_entrename_gyms_Destroy_route.matches(request, routeParameters)) {
       new Destroy(request, response, routeParameters.build()).handle();
       return;
     }
-    if (entrename_trainees_Destroy_route.matches(request, routeParameters)) {
+    if (DELETE_entrename_trainees_Destroy_route.matches(request, routeParameters)) {
       new entrename.trainees.Destroy(request, response, routeParameters.build()).handle();
       return;
     }

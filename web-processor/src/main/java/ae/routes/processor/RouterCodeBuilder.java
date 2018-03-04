@@ -51,10 +51,10 @@ class RouterCodeBuilder {
   JavaFile buildJavaCode(final RoutesDeclarations declarations) {
     final ClassName classname = ClassName.get(declarations.packageName, declarations.superClass);
     final TypeSpec.Builder router = TypeSpec.classBuilder(classname)
-            .superclass(servletSuperclass(declarations))
+            .superclass(HTTP_SERVLET)
             .addModifiers(Modifier.ABSTRACT)
             .addAnnotation(AnnotationSpec.builder(Generated.class)
-                    .addMember("value", "$S", "ae-routes")
+                    .addMember("value", "$S", "AE/web-processor")
                     .addMember("comments", "$S", declarations.paths)
                     .addMember("date", "$S", declarations.date)
                     .build())
@@ -71,7 +71,7 @@ class RouterCodeBuilder {
       }
 
       for (final RouteDescriptor route : routes) {
-        router.addField(routeField(router, route));
+        router.addField(routeField(router, route, httpVerb));
       }
 
       router.addMethod(overrideVerbHandler(httpVerb, router, routes));
@@ -80,11 +80,7 @@ class RouterCodeBuilder {
     return JavaFile.builder(classname.packageName(), router.build()).build();
   }
 
-  private TypeName servletSuperclass(final RoutesDeclarations declarations) {
-    return HTTP_SERVLET;
-  }
-
-  static FieldSpec routeField(final TypeSpec.Builder routerServlet, final RouteDescriptor route) {
+  static FieldSpec routeField(final TypeSpec.Builder routerServlet, final RouteDescriptor route, final HttpVerb httpVerb) {
     final FieldSpec.Builder property = FieldSpec.builder(TypeName.get(route.type),
                                                          route.routeField(),
                                                          Modifier.PRIVATE, Modifier.FINAL);

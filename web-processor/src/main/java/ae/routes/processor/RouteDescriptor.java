@@ -95,11 +95,11 @@ class RouteDescriptor {
   }
 
   String handlerField() {
-    return this.handlerCannonicalName.replace('.', '_') + "_handler";
+    return this.verb.name() + '_' + this.handlerCannonicalName.replace('.', '_') + "_handler";
   }
 
   String routeField() {
-    return this.handlerCannonicalName.replace('.', '_') + "_route";
+    return this.verb.name() + '_' + this.handlerCannonicalName.replace('.', '_') + "_route";
   }
 
   boolean isDynamic() {
