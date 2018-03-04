@@ -23,6 +23,10 @@
  */
 package ae.web;
 
+import ae.db.ActiveEntity;
+import ae.db.Attr;
+import ae.db.RootWithId;
+import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -87,5 +91,145 @@ public abstract class TemplateHandler extends Handler {
 
   protected static final String template(final String template) {
     return template;
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr, final Object value) {
+    return ImmutableMap.of(attr.property(), value);
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                    final Attr attr2, final Object value2) {
+    return ImmutableMap.of(attr1.property(), value1,
+                           attr2.property(), value2);
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                    final Attr attr2, final Object value2,
+                                                    final Attr attr3, final Object value3) {
+    return ImmutableMap.of(attr1.property(), value1,
+                           attr2.property(), value2,
+                           attr3.property(), value3);
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                    final Attr attr2, final Object value2,
+                                                    final Attr attr3, final Object value3,
+                                                    final Attr attr4, final Object value4) {
+    return ImmutableMap.of(attr1.property(), value1,
+                           attr2.property(), value2,
+                           attr3.property(), value3,
+                           attr4.property(), value4);
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                    final Attr attr2, final Object value2,
+                                                    final Attr attr3, final Object value3,
+                                                    final Attr attr4, final Object value4,
+                                                    final Attr attr5, final Object value5) {
+    return ImmutableMap.of(attr1.property(), value1,
+                           attr2.property(), value2,
+                           attr3.property(), value3,
+                           attr4.property(), value4,
+                           attr5.property(), value5);
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                    final Attr attr2, final Object value2,
+                                                    final Attr attr3, final Object value3,
+                                                    final Attr attr4, final Object value4,
+                                                    final Attr attr5, final Object value5,
+                                                    final Attr attr6, final Object value6) {
+    return ImmutableMap.<String, Object>builder()
+            .put(attr1.property(), value1)
+            .put(attr2.property(), value2)
+            .put(attr3.property(), value3)
+            .put(attr4.property(), value4)
+            .put(attr5.property(), value5)
+            .put(attr6.property(), value6)
+            .build();
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                    final Attr attr2, final Object value2,
+                                                    final Attr attr3, final Object value3,
+                                                    final Attr attr4, final Object value4,
+                                                    final Attr attr5, final Object value5,
+                                                    final Attr attr6, final Object value6,
+                                                    final Attr attr7, final Object value7) {
+    return ImmutableMap.<String, Object>builder()
+            .put(attr1.property(), value1)
+            .put(attr2.property(), value2)
+            .put(attr3.property(), value3)
+            .put(attr4.property(), value4)
+            .put(attr5.property(), value5)
+            .put(attr6.property(), value6)
+            .put(attr7.property(), value7)
+            .build();
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                    final Attr attr2, final Object value2,
+                                                    final Attr attr3, final Object value3,
+                                                    final Attr attr4, final Object value4,
+                                                    final Attr attr5, final Object value5,
+                                                    final Attr attr6, final Object value6,
+                                                    final Attr attr7, final Object value7,
+                                                    final Attr attr8, final Object value8) {
+    return ImmutableMap.<String, Object>builder()
+            .put(attr1.property(), value1)
+            .put(attr2.property(), value2)
+            .put(attr3.property(), value3)
+            .put(attr4.property(), value4)
+            .put(attr5.property(), value5)
+            .put(attr6.property(), value6)
+            .put(attr7.property(), value7)
+            .put(attr8.property(), value8)
+            .build();
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                    final Attr attr2, final Object value2,
+                                                    final Attr attr3, final Object value3,
+                                                    final Attr attr4, final Object value4,
+                                                    final Attr attr5, final Object value5,
+                                                    final Attr attr6, final Object value6,
+                                                    final Attr attr7, final Object value7,
+                                                    final Attr attr8, final Object value8,
+                                                    final Attr attr9, final Object value9) {
+    return ImmutableMap.<String, Object>builder()
+            .put(attr1.property(), value1)
+            .put(attr2.property(), value2)
+            .put(attr3.property(), value3)
+            .put(attr4.property(), value4)
+            .put(attr5.property(), value5)
+            .put(attr6.property(), value6)
+            .put(attr7.property(), value7)
+            .put(attr8.property(), value8)
+            .put(attr9.property(), value9)
+            .build();
+  }
+
+  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                    final Attr attr2, final Object value2,
+                                                    final Attr attr3, final Object value3,
+                                                    final Attr attr4, final Object value4,
+                                                    final Attr attr5, final Object value5,
+                                                    final Attr attr6, final Object value6,
+                                                    final Attr attr7, final Object value7,
+                                                    final Attr attr8, final Object value8,
+                                                    final Attr attr9, final Object value9,
+                                                    final Attr attr10, final Object value10) {
+    return ImmutableMap.<String, Object>builder()
+            .put(attr1.property(), value1)
+            .put(attr2.property(), value2)
+            .put(attr3.property(), value3)
+            .put(attr4.property(), value4)
+            .put(attr5.property(), value5)
+            .put(attr6.property(), value6)
+            .put(attr7.property(), value7)
+            .put(attr8.property(), value8)
+            .put(attr9.property(), value9)
+            .put(attr10.property(), value10)
+            .build();
   }
 }
