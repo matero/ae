@@ -124,12 +124,16 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     return httpStatusCode;
   }
 
+  protected static final String location(final String value) {
+    return value;
+  }
+
   /**
-   * Trigger a browser redirect
+   * Trigger a browser redirectTo
    *
-   * @param location Where to redirect
+   * @param location Where to redirectTo
    */
-  protected void redirect(final String location) {
+  protected void redirectTo(final String location) {
     if (isLoggable(Level.FINE)) {
       logFine("Redirecting ('Found', " + HttpServletResponse.SC_FOUND + " to " + location + ')');
     }
@@ -141,12 +145,22 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
   }
 
   /**
-   * Trigger a browser redirect named specific http 3XX status code.
+   * Trigger a browser redirectTo named specific http 3XX status code.
    *
-   * @param location Where to redirect permanently
+   * @param location Where to redirectTo permanently
    * @param httpStatusCode the http status code
    */
-  protected void redirect(final String location, final int httpStatusCode) {
+  protected void redirectTo(final String location, final StatusCode httpStatusCode) {
+    redirectTo(location, httpStatusCode.value);
+  }
+
+  /**
+   * Trigger a browser redirectTo named specific http 3XX status code.
+   *
+   * @param location Where to redirectTo permanently
+   * @param httpStatusCode the http status code
+   */
+  protected void redirectTo(final String location, final int httpStatusCode) {
     if (isLoggable(Level.FINE)) {
       logFine("Redirecting (" + httpStatusCode + " to " + location + ')');
     }
