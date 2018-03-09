@@ -128,6 +128,17 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     return value;
   }
 
+  protected void forwardTo(final String location) throws ServletException {
+    if (isLoggable(Level.FINE)) {
+      log(Level.FINE, "Forwarding (to " + location + ')');
+    }
+    try {
+      request.getRequestDispatcher(location).forward(request, response);
+    } catch (final IOException e) {
+      log(Level.WARNING, "Forward failure", e);
+    }
+  }
+
   /**
    * Trigger a browser redirectTo
    *
@@ -135,7 +146,7 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
    */
   protected void redirectTo(final String location) {
     if (isLoggable(Level.FINE)) {
-      logFine("Redirecting ('Found', " + HttpServletResponse.SC_FOUND + " to " + location + ')');
+      log(Level.FINE, "Redirecting ('Found', " + HttpServletResponse.SC_FOUND + " to " + location + ')');
     }
     try {
       response.sendRedirect(location);
@@ -162,7 +173,7 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
    */
   protected void redirectTo(final String location, final int httpStatusCode) {
     if (isLoggable(Level.FINE)) {
-      logFine("Redirecting (" + httpStatusCode + " to " + location + ')');
+      log(Level.FINE, "Redirecting (" + httpStatusCode + " to " + location + ')');
     }
     response.setStatus(httpStatusCode);
     response.setHeader("Location", location);

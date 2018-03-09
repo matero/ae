@@ -23,10 +23,7 @@
  */
 package ae.web;
 
-import ae.db.ActiveEntity;
 import ae.db.Attr;
-import ae.db.RootWithId;
-import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -40,13 +37,10 @@ public abstract class TemplateHandler extends Handler {
   private final WebContext templateContext;
   private final TemplateEngine templateEngine;
 
-  protected TemplateHandler(final HttpServletRequest request,
-                            final HttpServletResponse response,
-                            final WebContext templateContext,
-                            final TemplateEngine templateEngine) {
+  protected TemplateHandler(final HttpServletRequest request, final HttpServletResponse response, final WebContext cxt, final TemplateEngine engine) {
     super(request, response);
-    this.templateContext = templateContext;
-    this.templateEngine = templateEngine;
+    this.templateContext = cxt;
+    this.templateEngine = engine;
   }
 
   @Override protected void setup() throws ServletException, IOException {

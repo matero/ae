@@ -231,7 +231,9 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
     final StringBuilder fields = new StringBuilder();
     fields.append(model.id.name).append(".makeJsonFieldFrom(data)");
     for (final MetaField field : model.fields) {
-      fields.append(',').append(field.name).append(".makeJsonFieldFrom(data)");
+      if (!field.jsonIgnore) {
+        fields.append(',').append(field.name).append(".makeJsonFieldFrom(data)");
+      }
     }
 
     return methodBuilder("toJson")
@@ -253,7 +255,9 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
             .addParameter(Entity.class, "data", Modifier.FINAL)
             .addParameter(JsonNode.class, "json", Modifier.FINAL);
     for (final MetaField field : model.fields) {
-      method.addStatement("$L.write(data, json)", field.name);
+      if (!field.jsonIgnore) {
+        method.addStatement("$L.write(data, json)", field.name);
+      }
     }
     return method.build();
   }

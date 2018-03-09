@@ -139,6 +139,7 @@ final class MetaParent extends MetaModelAttribute {
 final class MetaField extends MetaModelAttribute {
   final String property;
   final boolean indexed;
+  final boolean jsonIgnore;
   private static final ImmutableSet<TypeName> FIELDS_WITH_DEFAULT_VALIDATIONS = ImmutableSet.of(
           TypeName.get(Category.class),
           TypeName.get(Email.class),
@@ -152,11 +153,13 @@ final class MetaField extends MetaModelAttribute {
             final String property,
             final boolean indexed,
             final boolean required,
+            final boolean jsonIgnore,
             final ImmutableSet<Modifier> modifiers,
             final Iterable<MetaConstraint> constraints) {
     super(type, name, description, required, modifiers, constraints);
     this.property = property;
     this.indexed = indexed;
+    this.jsonIgnore = jsonIgnore;
   }
 
   @Override

@@ -129,6 +129,13 @@ abstract class ModelAttributeInterpreter {
     return variable.getAnnotation(Record.required.class) != null;
   }
 
+  boolean shouldIgnoreAtJsonSerialization(final VariableElement variable) {
+    final Record.json json = variable.getAnnotation(Record.json.class);
+    if (json == null)
+      return false;
+    return json.ignore();
+  }
+
   List<MetaConstraint> constraintsOf(final VariableElement variable) {
     final LinkedList<MetaConstraint> constraints = new LinkedList<>();
 

@@ -106,6 +106,7 @@ class ModelFieldInterpreter extends ModelAttributeInterpreter {
                          propertyOf(variable),
                          isIndexed(variable),
                          isRequired(variable),
+                         shouldIgnoreAtJsonSerialization(variable),
                          modifiersOf(variable),
                          constraintsOf(variable));
   }

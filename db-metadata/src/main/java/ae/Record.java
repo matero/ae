@@ -39,4 +39,6 @@ public abstract class Record {
   public @interface notBlank { }
 
   public @interface email { }
+
+  public @interface json { boolean ignore() default false; }
 }

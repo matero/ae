@@ -29,10 +29,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 public abstract class StaticTemplateHandler extends TemplateHandler {
-  protected StaticTemplateHandler(final HttpServletRequest request,
-                                  final HttpServletResponse response,
-                                  final WebContext templateContext,
-                                  final TemplateEngine templateEngine) {
-    super(request, response, templateContext, templateEngine);
+  protected StaticTemplateHandler(final HttpServletRequest request, final HttpServletResponse response, final WebContext ctx, final TemplateEngine engine) {
+    super(request, response, ctx, engine);
   }
 }

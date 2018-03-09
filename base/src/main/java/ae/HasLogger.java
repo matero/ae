@@ -136,58 +136,6 @@ public abstract class HasLogger {
     logger().throwing(sourceClass, sourceMethod, thrown);
   }
 
-  protected void logSevere(final String msg) {
-    logger().severe(msg);
-  }
-
-  protected void logWarning(final String msg) {
-    logger().warning(msg);
-  }
-
-  protected void logInfo(final String msg) {
-    logger().info(msg);
-  }
-
-  protected void logConfig(final String msg) {
-    logger().config(msg);
-  }
-
-  protected void logFine(final String msg) {
-    logger().fine(msg);
-  }
-
-  protected void logFiner(final String msg) {
-    logger().finer(msg);
-  }
-
-  protected void logFinest(final String msg) {
-    logger().finest(msg);
-  }
-
-  protected void logSevere(final Supplier<String> msgSupplier) {
-    logger().severe(msgSupplier);
-  }
-
-  protected void logWarning(final Supplier<String> msgSupplier) {
-    logger().warning(msgSupplier);
-  }
-
-  protected void logInfo(final Supplier<String> msgSupplier) {
-    logger().info(msgSupplier);
-  }
-
-  protected void logFine(final Supplier<String> msgSupplier) {
-    logger().fine(msgSupplier);
-  }
-
-  protected void logFiner(final Supplier<String> msgSupplier) {
-    logger().finer(msgSupplier);
-  }
-
-  protected void logFinest(final Supplier<String> msgSupplier) {
-    logger().finest(msgSupplier);
-  }
-
   protected boolean isLoggable(final Level level) {
     return logger().isLoggable(level);
   }
