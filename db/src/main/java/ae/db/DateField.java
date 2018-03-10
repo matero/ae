@@ -25,6 +25,8 @@ package ae.db;
 
 import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.PropertyProjection;
 import java.util.Date;
 
@@ -42,6 +44,13 @@ public interface DateField extends ScalarField<Date> {
       throw new NullPointerException("json");
     }
     return DateJsonSerializer.INSTANCE.fromJson(json, jsonPath());
+  }
+
+  default void writeTimestamp(final PropertyContainer data) {
+    if (data == null) {
+      throw new NullPointerException("data");
+    }
+    write(data, new Date());
   }
 
   final class Unindexed extends ScalarField.Unindexed<Date> implements DateField {
