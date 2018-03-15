@@ -50,6 +50,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import ae.db.ActiveEntity;
+import com.google.appengine.api.datastore.AsyncDatastoreService;
+import com.google.appengine.api.datastore.DatastoreService;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.function.Supplier;
@@ -734,11 +736,11 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     );
   }
 
-  protected Key save(final Entity data) {
-    return DatastoreServiceFactory.getDatastoreService().put(data);
+  protected DatastoreService datastore() {
+    return DatastoreServiceFactory.getDatastoreService();
   }
 
-  protected Future<Key> asyncSave(final Entity data) {
-    return DatastoreServiceFactory.getAsyncDatastoreService().put(data);
+  protected AsyncDatastoreService asyncDatastore() {
+    return DatastoreServiceFactory.getAsyncDatastoreService();
   }
 }
