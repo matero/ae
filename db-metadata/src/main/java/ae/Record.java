@@ -40,5 +40,8 @@ public abstract class Record {
 
   public @interface email { }
 
-  public @interface json { boolean ignore() default false; }
+  public @interface json {
+    boolean ignore() default false;
+    String format() default "";
+  }
 }

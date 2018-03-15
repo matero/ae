@@ -33,17 +33,6 @@ public interface ShortBlobField extends ScalarField<ShortBlob> {
     return ShortBlob.class;
   }
 
-  @Override default JsonNode makeJsonValue(final ShortBlob value) {
-    return ShortBlobJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default ShortBlob interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return ShortBlobJsonSerializer.INSTANCE.fromJson(json, jsonPath());
-  }
-
   final class Unindexed extends ScalarField.Unindexed<ShortBlob> implements ShortBlobField {
     public Unindexed(final String canonicalName,
                      final String description,
@@ -53,7 +42,7 @@ public interface ShortBlobField extends ScalarField<ShortBlob> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, ShortBlobJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -66,7 +55,7 @@ public interface ShortBlobField extends ScalarField<ShortBlob> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, ShortBlob.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, ShortBlobJsonSerializer.INSTANCE, new PropertyProjection(property, ShortBlob.class), constraints);
     }
   }
 }

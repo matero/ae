@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Text;
 
@@ -36,21 +35,10 @@ public final class TextField extends ScalarField.Unindexed<Text> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, TextJsonSerializer.INSTANCE, constraints);
   }
 
   @Override public Class<Text> type() {
     return Text.class;
-  }
-
-  @Override public JsonNode makeJsonValue(final Text value) {
-    return TextJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override public Text interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return TextJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 }

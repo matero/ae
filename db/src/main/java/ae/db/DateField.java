@@ -23,27 +23,15 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.PropertyProjection;
 import java.util.Date;
 
 public interface DateField extends ScalarField<Date> {
+
   @Override default Class<Date> type() {
     return Date.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final Date value) {
-    return DateJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default Date interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return DateJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   default void writeTimestamp(final PropertyContainer data) {
@@ -61,8 +49,9 @@ public interface DateField extends ScalarField<Date> {
                      final boolean required,
                      final JsonStringNode jsonName,
                      final String jsonPath,
+                     final JsonSerializer<Date> jsonSerializer,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
     }
   }
 
@@ -74,8 +63,9 @@ public interface DateField extends ScalarField<Date> {
                    final boolean required,
                    final JsonStringNode jsonName,
                    final String jsonPath,
+                   final JsonSerializer<Date> jsonSerializer,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Date.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, new PropertyProjection(property, Date.class), constraints);
     }
   }
 }

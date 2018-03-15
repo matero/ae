@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.users.User;
@@ -31,17 +30,6 @@ import com.google.appengine.api.users.User;
 public interface UserField extends ScalarField<User> {
   @Override default Class<User> type() {
     return User.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final User value) {
-    return UserJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default User interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return UserJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<User> implements UserField {
@@ -53,7 +41,7 @@ public interface UserField extends ScalarField<User> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, UserJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -66,7 +54,7 @@ public interface UserField extends ScalarField<User> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, User.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, UserJsonSerializer.INSTANCE, new PropertyProjection(property, User.class), constraints);
     }
   }
 }

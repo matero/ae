@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Email;
 import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
 
 public interface EmailListField extends ListField<Email> {
   @Override default Class<Email> elementType() {
     return Email.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<Email> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return EmailJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<Email> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return EmailJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<Email> implements EmailListField {
@@ -57,7 +41,7 @@ public interface EmailListField extends ListField<Email> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -70,7 +54,7 @@ public interface EmailListField extends ListField<Email> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Email.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.ARRAY, new PropertyProjection(property, Email.class), constraints);
     }
   }
 }

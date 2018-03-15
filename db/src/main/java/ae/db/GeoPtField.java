@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.PropertyProjection;
@@ -31,17 +30,6 @@ import com.google.appengine.api.datastore.PropertyProjection;
 public interface GeoPtField extends ScalarField<GeoPt> {
   @Override default Class<GeoPt> type() {
     return GeoPt.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final GeoPt value) {
-    return GeoPtJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default GeoPt interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return GeoPtJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<GeoPt> implements GeoPtField {
@@ -53,7 +41,7 @@ public interface GeoPtField extends ScalarField<GeoPt> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, GeoPtJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -66,7 +54,7 @@ public interface GeoPtField extends ScalarField<GeoPt> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, GeoPt.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, GeoPtJsonSerializer.INSTANCE, new PropertyProjection(property, GeoPt.class), constraints);
     }
   }
 }

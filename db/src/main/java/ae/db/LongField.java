@@ -23,24 +23,12 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
 
 public interface LongField extends ScalarField<Long> {
   @Override default Class<Long> type() {
     return Long.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final Long value) {
-    return LongJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default Long interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return LongJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<Long> implements LongField {
@@ -52,7 +40,7 @@ public interface LongField extends ScalarField<Long> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, LongJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -65,7 +53,7 @@ public interface LongField extends ScalarField<Long> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Long.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, LongJsonSerializer.INSTANCE, new PropertyProjection(property, Long.class), constraints);
     }
   }
 }

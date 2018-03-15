@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Link;
 import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
 
 public interface LinkListField extends ListField<Link> {
   @Override default Class<Link> elementType() {
     return Link.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<Link> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return LinkJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<Link> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return LinkJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<Link> implements LinkListField {
@@ -57,7 +41,7 @@ public interface LinkListField extends ListField<Link> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, LinkJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -70,7 +54,7 @@ public interface LinkListField extends ListField<Link> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Link.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, LinkJsonSerializer.ARRAY, new PropertyProjection(property, Link.class), constraints);
     }
   }
 }

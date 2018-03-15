@@ -23,10 +23,8 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.EmbeddedEntity;
-import java.util.List;
 
 public final class EmbeddedEntityListField extends ListField.Unindexed<EmbeddedEntity> {
   public EmbeddedEntityListField(final String canonicalName,
@@ -37,24 +35,10 @@ public final class EmbeddedEntityListField extends ListField.Unindexed<EmbeddedE
                                  final JsonStringNode jsonName,
                                  final String jsonPath,
                                  final Constraint... constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, EmbeddedEntityJsonSerializer.ARRAY, constraints);
   }
 
   @Override public Class<EmbeddedEntity> elementType() {
     return EmbeddedEntity.class;
-  }
-
-  @Override public JsonNode makeJsonValue(final List<EmbeddedEntity> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return EmbeddedEntityJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override public List<EmbeddedEntity> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return EmbeddedEntityJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 }

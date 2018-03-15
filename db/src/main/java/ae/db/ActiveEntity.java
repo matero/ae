@@ -32,6 +32,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
@@ -78,6 +79,16 @@ public abstract class ActiveEntity extends ae.HasLogger implements Serializable 
     return kind.equals(key.getKind());
   }
 
+  public Key keyFrom(final String webSafeKey) {
+    if (webSafeKey == null) {
+      return null;
+    }
+    final Key key = KeyFactory.stringToKey(webSafeKey);
+    if (!isKindOf(key)) {
+      throw new IllegalArgumentException("'"+webSafeKey+"' represents '"+key+"' which doesn't identify a '"+kind+"' Entity.");
+    }
+    return key;
+  }
   /* **************************************************************************
    * metadata
    */

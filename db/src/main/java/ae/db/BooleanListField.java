@@ -33,20 +33,6 @@ public interface BooleanListField extends ListField<Boolean> {
     return Boolean.class;
   }
 
-  @Override default JsonNode makeJsonValue(final java.util.List<Boolean> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return BooleanJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override public default java.util.List<Boolean> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return BooleanJsonSerializer.ARRAY.fromJson(json, jsonPath());
-  }
-
   final class Unindexed extends ListField.Unindexed<Boolean> implements BooleanListField {
     public Unindexed(String canonicalName,
                      String description,
@@ -56,7 +42,7 @@ public interface BooleanListField extends ListField<Boolean> {
                      JsonStringNode jsonName,
                      String jsonPath,
                      Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -72,7 +58,7 @@ public interface BooleanListField extends ListField<Boolean> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Boolean.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.ARRAY, new PropertyProjection(property, Boolean.class), constraints);
       this.isTrue = new Query.FilterPredicate(property, Query.FilterOperator.EQUAL, Boolean.TRUE);
       this.isFalse = new Query.FilterPredicate(property, Query.FilterOperator.EQUAL, Boolean.FALSE);
     }

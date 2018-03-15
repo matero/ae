@@ -27,6 +27,7 @@ import argo.jdom.JsonField;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
 
@@ -91,6 +92,7 @@ public interface Field<T> extends Attr {
 abstract class FieldData<T> extends AttrData implements Field<T> {
   private final String property;
   private final boolean required;
+  private final JsonSerializer<T> jsonSerializer;
 
   protected FieldData(final String canonicalName,
                       final String description,
@@ -99,10 +101,12 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
                       final boolean required,
                       final JsonStringNode jsonName,
                       final String jsonPath,
+                      final JsonSerializer<T> jsonSerializer,
                       final Constraint... constraints) {
     super(canonicalName, description, field, jsonName, jsonPath, constraints);
     this.property = property;
     this.required = required;
+    this.jsonSerializer = jsonSerializer;
   }
 
   @Override public final String property() {
@@ -111,6 +115,20 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
 
   @Override public final boolean required() {
     return required;
+  }
+
+  @Override public final JsonNode makeJsonValue(final T value) {
+    if (value == null)
+      return JsonNodeFactories.nullNode();
+    else
+      return jsonSerializer.toJson(value);
+  }
+
+  @Override public final T interpretJson(final JsonNode json) {
+    if (json == null) {
+      throw new NullPointerException("json");
+    }
+    return jsonSerializer.fromJson(json, jsonPath());
   }
 
   @Override public final void validate(final Entity data, final Validation validation) {

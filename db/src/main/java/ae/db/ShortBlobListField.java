@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.ShortBlob;
 import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
 
 public interface ShortBlobListField extends ListField<ShortBlob> {
   @Override default Class<ShortBlob> elementType() {
     return ShortBlob.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<ShortBlob> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return ShortBlobJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<ShortBlob> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return ShortBlobJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<ShortBlob> implements ShortBlobListField {
@@ -57,7 +41,7 @@ public interface ShortBlobListField extends ListField<ShortBlob> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, ShortBlobJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -70,7 +54,7 @@ public interface ShortBlobListField extends ListField<ShortBlob> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, ShortBlob.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, ShortBlobJsonSerializer.ARRAY, new PropertyProjection(property, ShortBlob.class), constraints);
     }
   }
 }

@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Category;
 import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
 
 public interface CategoryListField extends ListField<Category> {
   @Override default Class<Category> elementType() {
     return Category.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<Category> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return CategoryJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<Category> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return CategoryJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<Category> implements CategoryListField {
@@ -57,7 +41,7 @@ public interface CategoryListField extends ListField<Category> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -70,7 +54,7 @@ public interface CategoryListField extends ListField<Category> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Category.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY, new PropertyProjection(property, Category.class), constraints);
     }
   }
 }

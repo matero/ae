@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.IMHandle;
 import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
 
 public interface IMHandleListField extends ListField<IMHandle> {
   @Override default Class<IMHandle> elementType() {
     return IMHandle.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<IMHandle> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return IMHandleJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<IMHandle> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return IMHandleJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<IMHandle> implements IMHandleListField {
@@ -57,7 +41,7 @@ public interface IMHandleListField extends ListField<IMHandle> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, IMHandleJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -70,7 +54,7 @@ public interface IMHandleListField extends ListField<IMHandle> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, IMHandle.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, IMHandleJsonSerializer.ARRAY, new PropertyProjection(property, IMHandle.class), constraints);
     }
   }
 }

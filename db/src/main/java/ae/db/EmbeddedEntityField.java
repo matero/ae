@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 
@@ -36,21 +35,10 @@ public final class EmbeddedEntityField extends ScalarField.Unindexed<EmbeddedEnt
                              final JsonStringNode jsonName,
                              final String jsonPath,
                              final Constraint... constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, EmbeddedEntityJsonSerializer.INSTANCE, constraints);
   }
 
   @Override public Class<EmbeddedEntity> type() {
     return EmbeddedEntity.class;
-  }
-
-  @Override public JsonNode makeJsonValue(final EmbeddedEntity value) {
-    return EmbeddedEntityJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override public EmbeddedEntity interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return EmbeddedEntityJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 }

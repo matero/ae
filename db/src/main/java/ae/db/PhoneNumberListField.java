@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PhoneNumber;
 import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
 
 public interface PhoneNumberListField extends ListField<PhoneNumber> {
   @Override default Class<PhoneNumber> elementType() {
     return PhoneNumber.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<PhoneNumber> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return PhoneNumberJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<PhoneNumber> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return PhoneNumberJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<PhoneNumber> implements PhoneNumberListField {
@@ -57,7 +41,7 @@ public interface PhoneNumberListField extends ListField<PhoneNumber> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, PhoneNumberJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -70,7 +54,7 @@ public interface PhoneNumberListField extends ListField<PhoneNumber> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, PhoneNumber.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, PhoneNumberJsonSerializer.ARRAY, new PropertyProjection(property, PhoneNumber.class), constraints);
     }
   }
 }

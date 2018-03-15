@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.users.User;
-import java.util.List;
 
 public interface UserListField extends ListField<User> {
   @Override default Class<User> elementType() {
     return User.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<User> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return UserJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<User> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return UserJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<User> implements UserListField {
@@ -57,7 +41,7 @@ public interface UserListField extends ListField<User> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, UserJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -70,7 +54,7 @@ public interface UserListField extends ListField<User> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, User.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, UserJsonSerializer.ARRAY, new PropertyProjection(property, User.class), constraints);
     }
   }
 }

@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Email;
 import com.google.appengine.api.datastore.PropertyProjection;
@@ -31,17 +30,6 @@ import com.google.appengine.api.datastore.PropertyProjection;
 public interface EmailField extends ScalarField<Email> {
   @Override default Class<Email> type() {
     return Email.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final Email value) {
-    return EmailJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default Email interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return EmailJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<Email> implements EmailField {
@@ -53,7 +41,7 @@ public interface EmailField extends ScalarField<Email> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.INSTANCE, constraints);
     }
 
     @Override protected void validateNotNullValue(final Email value, final Validation validation) {
@@ -73,7 +61,7 @@ public interface EmailField extends ScalarField<Email> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Email.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.INSTANCE, new PropertyProjection(property, Email.class), constraints);
     }
 
     @Override protected void validateNotNullValue(final Email value, final Validation validation) {

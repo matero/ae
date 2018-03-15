@@ -136,6 +136,15 @@ abstract class ModelAttributeInterpreter {
     return json.ignore();
   }
 
+  String jsonFormat(final VariableElement variable) {
+    final Record.json json = variable.getAnnotation(Record.json.class);
+    if (json == null)
+      return "";
+    if (json.format() == null)
+      return "";
+    return json.format();
+  }
+
   List<MetaConstraint> constraintsOf(final VariableElement variable) {
     final LinkedList<MetaConstraint> constraints = new LinkedList<>();
 

@@ -37,24 +37,10 @@ public final class BlobListField extends ListField.Unindexed<Blob> {
                        final JsonStringNode jsonName,
                        final String jsonPath,
                        final Constraint... constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, BlobJsonSerializer.ARRAY, constraints);
   }
 
   @Override public Class<Blob> elementType() {
     return Blob.class;
-  }
-
-  @Override public JsonNode makeJsonValue(final List<Blob> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return BlobJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override public List<Blob> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return BlobJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 }

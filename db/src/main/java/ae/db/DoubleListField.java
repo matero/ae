@@ -33,20 +33,6 @@ public interface DoubleListField extends ListField<Double> {
     return Double.class;
   }
 
-  @Override default JsonNode makeJsonValue(final List<Double> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return DoubleJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<Double> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return DoubleJsonSerializer.ARRAY.fromJson(json, jsonPath());
-  }
-
   final class Unindexed extends ListField.Unindexed<Double> implements DoubleListField {
     public Unindexed(final String canonicalName,
                      final String description,
@@ -56,7 +42,7 @@ public interface DoubleListField extends ListField<Double> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -69,7 +55,7 @@ public interface DoubleListField extends ListField<Double> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Double.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.ARRAY, new PropertyProjection(property, Double.class), constraints);
     }
   }
 }

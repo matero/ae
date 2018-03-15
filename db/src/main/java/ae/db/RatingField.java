@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Rating;
 import com.google.appengine.api.datastore.PropertyProjection;
@@ -31,17 +30,6 @@ import com.google.appengine.api.datastore.PropertyProjection;
 public interface RatingField extends ScalarField<Rating> {
   @Override default Class<Rating> type() {
     return Rating.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final Rating value) {
-    return RatingJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default Rating interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return RatingJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<Rating> implements RatingField {
@@ -53,7 +41,7 @@ public interface RatingField extends ScalarField<Rating> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, RatingJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -66,7 +54,7 @@ public interface RatingField extends ScalarField<Rating> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Rating.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, RatingJsonSerializer.INSTANCE, new PropertyProjection(property, Rating.class), constraints);
     }
   }
 }

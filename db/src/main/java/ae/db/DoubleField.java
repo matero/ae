@@ -23,24 +23,12 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
 
 public interface DoubleField extends ScalarField<Double> {
   @Override default Class<Double> type() {
     return Double.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final Double value) {
-    return DoubleJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default Double interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return DoubleJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<Double> implements DoubleField {
@@ -52,7 +40,7 @@ public interface DoubleField extends ScalarField<Double> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -65,7 +53,7 @@ public interface DoubleField extends ScalarField<Double> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Double.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.INSTANCE, new PropertyProjection(property, Double.class), constraints);
     }
   }
 }

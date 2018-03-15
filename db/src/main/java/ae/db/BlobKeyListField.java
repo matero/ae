@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
 
 public interface BlobKeyListField extends ListField<BlobKey> {
   @Override default Class<BlobKey> elementType() {
     return BlobKey.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<BlobKey> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return BlobKeyJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<BlobKey> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return BlobKeyJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<BlobKey> implements BlobKeyListField {
@@ -57,7 +41,7 @@ public interface BlobKeyListField extends ListField<BlobKey> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, BlobKeyJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -70,7 +54,7 @@ public interface BlobKeyListField extends ListField<BlobKey> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, BlobKey.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, BlobKeyJsonSerializer.ARRAY, new PropertyProjection(property, BlobKey.class), constraints);
     }
   }
 }

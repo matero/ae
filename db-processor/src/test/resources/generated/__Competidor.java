@@ -3,6 +3,7 @@ package processor.test;
 import ae.db.Attr;
 import ae.db.ChildWithId;
 import ae.db.DateField;
+import ae.db.DateJsonSerializer;
 import ae.db.EmailField;
 import ae.db.Field;
 import ae.db.PhoneNumberField;
@@ -46,7 +47,7 @@ abstract class __Competidor extends ChildWithId {
 
   final StringField.Indexed apodo = new StringField.Indexed(canonicalName("processor.test.Competidor.apodo"), description("Apodo"), property("apodo"), field("apodo"), required(false), jsonName("apodo"), jsonPath("apodo"), ae.db.NotBlankConstraint.ForString.INSTANCE);
 
-  final DateField.Unindexed nacimiento = new DateField.Unindexed(canonicalName("processor.test.Competidor.nacimiento"), description("Nacimiento"), property("nacimiento"), field("nacimiento"), required(true), jsonName("nacimiento"), jsonPath("nacimiento"), noConstraints());
+  final DateField.Unindexed nacimiento = new DateField.Unindexed(canonicalName("processor.test.Competidor.nacimiento"), description("Nacimiento"), property("nacimiento"), field("nacimiento"), required(true), jsonName("nacimiento"), jsonPath("nacimiento"), new DateJsonSerializer("yyyy-MM-dd"),noConstraints());
 
   final StringField.Unindexed sexo = new StringField.Unindexed(canonicalName("processor.test.Competidor.sexo"), description("Sexo"), property("sexo"), field("sexo"), required(true), jsonName("sexo"), jsonPath("sexo"), noConstraints());
 

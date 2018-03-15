@@ -33,17 +33,6 @@ public interface LinkField extends ScalarField<Link> {
     return Link.class;
   }
 
-  @Override default JsonNode makeJsonValue(final Link value) {
-    return LinkJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default Link interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return LinkJsonSerializer.INSTANCE.fromJson(json, jsonPath());
-  }
-
   final class Unindexed extends ScalarField.Unindexed<Link> implements LinkField {
     public Unindexed(final String canonicalName,
                      final String description,
@@ -53,7 +42,7 @@ public interface LinkField extends ScalarField<Link> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, LinkJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -66,7 +55,7 @@ public interface LinkField extends ScalarField<Link> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Link.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, LinkJsonSerializer.INSTANCE, new PropertyProjection(property, Link.class), constraints);
     }
   }
 }

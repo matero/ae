@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Query;
@@ -39,17 +38,6 @@ public interface BooleanField extends ScalarField<Boolean> {
     return Boolean.class;
   }
 
-  @Override default JsonNode makeJsonValue(final Boolean value) {
-    return BooleanJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default Boolean interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return BooleanJsonSerializer.INSTANCE.fromJson(json, jsonPath());
-  }
-
   final class Unindexed extends ScalarField.Unindexed<Boolean> implements BooleanField {
     public Unindexed(final String canonicalName,
                      final String description,
@@ -59,7 +47,7 @@ public interface BooleanField extends ScalarField<Boolean> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -75,7 +63,7 @@ public interface BooleanField extends ScalarField<Boolean> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Boolean.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.INSTANCE, new PropertyProjection(property, Boolean.class), constraints);
       this.isTrue = new Query.FilterPredicate(property, Query.FilterOperator.EQUAL, Boolean.TRUE);
       this.isFalse = new Query.FilterPredicate(property, Query.FilterOperator.EQUAL, Boolean.FALSE);
     }

@@ -23,10 +23,8 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Text;
-import java.util.List;
 
 public final class TextListField extends ListField.Unindexed<Text> {
   public TextListField(final String canonicalName,
@@ -37,24 +35,10 @@ public final class TextListField extends ListField.Unindexed<Text> {
                        final JsonStringNode jsonName,
                        final String jsonPath,
                        final Constraint... constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, TextJsonSerializer.ARRAY, constraints);
   }
 
   @Override public Class<Text> elementType() {
     return Text.class;
-  }
-
-  @Override public JsonNode makeJsonValue(final List<Text> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return TextJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override public List<Text> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return TextJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 }

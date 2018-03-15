@@ -23,26 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.Category;
 import com.google.appengine.api.datastore.PostalAddress;
 import com.google.appengine.api.datastore.PropertyProjection;
 
 public interface PostalAddressField extends ScalarField<PostalAddress> {
   @Override default Class<PostalAddress> type() {
     return PostalAddress.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final PostalAddress value) {
-    return PostalAddressJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default PostalAddress interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return PostalAddressJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<PostalAddress> implements PostalAddressField {
@@ -54,7 +41,7 @@ public interface PostalAddressField extends ScalarField<PostalAddress> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, PostalAddressJsonSerializer.INSTANCE, constraints);
     }
 
     @Override protected void validateNotNullValue(final PostalAddress value, final Validation validation) {
@@ -74,7 +61,7 @@ public interface PostalAddressField extends ScalarField<PostalAddress> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, PostalAddress.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, PostalAddressJsonSerializer.INSTANCE, new PropertyProjection(property, PostalAddress.class), constraints);
     }
 
     @Override protected void validateNotNullValue(final PostalAddress value, final Validation validation) {

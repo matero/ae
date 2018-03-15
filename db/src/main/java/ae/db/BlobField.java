@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Blob;
 
@@ -35,22 +34,12 @@ public final class BlobField extends ScalarField.Unindexed<Blob> {
                    final boolean required,
                    final JsonStringNode jsonName,
                    final String jsonPath,
+                   final JsonSerializer<Blob> jsonSerializer,
                    final Constraint... constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
   }
 
   @Override public Class<Blob> type() {
     return Blob.class;
-  }
-
-  @Override public JsonNode makeJsonValue(final Blob value) {
-    return BlobJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override public Blob interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return BlobJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 }

@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
 import java.util.Date;
-import java.util.List;
 
 public interface DateListField extends ListField<Date> {
   @Override default Class<Date> elementType() {
     return Date.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<Date> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return DateJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<Date> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return DateJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<Date> implements DateListField {
@@ -56,8 +40,9 @@ public interface DateListField extends ListField<Date> {
                      final boolean required,
                      final JsonStringNode jsonName,
                      final String jsonPath,
+                     final JsonSerializer<Date> jsonElementSerializer,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, new JsonArraySerializer<>(jsonElementSerializer), constraints);
     }
   }
 
@@ -69,8 +54,9 @@ public interface DateListField extends ListField<Date> {
                    final boolean required,
                    final JsonStringNode jsonName,
                    final String jsonPath,
+                   final JsonSerializer<Date> jsonElementSerializer,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Date.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, new JsonArraySerializer<>(jsonElementSerializer), new PropertyProjection(property, Date.class), constraints);
     }
   }
 }

@@ -38,6 +38,7 @@ import ae.db.BooleanListField;
 import ae.db.CategoryField;
 import ae.db.CategoryListField;
 import ae.db.DateField;
+import ae.db.DateJsonSerializer;
 import ae.db.DateListField;
 import ae.db.DoubleField;
 import ae.db.DoubleListField;
@@ -174,7 +175,15 @@ final class FieldGenerator extends AttributeGenerator {
   }
 
   protected String fieldInitializerFormat() {
-    return "new $T(canonicalName($S), description($S), property($S), field($S), required($L), jsonName($S), jsonPath($S), " + constraints(field) + ')';
+    if (isDate()) {
+      return "new $T(canonicalName($S), description($S), property($S), field($S), required($L), jsonName($S), jsonPath($S), new $T($S)," + constraints(field) + ')';
+    } else {
+      return "new $T(canonicalName($S), description($S), property($S), field($S), required($L), jsonName($S), jsonPath($S), " + constraints(field) + ')';
+    }
+  }
+
+  boolean isDate() {
+    return FieldType.DATE.equals(field.type);
   }
 
   private Object[] fieldInitializerArgs() {
@@ -187,6 +196,33 @@ final class FieldGenerator extends AttributeGenerator {
     args.add(field.required);
     args.add(field.name);
     args.add(field.name);
+    if (isDate()) {
+      args.add(ClassName.get(DateJsonSerializer.class));
+      switch (field.jsonFormat) {
+        case "":
+        case "#date":
+          args.add("yyyy-MM-dd");
+          break;
+        case "#time":
+          args.add("hh:mm:ss");
+          break;
+        case "#hour":
+          args.add("hh:mm");
+          break;
+        case "#datehour":
+          args.add("yyyy-MM-dd hh:mm");
+          break;
+        case "#datetime":
+          args.add("yyyy-MM-dd hh:mm:ss");
+          break;
+        case "#timestamp":
+          args.add("yyyy-MM-dd hh:mm:ss.S");
+          break;
+        default:
+          args.add(field.jsonFormat);
+          break;
+      }
+    }
     args.addAll(constraintsArgs(field));
     return args.toArray();
   }

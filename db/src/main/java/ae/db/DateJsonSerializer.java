@@ -25,26 +25,35 @@ package ae.db;
 
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-enum DateJsonSerializer implements JsonSerializer<Date> {
-  INSTANCE;
+public class DateJsonSerializer implements JsonSerializer<Date> {
+  private final String datePattern;
 
-  static final JsonArraySerializer<Date> ARRAY = new JsonArraySerializer<>(INSTANCE);
+  public DateJsonSerializer(final String datePattern) {
+    this.datePattern = datePattern;
+  }
 
   @Override public JsonNode toJson(final Date value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
-    return JsonNodeFactories.number(value.getTime());
+    return JsonNodeFactories.string(new SimpleDateFormat(datePattern).format(value));
   }
 
   @Override public Date fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
-      final String timestamp = json.getNumberValue(jsonPath);
-      return new Date(Long.parseLong(timestamp));
+      final String value = json.getStringValue(jsonPath);
+      final SimpleDateFormat parser = new SimpleDateFormat(datePattern);
+      try {
+        return parser.parse(value);
+      } catch (final ParseException e) {
+        throw new IllegalArgumentException("Could not interpret '" + value + "' as date.", e);
+      }
     }
   }
 
@@ -52,8 +61,13 @@ enum DateJsonSerializer implements JsonSerializer<Date> {
     if (json.isNullNode()) {
       return null;
     } else {
-      final String timestamp = json.getNumberValue();
-      return new Date(Long.parseLong(timestamp));
+      final String value = json.getStringValue();
+      final SimpleDateFormat parser = new SimpleDateFormat(datePattern);
+      try {
+        return parser.parse(value);
+      } catch (final ParseException e) {
+        throw new IllegalArgumentException("Could not interpret '" + value + "' as date.", e);
+      }
     }
   }
 }

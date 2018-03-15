@@ -23,26 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.Category;
 import com.google.appengine.api.datastore.PhoneNumber;
 import com.google.appengine.api.datastore.PropertyProjection;
 
 public interface PhoneNumberField extends ScalarField<PhoneNumber> {
   @Override default Class<PhoneNumber> type() {
     return PhoneNumber.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final PhoneNumber value) {
-    return PhoneNumberJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default PhoneNumber interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return PhoneNumberJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<PhoneNumber> implements PhoneNumberField {
@@ -54,7 +41,7 @@ public interface PhoneNumberField extends ScalarField<PhoneNumber> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, PhoneNumberJsonSerializer.INSTANCE, constraints);
     }
 
     @Override protected void validateNotNullValue(final PhoneNumber value, final Validation validation) {
@@ -74,7 +61,7 @@ public interface PhoneNumberField extends ScalarField<PhoneNumber> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, PhoneNumber.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, PhoneNumberJsonSerializer.INSTANCE, new PropertyProjection(property, PhoneNumber.class), constraints);
     }
 
     @Override protected void validateNotNullValue(final PhoneNumber value, final Validation validation) {

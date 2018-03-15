@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PropertyProjection;
@@ -31,17 +30,6 @@ import com.google.appengine.api.datastore.PropertyProjection;
 public interface KeyField extends ScalarField<Key> {
   @Override default Class<Key> type() {
     return Key.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final Key value) {
-    return KeyJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default Key interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return KeyJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<Key> implements KeyField {
@@ -53,7 +41,7 @@ public interface KeyField extends ScalarField<Key> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, KeyJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -66,7 +54,7 @@ public interface KeyField extends ScalarField<Key> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Key.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, KeyJsonSerializer.INSTANCE, new PropertyProjection(property, Key.class), constraints);
     }
   }
 }

@@ -23,7 +23,6 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.IMHandle;
 import com.google.appengine.api.datastore.PropertyProjection;
@@ -31,17 +30,6 @@ import com.google.appengine.api.datastore.PropertyProjection;
 public interface IMHandleField extends ScalarField<IMHandle> {
   @Override default Class<IMHandle> type() {
     return IMHandle.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final IMHandle value) {
-    return IMHandleJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default IMHandle interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return IMHandleJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<IMHandle> implements IMHandleField {
@@ -53,7 +41,7 @@ public interface IMHandleField extends ScalarField<IMHandle> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, IMHandleJsonSerializer.INSTANCE, constraints);
     }
   }
 
@@ -66,7 +54,7 @@ public interface IMHandleField extends ScalarField<IMHandle> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, IMHandle.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, IMHandleJsonSerializer.INSTANCE, new PropertyProjection(property, IMHandle.class), constraints);
     }
   }
 }

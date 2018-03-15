@@ -23,26 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Category;
-import com.google.appengine.api.datastore.Email;
 import com.google.appengine.api.datastore.PropertyProjection;
 
 public interface CategoryField extends ScalarField<Category> {
   @Override default Class<Category> type() {
     return Category.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final Category value) {
-    return CategoryJsonSerializer.INSTANCE.toJson(value);
-  }
-
-  @Override default Category interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return CategoryJsonSerializer.INSTANCE.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ScalarField.Unindexed<Category> implements CategoryField {
@@ -54,7 +41,7 @@ public interface CategoryField extends ScalarField<Category> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.INSTANCE, constraints);
     }
 
     @Override protected void validateNotNullValue(final Category value, final Validation validation) {
@@ -74,7 +61,7 @@ public interface CategoryField extends ScalarField<Category> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Category.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.INSTANCE, new PropertyProjection(property, Category.class), constraints);
     }
 
     @Override protected void validateNotNullValue(final Category value, final Validation validation) {

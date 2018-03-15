@@ -175,8 +175,9 @@ public interface ScalarField<T> extends Field<T> {
                         final boolean required,
                         final JsonStringNode jsonName,
                         final String jsonPath,
+                        final JsonSerializer<T> jsonSerializer,
                         final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
     }
 
     @Override public final boolean indexed() {
@@ -208,9 +209,10 @@ public interface ScalarField<T> extends Field<T> {
                       final boolean required,
                       final JsonStringNode jsonName,
                       final String jsonPath,
+                      final JsonSerializer<T> jsonSerializer,
                       final PropertyProjection projection,
                       final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
       this.projection = projection;
       this.asc = new Query.SortPredicate(property, Query.SortDirection.ASCENDING);
       this.desc = new Query.SortPredicate(property, Query.SortDirection.DESCENDING);

@@ -23,28 +23,12 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
 
 public interface LongListField extends ListField<Long> {
   @Override default Class<Long> elementType() {
     return Long.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<Long> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return LongJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<Long> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return LongJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<Long> implements LongListField {
@@ -56,7 +40,7 @@ public interface LongListField extends ListField<Long> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, LongJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -69,7 +53,7 @@ public interface LongListField extends ListField<Long> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, Long.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, LongJsonSerializer.ARRAY, new PropertyProjection(property, Long.class), constraints);
     }
   }
 }

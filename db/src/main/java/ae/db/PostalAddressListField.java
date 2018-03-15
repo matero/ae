@@ -23,29 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PostalAddress;
 import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
 
 public interface PostalAddressListField extends ListField<PostalAddress> {
   @Override default Class<PostalAddress> elementType() {
     return PostalAddress.class;
-  }
-
-  @Override default JsonNode makeJsonValue(final List<PostalAddress> value) {
-    if (value == null) {
-      throw new NullPointerException("json");
-    }
-    return PostalAddressJsonSerializer.ARRAY.toJson(value);
-  }
-
-  @Override default List<PostalAddress> interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return PostalAddressJsonSerializer.ARRAY.fromJson(json, jsonPath());
   }
 
   final class Unindexed extends ListField.Unindexed<PostalAddress> implements PostalAddressListField {
@@ -57,7 +41,7 @@ public interface PostalAddressListField extends ListField<PostalAddress> {
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, PostalAddressJsonSerializer.ARRAY, constraints);
     }
   }
 
@@ -70,7 +54,7 @@ public interface PostalAddressListField extends ListField<PostalAddress> {
                    final JsonStringNode jsonName,
                    final String jsonPath,
                    final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new PropertyProjection(property, PostalAddress.class), constraints);
+      super(canonicalName, description, property, field, required, jsonName, jsonPath, PostalAddressJsonSerializer.ARRAY, new PropertyProjection(property, PostalAddress.class), constraints);
     }
   }
 }
