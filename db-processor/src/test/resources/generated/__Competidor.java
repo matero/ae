@@ -21,15 +21,16 @@ import com.google.common.collect.ImmutableList;
 import java.lang.Override;
 import java.lang.String;
 import java.util.Date;
-import java.util.logging.Logger;
 import javax.annotation.Generated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Generated(
     value = "ae-db",
     date = "2017-02-23"
 )
 abstract class __Competidor extends ChildWithId {
-  protected static final Logger LOGGER = Logger.getLogger("processor.test.Competidor");
+  protected static final Logger LOG = LoggerFactory.getLogger("processor.test.Competidor");
 
   final Id personId = new Id(canonicalName("processor.test.Competidor.personId"), description("Person Id"), field("personId"), jsonName("personId"), jsonPath("personId"), noConstraints());
 
@@ -70,8 +71,8 @@ abstract class __Competidor extends ChildWithId {
   }
 
   @Override
-  protected final Logger logger() {
-    return LOGGER;
+  protected final Logger log() {
+    return LOG;
   }
 
   @Override

@@ -41,7 +41,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 import ae.db.ChildWithId;
@@ -53,6 +53,8 @@ import ae.db.Validation;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.WildcardTypeName;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 class ModelBaseClassCodeGenerator implements CodeGenerator {
@@ -76,6 +78,7 @@ class ModelBaseClassCodeGenerator implements CodeGenerator {
 
 abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
   private static final ClassName LOGGER_CLASS = ClassName.get(Logger.class);
+  private static final ClassName LOGGER_FACTORY_CLASS = ClassName.get(LoggerFactory.class);
   final M model;
   final TypeSpec.Builder baseModelClass;
   final ClassName modelClass;
@@ -141,8 +144,8 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
 
   void defineLogger() {
     baseModelClass.addField(
-            FieldSpec.builder(LOGGER_CLASS, "LOGGER", Modifiers.PROTECTED_STATIC_FINAL)
-                    .initializer("$T.getLogger($S)", LOGGER_CLASS, model.canonicalName).build()
+            FieldSpec.builder(LOGGER_CLASS, "LOG", Modifiers.PROTECTED_STATIC_FINAL)
+                    .initializer("$T.getLogger($S)", LOGGER_FACTORY_CLASS, model.canonicalName).build()
     );
   }
 
@@ -192,11 +195,11 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
   }
 
   MethodSpec logger() {
-    return methodBuilder("logger")
+    return methodBuilder("log")
             .addAnnotation(Override.class)
             .addModifiers(Modifiers.PROTECTED_FINAL)
             .returns(Logger.class)
-            .addStatement("return LOGGER")
+            .addStatement("return LOG")
             .build();
   }
 

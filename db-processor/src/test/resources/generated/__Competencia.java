@@ -11,15 +11,16 @@ import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
 import java.lang.Override;
 import java.lang.String;
-import java.util.logging.Logger;
 import javax.annotation.Generated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Generated(
     value = "ae-db",
     date = "2017-02-23"
 )
 abstract class __Competencia extends RootWithName {
-  protected static final Logger LOGGER = Logger.getLogger("processor.test.Competencia");
+  protected static final Logger LOG = LoggerFactory.getLogger("processor.test.Competencia");
 
   final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), field("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints());
 
@@ -32,8 +33,8 @@ abstract class __Competencia extends RootWithName {
   }
 
   @Override
-  protected final Logger logger() {
-    return LOGGER;
+  protected final Logger log() {
+    return LOG;
   }
 
   @Override
