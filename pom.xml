@@ -9,6 +9,27 @@
   <name>ActiveEngine</name>
   <description>Thin library around google-appengine java low-level APIs.</description>
 
+  <url>https://github.com/matero/ae</url>
+
+  <issueManagement>
+    <url>https://github.com/matero/ae/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/matero/ae</url>
+    <connection>scm:git:git://github.com/matero/ae.git</connection>
+    <developerConnection>scm:git:git@github.com:matero/ae.git</developerConnection>
+  </scm>
+
   <prerequisites>
     <maven>3.5.0</maven>
   </prerequisites>
@@ -230,6 +251,30 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.7.0</version>
+      </plugin>
+      <plugin>
+        <!-- Deploy the web site -->
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <version>0.9</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>site</goal>
+            </goals>
+            <phase>site-deploy</phase>
+            <configuration>
+              <repositoryName>ae</repositoryName>
+              <repositoryOwner>matero</repositoryOwner>
+
+              <server>github</server>
+
+              <message>Building site for ae for version ${project.version}.</message>
+              <path>site</path>
+              <merge>true</merge>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
