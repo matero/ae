@@ -23,53 +23,62 @@
  */
 package ae.routes.processor;
 
+import ae.web.ParameterizedRoute;
+import ae.web.Route;
 import com.google.common.collect.ImmutableList;
-import ae.web.route.ParameterizedRoute;
-import ae.web.route.Route;
 
-class RouteDescriptor {
-  final Class<?> type;
-  final HttpVerb verb;
-  final String pattern;
-  final String regex;
-  final String handlerCannonicalName;
-  final ImmutableList<String> parametersNames;
-  final String ctorArgs;
-  final boolean useCredentials;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 
-  static final RouteDescriptor makeStatic(final HttpVerb verb,
-                                          final String pattern,
-                                          final boolean useCredentials,
-                                          final String handlerCannonicalName,
-                                          final String ctorArgs) {
-    return new RouteDescriptor(verb, pattern, pattern, useCredentials, handlerCannonicalName, ctorArgs, ImmutableList.<String>of());
+final class Parameter {
+  final String     name;
+  final TypeMirror type;
+  final String     interpreterMethod;
+
+  Parameter(String name, TypeMirror type, String interpreterMethod) {
+    this.name = name;
+    this.type = type;
+    this.interpreterMethod = interpreterMethod;
   }
+}
 
-  static final RouteDescriptor makeParameterized(final HttpVerb verb,
-                                                 final String pattern,
-                                                 final String regex,
-                                                 final boolean useCredentials,
-                                                 final String handlerCannonicalName,
-                                                 final String ctorArgs,
-                                                 final ImmutableList<String> parametersNames) {
-    return new RouteDescriptor(verb, pattern, regex, useCredentials, handlerCannonicalName, ctorArgs, parametersNames);
+final class RouteDescriptor {
+  final Class<?>                 type;
+  final HttpVerb                 verb;
+  final String                   pattern;
+  final String                   regex;
+  final TypeElement              controller;
+  final String                   action;
+  final ImmutableList<Parameter> parameters;
+  final String                   ctorArgs;
+  final boolean                  useCredentials;
+
+  RouteDescriptor(final HttpVerb verb,
+                  final String pattern,
+                  final boolean useCredentials,
+                  final TypeElement controller,
+                  final String action,
+                  final String ctorArgs) {
+    this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs);
   }
 
   RouteDescriptor(final HttpVerb verb,
                   final String pattern,
                   final String regex,
                   final boolean useCredentials,
-                  final String handlerCannonicalName,
-                  final String ctorArgs,
-                  final ImmutableList<String> parametersNames) {
-    this.type = parametersNames.isEmpty() ? Route.class : ParameterizedRoute.class;
+                  final TypeElement controller,
+                  final String action,
+                  final ImmutableList<Parameter> parameters,
+                  final String ctorArgs) {
+    this.type = parameters.isEmpty() ? Route.class : ParameterizedRoute.class;
     this.verb = verb;
     this.pattern = pattern;
     this.regex = regex;
     this.useCredentials = useCredentials;
-    this.handlerCannonicalName = handlerCannonicalName;
-    this.parametersNames = parametersNames;
+    this.controller = controller;
+    this.parameters = parameters;
     this.ctorArgs = ctorArgs;
+    this.action = action;
   }
 
   @Override public int hashCode() {
@@ -91,27 +100,36 @@ class RouteDescriptor {
   }
 
   @Override public String toString() {
-    return "Route{type=" + type + "verb=" + verb + ", pattern=" + pattern + ", handlerCannonicalName=" + handlerCannonicalName + '}';
-  }
-
-  String handlerField() {
-    return this.verb.name() + '_' + this.handlerCannonicalName.replace('.', '_') + "_handler";
+    return "Route{type=" + type + "verb=" + verb + ", pattern=" + pattern + ", controller=" + controller + '}';
   }
 
   String routeField() {
-    return this.verb.name() + '_' + this.handlerCannonicalName.replace('.', '_') + "_route";
+    return this.verb.name() + '_' + controllerQualifiedName().replace('.', '_') + '_' + action;
   }
+
+  String controllerQualifiedName() { return controller.getQualifiedName().toString(); }
 
   boolean isDynamic() {
     return type == ParameterizedRoute.class;
   }
 
-  String parametersNamesLiteral() {
-    final StringBuilder params = new StringBuilder();
-    params.append('"').append(parametersNames.get(0)).append('"');
-    for (int i = 1; i < parametersNames.size(); ++i) {
-      params.append(", \"").append(parametersNames.get(0)).append('"');
+  String arguments() {
+    if (parametersCount() == 0) {
+      return "";
+    } else if (parametersCount() == 1) {
+      return parameterName(0);
+    } else {
+      final StringBuilder args = new StringBuilder();
+      args.append(parameterName(0));
+      for (int i = 1; i < parametersCount(); i++) {
+        args.append(',').append(parameterName(i));
+      }
+      return args.toString();
     }
-    return params.toString();
   }
+
+  int parametersCount() { return parameters.size(); }
+  String parameterName(final int i) { return parameters.get(i).name; }
+  TypeMirror parameterType(final int i) { return parameters.get(i).type; }
+  String parameterInterpreterMethod(final int i) { return parameters.get(i).interpreterMethod; }
 }

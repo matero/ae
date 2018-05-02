@@ -28,7 +28,7 @@ import javax.servlet.ServletContextEvent;
 import org.thymeleaf.TemplateEngine;
 
 public final class ThymeleafTemplateEngine {
-  public static final String TEMPLATE_ENGINE = "TemplateEngine";
+  public static final String TEMPLATE_ENGINE = "$thyme";
 
   private ThymeleafTemplateEngine() {
     throw new UnsupportedOperationException();

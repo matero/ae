@@ -1,16 +1,12 @@
-
 package processor.test;
 
-import ae.web.route.ParameterizedRoute;
-import ae.web.route.Route;
-import ae.web.route.RouterServlet;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import entrename.gyms.Create;
-import entrename.gyms.Destroy;
-import entrename.gyms.List;
-import entrename.gyms.Show;
-import entrename.gyms.Update;
+import ae.web.Interpret;
+import ae.web.OAuth2Flow;
+import ae.web.ParameterizedRoute;
+import ae.web.Route;
+import ae.web.RouterServlet;
+import book.Controller;
+import com.google.appengine.api.datastore.Cursor;
 import java.io.IOException;
 import java.lang.Override;
 import java.lang.String;
@@ -28,26 +24,89 @@ import javax.servlet.http.HttpServletResponse;
 abstract class RouterDefs extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 
-  private final ParameterizedRoute GET_entrename_gyms_Show_route = new ParameterizedRoute("/gyms/{id: [0-9]+}", Pattern.compile("/gyms/(?<p0>[0-9]+)"), ImmutableList.of("id"));
+  private final Route GET_book_Controller_index = new Route("/books");
 
-  private final Route GET_entrename_gyms_List_route = new Route("/gyms");
+  private final Route GET_book_Controller_create = new Route("/books/create");
 
-  private final Route POST_entrename_gyms_Create_route = new Route("/gyms");
+  private final ParameterizedRoute GET_book_Controller_show = new ParameterizedRoute("/books/${id}", Pattern.compile("/books/$(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute PUT_entrename_gyms_Update_route = new ParameterizedRoute("/gyms/{id: :digit:+}", Pattern.compile("/gyms/(?<p0>\\p{Digit}+)"), ImmutableList.of("id"));
+  private final ParameterizedRoute GET_book_Controller_edit = new ParameterizedRoute("/books/${id}/edit", Pattern.compile("/books/$(?<p0>[^/]+)/edit"));
 
-  private final ParameterizedRoute DELETE_entrename_gyms_Destroy_route = new ParameterizedRoute("/gyms/{id: [0-9]+}", Pattern.compile("/gyms/(?<p0>[0-9]+)"), ImmutableList.of("id"));
+  private final ParameterizedRoute GET_book_Controller_foo = new ParameterizedRoute("/books/${id}/{$arg}", Pattern.compile("/books/$(?<p0>[^/]+)/(?<p1>[^/]+)"));
+
+  private final ParameterizedRoute GET_book_Controller_bar = new ParameterizedRoute("/books/${id}/{$c}/{$arg}", Pattern.compile("/books/$(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
+
+  private final Route GET_gym_Controller_index = new Route("/gyms");
+
+  private final Route GET_gym_Controller_create = new Route("/gyms/create");
+
+  private final ParameterizedRoute GET_gym_Controller_show = new ParameterizedRoute("/gyms/${id}", Pattern.compile("/gyms/$(?<p0>[^/]+)"));
+
+  private final ParameterizedRoute GET_gym_Controller_edit = new ParameterizedRoute("/gyms/${id}/edit", Pattern.compile("/gyms/$(?<p0>[^/]+)/edit"));
+
+  private final Route POST_book_Controller_save = new Route("/books");
+
+  private final Route POST_gym_Controller_save = new Route("/gyms");
+
+  private final ParameterizedRoute PUT_book_Controller_update = new ParameterizedRoute("/books/${id}", Pattern.compile("/books/$(?<p0>[^/]+)"));
+
+  private final ParameterizedRoute PUT_gym_Controller_update = new ParameterizedRoute("/gyms/${id}", Pattern.compile("/gyms/$(?<p0>[^/]+)"));
+
+  private final ParameterizedRoute DELETE_book_Controller_delete = new ParameterizedRoute("/books/${id}", Pattern.compile("/books/$(?<p0>[^/]+)"));
+
+  private final ParameterizedRoute DELETE_gym_Controller_delete = new ParameterizedRoute("/gyms/${id}", Pattern.compile("/gyms/$(?<p0>[^/]+)"));
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws
-      ServletException, IOException {
-    final ImmutableMap.Builder<String, String> routeParameters = ImmutableMap.builder();
-    if (GET_entrename_gyms_Show_route.matches(request, routeParameters)) {
-      new Show(request, response, routeParameters.build()).handle();
+                                                                                          ServletException, IOException {
+    final String[] routeParameters = new String[3];
+    if (GET_book_Controller_index.matches(request)) {
+      handle(new Controller(request, response), (controller) -> controller.index());
       return;
     }
-    if (GET_entrename_gyms_List_route.matches(request)) {
-      new List(request, response).handle();
+    if (GET_book_Controller_create.matches(request)) {
+      handle(new Controller(request, response), (controller) -> controller.create());
+      return;
+    }
+    if (GET_book_Controller_show.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new Controller(request, response, webContext(request, response), templateEngine()), (controller) -> controller.show(id));
+      return;
+    }
+    if (GET_book_Controller_edit.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new Controller(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
+      return;
+    }
+    if (GET_book_Controller_foo.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      final String arg = Interpret.asString(routeParameters[1]);
+      handle(new Controller(request, response), (controller) -> OAuth2Flow.Director.of(controller).authorize((c) -> c.foo(id,arg)));
+      return;
+    }
+    if (GET_book_Controller_bar.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      final Cursor c = Interpret.asCursor(routeParameters[1]);
+      final String arg = Interpret.asString(routeParameters[2]);
+      handle(new Controller(request, response), (controller) -> controller.bar(id,c,arg));
+      return;
+    }
+    if (GET_gym_Controller_index.matches(request)) {
+      handle(new gym.Controller(request, response), (controller) -> controller.index());
+      return;
+    }
+    if (GET_gym_Controller_create.matches(request)) {
+      handle(new gym.Controller(request, response), (controller) -> controller.create());
+      return;
+    }
+    if (GET_gym_Controller_show.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new gym.Controller(request, response), (controller) -> controller.show(id));
+      return;
+    }
+    if (GET_gym_Controller_edit.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new gym.Controller(request, response), (controller) -> controller.edit(id));
       return;
     }
     unhandledGet(request, response);
@@ -55,9 +114,13 @@ abstract class RouterDefs extends RouterServlet {
 
   @Override
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws
-      ServletException, IOException {
-    if (POST_entrename_gyms_Create_route.matches(request)) {
-      new Create(request, response).handle();
+                                                                                           ServletException, IOException {
+    if (POST_book_Controller_save.matches(request)) {
+      handle(new Controller(request, response), (controller) -> controller.save());
+      return;
+    }
+    if (POST_gym_Controller_save.matches(request)) {
+      handle(new gym.Controller(request, response), (controller) -> controller.save());
       return;
     }
     unhandledPost(request, response);
@@ -65,10 +128,16 @@ abstract class RouterDefs extends RouterServlet {
 
   @Override
   public void doPut(final HttpServletRequest request, final HttpServletResponse response) throws
-      ServletException, IOException {
-    final ImmutableMap.Builder<String, String> routeParameters = ImmutableMap.builder();
-    if (PUT_entrename_gyms_Update_route.matches(request, routeParameters)) {
-      new Update(request, response, routeParameters.build()).handle();
+                                                                                          ServletException, IOException {
+    final String[] routeParameters = new String[1];
+    if (PUT_book_Controller_update.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new Controller(request, response), (controller) -> controller.update(id));
+      return;
+    }
+    if (PUT_gym_Controller_update.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new gym.Controller(request, response), (controller) -> controller.update(id));
       return;
     }
     unhandledPut(request, response);
@@ -76,10 +145,16 @@ abstract class RouterDefs extends RouterServlet {
 
   @Override
   public void doDelete(final HttpServletRequest request, final HttpServletResponse response) throws
-      ServletException, IOException {
-    final ImmutableMap.Builder<String, String> routeParameters = ImmutableMap.builder();
-    if (DELETE_entrename_gyms_Destroy_route.matches(request, routeParameters)) {
-      new Destroy(request, response, routeParameters.build()).handle();
+                                                                                             ServletException, IOException {
+    final String[] routeParameters = new String[1];
+    if (DELETE_book_Controller_delete.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new Controller(request, response), (controller) -> controller.delete(id));
+      return;
+    }
+    if (DELETE_gym_Controller_delete.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new gym.Controller(request, response), (controller) -> controller.delete(id));
       return;
     }
     unhandledDelete(request, response);

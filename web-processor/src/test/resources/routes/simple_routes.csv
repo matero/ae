@@ -1,3 +1,0 @@
-HTTP VERB,PATH              ,HANDLER            
-   GET   ,/gyms/{id: [0-9]+},entrename.gyms.Show
-   GET   ,/gyms             ,entrename.gyms.List

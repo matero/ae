@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2018 ActiveEngine.
+ * Copyright 2018 AppEngine.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
  */
 package ae.web;
 
+import ae.db.ActiveEntity;
 import argo.format.CompactJsonFormatter;
 import argo.format.JsonFormatter;
 import argo.format.PrettyJsonFormatter;
@@ -31,76 +32,56 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import argo.saj.InvalidSyntaxException;
+import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.function.Supplier;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import ae.db.ActiveEntity;
-import com.google.appengine.api.datastore.AsyncDatastoreService;
-import com.google.appengine.api.datastore.DatastoreService;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.function.Supplier;
+import org.slf4j.Logger;
 
-abstract class Handler extends ae.HasLogger implements RequestHandler {
+public abstract class Controller {
   protected final HttpServletRequest request;
   protected final HttpServletResponse response;
-
-  /* construction and initialization *************************************** */
-  Handler(final HttpServletRequest request, final HttpServletResponse response) {
+  protected Controller(final HttpServletRequest request, final HttpServletResponse response) {
     this.request = request;
     this.response = response;
   }
-
-  @Override public void handle() throws ServletException, IOException {
-    try {
-      setup();
-      h();
-    } finally {
-      teardown();
-    }
-  }
-
-  protected void setup() throws ServletException, IOException {
+  protected void setup() {
     // nothing to do
   }
-
-  protected abstract void h() throws ServletException, IOException;
-
-  protected void teardown() throws ServletException, IOException {
+  protected void teardown() {
     // nothing to do
   }
-
-  @Override protected Logger logger() {
-    return Logger.getLogger(getClass().getCanonicalName());
-  }
-
+  /** @return the logger to be used at the controller. */
+  protected abstract Logger log();
   /* request manipulation ************************************************** */
-  protected String readBody() throws ServletException, IOException {
+  /**
+   * Reads the text at the request body.
+   * @return the raw text at the {@link HttpServletRequest} associated to the controller.
+   * @throws IOException if some problem occurs while reading the text.
+   */
+  protected String readBody() throws IOException {
     final BufferedReader reader = request.getReader();
     final StringBuilder requestBody = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null) {
       requestBody.append(line);
     }
-
     return requestBody.toString();
   }
-
   protected JsonNode readJson() throws IOException, ServletException {
     try {
       return readJson(request.getReader());
@@ -108,11 +89,9 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
       throw new ServletException(e);
     }
   }
-
   protected JsonNode readJson(final Reader reader) throws IOException, InvalidSyntaxException {
     return JDOM_PARSER.parse(reader);
   }
-
   protected JsonNode readJson(final String content) throws IOException, InvalidSyntaxException {
     return JDOM_PARSER.parse(content);
   }
@@ -121,72 +100,59 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
   protected static String to(final String location) {
     return location;
   }
-
   protected static int withStatus(final int httpStatusCode) {
     return httpStatusCode;
   }
-
   protected static final String location(final String value) {
     return value;
   }
-
   protected void forwardTo(final String location) throws ServletException {
-    if (isLoggable(Level.FINE)) {
-      log(Level.FINE, "Forwarding (to " + location + ')');
-    }
+    log().debug("Forwarding (to {})", location);
     try {
       request.getRequestDispatcher(location).forward(request, response);
     } catch (final IOException e) {
-      log(Level.WARNING, "Forward failure", e);
+      log().warn("Forward failure", e);
     }
   }
-
   /**
    * Trigger a browser redirectTo
    *
    * @param location Where to redirectTo
    */
   protected void redirectTo(final String location) {
-    if (isLoggable(Level.FINE)) {
-      log(Level.FINE, "Redirecting ('Found', " + HttpServletResponse.SC_FOUND + " to " + location + ')');
-    }
+    log().debug("Redirecting ('Found', {} to {})", HttpServletResponse.SC_FOUND, location + ')');
     try {
       response.sendRedirect(location);
     } catch (final IOException e) {
-      log(Level.WARNING, "Redirect failure", e);
+      log().warn("Redirect failure", e);
     }
   }
-
   /**
    * Trigger a browser redirectTo named specific http 3XX status code.
    *
-   * @param location Where to redirectTo permanently
+   * @param location       Where to redirectTo permanently
    * @param httpStatusCode the http status code
    */
   protected void redirectTo(final String location, final StatusCode httpStatusCode) {
     redirectTo(location, httpStatusCode.value);
   }
-
   /**
    * Trigger a browser redirectTo named specific http 3XX status code.
    *
-   * @param location Where to redirectTo permanently
+   * @param location       Where to redirectTo permanently
    * @param httpStatusCode the http status code
    */
   protected void redirectTo(final String location, final int httpStatusCode) {
-    if (isLoggable(Level.FINE)) {
-      log(Level.FINE, "Redirecting (" + httpStatusCode + " to " + location + ')');
-    }
+    log().warn("Redirecting ({} to {})", httpStatusCode, location);
     response.setStatus(httpStatusCode);
     response.setHeader("Location", location);
     response.setHeader("Connection", "close");
     try {
       response.sendError(httpStatusCode);
     } catch (final IOException e) {
-      log(Level.WARNING, "Exception when trying to redirect permanently", e);
+      log().warn("Exception when trying to redirect permanently", e);
     }
   }
-
   protected String format(final JsonNode json) {
     return JSON_FORMATTER.format(json);
   }
@@ -196,32 +162,26 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     set(ContentType.TEXT_HTML);
     send(content);
   }
-
   protected void writeXhtml(final CharSequence content) throws ServletException, IOException {
     set(ContentType.TEXT_XHTML);
     send(content);
   }
-
   protected void renderJson(final JsonNode json) throws ServletException, IOException {
     writeJson(JSON_FORMATTER.format(json));
   }
-
   protected void writeJson(final CharSequence content) throws ServletException, IOException {
     set(ContentType.APPLICATION_JSON);
     send(content);
   }
-
   protected void writeText(final CharSequence content) throws ServletException, IOException {
     set(ContentType.TEXT_PLAIN);
     send(content);
   }
-
   /**
    * Writes the string content directly to the response.
-   *
+   * <p>
    * This method commits the response.
    *
-   * @param response the response to write.
    * @param content the content to write into the response.
    * @throws javax.servlet.ServletException if the response is already committed.
    * @throws java.io.IOException
@@ -236,7 +196,6 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
       commit(content.toString());
     }
   }
-
   void commit(final String content) throws IOException {
     if (response.getContentType() == null) {
       set(ContentType.TEXT_HTML);
@@ -247,11 +206,9 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     }
     set(StatusCode.OK);
   }
-
   protected void unprocessableEntity() {
     response.setStatus(422);
   }
-
   protected void notFound() {
     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
   }
@@ -262,35 +219,27 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
   protected String loginURL(final HttpServletRequest request) {
     return loginURL(request.getRequestURI());
   }
-
   protected String loginURL(final String destinationURL) {
     return UserServiceFactory.getUserService().createLoginURL(destinationURL);
   }
-
   protected String loginURL(final String destinationURL, final String authDomain) {
     return UserServiceFactory.getUserService().createLoginURL(destinationURL, authDomain);
   }
-
   protected String logoutURL(final HttpServletRequest request) {
     return logoutURL(request.getRequestURI());
   }
-
   protected String logoutURL(final String destinationURL) {
     return UserServiceFactory.getUserService().createLogoutURL(destinationURL);
   }
-
   protected String logoutURL(final String destinationURL, final String authDomain) {
     return UserServiceFactory.getUserService().createLogoutURL(destinationURL, authDomain);
   }
-
   protected boolean isUserLoggedIn() {
     return UserServiceFactory.getUserService().isUserLoggedIn();
   }
-
   protected boolean isUserAdmin() {
     return UserServiceFactory.getUserService().isUserAdmin();
   }
-
   protected final String currentUserId() {
     final User current = currentUser();
     if (current == null) {
@@ -298,46 +247,36 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     }
     return current.getUserId();
   }
-
   protected final User currentUser() {
     return UserServiceFactory.getUserService().getCurrentUser();
   }
-
   public static class ParameterNotDefinedException extends RuntimeException {
     public ParameterNotDefinedException(final String parameterName) {
       super(parameterName);
     }
   }
-
   protected static final JdomParser JDOM_PARSER;
-
   static {
     JDOM_PARSER = new JdomParser();
   }
   protected static final PrettyJsonFormatter PRETTY_JSON;
-
   static {
     PRETTY_JSON = new PrettyJsonFormatter();
   }
   protected static final CompactJsonFormatter COMPACT_JSON;
-
   static {
     COMPACT_JSON = new CompactJsonFormatter();
   }
   private static JsonFormatter JSON_FORMATTER;
-
   static {
     JSON_FORMATTER = PRETTY_JSON;
   }
-
   public synchronized static final void usePrettyJsonFormat() {
     JSON_FORMATTER = PRETTY_JSON;
   }
-
   public synchronized static final void useCompactJsonFormat() {
     JSON_FORMATTER = COMPACT_JSON;
   }
-
   protected static final class StatusCode {
     public static final StatusCode OK = new StatusCode(200);
     public static final StatusCode CREATED = new StatusCode(201);
@@ -362,25 +301,22 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     public static final StatusCode OVERLOADED = new StatusCode(502);
     public static final StatusCode SERVICE_UNAVAILABLE = new StatusCode(503);
     public static final StatusCode GATEWAY_TIMEOUT = new StatusCode(504);
-
     private final int value;
-
     private StatusCode(final int value) {
       this.value = value;
     }
-
     public static final StatusCode of(final int value) {
       if (value < 0) {
         throw new IllegalArgumentException("value < 0");
       }
       return new StatusCode(value);
     }
-
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
       return Integer.hashCode(value);
     }
-
-    @Override public boolean equals(final Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
       if (this == obj) {
         return true;
       }
@@ -390,16 +326,14 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
       }
       return false;
     }
-
-    @Override public String toString() {
+    @Override
+    public String toString() {
       return "StatusCode{" + value + '}';
     }
   }
-
   protected void set(final StatusCode statusCode) {
     response.setStatus(statusCode.value);
   }
-
   protected static final class ContentType {
     public static final ContentType APPLICATION_FORM_URLENCODED = new ContentType("application/x-www-form-urlencoded");
     public static final ContentType APPLICATION_JSON = new ContentType("application/json");
@@ -410,25 +344,22 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     public static final ContentType TEXT_PLAIN = new ContentType("text/plain");
     public static final ContentType APPLICATION_OCTET_STREAM = new ContentType("application/octet-stream");
     public static final ContentType MULTIPART_FORM_DATA = new ContentType("multipart/form-data");
-
     private final String value;
-
     private ContentType(final String value) {
       this.value = value;
     }
-
     public static final ContentType of(final String value) {
       if (value == null) {
         throw new NullPointerException("value");
       }
       return new ContentType(value);
     }
-
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
       return value.hashCode();
     }
-
-    @Override public boolean equals(final Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
       if (this == obj) {
         return true;
       }
@@ -438,16 +369,14 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
       }
       return false;
     }
-
-    @Override public String toString() {
+    @Override
+    public String toString() {
       return "ContentType{" + value + '}';
     }
   }
-
   protected void set(final ContentType contentType) {
     response.setContentType(contentType.value);
   }
-
   protected final static class Header {
     public static final Header ACCEPT = new Header("Accept");
     public static final Header ACCEPT_CHARSET = new Header("Accept-Charset");
@@ -472,25 +401,22 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
     public static final Header HOST = new Header("Host");
     public static final Header LAST_MODIFIED = new Header("Last-Modified");
     public static final Header LOCATION = new Header("Location");
-
     private final String name;
-
     private Header(final String value) {
       this.name = value;
     }
-
     public static final Header of(final String value) {
       if (value == null) {
         throw new NullPointerException("value");
       }
       return new Header(value);
     }
-
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
       return name.hashCode();
     }
-
-    @Override public boolean equals(final Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
       if (this == obj) {
         return true;
       }
@@ -500,72 +426,59 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
       }
       return false;
     }
-
-    @Override public String toString() {
+    @Override
+    public String toString() {
       return "Header{" + name + '}';
     }
   }
-
   protected void set(final Header header, final String value) {
     response.setHeader(header.name, value);
   }
-
   protected void set(final Header header, final int value) {
     response.setIntHeader(header.name, value);
   }
-
   protected void set(final Header header, final Date value) {
     response.setDateHeader(header.name, value.getTime());
   }
-
   protected void set(final Header header, final long timestamp) {
     response.setDateHeader(header.name, timestamp);
   }
-
   protected void add(final Header header, final String value) {
     response.addHeader(header.name, value);
   }
-
   protected void add(final Header header, final int value) {
     response.addIntHeader(header.name, value);
   }
-
   protected void add(final Header header, final Date value) {
     response.addDateHeader(header.name, value.getTime());
   }
-
   protected void add(final Header header, final long timestamp) {
     response.addDateHeader(header.name, timestamp);
   }
-
-  protected static String name(final String value) {
-    return value;
-  }
-
-  protected static boolean trimmed(final boolean value) {
-    return value;
-  }
-
-  public static abstract class HttpParameter<T, C extends HttpParameter<T, C>> {
-
+  public static abstract class HttpParameter<T> {
+    @FunctionalInterface
+    public interface ValueInterpreter<T> {
+      T from(String rawValue);
+    }
     private final String name;
-    private boolean required;
-    private Supplier<T> defaultValue;
-
-    protected HttpParameter(final String name, final boolean required, final Supplier<T> defaultValue) {
+    private final boolean required;
+    private final Supplier<T> defaultValue;
+    private final ValueInterpreter<T> interpretValue;
+    protected HttpParameter(final String name,
+                            final boolean required,
+                            final ValueInterpreter<T> interpretValue,
+                            final Supplier<T> defaultValue) {
       this.name = name;
       this.required = required;
       this.defaultValue = defaultValue;
+      this.interpretValue = interpretValue;
     }
-
     public final boolean isDefinedAt(final HttpServletRequest request) {
       return request.getParameterMap().containsKey(name);
     }
-
     public final boolean isDefinedAt(final Map<String, String> parameters) {
       return parameters.containsKey(name);
     }
-
     public final T of(final HttpServletRequest request) {
       if (isDefinedAt(request)) {
         return interpret(read(request));
@@ -576,7 +489,6 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
         return defaultValue.get();
       }
     }
-
     public final T of(final Map<String, String> parameters) {
       if (isDefinedAt(parameters)) {
         return interpret(read(parameters));
@@ -587,159 +499,182 @@ abstract class Handler extends ae.HasLogger implements RequestHandler {
         return defaultValue.get();
       }
     }
-
-    protected abstract T interpret(String value);
-
-    protected String read(final HttpServletRequest request) {
+    protected final T interpret(String raw) {
+      return interpretValue.from(raw);
+    }
+    protected final String read(final HttpServletRequest request) {
       return request.getParameter(name);
     }
-
-    protected String read(final Map<String, String> parameters) {
+    protected final String read(final Map<String, String> parameters) {
       return parameters.get(name);
     }
-
-    public final C required(final boolean value) {
-      required = value;
-      return (C) this;
+  }
+  protected static final HttpParameter.ValueInterpreter<String> trimmed = Interpret::asTrimmedString;
+  protected static final String name(final String value) {
+    if (value == null || value.isEmpty()) {
+      throw new IllegalArgumentException("name must be a defined non empty string");
     }
-
-    public final C defaultValue(final T value) {
-      return defaultValue(() -> value);
+    return value;
+  }
+  protected static <T> Supplier<T> byDefault(final T defaultValue) {
+    return () -> defaultValue;
+  }
+  protected static final boolean required = true;
+  protected static final boolean notRequired = true;
+  public static final class StringParameter extends HttpParameter<String> {
+    static final ValueInterpreter<String> DEFAULT_INTERPRETER = Interpret::asString;
+    static final Supplier<String> NULL_DEFAULT_VALUE = () -> null;
+    public StringParameter(final String name) {
+      this(name, notRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
     }
-
-    public final C defaultValue(final Supplier<T> valueSupplier) {
-      defaultValue = valueSupplier;
-      return (C) this;
+    public StringParameter(final String name, boolean isRequired) {
+      this(name, isRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
+    }
+    public StringParameter(final String name, boolean isRequired, final ValueInterpreter<String> interpretValue) {
+      this(name, isRequired, interpretValue, NULL_DEFAULT_VALUE);
+    }
+    public StringParameter(final String name, final ValueInterpreter<String> interpretValue) {
+      this(name, notRequired, interpretValue, NULL_DEFAULT_VALUE);
+    }
+    public StringParameter(final String name, final ValueInterpreter<String> interpretValue, final Supplier<String> defaultValue) {
+      this(name, notRequired, interpretValue, defaultValue);
+    }
+    public StringParameter(final String name, final Supplier<String> defaultValue) {
+      this(name, notRequired, DEFAULT_INTERPRETER, defaultValue);
+    }
+    public StringParameter(final String name, final boolean isRequired, final Supplier<String> defaultValue) {
+      super(name, isRequired, DEFAULT_INTERPRETER, defaultValue);
+    }
+    public StringParameter(final String name, final boolean required, final ValueInterpreter<String> interpretValue,
+                           final Supplier<String> defaultValue) {
+      super(name, required, interpretValue, defaultValue);
     }
   }
-
-  public static final class StringParameter extends HttpParameter<String, StringParameter> {
-    public static StringParameter named(final String name) {
-      if (name == null) {
-        throw new NullPointerException("name");
-      }
-      return new StringParameter(name);
+  public static final class UrlParameter extends HttpParameter<URL> {
+    static final ValueInterpreter<URL> DEFAULT_INTERPRETER = Interpret::asUrl;
+    static final Supplier<URL> NULL_DEFAULT_VALUE = () -> null;
+    public UrlParameter(final String name) {
+      this(name, notRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
     }
-
-    private boolean trimmed;
-
-    StringParameter(final String name) {
-      super(name, false, () -> null);
-      this.trimmed = true;
+    public UrlParameter(final String name, boolean isRequired) {
+      this(name, isRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
     }
-
-    public StringParameter trimmed(final boolean value) {
-      this.trimmed = value;
-      return this;
+    public UrlParameter(final String name, boolean isRequired, final ValueInterpreter<URL> interpretValue) {
+      this(name, isRequired, interpretValue, NULL_DEFAULT_VALUE);
     }
-
-    @Override protected String interpret(final String value) {
-      if (trimmed) {
-        return value == null ? null : value.trim();
-      } else {
-        return value;
-      }
+    public UrlParameter(final String name, final ValueInterpreter<URL> interpretValue) {
+      this(name, notRequired, interpretValue, NULL_DEFAULT_VALUE);
     }
-  }
-
-  public static final class UrlParameter extends HttpParameter<URL, UrlParameter> {
-    public static UrlParameter named(final String name) {
-      if (name == null) {
-        throw new NullPointerException("name");
-      }
-      return new UrlParameter(name);
+    public UrlParameter(final String name, final ValueInterpreter<URL> interpretValue, final Supplier<URL> defaultValue) {
+      this(name, notRequired, interpretValue, defaultValue);
     }
-
-    UrlParameter(final String name) {
-      super(name, false, () -> null);
+    public UrlParameter(final String name, final Supplier<URL> defaultValue) {
+      this(name, notRequired, DEFAULT_INTERPRETER, defaultValue);
     }
-
-    @Override protected URL interpret(final String value) {
-      if (value == null) {
-        return null;
-      }
-      try {
-        return new URL(value);
-      } catch (final MalformedURLException ex) {
-        throw new IllegalArgumentException("malformed URL", ex);
-      }
+    public UrlParameter(final String name, final boolean isRequired, final Supplier<URL> defaultValue) {
+      super(name, isRequired, DEFAULT_INTERPRETER, defaultValue);
+    }
+    public UrlParameter(final String name, final boolean required, final ValueInterpreter<URL> interpretValue, final Supplier<URL> defaultValue) {
+      super(name, required, interpretValue, defaultValue);
     }
   }
-
-  public static final class CursorParameter extends HttpParameter<Cursor, CursorParameter> {
-    public static CursorParameter named(final String name) {
-      if (name == null) {
-        throw new NullPointerException("name");
-      }
-      return new CursorParameter(name);
+  public static final class CursorParameter extends HttpParameter<Cursor> {
+    static final ValueInterpreter<Cursor> DEFAULT_INTERPRETER = Interpret::asCursor;
+    static final Supplier<Cursor> NULL_DEFAULT_VALUE = () -> null;
+    public CursorParameter(final String name) {
+      this(name, notRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
     }
-
-    CursorParameter(final String name) {
-      super(name, false, () -> null);
+    public CursorParameter(final String name, boolean isRequired) {
+      this(name, isRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
     }
-
-    @Override protected Cursor interpret(final String value) {
-      if (value == null) {
-        return null;
-      }
-      return Cursor.fromWebSafeString(value);
+    public CursorParameter(final String name, boolean isRequired, final ValueInterpreter<Cursor> interpretValue) {
+      this(name, isRequired, interpretValue, NULL_DEFAULT_VALUE);
     }
-  }
-
-  public static final class IntegerParameter extends HttpParameter<Integer, IntegerParameter> {
-    public static IntegerParameter named(final String name) {
-      if (name == null) {
-        throw new NullPointerException("name");
-      }
-      return new IntegerParameter(name);
+    public CursorParameter(final String name, final ValueInterpreter<Cursor> interpretValue) {
+      this(name, notRequired, interpretValue, NULL_DEFAULT_VALUE);
     }
-
-    IntegerParameter(final String name) {
-      super(name, false, () -> null);
+    public CursorParameter(final String name, final ValueInterpreter<Cursor> interpretValue, final Supplier<Cursor> defaultValue) {
+      this(name, notRequired, interpretValue, defaultValue);
     }
-
-    @Override protected Integer interpret(final String value) {
-      if (value == null) {
-        return null;
-      }
-      return Integer.valueOf(value);
+    public CursorParameter(final String name, final Supplier<Cursor> defaultValue) {
+      this(name, notRequired, DEFAULT_INTERPRETER, defaultValue);
+    }
+    public CursorParameter(final String name, final boolean isRequired, final Supplier<Cursor> defaultValue) {
+      super(name, isRequired, DEFAULT_INTERPRETER, defaultValue);
+    }
+    public CursorParameter(final String name, final boolean required, final ValueInterpreter<Cursor> interpretValue,
+                           final Supplier<Cursor> defaultValue) {
+      super(name, required, interpretValue, defaultValue);
     }
   }
-
-  public static final class LongParameter extends HttpParameter<Long, LongParameter> {
-    public static LongParameter named(final String name) {
-      if (name == null) {
-        throw new NullPointerException("name");
-      }
-      return new LongParameter(name);
+  public static final class IntegerParameter extends HttpParameter<Integer> {
+    static final ValueInterpreter<Integer> DEFAULT_INTERPRETER = Interpret::asInteger;
+    static final Supplier<Integer> NULL_DEFAULT_VALUE = () -> null;
+    public IntegerParameter(final String name) {
+      this(name, notRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
     }
-
-    LongParameter(final String name) {
-      super(name, false, () -> null);
+    public IntegerParameter(final String name, boolean isRequired) {
+      this(name, isRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
     }
-
-    @Override protected Long interpret(final String value) {
-      if (value == null) {
-        return null;
-      }
-      return Long.valueOf(value);
+    public IntegerParameter(final String name, boolean isRequired, final ValueInterpreter<Integer> interpretValue) {
+      this(name, isRequired, interpretValue, NULL_DEFAULT_VALUE);
+    }
+    public IntegerParameter(final String name, final ValueInterpreter<Integer> interpretValue) {
+      this(name, notRequired, interpretValue, NULL_DEFAULT_VALUE);
+    }
+    public IntegerParameter(final String name, final ValueInterpreter<Integer> interpretValue, final Supplier<Integer> defaultValue) {
+      this(name, notRequired, interpretValue, defaultValue);
+    }
+    public IntegerParameter(final String name, final Supplier<Integer> defaultValue) {
+      this(name, notRequired, DEFAULT_INTERPRETER, defaultValue);
+    }
+    public IntegerParameter(final String name, final boolean isRequired, final Supplier<Integer> defaultValue) {
+      super(name, isRequired, DEFAULT_INTERPRETER, defaultValue);
+    }
+    public IntegerParameter(final String name, final boolean required, final ValueInterpreter<Integer> interpretValue,
+                            final Supplier<Integer> defaultValue) {
+      super(name, required, interpretValue, defaultValue);
     }
   }
-
+  public static final class LongParameter extends HttpParameter<Long> {
+    static final ValueInterpreter<Long> DEFAULT_INTERPRETER = Interpret::asLong;
+    static final Supplier<Long> NULL_DEFAULT_VALUE = () -> null;
+    public LongParameter(final String name) {
+      this(name, notRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
+    }
+    public LongParameter(final String name, boolean isRequired) {
+      this(name, isRequired, DEFAULT_INTERPRETER, NULL_DEFAULT_VALUE);
+    }
+    public LongParameter(final String name, boolean isRequired, final ValueInterpreter<Long> interpretValue) {
+      this(name, isRequired, interpretValue, NULL_DEFAULT_VALUE);
+    }
+    public LongParameter(final String name, final ValueInterpreter<Long> interpretValue) {
+      this(name, notRequired, interpretValue, NULL_DEFAULT_VALUE);
+    }
+    public LongParameter(final String name, final ValueInterpreter<Long> interpretValue, final Supplier<Long> defaultValue) {
+      this(name, notRequired, interpretValue, defaultValue);
+    }
+    public LongParameter(final String name, final Supplier<Long> defaultValue) {
+      this(name, notRequired, DEFAULT_INTERPRETER, defaultValue);
+    }
+    public LongParameter(final String name, final boolean isRequired, final Supplier<Long> defaultValue) {
+      super(name, isRequired, DEFAULT_INTERPRETER, defaultValue);
+    }
+    public LongParameter(final String name, final boolean required, final ValueInterpreter<Long> interpretValue, final Supplier<Long> defaultValue) {
+      super(name, required, interpretValue, defaultValue);
+    }
+  }
   private static final JsonStringNode cursor = JsonNodeFactories.string("cursor");
   private static final JsonStringNode data = JsonNodeFactories.string("data");
-
   protected JsonNode buildPage(final ActiveEntity ae, final QueryResultList<Entity> page) {
     return JsonNodeFactories.object(
-            JsonNodeFactories.field(cursor, JsonNodeFactories.string(page.getCursor().toWebSafeString())),
-            JsonNodeFactories.field(data, ae.toJson(page))
+        JsonNodeFactories.field(cursor, JsonNodeFactories.string(page.getCursor().toWebSafeString())),
+        JsonNodeFactories.field(data, ae.toJson(page))
     );
   }
-
   protected DatastoreService datastore() {
     return DatastoreServiceFactory.getDatastoreService();
   }
-
   protected AsyncDatastoreService asyncDatastore() {
     return DatastoreServiceFactory.getAsyncDatastoreService();
   }

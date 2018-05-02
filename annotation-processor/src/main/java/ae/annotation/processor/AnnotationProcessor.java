@@ -31,6 +31,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -139,5 +140,9 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
   protected final String message(final Throwable t) {
     final String msg = t.getMessage();
     return msg == null ? "unknown error" : msg;
+  }
+
+  protected String readSuperClassCannonicalName(final TypeMirror superClass) {
+    return types.asElement(superClass).getSimpleName().toString();
   }
 }

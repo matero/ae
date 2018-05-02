@@ -1,6 +1,14 @@
-HTTP VERB, PATH                 , HANDLER
-  GET    , /gyms/{id: [0-9]+}   , entrename.gyms.Show    
-  GET    , /gyms                , entrename.gyms.List    
-  POST   , /gyms                , entrename.gyms.Create  
-  PUT    , /gyms/{id: :digit:+} , entrename.gyms.Update  
-  DELETE , /gyms/{id: [0-9]+}   , entrename.gyms.Destroy 
+ HTTP Method | URI                      | Controller      | Action
+-------------+--------------------------+-----------------+-------------
+     GET     | /books                   | book.Controller | index
+     GET     | /books/create            | book.Controller | create
+    POST     | /books                   |                 | save
+     GET     | /books/${id}             |                 | show
+     GET     | /books/${id}/edit        |                 | edit
+     PUT     | /books/${id}             |                 | update
+   DELETE    | /books/${id}             |                 | delete
+     GET     | /books/${id}/{$arg}      |                 | foo
+     GET     | /books/${id}/{$c}/{$arg} |                 | bar
+-------------+--------------------------+-----------------+-------------
+  RESOURCE   | /gyms                    | gym.Controller  |
+-------------+--------------------------+-----------------+-------------

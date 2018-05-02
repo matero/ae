@@ -68,10 +68,9 @@
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-jdk14</artifactId>
+        <artifactId>slf4j-api</artifactId>
         <version>1.7.25</version>
       </dependency>
-
       <dependency>
         <groupId>net.sourceforge.argo</groupId>
         <artifactId>argo</artifactId>
@@ -269,7 +268,6 @@
   </profiles>
 
   <modules>
-    <module>base</module>
     <module>annotation-processor</module>
     <module>db</module>
     <module>db-metadata</module>

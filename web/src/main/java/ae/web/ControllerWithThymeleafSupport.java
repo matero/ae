@@ -33,18 +33,24 @@ import javax.servlet.http.HttpServletResponse;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-public abstract class TemplateHandler extends Handler {
+public abstract class ControllerWithThymeleafSupport extends Controller {
   private final WebContext templateContext;
   private final TemplateEngine templateEngine;
 
-  protected TemplateHandler(final HttpServletRequest request, final HttpServletResponse response, final WebContext cxt, final TemplateEngine engine) {
-    super(request, response);
-    this.templateContext = cxt;
-    this.templateEngine = engine;
+  protected ControllerWithThymeleafSupport(final HttpServletRequest request, final HttpServletResponse response) {
+    this(request, response, null, null);
   }
 
-  @Override protected void setup() throws ServletException, IOException {
-    super.setup();
+  protected ControllerWithThymeleafSupport(final HttpServletRequest request,
+                                           final HttpServletResponse response,
+                                           final WebContext webContext,
+                                           final TemplateEngine templateEngine) {
+    super(request, response);
+    this.templateContext = webContext;
+    this.templateEngine = templateEngine;
+  }
+
+  @Override protected void setup() {
     ctx("gae", AppengineDialect.INSTANCE);
     if (isUserLoggedIn()) {
       ctx("user_type", isUserAdmin() ? "adm" : "usr");

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2018 ActiveEngine.
+ * Copyright 2018 jj.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,21 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package entrename.trainees;
+package ae;
 
-import com.google.common.collect.ImmutableMap;
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import ae.web.ParameterizedHandler;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class Destroy extends ParameterizedHandler {
-  public Destroy(final HttpServletRequest request, final HttpServletResponse response, final ImmutableMap<String, String> parameters) {
-    super(request, response, parameters);
-  }
-
-  @Override public void h() throws ServletException, IOException {
-    writeText("hello from Destroy with id=" + parameter("id"));
-  }
-}
+@Retention(RetentionPolicy.CLASS) @Target(ElementType.METHOD) public @interface Template {}

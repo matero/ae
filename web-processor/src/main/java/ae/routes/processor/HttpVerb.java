@@ -27,12 +27,13 @@ enum HttpVerb {
   GET("doGet", "unhandledGet"),
   POST("doPost", "unhandledPost"),
   PUT("doPut", "unhandledPut"),
-  DELETE("doDelete", "unhandledDelete");
+  DELETE("doDelete", "unhandledDelete"),
+  RESOURCE(null, null);
 
   final String handler;
   final String unhandled;
 
-  private HttpVerb(final String handler, final String unhandled) {
+  HttpVerb(final String handler, final String unhandled) {
     this.handler = handler;
     this.unhandled = unhandled;
   }

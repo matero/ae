@@ -21,30 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package ae.web.route;
+package ae.web;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 public class ParameterizedRoute implements java.io.Serializable {
+
   private final String uriPattern;
   private final Pattern regex;
-  private final ImmutableList<String> parameterNames;
 
-  public ParameterizedRoute(final String uriPattern, final Pattern regex, final ImmutableList<String> parameterNames) {
+  public ParameterizedRoute(final String uriPattern, final Pattern regex) {
     this.uriPattern = uriPattern;
     this.regex = regex;
-    this.parameterNames = parameterNames;
   }
 
-  @Override public String toString() { return "Route{"+uriPattern+'}'; }
+  @Override
+  public String toString() {
+    return "ParameterizedRoute{" + uriPattern + '}';
+  }
 
-  @Override public int hashCode() { return regex.hashCode(); }
+  @Override
+  public int hashCode() {
+    return regex.hashCode();
+  }
 
-  @Override public boolean equals(final Object that) {
+  @Override
+  public boolean equals(final Object that) {
     if (this == that) {
       return true;
     }
@@ -55,7 +59,7 @@ public class ParameterizedRoute implements java.io.Serializable {
     return false;
   }
 
-  public boolean matches(final HttpServletRequest request, final ImmutableMap.Builder<String, String> routeParameters) {
+  public boolean matches(final HttpServletRequest request, final String[] routeParameters) {
     if (request.getPathInfo() == null) {
       return false;
     }
@@ -65,7 +69,7 @@ public class ParameterizedRoute implements java.io.Serializable {
     final Matcher matcher = regex.matcher(request.getPathInfo());
     if (matcher.matches()) {
       for (int i = 0; i < matcher.groupCount(); i++) {
-        routeParameters.put(parameterNames.get(i), matcher.group(getPathParameterRegexGroupName(i)));
+        routeParameters[i] = matcher.group(getPathParameterRegexGroupName(i));
       }
       return true;
     } else {
@@ -73,5 +77,7 @@ public class ParameterizedRoute implements java.io.Serializable {
     }
   }
 
-  String getPathParameterRegexGroupName(final int pathParameterIndex) { return "p"+pathParameterIndex; }
+  private String getPathParameterRegexGroupName(final int pathParameterIndex) {
+    return "p" + pathParameterIndex;
+  }
 }

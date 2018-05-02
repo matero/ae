@@ -29,10 +29,8 @@ import com.google.testing.compile.Compiler;
 import static com.google.testing.compile.Compiler.javac;
 import com.google.testing.compile.JavaFileObjects;
 import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.util.*;
+
 import org.junit.Test;
 
 public class RoutesProcessingTest {
@@ -43,26 +41,9 @@ public class RoutesProcessingTest {
     GENERATION_DATE = calendar.getTime();
   }
 
-  final Compiler compiler = javac().withProcessors(new RoutesCompiler(GENERATION_DATE));
+  final Compiler compiler = javac().withProcessors(new ControllerAndRoutesCompiler(GENERATION_DATE, new RoutersCodeBuilder(), new ArrayList<>()));
 
-  @Test
-  public void should_compile_simple_routes() {
-    final Compilation compilation = compiler.compile(
-            JavaFileObjects.forSourceString(
-                    "AppRouter",
-                    "package processor.test;\n"
-                    + "@ae.Router(routes=\"src/test/resources/routes/simple_routes.csv\")\n"
-                    + "public final class AppRouter extends RouterDefs {}"
-            )
-    );
-    assertThat(compilation).succeeded();
-    assertThat(compilation)
-            .generatedSourceFile("processor.test.RouterDefs")
-            .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/simple_routes/RouterDefs.java"));
-  }
-
-  @Test
-  public void should_compile_multiple_verb_routes() {
+  @Test public void should_compile_multiple_verb_routes() {
     final Compilation compilation = compiler.compile(
             JavaFileObjects.forSourceString(
                     "AppRouter",
@@ -75,21 +56,5 @@ public class RoutesProcessingTest {
     assertThat(compilation)
             .generatedSourceFile("processor.test.RouterDefs")
             .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/routes/RouterDefs.java"));
-  }
-
-  @Test
-  public void should_compile_multiple_verb_and_packages_routes() {
-    final Compilation compilation = compiler.compile(
-            JavaFileObjects.forSourceString(
-                    "AppRouter",
-                    "package processor.test;\n"
-                    + "@ae.Router(routes=\"src/test/resources/routes/multiple_verb_and_package.csv\")\n"
-                    + "public final class AppRouter extends RouterDefs {}"
-            )
-    );
-    assertThat(compilation).succeeded();
-    assertThat(compilation)
-            .generatedSourceFile("processor.test.RouterDefs")
-            .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/multiple_verb_and_package/RouterDefs.java"));
   }
 }

@@ -21,4 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package ae.web.route;
+package ae.web;
+
+import javax.servlet.http.HttpServletRequest;
+
+public final class Route implements java.io.Serializable {
+  private final String uri;
+
+  public Route(final String routeUri) { uri = routeUri; }
+
+  @Override public String toString() { return "Route{" + uri + '}'; }
+
+  @Override public int hashCode() { return uri.hashCode(); }
+
+  @Override public boolean equals(final Object that) {
+    if (this == that) {
+      return true;
+    }
+    if (that instanceof Route) {
+      final Route other = (Route) that;
+      return uri.equals(other.uri);
+    }
+    return false;
+  }
+
+  public final boolean matches(final HttpServletRequest request) {
+    if (request.getPathInfo() == null) {
+      return false;
+    }
+    if (request.getPathInfo().isEmpty()) {
+      return false;
+    }
+    return uri.equals(request.getPathInfo());
+  }
+}

@@ -23,10 +23,15 @@
  */
 package ae.routes.processor;
 
+import static java.util.stream.Collectors.toList;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
+
+import javax.lang.model.element.TypeElement;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 class RoutesDeclarations {
   final ImmutableList<RouteDescriptor> routes;
@@ -53,8 +58,8 @@ class RoutesDeclarations {
     this.serialVersionUID = serialVersionUID;
   }
 
-  boolean hasHandlerThatRequiresCredentials() {
-    return routes.stream().anyMatch(route -> route.useCredentials);
+  List<TypeElement> controllers() {
+    return routes.stream().distinct().map(route -> route.controller).collect(toList());
   }
 
   static class Builder {
@@ -98,6 +103,12 @@ class RoutesDeclarations {
         paths.append("Build from specs at: ");
       }
       paths.append(path);
+    }
+
+    void addRoutes(final Iterable<RouteDescriptor> routes) {
+      for (RouteDescriptor r: routes) {
+        addRoute(r);
+      }
     }
 
     void addRoute(final RouteDescriptor route) {

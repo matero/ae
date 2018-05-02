@@ -24,11 +24,6 @@
     </dependency>
     <dependency>
       <groupId>ae</groupId>
-      <artifactId>base</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>ae</groupId>
       <artifactId>db</artifactId>
       <version>${project.version}</version>
     </dependency>
