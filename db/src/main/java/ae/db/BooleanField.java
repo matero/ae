@@ -23,57 +23,17 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.PropertyProjection;
-import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface BooleanField extends ScalarField<Boolean> {
   interface Filter {
-    Query.FilterPredicate isTrue();
+    @NonNull FilterPredicate isTrue();
 
-    Query.FilterPredicate isFalse();
+    @NonNull FilterPredicate isFalse();
   }
 
-  @Override default Class<Boolean> type() {
+  @Override default @NonNull Class<Boolean> type() {
     return Boolean.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<Boolean> implements BooleanField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.INSTANCE, constraints);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<Boolean> implements BooleanField, BooleanField.Filter {
-    private final Query.FilterPredicate isTrue;
-    private final Query.FilterPredicate isFalse;
-
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.INSTANCE, new PropertyProjection(property, Boolean.class), constraints);
-      this.isTrue = new Query.FilterPredicate(property, Query.FilterOperator.EQUAL, Boolean.TRUE);
-      this.isFalse = new Query.FilterPredicate(property, Query.FilterOperator.EQUAL, Boolean.FALSE);
-    }
-
-    @Override public Query.FilterPredicate isTrue() {
-      return isTrue;
-    }
-
-    @Override public Query.FilterPredicate isFalse() {
-      return isFalse;
-    }
   }
 }

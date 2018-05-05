@@ -27,37 +27,10 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface BlobKeyField extends ScalarField<BlobKey> {
-  @Override default Class<BlobKey> type() {
+  @Override default @NonNull Class<BlobKey> type() {
     return BlobKey.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<BlobKey> implements BlobKeyField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final JsonSerializer<BlobKey> jsonSerializer,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<BlobKey> implements BlobKeyField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final JsonSerializer<BlobKey> jsonSerializer,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, new PropertyProjection(property, BlobKey.class), constraints);
-    }
   }
 }

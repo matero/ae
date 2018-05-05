@@ -25,20 +25,22 @@ package ae.db;
 
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.EmbeddedEntity;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-public final class EmbeddedEntityField extends ScalarField.Unindexed<EmbeddedEntity> {
-  public EmbeddedEntityField(final String canonicalName,
-                             final String description,
-                             final String property,
-                             final String field,
-                             final boolean required,
-                             final JsonStringNode jsonName,
-                             final String jsonPath,
-                             final Constraint... constraints) {
+public final class UnindexedEmbeddedEntity extends ScalarField.Unindexed<EmbeddedEntity> {
+  public UnindexedEmbeddedEntity(final @NonNull String canonicalName,
+                                 final @NonNull String description,
+                                 final @NonNull String property,
+                                 final @NonNull String field,
+                                 final boolean required,
+                                 final @NonNull JsonStringNode jsonName,
+                                 final @NonNull String jsonPath,
+                                 final @Nullable Constraint... constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, EmbeddedEntityJsonSerializer.INSTANCE, constraints);
   }
 
-  @Override public Class<EmbeddedEntity> type() {
+  @Override public @NonNull Class<EmbeddedEntity> type() {
     return EmbeddedEntity.class;
   }
 }

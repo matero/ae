@@ -24,22 +24,23 @@
 package ae.db;
 
 import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.Blob;
+import com.google.appengine.api.datastore.Text;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-public final class BlobField extends ScalarField.Unindexed<Blob> {
-  public BlobField(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final JsonSerializer<Blob> jsonSerializer,
-                   final Constraint... constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
+public final class UnindexedText extends ScalarField.Unindexed<Text> {
+  public UnindexedText(final @NonNull String canonicalName,
+                       final @NonNull String description,
+                       final @NonNull String property,
+                       final @NonNull String field,
+                       final boolean required,
+                       final @NonNull JsonStringNode jsonName,
+                       final @NonNull String jsonPath,
+                       final @Nullable Constraint... constraints) {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, TextJsonSerializer.INSTANCE, constraints);
   }
 
-  @Override public Class<Blob> type() {
-    return Blob.class;
+  @Override public @NonNull Class<Text> type() {
+    return Text.class;
   }
 }

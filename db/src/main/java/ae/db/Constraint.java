@@ -23,14 +23,17 @@
  */
 package ae.db;
 
-public interface Constraint<T> extends java.io.Serializable {
-  boolean isInvalid(final T value);
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-  default String completeName(final Attr attr) {
+public interface Constraint<T> extends java.io.Serializable {
+  boolean isInvalid(T value);
+
+  default @NonNull String completeName(final @NonNull Attr attr) {
     return attr.canonicalName() + '.' + getName();
   }
 
-  String messageFor(Attr attr, T value);
+  @NonNull String messageFor(@NonNull Attr attr, T value);
 
-  String getName();
+  @NonNull String getName();
 }

@@ -33,35 +33,37 @@ import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Cursor;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Iterator;
 import java.util.List;
 
 public abstract class Select implements java.io.Serializable {
-  final Query query;
-  private final FetchOptions fetchOptions;
+  final @NonNull         Query        query;
+  private final @NonNull FetchOptions fetchOptions;
 
-  protected Select(final Query query, final FetchOptions fetchOptions) {
+  protected Select(final @NonNull Query query, final @NonNull FetchOptions fetchOptions) {
     this.query = query;
     this.fetchOptions = fetchOptions;
   }
 
-  public List<Entity> asList() {
+  public @NonNull List<@NonNull Entity> asList() {
     return asList(DatastoreServiceFactory.getDatastoreService());
   }
 
-  protected List<Entity> asList(final BaseDatastoreService datastore) {
+  protected @NonNull List<@NonNull Entity> asList(final @NonNull BaseDatastoreService datastore) {
     return prepare(datastore).asList(fetchOptions);
   }
 
-  public QueryResultList<Entity> asQueryResultList() {
+  public @NonNull QueryResultList<@NonNull Entity> asQueryResultList() {
     return asQueryResultList(DatastoreServiceFactory.getDatastoreService());
   }
 
-  protected QueryResultList<Entity> asQueryResultList(final BaseDatastoreService datastore) {
+  protected @NonNull QueryResultList<@NonNull Entity> asQueryResultList(final @NonNull BaseDatastoreService datastore) {
     return prepare(datastore).asQueryResultList(fetchOptions);
   }
 
-  public Iterable<Entity> asIterable() {
+  public @NonNull Iterable<@NonNull Entity> asIterable() {
     return asIterable(DatastoreServiceFactory.getDatastoreService());
   }
 
@@ -69,35 +71,35 @@ public abstract class Select implements java.io.Serializable {
     return prepare(datastore).asIterable(fetchOptions);
   }
 
-  public QueryResultIterable<Entity> asQueryResultIterable() {
+  public @NonNull QueryResultIterable<@NonNull Entity> asQueryResultIterable() {
     return asQueryResultIterable(DatastoreServiceFactory.getDatastoreService());
   }
 
-  protected QueryResultIterable<Entity> asQueryResultIterable(final BaseDatastoreService datastore) {
+  protected @NonNull QueryResultIterable<@NonNull Entity> asQueryResultIterable(final @NonNull BaseDatastoreService datastore) {
     return prepare(datastore).asQueryResultIterable(fetchOptions);
   }
 
-  public Iterator<Entity> asIterator() {
+  public @NonNull Iterator<@NonNull Entity> asIterator() {
     return asIterator(DatastoreServiceFactory.getDatastoreService());
   }
 
-  protected Iterator<Entity> asIterator(final BaseDatastoreService datastore) {
+  protected @NonNull Iterator<@NonNull Entity> asIterator(final @NonNull BaseDatastoreService datastore) {
     return prepare(datastore).asIterator(fetchOptions);
   }
 
-  public QueryResultIterator<Entity> asQueryResultIterator() {
+  public @NonNull QueryResultIterator<@NonNull Entity> asQueryResultIterator() {
     return asQueryResultIterator(DatastoreServiceFactory.getDatastoreService());
   }
 
-  protected QueryResultIterator<Entity> asQueryResultIterator(final BaseDatastoreService datastore) {
+  protected @NonNull QueryResultIterator<@NonNull Entity> asQueryResultIterator(final @NonNull BaseDatastoreService datastore) {
     return prepare(datastore).asQueryResultIterator(fetchOptions);
   }
 
-  public Entity asSingle() throws PreparedQuery.TooManyResultsException {
+  public @NonNull Entity asSingle() throws PreparedQuery.TooManyResultsException {
     return asSingle(DatastoreServiceFactory.getDatastoreService());
   }
 
-  protected Entity asSingle(final BaseDatastoreService datastore) throws PreparedQuery.TooManyResultsException {
+  protected @NonNull Entity asSingle(final @NonNull BaseDatastoreService datastore) throws PreparedQuery.TooManyResultsException {
     return prepare(datastore).asSingleEntity();
   }
 
@@ -109,37 +111,37 @@ public abstract class Select implements java.io.Serializable {
     return prepare(datastore).countEntities(fetchOptions);
   }
 
-  public Select limit(final int limit) {
+  public @NonNull Select limit(final int limit) {
     fetchOptions.limit(limit);
     return this;
   }
 
-  public Select offset(final int offset) {
+  public @NonNull Select offset(final int offset) {
     fetchOptions.offset(offset);
     return this;
   }
 
-  public Select chunkSize(final int chunkSize) {
+  public @NonNull Select chunkSize(final int chunkSize) {
     fetchOptions.chunkSize(chunkSize);
     return this;
   }
 
-  public Select prefetchSize(final int prefetchSize) {
+  public @NonNull Select prefetchSize(final int prefetchSize) {
     fetchOptions.prefetchSize(prefetchSize);
     return this;
   }
 
-  public Select startCursor(final Cursor startCursor) {
+  public @NonNull Select startCursor(final Cursor startCursor) {
     fetchOptions.startCursor(startCursor);
     return this;
   }
 
-  public Select endCursor(final Cursor endCursor) {
+  public @NonNull Select endCursor(final Cursor endCursor) {
     fetchOptions.endCursor(endCursor);
     return this;
   }
 
-  protected PreparedQuery prepare(final BaseDatastoreService datastore) {
+  protected @NonNull PreparedQuery prepare(final @NonNull BaseDatastoreService datastore) {
     return datastore.prepare(query);
   }
 }

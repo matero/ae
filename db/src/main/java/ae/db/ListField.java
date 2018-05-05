@@ -23,143 +23,147 @@
  */
 package ae.db;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.*;
+
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Query;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Spliterator;
+import com.google.appengine.api.datastore.Query.*;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.*;
 import java.util.function.UnaryOperator;
 
-public interface ListField<E> extends Field<List<E>> {
-  default int sizeAt(final PropertyContainer data) {
+public interface ListField<E> extends Field<List<@Nullable E>> {
+  default int sizeAt(final @NonNull PropertyContainer data) {
     return read(data).size();
   }
 
-  default boolean isEmptyAt(final PropertyContainer data) {
+  default boolean isEmptyAt(final @NonNull PropertyContainer data) {
     return read(data).isEmpty();
   }
 
-  default boolean containsAt(final PropertyContainer data, final E element) {
+  default boolean containsAt(final @NonNull PropertyContainer data, final @Nullable E element) {
     return read(data).contains(element);
   }
 
-  default Iterator<E> iteratorAt(final PropertyContainer data, final E element) {
-    return read(data).iterator();
+  default @Nullable ListIterator<@Nullable E> iteratorAt(final @NonNull PropertyContainer data) {
+    final @Nullable List<E> list = read(data);
+    return list == null ? null : list.listIterator();
   }
 
-  default E[] toArrayAt(final PropertyContainer data) {
-    return (E[]) read(data).toArray();
+  default @Nullable E[] toArrayAt(final @NonNull PropertyContainer data) {
+    final @Nullable List<E> list = read(data);
+    return list == null ? null : (E[]) read(data).toArray();
   }
 
-  default E[] toArrayAt(final PropertyContainer data, final E[] array) {
-    return read(data).toArray(array);
+  default @Nullable E[] toArrayAt(final @NonNull PropertyContainer data, final @NonNull E[] array) {
+    final @Nullable List<E> list = read(data);
+    return list == null ? null : list.toArray(array);
   }
 
-  default boolean addAt(final PropertyContainer data, final E e) {
+  default boolean addAt(final @NonNull PropertyContainer data, final @Nullable E e) {
     return read(data).add(e);
   }
 
-  default boolean removeAt(final PropertyContainer data, final E e) {
+  default boolean removeAt(final @NonNull PropertyContainer data, final @Nullable E e) {
     return read(data).remove(e);
   }
 
-  default boolean containsAllAt(final PropertyContainer data, final Collection<?> c) {
+  default boolean containsAllAt(final @NonNull PropertyContainer data, final @NonNull Collection<?> c) {
     return read(data).containsAll(c);
   }
 
-  default boolean addAllAt(final PropertyContainer data, final Collection<? extends E> c) {
+  default boolean addAllAt(final @NonNull PropertyContainer data, final @NonNull Collection<? extends E> c) {
     return read(data).addAll(c);
   }
 
-  default boolean addAllAt(final PropertyContainer data, final int index, final Collection<? extends E> c) {
+  default boolean addAllAt(final @NonNull PropertyContainer data, final int index, final @NonNull Collection<? extends E> c) {
     return read(data).addAll(index, c);
   }
 
-  default boolean removeAllAt(final PropertyContainer data, final Collection<?> c) {
+  default boolean removeAllAt(final @NonNull PropertyContainer data, final @NonNull Collection<?> c) {
     return read(data).removeAll(c);
   }
 
-  default boolean retainAllAt(final PropertyContainer data, final Collection<?> c) {
+  default boolean retainAllAt(final @NonNull PropertyContainer data, final @NonNull Collection<?> c) {
     return read(data).removeAll(c);
   }
 
-  default void replaceAllAt(final PropertyContainer data, final UnaryOperator<E> operator) {
+  default void replaceAllAt(final @NonNull PropertyContainer data, final @NonNull UnaryOperator<E> operator) {
     read(data).replaceAll(operator);
   }
 
-  default void sortAt(final PropertyContainer data, final Comparator<? super E> c) {
+  default void sortAt(final @NonNull PropertyContainer data, final @NonNull Comparator<? super E> c) {
     read(data).sort(c);
   }
 
-  default void clearAt(final PropertyContainer data) {
+  default void clearAt(final @NonNull PropertyContainer data) {
     read(data).clear();
   }
 
   // Positional Access Operations
-  default E getAt(final PropertyContainer data, final int index) {
+  default E getAt(final @NonNull PropertyContainer data, final int index) {
     return read(data).get(index);
   }
 
-  default E setAt(final PropertyContainer data, final int index, final E element) {
+  default E setAt(final @NonNull PropertyContainer data, final int index, final E element) {
     return read(data).set(index, element);
   }
 
-  default void addAt(final PropertyContainer data, final int index, final E element) {
+  default void addAt(final @NonNull PropertyContainer data, final int index, final E element) {
     read(data).add(index, element);
   }
 
-  default E removeAt(final PropertyContainer data, final int index) {
+  default E removeAt(final @NonNull PropertyContainer data, final int index) {
     return read(data).remove(index);
   }
 
-  default int indexOfAt(final PropertyContainer data, final Object o) {
+  default int indexOfAt(final @NonNull PropertyContainer data, final @Nullable Object o) {
     return read(data).indexOf(o);
   }
 
-  default int lastIndexOfAt(final PropertyContainer data, final Object o) {
+  default int lastIndexOfAt(final @NonNull PropertyContainer data, final @Nullable Object o) {
     return read(data).lastIndexOf(o);
   }
 
-  default ListIterator<E> listIteratorAt(final PropertyContainer data) {
+  default ListIterator<E> listIteratorAt(final @NonNull PropertyContainer data) {
     return read(data).listIterator();
   }
 
-  default ListIterator<E> listIteratorAt(final PropertyContainer data, final int index) {
+  default ListIterator<E> listIteratorAt(final @NonNull PropertyContainer data, final int index) {
     return read(data).listIterator(index);
   }
 
-  default List<E> subListAt(final PropertyContainer data, final int fromIndex, final int toIndex) {
+  default List<E> subListAt(final @NonNull PropertyContainer data, final int fromIndex, final int toIndex) {
     return read(data).subList(fromIndex, toIndex);
   }
 
-  default Spliterator<E> spliteratorAt(final PropertyContainer data) {
+  default Spliterator<E> spliteratorAt(final @NonNull PropertyContainer data) {
     return read(data).spliterator();
   }
 
-  @Override default Class<List<E>> type() {
+  @Override default @NonNull Class<List<E>> type() {
     return (Class<List<E>>) (Class<?>) List.class;
   }
 
-  Class<E> elementType();
+  @NonNull Class<E> elementType();
 
-  default E asModelElementValue(final Object value) {
+  default @Nullable E asModelElementValue(final @Nullable Object value) {
     return elementType().cast(value);
   }
 
-  default Object asDatastoreElementValue(final E value) {
+  default @Nullable Object asDatastoreElementValue(final @Nullable E value) {
     return value;
   }
 
-  default List<Object> asDatastoreValues(final E... values) {
+  default @Nullable List<@Nullable Object> asDatastoreValues(final @Nullable E... values) {
     if (values == null) {
       return null;
     }
-    final List<Object> result;
+    final List<@Nullable Object> result;
     if (values.length == 0) {
       result = new java.util.LinkedList<>();
     } else {
@@ -171,36 +175,36 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<Object> asDatastoreValues(final Iterable<E> values) {
+  default @Nullable List<@Nullable Object> asDatastoreValues(final @Nullable Iterable<@Nullable E> values) {
     if (values == null) {
       return null;
     }
-    final List<Object> result = new java.util.LinkedList<>();
-    final java.util.Iterator<E> iter = values.iterator();
-    if (iter.hasNext()) {
-      while (iter.hasNext()) {
-        result.add(asDatastoreElementValue(iter.next()));
+    final List<@Nullable Object> result   = new java.util.LinkedList<>();
+    final Iterator<@Nullable E>  iterator = values.iterator();
+    if (iterator.hasNext()) {
+      while (iterator.hasNext()) {
+        result.add(asDatastoreElementValue(iterator.next()));
       }
     }
     return result;
   }
 
-  default List<Object> asDatastoreValues(final java.util.Iterator<E> values) {
+  default @Nullable List<@Nullable Object> asDatastoreValues(final @Nullable Iterator<@Nullable E> values) {
     if (values == null) {
       return null;
     }
-    final List<Object> result = new java.util.LinkedList<>();
+    final List<@Nullable Object> result = new java.util.LinkedList<>();
     while (values.hasNext()) {
       result.add(asDatastoreElementValue(values.next()));
     }
     return result;
   }
 
-  default List<Object> asDatastoreValues(final Collection<E> values) {
+  default @Nullable List<@Nullable Object> asDatastoreValues(final @Nullable Collection<@Nullable E> values) {
     if (values == null) {
       return null;
     }
-    final List<Object> result;
+    final List<@Nullable Object> result;
     if (values.isEmpty()) {
       result = new java.util.LinkedList<>();
     } else {
@@ -212,11 +216,11 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<E> asModelValues(final Object... values) {
+  default @Nullable List<@Nullable E> asModelValues(final @Nullable Object... values) {
     if (values == null) {
       return null;
     }
-    final List<E> result;
+    final List<@Nullable E> result;
     if (values.length == 0) {
       result = new java.util.LinkedList<>();
     } else {
@@ -228,12 +232,12 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<E> asModelValues(final Iterable<Object> values) {
+  default @Nullable List<@Nullable E> asModelValues(final @Nullable Iterable<@Nullable Object> values) {
     if (values == null) {
       return null;
     }
-    final List<E> result = new java.util.LinkedList<>();
-    final java.util.Iterator<Object> iter = values.iterator();
+    final List<@Nullable E>          result = new java.util.LinkedList<>();
+    final Iterator<@Nullable Object> iter   = values.iterator();
     if (iter.hasNext()) {
       while (iter.hasNext()) {
         result.add(asModelElementValue(iter.next()));
@@ -242,22 +246,22 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<E> asModelValues(final java.util.Iterator<Object> values) {
+  default @Nullable List<@Nullable E> asModelValues(final @Nullable Iterator<@Nullable Object> values) {
     if (values == null) {
       return null;
     }
-    final List<E> result = new java.util.LinkedList<>();
+    final List<@Nullable E> result = new java.util.LinkedList<>();
     while (values.hasNext()) {
       result.add(asModelElementValue(values.next()));
     }
     return result;
   }
 
-  default List<E> asModelValues(final Collection<Object> values) {
+  default @Nullable List<@Nullable E> asModelValues(final @Nullable Collection<@Nullable Object> values) {
     if (values == null) {
       return null;
     }
-    final List<E> result;
+    final List<@Nullable E> result;
     if (values.isEmpty()) {
       result = new java.util.LinkedList<>();
     } else {
@@ -269,11 +273,8 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  @Override default List<E> read(final PropertyContainer data) {
-    if (data == null) {
-      throw new NullPointerException("data");
-    }
-    final Object values = data.getProperty(property());
+  @Override default @Nullable List<@Nullable E> read(final @NonNull PropertyContainer data) {
+    final @Nullable Object values = data.getProperty(property());
     return asModelValues((Collection<Object>) values);
   }
 
@@ -281,15 +282,15 @@ public interface ListField<E> extends Field<List<E>> {
    * unindexed list properties
    */
   abstract class Unindexed<E> extends FieldData<List<E>> implements ListField<E> {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
+    public Unindexed(final @NonNull String canonicalName,
+                     final @NonNull String description,
+                     final @NonNull String property,
+                     final @NonNull String field,
                      final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final JsonSerializer<List<E>> jsonSerializer,
-                     final Constraint... constraints) {
+                     final @NonNull JsonStringNode jsonName,
+                     final @NonNull String jsonPath,
+                     final @NonNull JsonSerializer<List<@Nullable E>> jsonSerializer,
+                     final @Nullable Constraint... constraints) {
       super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
     }
 
@@ -297,59 +298,61 @@ public interface ListField<E> extends Field<List<E>> {
       return false;
     }
 
-    @Override public final void write(final PropertyContainer data, final List<E> value) {
-      if (data == null) {
-        throw new NullPointerException("data");
-      }
-      data.setUnindexedProperty(property(), asDatastoreValues(value));
+    @Override public final void write(final @NonNull PropertyContainer data, final @Nullable List<@Nullable E> value) {
+      data.setUnindexedProperty(property(), castNonNull(asDatastoreValues(value)));
     }
   }
 
   /**
-   * Indexed List properties.
+   * IndexedBooleanList List properties.
    */
   abstract class Indexed<E> extends FieldData<List<E>> implements ListField<E>, Filterable<E> {
-    private final PropertyProjection projection;
-    private final Query.SortPredicate asc;
-    private final Query.SortPredicate desc;
-    private final Query.FilterPredicate isNull;
-    private final Query.FilterPredicate isNotNull;
+    private final @NonNull PropertyProjection projection;
+    private final @NonNull SortPredicate      asc;
+    private final @NonNull SortPredicate      desc;
+    private final @NonNull FilterPredicate    isNull;
+    private final @NonNull FilterPredicate    isNotNull;
 
-    protected Indexed(final String canonicalName,
-                      final String description,
-                      final String property,
-                      final String field,
+    protected Indexed(final @NonNull String canonicalName,
+                      final @NonNull String description,
+                      final @NonNull String property,
+                      final @NonNull String field,
                       final boolean required,
-                      final JsonStringNode jsonName,
-                      final String jsonPath,
-                      final JsonSerializer<List<E>> jsonSerializer,
-                      final PropertyProjection projection,
-                      final Constraint... constraints) {
+                      final @NonNull JsonStringNode jsonName,
+                      final @NonNull String jsonPath,
+                      final @NonNull JsonSerializer<List<@Nullable E>> jsonSerializer,
+                      final @NonNull PropertyProjection projection,
+                      final @Nullable Constraint... constraints) {
+      // /home/jj/Code/ae/db/src/main/java/ae/db/ListField.java:[328,88] [argument.type.incompatible] incompatible types in argument.
+      //   found   : @Initialized @NonNull JsonSerializer<@Initialized @NonNull List<E[ extends @Initialized @Nullable Object super @Initialized
+      // @Nullable Void]>>
+      //   required: @Initialized @NonNull JsonSerializer<@Initialized @NonNull List<E[ extends @Initialized @Nullable Object super @Initialized
+      // @NonNull Void]>>
       super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
       this.projection = projection;
       this.asc = new Query.SortPredicate(property, Query.SortDirection.ASCENDING);
       this.desc = new Query.SortPredicate(property, Query.SortDirection.DESCENDING);
-      this.isNull = new Query.FilterPredicate(property, Query.FilterOperator.EQUAL, null);
-      this.isNotNull = new Query.FilterPredicate(property, Query.FilterOperator.NOT_EQUAL, null);
+      this.isNull = new FilterPredicate(property, FilterOperator.EQUAL, castNonNull(null));
+      this.isNotNull = new FilterPredicate(property, FilterOperator.NOT_EQUAL, castNonNull(null));
     }
 
-    @Override public final Query.FilterPredicate isNull() {
+    @Override public final @NonNull FilterPredicate isNull() {
       return isNull;
     }
 
-    @Override public final Query.FilterPredicate isNotNull() {
+    @Override public final @NonNull FilterPredicate isNotNull() {
       return isNotNull;
     }
 
-    @Override public final PropertyProjection projection() {
+    @Override public final @NonNull PropertyProjection projection() {
       return projection;
     }
 
-    @Override public final Query.SortPredicate asc() {
+    @Override public final @NonNull SortPredicate asc() {
       return asc;
     }
 
-    @Override public Query.SortPredicate desc() {
+    @Override public final @NonNull SortPredicate desc() {
       return desc;
     }
 
@@ -357,51 +360,48 @@ public interface ListField<E> extends Field<List<E>> {
       return true;
     }
 
-    @Override public final void write(final PropertyContainer data, final List<E> value) {
-      if (data == null) {
-        throw new NullPointerException("data");
-      }
-      data.setIndexedProperty(property(), asDatastoreValues(value));
+    @Override public final void write(final @NonNull PropertyContainer data, final @Nullable List<@Nullable E> value) {
+      data.setIndexedProperty(property(), castNonNull(asDatastoreValues(value)));
     }
 
-    @Override public final Query.FilterPredicate eq(final E value) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.EQUAL, asDatastoreElementValue(value));
+    @Override public final @NonNull FilterPredicate eq(final @Nullable E value) {
+      return new FilterPredicate(field(), FilterOperator.EQUAL, castNonNull(asDatastoreElementValue(value)));
     }
 
-    @Override public final Query.FilterPredicate ne(final E value) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.NOT_EQUAL, asDatastoreElementValue(value));
+    @Override public final @NonNull FilterPredicate ne(final @Nullable E value) {
+      return new FilterPredicate(field(), FilterOperator.NOT_EQUAL, castNonNull(asDatastoreElementValue(value)));
     }
 
-    @Override public final Query.FilterPredicate lt(final E value) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.LESS_THAN, asDatastoreElementValue(value));
+    @Override public final @NonNull FilterPredicate lt(final @Nullable E value) {
+      return new FilterPredicate(field(), FilterOperator.LESS_THAN, castNonNull(asDatastoreElementValue(value)));
     }
 
-    @Override public final Query.FilterPredicate le(final E value) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.LESS_THAN_OR_EQUAL, asDatastoreElementValue(value));
+    @Override public final @NonNull FilterPredicate le(final @Nullable E value) {
+      return new FilterPredicate(field(), FilterOperator.LESS_THAN_OR_EQUAL, castNonNull(asDatastoreElementValue(value)));
     }
 
-    @Override public final Query.FilterPredicate gt(final E value) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.GREATER_THAN, asDatastoreElementValue(value));
+    @Override public final @NonNull FilterPredicate gt(final @Nullable E value) {
+      return new FilterPredicate(field(), FilterOperator.GREATER_THAN, castNonNull(asDatastoreElementValue(value)));
     }
 
-    @Override public final Query.FilterPredicate ge(final E value) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.GREATER_THAN_OR_EQUAL, asDatastoreElementValue(value));
+    @Override public final @NonNull FilterPredicate ge(final @Nullable E value) {
+      return new FilterPredicate(field(), FilterOperator.GREATER_THAN_OR_EQUAL, castNonNull(asDatastoreElementValue(value)));
     }
 
-    @Override public final Query.FilterPredicate in(final E... values) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.IN, asDatastoreValues(values));
+    @Override public final @NonNull FilterPredicate in(final @Nullable E... values) {
+      return new FilterPredicate(field(), FilterOperator.IN, castNonNull(asDatastoreValues(values)));
     }
 
-    @Override public final Query.FilterPredicate in(final Iterable<E> values) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.IN, asDatastoreValues(values));
+    @Override public final @NonNull FilterPredicate in(final @Nullable Iterable<@Nullable E> values) {
+      return new FilterPredicate(field(), FilterOperator.IN, castNonNull(asDatastoreValues(values)));
     }
 
-    @Override public final Query.FilterPredicate in(final java.util.Iterator<E> values) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.IN, asDatastoreValues(values));
+    @Override public final @NonNull FilterPredicate in(final @Nullable Iterator<@Nullable E> values) {
+      return new FilterPredicate(field(), FilterOperator.IN, castNonNull(asDatastoreValues(values)));
     }
 
-    @Override public final Query.FilterPredicate in(final Collection<E> values) {
-      return new Query.FilterPredicate(field(), Query.FilterOperator.IN, asDatastoreValues(values));
+    @Override public final @NonNull FilterPredicate in(final @Nullable Collection<@Nullable E> values) {
+      return new FilterPredicate(field(), FilterOperator.IN, castNonNull(asDatastoreValues(values)));
     }
   }
 }

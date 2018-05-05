@@ -26,35 +26,11 @@ package ae.db;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Link;
 import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface LinkListField extends ListField<Link> {
-  @Override default Class<Link> elementType() {
+  @Override default @NonNull Class<Link> elementType() {
     return Link.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<Link> implements LinkListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, LinkJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<Link> implements LinkListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, LinkJsonSerializer.ARRAY, new PropertyProjection(property, Link.class), constraints);
-    }
   }
 }

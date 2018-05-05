@@ -30,86 +30,74 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface Field<T> extends Attr {
-  @Override default boolean isDefinedAt(final Entity data) {
+  @Override default boolean isDefinedAt(final @NonNull Entity data) {
     return data.hasProperty(property());
   }
 
-  default boolean isDefinedAt(final PropertyContainer data) {
+  default boolean isDefinedAt(final @NonNull PropertyContainer data) {
     return data.hasProperty(property());
   }
 
-  Class<T> type();
+  @NonNull Class<T> type();
 
   boolean indexed();
 
   boolean required();
 
-  default T of(final PropertyContainer data) {
+  default T of(final @NonNull PropertyContainer data) {
     return read(data);
   }
 
-  T read(final PropertyContainer data);
+  @Nullable T read(final @NonNull PropertyContainer data);
 
-  void write(PropertyContainer data, T value);
+  void write(@NonNull PropertyContainer data, @Nullable T value);
 
-  default void write(final PropertyContainer data, final JsonNode json) {
+  default void write(final @NonNull PropertyContainer data, final @NonNull JsonNode json) {
     write(data, interpretJson(json));
   }
 
-  JsonNode makeJsonValue(T value);
+  @NonNull JsonNode makeJsonValue(@Nullable T value);
 
-  default JsonField makeJsonFieldFrom(final PropertyContainer data) {
-    if (data == null) {
-      throw new NullPointerException("data");
-    }
+  default @NonNull JsonField makeJsonFieldFrom(final @NonNull PropertyContainer data) {
     return makeJsonField(read(data));
   }
 
-  default JsonField makeJsonField(final T value) {
+  default @NonNull JsonField makeJsonField(final @Nullable T value) {
     return JsonNodeFactories.field(jsonName(), makeJsonValue(value));
   }
 
-  @Override default JsonNode makeJsonValue(final Entity data) {
-    if (data == null) {
-      throw new NullPointerException("data");
-    }
-    return makeJsonValue(read(data));
-  }
+  @Override default @NonNull JsonNode makeJsonValue(final @NonNull Entity data) { return makeJsonValue(read(data)); }
 
-  default JsonNode makeJsonValue(final PropertyContainer data) {
-    if (data == null) {
-      throw new NullPointerException("data");
-    }
-    return makeJsonValue(read(data));
-  }
+  default @NonNull JsonNode makeJsonValue(final @NonNull PropertyContainer data) { return makeJsonValue(read(data)); }
 
-  @Override
-  T interpretJson(JsonNode json);
+  @Override @Nullable T interpretJson(@NonNull JsonNode json);
 }
 
 abstract class FieldData<T> extends AttrData implements Field<T> {
-  private final String property;
+  private final @NonNull String property;
   private final boolean required;
-  private final JsonSerializer<T> jsonSerializer;
+  private final @NonNull JsonSerializer<T> jsonSerializer;
 
-  protected FieldData(final String canonicalName,
-                      final String description,
-                      final String property,
-                      final String field,
+  protected FieldData(final @NonNull String canonicalName,
+                      final @NonNull String description,
+                      final @NonNull String property,
+                      final @NonNull String field,
                       final boolean required,
-                      final JsonStringNode jsonName,
-                      final String jsonPath,
-                      final JsonSerializer<T> jsonSerializer,
-                      final Constraint... constraints) {
+                      final @NonNull JsonStringNode jsonName,
+                      final @NonNull String jsonPath,
+                      final @NonNull JsonSerializer<@Nullable T> jsonSerializer,
+                      final @Nullable Constraint... constraints) {
     super(canonicalName, description, field, jsonName, jsonPath, constraints);
     this.property = property;
     this.required = required;
     this.jsonSerializer = jsonSerializer;
   }
 
-  @Override public final String property() {
+  @Override public final @NonNull String property() {
     return property;
   }
 
@@ -117,27 +105,11 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
     return required;
   }
 
-  @Override public final JsonNode makeJsonValue(final T value) {
-    if (value == null)
-      return JsonNodeFactories.nullNode();
-    else
-      return jsonSerializer.toJson(value);
-  }
+  @Override public final @NonNull JsonNode makeJsonValue(final @Nullable  T value) { return jsonSerializer.toJson(value); }
 
-  @Override public final T interpretJson(final JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
-    return jsonSerializer.fromJson(json, jsonPath());
-  }
+  @Override public final @Nullable T interpretJson(final @NonNull JsonNode json) { return jsonSerializer.fromJson(json, jsonPath()); }
 
-  @Override public final void validate(final Entity data, final Validation validation) {
-    if (data == null) {
-      throw new NullPointerException("data");
-    }
-    if (validation == null) {
-      throw new NullPointerException("validation");
-    }
+  @Override public final void validate(final @NonNull Entity data, final @NonNull Validation validation) {
     final T value = read(data);
     if (value == null) {
       if (required()) {
@@ -148,7 +120,7 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
     }
   }
 
-  protected void validateNotNullValue(final T value, final Validation validation) {
+  protected void validateNotNullValue(final @NonNull T value, final @NonNull Validation validation) {
     if (constraints != null && constraints.length > 0) {
       for (final Constraint constraint : constraints) {
         if (constraint.isInvalid(value)) {
@@ -159,14 +131,14 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
   }
 }
 
-enum RequiredConstraint implements Constraint {
+enum RequiredConstraint implements Constraint<@Nullable Object> {
   INSTANCE;
 
-  @Override public boolean isInvalid(final Object value) {
+  @Override public boolean isInvalid(final @Nullable Object value) {
     return value == null;
   }
 
-  @Override public String messageFor(final Attr attr, final Object value) {
+  @Override public String messageFor(final @NonNull Attr attr, final @Nullable Object value) {
     final StringBuilder msg = new StringBuilder().append('\'').append(attr.description()).append("' es requerido.");
     return msg.toString();
   }

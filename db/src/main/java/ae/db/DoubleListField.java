@@ -23,39 +23,10 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
-import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.PropertyProjection;
-import java.util.List;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface DoubleListField extends ListField<Double> {
-  @Override default Class<Double> elementType() {
+  @Override default @NonNull Class<Double> elementType() {
     return Double.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<Double> implements DoubleListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<Double> implements DoubleListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.ARRAY, new PropertyProjection(property, Double.class), constraints);
-    }
   }
 }

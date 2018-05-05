@@ -23,38 +23,11 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.ShortBlob;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface ShortBlobListField extends ListField<ShortBlob> {
-  @Override default Class<ShortBlob> elementType() {
+  @Override default @NonNull Class<ShortBlob> elementType() {
     return ShortBlob.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<ShortBlob> implements ShortBlobListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, ShortBlobJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<ShortBlob> implements ShortBlobListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, ShortBlobJsonSerializer.ARRAY, new PropertyProjection(property, ShortBlob.class), constraints);
-    }
   }
 }

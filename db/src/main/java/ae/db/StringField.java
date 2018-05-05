@@ -23,37 +23,10 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface StringField extends ScalarField<String> {
-  @Override default Class<String> type() {
+  @Override default @NonNull Class<String> type() {
     return String.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<String> implements StringField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, StringJsonSerializer.INSTANCE, constraints);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<String> implements StringField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, StringJsonSerializer.INSTANCE, new PropertyProjection(property, String.class), constraints);
-    }
   }
 }

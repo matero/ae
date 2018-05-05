@@ -31,7 +31,10 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.*;
 import com.google.common.collect.ImmutableList;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RootWithId extends RootActiveEntity implements WithId {
   /**
@@ -39,34 +42,34 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
    *
    * @param kind Kind of the active entity.
    */
-  protected RootWithId(final String kind) {
+  protected RootWithId(final @NonNull String kind) {
     super(kind);
   }
 
   /* **************************************************************************
    * entity construction facilities
    */
-  @Override public Entity make() {
+  @Override public @NonNull Entity make() {
     final Entity data = newEntity();
     init(data);
     return data;
   }
 
-  @Override public final Entity newEntity() {
+  @Override public final @NonNull Entity newEntity() {
     return new Entity(this.kind);
   }
 
-  @Override public Entity make(final long id) {
+  @Override public @NonNull Entity make(final long id) {
     final Entity data = newEntity(id);
     init(data);
     return data;
   }
 
-  @Override public final Entity newEntity(final long id) {
+  @Override public final @NonNull Entity newEntity(final long id) {
     return new Entity(this.kind, id);
   }
 
-  @Override public Key makeKey(final long id) {
+  @Override public @NonNull Key makeKey(final long id) {
     return KeyFactory.createKey(this.kind, id);
   }
 
@@ -77,7 +80,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
   }
 
-  public Entity findById(final long id) {
+  public @Nullable Entity findById(final long id) {
     try {
       return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
     } catch (final EntityNotFoundException e) {
@@ -85,14 +88,14 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     }
   }
 
-  public Entity getById(final long id) throws EntityNotFoundException {
+  public @NonNull Entity getById(final long id) throws EntityNotFoundException {
     return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
   }
 
   public boolean existsById(final long id) {
     final Query exists = makeQuery()
             .setKeysOnly()
-            .setFilter(new Query.FilterPredicate(Entity.KEY_RESERVED_PROPERTY, Query.FilterOperator.EQUAL, makeKey(id)));
+            .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(id)));
     final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
     return data != null;
   }
@@ -100,15 +103,15 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
   /* **************************************************************************
    * JSON Serialization
    */
-  @Override protected final Iterable<JsonField> jsonKeyFields(final Key key) {
+  @Override protected final @NonNull Iterable<JsonField> jsonKeyFields(final @NonNull Key key) {
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
   }
 
-  @Override public final Key keyFromJson(final JsonNode json) {
+  @Override public final @Nullable Key keyFromJson(final @NonNull JsonNode json) {
     if (json == null || json.isNullNode()) {
       return null;
     }
-    final Long id = modelIdentifier().interpretJson(json);
+    final @Nullable Long id = modelIdentifier().interpretJson(json);
     if (id == null) {
       return newEntity().getKey();
     } else {
@@ -116,11 +119,11 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     }
   }
 
-  @Override public Entity fromJson(final JsonNode json) {
+  @Override public @Nullable Entity fromJson(final @NonNull JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }
-    final Long id = modelIdentifier().interpretJson(json);
+    final @Nullable Long id = modelIdentifier().interpretJson(json);
     final Entity data;
     if (id == null) {
       data = make();

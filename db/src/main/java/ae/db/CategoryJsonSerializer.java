@@ -26,20 +26,22 @@ package ae.db;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Category;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum CategoryJsonSerializer implements JsonSerializer<Category> {
   INSTANCE;
 
   static final JsonArraySerializer<Category> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final Category value) {
+  @Override public @NonNull JsonNode toJson(final @Nullable Category value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
     return JsonNodeFactories.string(value.getCategory());
   }
 
-  @Override public Category fromJson(final JsonNode json, final String jsonPath) {
+  @Override public @Nullable Category fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -47,7 +49,7 @@ enum CategoryJsonSerializer implements JsonSerializer<Category> {
     }
   }
 
-  @Override public Category fromJson(final JsonNode json) {
+  @Override public @Nullable Category fromJson(final @NonNull JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

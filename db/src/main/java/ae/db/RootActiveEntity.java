@@ -24,34 +24,34 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.FetchOptions;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-public abstract class RootActiveEntity
-        extends ActiveEntity {
+public abstract class RootActiveEntity extends ActiveEntity {
   /**
    * Constructs a ROOT active entity defining its kind.
    *
    * @param kind Kind of the active entity.
    */
-  protected RootActiveEntity(final String kind) {
+  protected RootActiveEntity(final @NonNull String kind) {
     super(kind);
   }
 
   /* **************************************************************************
    * query building facilities
    */
-  public final SelectEntities selectAll() {
+  public final @NonNull SelectEntities selectAll() {
     return new SelectEntities(makeQuery(), FetchOptions.Builder.withDefaults());
   }
 
-  public final SelectEntities selectKeys() {
+  public final @NonNull SelectEntities selectKeys() {
     return new SelectEntities(makeQuery().setKeysOnly(), FetchOptions.Builder.withDefaults());
   }
 
-  public final SelectEntities select(final Filterable<?>... projectedProperties) {
+  public final @NonNull SelectEntities select(final @NonNull Filterable<?>... projectedProperties) {
     return new SelectEntities(projection(projectedProperties), FetchOptions.Builder.withDefaults());
   }
 
-  public final SelectEntities select(final Iterable<Filterable<?>> projectedProperties) {
+  public final @NonNull SelectEntities select(final @NonNull Iterable<Filterable<?>> projectedProperties) {
     return new SelectEntities(projection(projectedProperties), FetchOptions.Builder.withDefaults());
   }
 }

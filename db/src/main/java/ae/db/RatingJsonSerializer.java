@@ -26,20 +26,22 @@ package ae.db;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Rating;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum RatingJsonSerializer implements JsonSerializer<Rating> {
   INSTANCE;
 
   static final JsonArraySerializer<Rating> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final Rating value) {
+  @Override public @NonNull JsonNode toJson(final @Nullable Rating value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
     return JsonNodeFactories.number(value.getRating());
   }
 
-  @Override public Rating fromJson(final JsonNode json, final String jsonPath) {
+  @Override public @Nullable Rating fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -48,7 +50,7 @@ enum RatingJsonSerializer implements JsonSerializer<Rating> {
     }
   }
 
-  @Override public Rating fromJson(final JsonNode json) {
+  @Override public @Nullable Rating fromJson(final @NonNull JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

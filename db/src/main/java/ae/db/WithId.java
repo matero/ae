@@ -28,27 +28,29 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface WithId extends java.io.Serializable {
-  Id modelIdentifier();
+  @NonNull Id modelIdentifier();
 
-  Entity make();
+  @NonNull Entity make();
 
-  Entity make(long id);
+  @NonNull Entity make(long id);
 
-  Key makeKey(long id);
+  @NonNull Key makeKey(long id);
 
-  Entity newEntity();
+  @NonNull Entity newEntity();
 
-  Entity newEntity(long id);
+  @NonNull Entity newEntity(long id);
 
   final class Id extends BasicId {
-    public Id(final String canonicalName,
-              final String description,
-              final String field,
-              final JsonStringNode jsonName,
-              final String jsonPath,
-              final Constraint... constraints) {
+    public Id(final @NonNull String canonicalName,
+              final @NonNull String description,
+              final @NonNull String field,
+              final @NonNull JsonStringNode jsonName,
+              final @NonNull String jsonPath,
+              final @Nullable Constraint... constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
     }
 
@@ -92,45 +94,26 @@ public interface WithId extends java.io.Serializable {
 }
 
 abstract class BasicId extends ActiveEntity.Identifier {
-  BasicId(final String canonicalName,
-          final String description,
-          final String field,
-          final JsonStringNode jsonName,
-          final String jsonPath,
-          final Constraint... constraints) {
+  BasicId(final @NonNull String canonicalName,
+          final @NonNull String description,
+          final @NonNull String field,
+          final @NonNull JsonStringNode jsonName,
+          final @NonNull String jsonPath,
+          final @Nullable Constraint... constraints) {
     super(canonicalName, description, field, jsonName, jsonPath, constraints);
   }
 
-  public long of(final Entity data) {
-    return read(data);
-  }
+  public long of(final @NonNull Entity data) {return read(data);}
 
-  public long read(final Entity data) {
-    if (data == null) {
-      throw new NullPointerException("data");
-    }
-    return read(data.getKey());
-  }
+  public long read(final @NonNull Entity data) {return read(data.getKey());}
 
-  public long of(final Key key) {
-    return read(key);
-  }
+  public long of(final @NonNull Key key) {return read(key);}
 
-  public long read(final Key key) {
-    if (key == null) {
-      throw new NullPointerException("key");
-    }
-    return key.getId();
-  }
+  public long read(final @NonNull Key key) {return key.getId();}
 
-  @Override public boolean isDefinedAt(final Key key) {
-    if (key == null) {
-      throw new NullPointerException("key");
-    }
-    return key.getId() != 0;
-  }
+  @Override public boolean isDefinedAt(final @NonNull Key key) {return key.getId() != 0;}
 
-  @Override public Long interpretJson(final JsonNode json) {
+  @Override public @Nullable Long interpretJson(final @NonNull JsonNode json) {
     if (json == null) {
       throw new NullPointerException("json");
     }
@@ -145,23 +128,12 @@ abstract class BasicId extends ActiveEntity.Identifier {
     }
   }
 
-  @Override public JsonNode makeJsonValue(final Key key) {
-    if (key == null) {
-      throw new NullPointerException("key");
-    }
-    return JsonNodeFactories.number(key.getId());
-  }
+  @Override public @NonNull JsonNode makeJsonValue(final @NonNull Key key) {return JsonNodeFactories.number(key.getId());}
 
-  @Override public void validate(final Entity data, final Validation validation) {
-    if (data == null) {
-      throw new NullPointerException("data");
-    }
-    if (validation == null) {
-      throw new NullPointerException("validation");
-    }
+  @Override public void validate(final @NonNull Entity data, final @NonNull Validation validation) {
     final Long value = read(data);
     doValidate(value, validation);
   }
 
-  abstract void doValidate(final Long value, final Validation validation);
+  abstract void doValidate(final @NonNull Long value, final @NonNull Validation validation);
 }

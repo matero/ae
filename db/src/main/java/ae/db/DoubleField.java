@@ -23,37 +23,8 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.PropertyProjection;
-
 public interface DoubleField extends ScalarField<Double> {
   @Override default Class<Double> type() {
     return Double.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<Double> implements DoubleField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.INSTANCE, constraints);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<Double> implements DoubleField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.INSTANCE, new PropertyProjection(property, Double.class), constraints);
-    }
   }
 }

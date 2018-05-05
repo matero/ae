@@ -23,8 +23,6 @@
  */
 package ae.db;
 
-import ae.db.Validation;
-import ae.db.StringField;
 import argo.jdom.JsonNode;
 import static argo.jdom.JsonNodeFactories.array;
 import static argo.jdom.JsonNodeFactories.field;
@@ -79,7 +77,7 @@ public class ValidationTest {
 
   @Test public void failed_validations_are_considered_on_failure_from_creation() {
     // given, an attr
-    final StringField attr = new StringField.Unindexed(
+    final StringField attr = new StringField.UnindexedString(
             canonicalName("attr"),
             description("test attribute"),
             property("attr"),
@@ -101,7 +99,7 @@ public class ValidationTest {
     // given, a validation
     final Validation validation = Validation.withSuccessMessage("Message");
     // and given, an attr
-    final StringField attr = new StringField.Unindexed(
+    final StringField attr = new StringField.UnindexedString(
             canonicalName("attr"),
             description("test attribute"),
             property("attr"),
@@ -131,7 +129,7 @@ public class ValidationTest {
     // given, a validation
     final Validation validation = Validation.withSuccessMessage("The Success Message");
     // and given, an 3 attrs
-    final StringField a = new StringField.Unindexed(
+    final StringField a = new StringField.UnindexedString(
             canonicalName("a"),
             description("test attribute a"),
             property("a"),
@@ -140,7 +138,7 @@ public class ValidationTest {
             jsonName("a"),
             jsonPath("a"),
             noConstraints());
-    final StringField b = new StringField.Unindexed(
+    final StringField b = new StringField.UnindexedString(
             canonicalName("b"),
             description("test attribute b"),
             property("b"),
@@ -149,7 +147,7 @@ public class ValidationTest {
             jsonName("b"),
             jsonPath("b"),
             noConstraints());
-    final StringField c = new StringField.Unindexed(
+    final StringField c = new StringField.UnindexedString(
             canonicalName("c"),
             description("test attribute c"),
             property("c"),

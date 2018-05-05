@@ -54,7 +54,7 @@ class ModelIdInterpreter extends ModelAttributeInterpreter {
       throw new ModelException(variable, "fields can be annotated with @Id or with @Property, but not both.");
     }
     if (variable.getAnnotation(Record.indexed.class) != null) {
-      throw new ModelException(variable, "fields can be annotated with @Id or with @Indexed, but not both.");
+      throw new ModelException(variable, "fields can be annotated with @Id or with @IndexedBooleanList, but not both.");
     }
     if (variable.getAnnotation(Record.parent.class) != null) {
       throw new ModelException(variable, "fields can be annotated with @Id or with @Parent, but not both.");

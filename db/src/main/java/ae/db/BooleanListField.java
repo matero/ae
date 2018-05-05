@@ -23,52 +23,10 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
-import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.PropertyProjection;
-import com.google.appengine.api.datastore.Query;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface BooleanListField extends ListField<Boolean> {
-  @Override default Class<Boolean> elementType() {
+  @Override default @NonNull Class<Boolean> elementType() {
     return Boolean.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<Boolean> implements BooleanListField {
-    public Unindexed(String canonicalName,
-                     String description,
-                     String property,
-                     String field,
-                     boolean required,
-                     JsonStringNode jsonName,
-                     String jsonPath,
-                     Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<Boolean> implements BooleanListField, BooleanField.Filter {
-    private final Query.FilterPredicate isTrue;
-    private final Query.FilterPredicate isFalse;
-
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.ARRAY, new PropertyProjection(property, Boolean.class), constraints);
-      this.isTrue = new Query.FilterPredicate(property, Query.FilterOperator.EQUAL, Boolean.TRUE);
-      this.isFalse = new Query.FilterPredicate(property, Query.FilterOperator.EQUAL, Boolean.FALSE);
-    }
-
-    @Override public Query.FilterPredicate isTrue() {
-      return isTrue;
-    }
-
-    @Override public Query.FilterPredicate isFalse() {
-      return isFalse;
-    }
   }
 }

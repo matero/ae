@@ -23,38 +23,11 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.users.User;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface UserListField extends ListField<User> {
-  @Override default Class<User> elementType() {
+  @Override default @NonNull Class<User> elementType() {
     return User.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<User> implements UserListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, UserJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<User> implements UserListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, UserJsonSerializer.ARRAY, new PropertyProjection(property, User.class), constraints);
-    }
   }
 }

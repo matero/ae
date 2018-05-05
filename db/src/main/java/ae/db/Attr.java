@@ -29,84 +29,85 @@ import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface Attr extends java.io.Serializable {
-  String canonicalName();
+  @NonNull String canonicalName();
 
-  String description();
+  @NonNull String description();
 
-  String field();
+  @NonNull String field();
 
-  String property();
+  @NonNull String property();
 
-  JsonStringNode jsonName();
+  @NonNull JsonStringNode jsonName();
 
-  String jsonPath();
+  @NonNull String jsonPath();
 
-  boolean isDefinedAt(Entity data);
+  boolean isDefinedAt(@NonNull Entity data);
 
-  default boolean isDefinedAt(final JsonNode json) {
+  default boolean isDefinedAt(final @NonNull JsonNode json) {
     return json.getFields().containsKey(jsonName());
   }
 
-  JsonNode makeJsonValue(Entity data);
+  @NonNull JsonNode makeJsonValue(@NonNull Entity data);
 
-  default JsonField makeJsonField(final Entity data) {
-    if (data == null) {
-      throw new NullPointerException("data");
-    }
+  default @NonNull JsonField makeJsonField(final @NonNull Entity data) {
     return JsonNodeFactories.field(jsonName(), makeJsonValue(data));
   }
 
-  Object interpretJson(JsonNode json);
+  @Nullable Object interpretJson(@NonNull JsonNode json);
 
-  void validate(Entity data, Validation validation);
+  void validate(@NonNull Entity data, @NonNull Validation validation);
 }
 
 abstract class AttrData implements Attr {
-  private final String canonicalName;
+  static final Constraint[] NO_CONSTRAINTS = {};
 
-  private final String description;
+  private final @NonNull String canonicalName;
 
-  private final String field;
+  private final @NonNull String description;
 
-  private final JsonStringNode jsonName;
+  private final @NonNull String field;
 
-  private final String jsonPath;
+  private final @NonNull JsonStringNode jsonName;
 
-  protected final Constraint[] constraints;
+  private final @NonNull String jsonPath;
 
-  protected AttrData(final String canonicalName,
-                     final String description,
-                     final String field,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
+  protected final @NonNull Constraint[] constraints;
+
+  protected AttrData(final @NonNull String canonicalName,
+                     final @NonNull String description,
+                     final @NonNull String field,
+                     final @NonNull JsonStringNode jsonName,
+                     final @NonNull String jsonPath,
+                     final @Nullable Constraint... constraints) {
     this.canonicalName = canonicalName;
     this.description = description;
     this.field = field;
     this.jsonName = jsonName;
     this.jsonPath = jsonPath;
-    this.constraints = constraints;
+    this.constraints = constraints == null? NO_CONSTRAINTS : constraints.length == 0? NO_CONSTRAINTS : constraints.clone();
   }
 
-  @Override public final String canonicalName() {
+  @Override public final @NonNull String canonicalName() {
     return canonicalName;
   }
 
-  @Override public final String description() {
+  @Override public final @NonNull String description() {
     return description;
   }
 
-  @Override public final String field() {
+  @Override public final @NonNull String field() {
     return field;
   }
 
-  @Override public final JsonStringNode jsonName() {
+  @Override public final @NonNull JsonStringNode jsonName() {
     return jsonName;
   }
 
-  @Override public final String jsonPath() {
+  @Override public final @NonNull String jsonPath() {
     return jsonPath;
   }
 }

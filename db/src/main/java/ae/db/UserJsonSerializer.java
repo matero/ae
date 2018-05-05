@@ -28,6 +28,9 @@ import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.users.User;
 import com.google.common.collect.ImmutableList;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Map;
 
 enum UserJsonSerializer implements JsonSerializer<User> {
@@ -35,48 +38,81 @@ enum UserJsonSerializer implements JsonSerializer<User> {
 
   static final JsonArraySerializer<User> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  private final JsonStringNode userId = JsonNodeFactories.string("userId");
-  private final JsonStringNode email = JsonNodeFactories.string("email");
+  private final JsonStringNode userId            = JsonNodeFactories.string("userId");
+  private final JsonStringNode email             = JsonNodeFactories.string("email");
   private final JsonStringNode federatedIdentity = JsonNodeFactories.string("fedId");
-  private final JsonStringNode authDomain = JsonNodeFactories.string("authDomain");
+  private final JsonStringNode authDomain        = JsonNodeFactories.string("authDomain");
 
-  @Override public JsonNode toJson(final User value) {
+  @Override public @NonNull JsonNode toJson(final @Nullable User value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
     return JsonNodeFactories.object(
-            ImmutableList.of(
-                    JsonNodeFactories.field(userId, JsonNodeFactories.string(value.getUserId())),
-                    JsonNodeFactories.field(email, JsonNodeFactories.string(value.getEmail())),
-                    JsonNodeFactories.field(federatedIdentity, JsonNodeFactories.string(value.getFederatedIdentity())),
-                    JsonNodeFactories.field(authDomain, JsonNodeFactories.string(value.getAuthDomain()))
-            )
+        ImmutableList.of(
+            JsonNodeFactories.field(userId, JsonNodeFactories.string(value.getUserId())),
+            JsonNodeFactories.field(email, JsonNodeFactories.string(value.getEmail())),
+            JsonNodeFactories.field(federatedIdentity, JsonNodeFactories.string(value.getFederatedIdentity())),
+            JsonNodeFactories.field(authDomain, JsonNodeFactories.string(value.getAuthDomain()))
+        )
     );
   }
 
-  @Override
-  public User fromJson(final JsonNode json, final String jsonPath) {
+  @Override public @Nullable User fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
       final Map<JsonStringNode, JsonNode> user = json.getObjectNode(jsonPath);
-      return new User(user.get(email).getStringValue(),
-                      user.get(authDomain).getStringValue(),
-                      user.get(userId).getStringValue(),
-                      user.get(federatedIdentity).getStringValue());
+      return jsonToUser(user);
     }
   }
 
-  @Override
-  public User fromJson(final JsonNode json) {
+  @Override public @Nullable User fromJson(final @NonNull JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {
       final Map<JsonStringNode, JsonNode> user = json.getObjectNode();
-      return new User(user.get(email).getStringValue(),
-                      user.get(authDomain).getStringValue(),
-                      user.get(userId).getStringValue(),
-                      user.get(federatedIdentity).getStringValue());
+      return jsonToUser(user);
+    }
+  }
+
+  @Nullable User jsonToUser(Map<JsonStringNode, JsonNode> user) {
+    if (user == null) {
+      return null;
+    }
+    @NonNull final String  _email      = readNonNull(user, email);
+    @NonNull final String  _authDomain = readNonNull(user, authDomain);
+    @Nullable final String _userId     = readNullable(user, userId);
+    if (_userId == null) {
+      return new User(_email, _authDomain);
+    } else {
+      @Nullable final String _federatedIdentity = readNonNull(user, federatedIdentity);
+      if (_federatedIdentity == null) {
+        return new User(_email, _authDomain, _userId);
+      } else {
+        return new User(_email, _authDomain, _userId, _federatedIdentity);
+      }
+    }
+  }
+
+  @NonNull String readNonNull(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field) {
+    final JsonNode node = user.get(field);
+    if (node == null) {
+      throw new NullPointerException(field.toString());
+    } else if (node.isNullNode()) {
+      throw new NullPointerException(field.toString());
+    } else {
+      return node.getStringValue();
+    }
+  }
+
+  @Nullable String readNullable(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field) {
+    final JsonNode node = user.get(field);
+    if (node == null) {
+      return null;
+    } else if (node.isNullNode()) {
+      return null;
+    } else {
+      return node.getStringValue();
     }
   }
 }

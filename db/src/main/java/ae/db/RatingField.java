@@ -23,38 +23,11 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Rating;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface RatingField extends ScalarField<Rating> {
-  @Override default Class<Rating> type() {
+  @Override default @NonNull Class<Rating> type() {
     return Rating.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<Rating> implements RatingField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, RatingJsonSerializer.INSTANCE, constraints);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<Rating> implements RatingField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, RatingJsonSerializer.INSTANCE, new PropertyProjection(property, Rating.class), constraints);
-    }
   }
 }

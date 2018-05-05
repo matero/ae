@@ -150,13 +150,13 @@ class ModelFieldInterpreter extends ModelAttributeInterpreter {
     }
     if (variable.getAnnotation(Record.indexed.class) != null) {
       if (Objects.equals(Text.class.getCanonicalName(), typeCanonicalName)) {
-        throw new ModelException(variable, "Text fields can't be @Indexed.");
+        throw new ModelException(variable, "Text fields can't be @IndexedBooleanList.");
       }
       if (FieldType.BLOB.equals(typeCanonicalName)) {
-        throw new ModelException(variable, "Blob fields can't be @Indexed.");
+        throw new ModelException(variable, "Blob fields can't be @IndexedBooleanList.");
       }
       if (FieldType.EMBEDDED_ENTITY.equals(typeCanonicalName)) {
-        throw new ModelException(variable, "EmbeddedEntity fields can't be @Indexed.");
+        throw new ModelException(variable, "EmbeddedEntity fields can't be @IndexedBooleanList.");
       }
     }
   }
