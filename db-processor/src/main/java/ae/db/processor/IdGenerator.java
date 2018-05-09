@@ -55,7 +55,7 @@ final class IdGenerator extends AttributeGenerator {
   }
 
   protected String idInitializerFormat() {
-    return "new $T(canonicalName($S), description($S), field($S), jsonName($S), jsonPath($S), " + constraints(id) + ')';
+    return "new $T(canonicalName($S), description($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints(id) + ')';
   }
 
   private Object[] idInitializerArgs() {
@@ -71,7 +71,7 @@ final class IdGenerator extends AttributeGenerator {
   }
 
   protected String nameInitializerFormat() {
-    return "new $T(canonicalName($S), description($S), field($S), jsonName($S), jsonPath($S), " + constraints(id) + ')';
+    return "new $T(canonicalName($S), description($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints(id) + ')';
   }
 
   private Object[] nameInitializerArgs() {

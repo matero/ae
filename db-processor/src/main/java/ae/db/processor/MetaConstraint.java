@@ -26,7 +26,7 @@ package ae.db.processor;
 final class MetaConstraint {
   private static final Object[] NO_ARGS = {};
 
-  final String construtionExpr;
+  final String constructionExpr;
   final Object[] args;
 
   MetaConstraint(final String construtionExpr) {
@@ -34,7 +34,11 @@ final class MetaConstraint {
   }
 
   MetaConstraint(final String construtionExpr, final Object[] args) {
-    this.construtionExpr = construtionExpr;
+    this.constructionExpr = construtionExpr;
     this.args = args;
+  }
+  
+  @Override public String toString() {
+    return constructionExpr;
   }
 }

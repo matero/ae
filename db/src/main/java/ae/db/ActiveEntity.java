@@ -321,21 +321,4 @@ public abstract class ActiveEntity implements Serializable {
       return this;
     }
   }
-
-  /* methods to improve redeability on generated code */
-  protected static @NonNull String canonicalName(final @NonNull String value) { return value; }
-
-  protected static @NonNull String description(final @NonNull String value) { return value; }
-
-  protected static @NonNull String property(final @NonNull String value) { return value; }
-
-  protected static @NonNull String field(final @NonNull String value) { return value; }
-
-  protected static boolean required(final boolean value) { return value; }
-
-  protected static @NonNull JsonStringNode jsonName(final @NonNull String value) { return JsonNodeFactories.string(value); }
-
-  protected static @NonNull String jsonPath(final @NonNull String value) { return value; }
-
-  protected static @NonNull ImmutableList<Constraint> noConstraints() { return ImmutableList.of(); }
 }

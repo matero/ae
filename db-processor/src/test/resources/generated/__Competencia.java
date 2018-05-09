@@ -1,5 +1,7 @@
 package processor.test;
 
+import static ae.db.DSL.*;
+
 import ae.db.Attr;
 import ae.db.Field;
 import ae.db.RootWithName;
@@ -22,7 +24,7 @@ import org.slf4j.LoggerFactory;
 abstract class __Competencia extends RootWithName {
   protected static final Logger LOG = LoggerFactory.getLogger("processor.test.Competencia");
 
-  final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), field("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints());
+  final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), fieldName("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints);
 
   private final ImmutableList<Attr> _attrs = ImmutableList.of(nombre);
 

@@ -34,8 +34,10 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+
 import static com.squareup.javapoet.MethodSpec.constructorBuilder;
 import static com.squareup.javapoet.MethodSpec.methodBuilder;
+
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
@@ -92,7 +94,9 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
   }
 
   JavaFile build() {
-    return JavaFile.builder(model.packageName, baseModel()).build();
+    return JavaFile.builder(model.packageName, baseModel())
+                   .addStaticImport(ClassName.get(ae.db.DSL.class), "*")
+                   .build();
   }
 
   private TypeSpec baseModel() {

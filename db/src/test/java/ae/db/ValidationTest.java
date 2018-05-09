@@ -23,23 +23,18 @@
  */
 package ae.db;
 
+import static ae.db.DSL.*;
+
 import argo.jdom.JsonNode;
 
 import static argo.jdom.JsonNodeFactories.array;
-import static argo.jdom.JsonNodeFactories.field;
 import static argo.jdom.JsonNodeFactories.object;
 import static argo.jdom.JsonNodeFactories.string;
-import static ae.db.ActiveEntity.canonicalName;
-import static ae.db.ActiveEntity.description;
-import static ae.db.ActiveEntity.field;
-import static ae.db.ActiveEntity.jsonName;
-import static ae.db.ActiveEntity.jsonPath;
-import static ae.db.ActiveEntity.noConstraints;
-import static ae.db.ActiveEntity.property;
-import static ae.db.ActiveEntity.required;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+
+import static argo.jdom.JsonNodeFactories.field;
 
 public class ValidationTest {
   @Test public void can_be_created_with_nonnull_success_message() {
@@ -66,12 +61,12 @@ public class ValidationTest {
     // given, an attr
     final StringField attr = new UnindexedString(canonicalName("attr"),
                                                  description("test attribute"),
-                                                 property("attr"),
-                                                 field("attr"),
-                                                 required(false),
+                                                 propertyName("attr"),
+                                                 fieldName("attr"),
+                                                 required,
                                                  jsonName("attr"),
                                                  jsonPath("attr"),
-                                                 noConstraints());
+                                                 noConstraints);
 
     // and given, a failed validation on attr
     final Validation validation = Validation.failed(attr, "Message");
@@ -87,12 +82,12 @@ public class ValidationTest {
     // and given, an attr
     final StringField attr = new UnindexedString(canonicalName("attr"),
                                                  description("test attribute"),
-                                                 property("attr"),
-                                                 field("attr"),
-                                                 required(false),
+                                                 propertyName("attr"),
+                                                 fieldName("attr"),
+                                                 nullable,
                                                  jsonName("attr"),
                                                  jsonPath("attr"),
-                                                 noConstraints());
+                                                 noConstraints);
 
     // when the attr is rejected
     validation.reject(attr, "message");
@@ -116,28 +111,20 @@ public class ValidationTest {
     // and given, an 3 attrs
     final StringField a = new UnindexedString(canonicalName("a"),
                                               description("test attribute a"),
-                                              property("a"),
-                                              field("a"),
-                                              required(false),
+                                              propertyName("a"),
+                                              fieldName("a"),
+                                              nullable,
                                               jsonName("a"),
                                               jsonPath("a"),
-                                              noConstraints());
+                                              noConstraints);
     final StringField b = new UnindexedString(canonicalName("b"),
                                               description("test attribute b"),
-                                              property("b"),
-                                              field("b"),
-                                              required(false),
+                                              propertyName("b"),
+                                              fieldName("b"),
+                                              nullable,
                                               jsonName("b"),
                                               jsonPath("b"),
-                                              noConstraints());
-    final StringField c = new UnindexedString(canonicalName("c"),
-                                              description("test attribute c"),
-                                              property("c"),
-                                              field("c"),
-                                              required(false),
-                                              jsonName("c"),
-                                              jsonPath("c"),
-                                              noConstraints());
+                                              noConstraints);
 
     // when, a is rejected 1 time
     validation.reject(a, "'a' message error");

@@ -25,7 +25,6 @@ package ae.db.processor;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.UnmodifiableIterator;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 import java.util.LinkedList;
@@ -53,33 +52,34 @@ abstract class AttributeGenerator {
     return JOINER.join(fieldClassName.simpleNames());
   }
 
-  String constraints(final MetaModelAttribute attr) {
-    final UnmodifiableIterator<MetaConstraint> iter = attr.constraints.iterator();
-    if (iter.hasNext()) {
-      final StringBuilder constraints = new StringBuilder();
-      constraints.append(iter.next().construtionExpr);
-      while (iter.hasNext()) {
-        constraints.append(", ").append(iter.next().construtionExpr);
-      }
-      return constraints.toString();
+  String required(final MetaModelAttribute attr) {
+    if (attr.required) {
+      return "required";
     } else {
-      return "$L";
+      return "nullable";
     }
   }
 
-  private static final List<Object> NO_ARGS = ImmutableList.of("noConstraints()");
+  String constraints(final MetaModelAttribute attr) {
+    if (attr.hasConstraints()) {
+      return "constraints($L)";
+    } else {
+      return "noConstraints";
+    }
+  }
 
   List<Object> constraintsArgs(final MetaModelAttribute attr) {
     if (attr.hasConstraints()) {
       final LinkedList<Object> args = new LinkedList<>();
       for (final MetaConstraint constraint : attr.constraints) {
+        args.add(constraint);
         for (final Object arg : constraint.args) {
           args.add(arg);
         }
       }
       return args;
     } else {
-      return NO_ARGS;
+      return ImmutableList.of();
     }
   }
 }

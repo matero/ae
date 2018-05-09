@@ -58,6 +58,7 @@
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
     <archiveClasses>true</archiveClasses>
+    <checkerframework.target.version>2.5.1</checkerframework.target.version>
     <appengine.target.version>1.9.63</appengine.target.version>
     <checkVersions>false</checkVersions>
 
@@ -96,6 +97,18 @@
         <groupId>net.sourceforge.argo</groupId>
         <artifactId>argo</artifactId>
         <version>5.3</version>
+      </dependency>
+      
+      <!-- Annotations from the Checker Framework: nullness, interning, locking, ... -->
+      <dependency>
+        <groupId>org.checkerframework</groupId>
+        <artifactId>checker-qual</artifactId>
+        <version>${checkerframework.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.checkerframework</groupId>
+        <artifactId>jdk8</artifactId>
+        <version>${checkerframework.target.version}</version>
       </dependency>
 
       <!-- ================================================================ -->

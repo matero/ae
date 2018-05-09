@@ -15,16 +15,13 @@
   </properties>
 
   <dependencies>
-    <!-- Annotations from the Checker Framework: nullness, interning, locking, ... -->
     <dependency>
       <groupId>org.checkerframework</groupId>
       <artifactId>checker-qual</artifactId>
-      <version>RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.checkerframework</groupId>
       <artifactId>jdk8</artifactId>
-      <version>2.5.1</version>
     </dependency>
     <!-- ================================================================ -->
     <!-- GAE Compile/runtime dependencies                                 -->
