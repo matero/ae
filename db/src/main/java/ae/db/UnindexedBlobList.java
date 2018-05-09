@@ -23,13 +23,11 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Blob;
+import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.List;
 
 public final class UnindexedBlobList extends ListField.Unindexed<Blob> {
   public UnindexedBlobList(final @NonNull String canonicalName,
@@ -39,7 +37,7 @@ public final class UnindexedBlobList extends ListField.Unindexed<Blob> {
                            final boolean required,
                            final @NonNull JsonStringNode jsonName,
                            final @NonNull String jsonPath,
-                           final @Nullable Constraint... constraints) {
+                           final @NonNull ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, BlobJsonSerializer.ARRAY, constraints);
   }
 

@@ -31,7 +31,8 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.*;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -42,9 +43,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
    *
    * @param kind Kind of the active entity.
    */
-  protected RootWithId(final @NonNull String kind) {
-    super(kind);
-  }
+  protected RootWithId(final @NonNull String kind) { super(kind); }
 
   /* **************************************************************************
    * entity construction facilities
@@ -55,9 +54,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     return data;
   }
 
-  @Override public final @NonNull Entity newEntity() {
-    return new Entity(this.kind);
-  }
+  @Override public final @NonNull Entity newEntity() { return new Entity(this.kind); }
 
   @Override public @NonNull Entity make(final long id) {
     final Entity data = newEntity(id);
@@ -65,20 +62,14 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     return data;
   }
 
-  @Override public final @NonNull Entity newEntity(final long id) {
-    return new Entity(this.kind, id);
-  }
+  @Override public final @NonNull Entity newEntity(final long id) { return new Entity(this.kind, id); }
 
-  @Override public @NonNull Key makeKey(final long id) {
-    return KeyFactory.createKey(this.kind, id);
-  }
+  @Override public @NonNull Key makeKey(final long id) { return KeyFactory.createKey(this.kind, id); }
 
   /* **************************************************************************
    * persistence methods
    */
-  public void deleteById(final long id) {
-    DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
-  }
+  public void deleteById(final long id) { DatastoreServiceFactory.getDatastoreService().delete(makeKey(id)); }
 
   public @Nullable Entity findById(final long id) {
     try {
@@ -108,7 +99,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
   }
 
   @Override public final @Nullable Key keyFromJson(final @NonNull JsonNode json) {
-    if (json == null || json.isNullNode()) {
+    if (json.isNullNode()) {
       return null;
     }
     final @Nullable Long id = modelIdentifier().interpretJson(json);

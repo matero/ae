@@ -23,38 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PostalAddress;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface PostalAddressListField extends ListField<PostalAddress> {
-  @Override default Class<PostalAddress> elementType() {
-    return PostalAddress.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<PostalAddress> implements PostalAddressListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, PostalAddressJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<PostalAddress> implements PostalAddressListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, PostalAddressJsonSerializer.ARRAY, new PropertyProjection(property, PostalAddress.class), constraints);
-    }
-  }
+  @Override default @NonNull Class<PostalAddress> elementType() { return PostalAddress.class; }
 }

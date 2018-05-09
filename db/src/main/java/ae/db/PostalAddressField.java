@@ -23,52 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PostalAddress;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface PostalAddressField extends ScalarField<PostalAddress> {
-  @Override default Class<PostalAddress> type() {
-    return PostalAddress.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<PostalAddress> implements PostalAddressField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, PostalAddressJsonSerializer.INSTANCE, constraints);
-    }
-
-    @Override protected void validateNotNullValue(final PostalAddress value, final Validation validation) {
-      if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getAddress())) {
-        validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.getAddress()));
-      }
-      super.validateNotNullValue(value, validation);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<PostalAddress> implements PostalAddressField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, PostalAddressJsonSerializer.INSTANCE, new PropertyProjection(property, PostalAddress.class), constraints);
-    }
-
-    @Override protected void validateNotNullValue(final PostalAddress value, final Validation validation) {
-      if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getAddress())) {
-        validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.getAddress()));
-      }
-      super.validateNotNullValue(value, validation);
-    }
-  }
+  @Override default @NonNull Class<PostalAddress> type() { return PostalAddress.class; }
 }

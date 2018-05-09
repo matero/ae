@@ -33,9 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEntity<P> implements WithId {
-  protected ChildWithId(final @NonNull String kind) {
-    super(kind);
-  }
+  protected ChildWithId(final @NonNull String kind) { super(kind); }
 
   /* **************************************************************************
    * entity construction facilities
@@ -98,17 +96,11 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     return KeyFactory.createKey(parentKey, kind, id);
   }
 
-  @Override public @NonNull Entity newEntity() {
-    return new Entity(kind);
-  }
+  @Override public @NonNull Entity newEntity() { return new Entity(kind); }
 
-  @Override public @NonNull Entity newEntity(final long id) {
-    return new Entity(kind, id);
-  }
+  @Override public @NonNull Entity newEntity(final long id) { return new Entity(kind, id); }
 
-  public final @NonNull Entity newEntity(final @NonNull Entity parent, final long id) {
-    return newEntity(parent.getKey(), id);
-  }
+  public final @NonNull Entity newEntity(final @NonNull Entity parent, final long id) { return newEntity(parent.getKey(), id); }
 
   public final @NonNull Entity newEntity(final @NonNull Key parentKey, final long id) {
     if (!modelParent().isKindOf(parentKey)) {
@@ -117,9 +109,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     return new Entity(kind, id, parentKey);
   }
 
-  public final @NonNull Entity newEntity(final @NonNull Entity parent) {
-    return newEntity(parent.getKey());
-  }
+  public final @NonNull Entity newEntity(final @NonNull Entity parent) { return newEntity(parent.getKey()); }
 
   public final @NonNull Entity newEntity(final @NonNull Key parentKey) {
     if (!modelParent().isKindOf(parentKey)) {
@@ -131,9 +121,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
   /* **************************************************************************
    * persistence methods
    */
-  public void deleteById(final long id) {
-    DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
-  }
+  public void deleteById(final long id) { DatastoreServiceFactory.getDatastoreService().delete(makeKey(id)); }
 
   public @Nullable Entity findById(final long id) {
     try {
@@ -214,8 +202,8 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     if (json.isNullNode()) {
       return null;
     }
-    final Long id        = modelIdentifier().interpretJson(json);
-    final Key  parentKey = modelParent().interpretJson(json);
+    final Long id = modelIdentifier().interpretJson(json);
+    final Key parentKey = modelParent().interpretJson(json);
     if (id == null) {
       if (parentKey == null) {
         return makeKey(0);
@@ -235,8 +223,8 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     if (json.isNullNode()) {
       return null;
     }
-    final Long   id        = modelIdentifier().interpretJson(json);
-    final Key    parentKey = modelParent().interpretJson(json);
+    final Long id = modelIdentifier().interpretJson(json);
+    final Key parentKey = modelParent().interpretJson(json);
     final Entity data;
     if (id == null) {
       if (parentKey == null) {

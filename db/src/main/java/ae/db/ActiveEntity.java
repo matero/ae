@@ -32,6 +32,7 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
@@ -58,9 +59,7 @@ public abstract class ActiveEntity implements Serializable {
    *
    * @param kind Kind of the active entity.
    */
-  protected ActiveEntity(final @NonNull String kind) {
-    this.kind = kind;
-  }
+  protected ActiveEntity(final @NonNull String kind) { this.kind = kind; }
 
   /**
    * @return the logger associated to the active entity, <em>never</em> {@code null}.
@@ -75,20 +74,14 @@ public abstract class ActiveEntity implements Serializable {
    *
    * @param data the {@link Entity} to initialize.
    */
-  protected void init(final @NonNull Entity data) {
-    // nothing to do
-  }
+  protected void init(final @NonNull Entity data) { /*nothing to do*/ }
 
   /* **************************************************************************
    * validation methods
    */
-  public boolean isKindOf(final @NonNull Entity data) {
-    return isKindOf(data.getKey());
-  }
+  public boolean isKindOf(final @NonNull Entity data) { return isKindOf(data.getKey()); }
 
-  public boolean isKindOf(final @NonNull Key key) {
-    return kind.equals(key.getKind());
-  }
+  public boolean isKindOf(final @NonNull Key key) { return kind.equals(key.getKind()); }
 
   public @Nullable Key keyFrom(final @Nullable String webSafeKey) {
     if (webSafeKey == null) {
@@ -147,7 +140,7 @@ public abstract class ActiveEntity implements Serializable {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
     }
-    final java.util.LinkedList<JsonNode> nodes = new java.util.LinkedList<>();
+    final List<JsonNode> nodes = new java.util.ArrayList<>(Iterables.size(elements));
     for (final Entity e : elements) {
       nodes.add(toJson(e));
     }
@@ -251,7 +244,7 @@ public abstract class ActiveEntity implements Serializable {
                          final @NonNull String field,
                          final @NonNull JsonStringNode jsonName,
                          final @NonNull String jsonPath,
-                         final @Nullable Constraint... constraints) {
+                         final @NonNull ImmutableList<Constraint> constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
     }
 
@@ -330,35 +323,19 @@ public abstract class ActiveEntity implements Serializable {
   }
 
   /* methods to improve redeability on generated code */
-  protected static @NonNull String canonicalName(final @NonNull String value) {
-    return value;
-  }
+  protected static @NonNull String canonicalName(final @NonNull String value) { return value; }
 
-  protected static @NonNull String description(final @NonNull String value) {
-    return value;
-  }
+  protected static @NonNull String description(final @NonNull String value) { return value; }
 
-  protected static @NonNull String property(final @NonNull String value) {
-    return value;
-  }
+  protected static @NonNull String property(final @NonNull String value) { return value; }
 
-  protected static @NonNull String field(final @NonNull String value) {
-    return value;
-  }
+  protected static @NonNull String field(final @NonNull String value) { return value; }
 
-  protected static boolean required(final boolean value) {
-    return value;
-  }
+  protected static boolean required(final boolean value) { return value; }
 
-  protected static @NonNull JsonStringNode jsonName(final @NonNull String value) {
-    return JsonNodeFactories.string(value);
-  }
+  protected static @NonNull JsonStringNode jsonName(final @NonNull String value) { return JsonNodeFactories.string(value); }
 
-  protected static @NonNull String jsonPath(final @NonNull String value) {
-    return value;
-  }
+  protected static @NonNull String jsonPath(final @NonNull String value) { return value; }
 
-  protected static @NonNull Constraint[] noConstraints() {
-    return AttrData.NO_CONSTRAINTS;
-  }
+  protected static @NonNull ImmutableList<Constraint> noConstraints() { return ImmutableList.of(); }
 }

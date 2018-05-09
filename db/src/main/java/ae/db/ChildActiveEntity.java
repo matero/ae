@@ -30,26 +30,22 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
+import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEntity {
-  protected ChildActiveEntity(final @NonNull String kind) {
-    super(kind);
-  }
+  protected ChildActiveEntity(final @NonNull String kind) { super(kind); }
 
   /* **************************************************************************
    * metadata facilities
    */
   public abstract @NonNull Parent<P> modelParent();
 
-  @Override
-  public final boolean isKindOf(final @NonNull Key key) {
-    return super.isKindOf(key) && modelParent().isKindOf(key.getParent());
-  }
+  @Override public final boolean isKindOf(final @NonNull Key key) { return super.isKindOf(key) && modelParent().isKindOf(key.getParent()); }
 
   public static final class Parent<P extends ActiveEntity> extends ActiveEntity.Identifier {
-    private final P       parent;
+    private final P parent;
     private final boolean required;
 
     public Parent(final @NonNull P parent,
@@ -59,63 +55,40 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
                   final boolean required,
                   final @NonNull JsonStringNode jsonName,
                   final @NonNull String jsonPath,
-                  final @Nullable Constraint... constraints) {
+                  final @NonNull ImmutableList<Constraint> constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
       this.parent = parent;
       this.required = required;
     }
 
-    public @NonNull P parent() {
-      return parent;
-    }
+    public @NonNull P parent() { return parent; }
 
-    public boolean isKindOf(final @NonNull Key key) {
-      return parent().isKindOf(key);
-    }
+    public boolean isKindOf(final @NonNull Key key) { return parent().isKindOf(key); }
 
-    @Override public boolean isDefinedAt(final @NonNull Key key) {
-      return key.getParent() != null && parent().isKindOf(key.getParent());
-    }
+    @Override public boolean isDefinedAt(final @NonNull Key key) { return key.getParent() != null && parent().isKindOf(key.getParent()); }
 
-    public @Nullable Key of(final @NonNull Entity data) {
-      return read(data);
-    }
+    public @Nullable Key of(final @NonNull Entity data) { return read(data); }
 
-    public Key read(final @NonNull Entity data) {
-      return data.getParent();
-    }
+    public Key read(final @NonNull Entity data) { return data.getParent(); }
 
-    public Key of(final @NonNull Key key) {
-      return read(key);
-    }
+    public Key of(final @NonNull Key key) { return read(key); }
 
-    public Key read(final @NonNull Key key) {
-      return key.getParent();
-    }
+    public Key read(final @NonNull Key key) { return key.getParent(); }
 
-    @Override public @NonNull JsonNode makeJsonValue(final @NonNull Key key) {
-      return JsonNodeFactories.object(parent().jsonKeyFields(key));
-    }
+    @Override public @NonNull JsonNode makeJsonValue(final @NonNull Key key) { return JsonNodeFactories.object(parent().jsonKeyFields(key)); }
 
-    @Override public @Nullable Key interpretJson(final @NonNull JsonNode json) {
-      if (json.isNullNode(jsonPath())) {
-        return null;
-      }
-      return parent().keyFromJson(json.getNode(jsonPath()));
-    }
+    @Override public @Nullable Key interpretJson(final @NonNull JsonNode json) { return parent().keyFromJson(json.getNode(jsonPath())); }
 
     @Override public void validate(final @NonNull Entity data, final @NonNull Validation validation) {
       final Key value = read(data);
       if (value == null) {
         if (required) {
-          validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this, value));
+          validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
         }
       } else {
-        if (constraints != null && constraints.length > 0) {
-          for (final Constraint constraint : constraints) {
-            if (constraint.isInvalid(value)) {
-              validation.reject(this, constraint.messageFor(this, value));
-            }
+        for (final Constraint constraint : constraints()) {
+          if (constraint.isInvalid(value)) {
+            validation.reject(this, constraint.messageFor(this, value));
           }
         }
       }
@@ -160,17 +133,11 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
   public static final class SelectChildEntities extends RootActiveEntity.SelectEntities {
     private static final long serialVersionUID = 5591903627552341816L;
 
-    SelectChildEntities(final @NonNull Query query, final @NonNull FetchOptions fetchOptions) {
-      super(query, fetchOptions);
-    }
+    SelectChildEntities(final @NonNull Query query, final @NonNull FetchOptions fetchOptions) { super(query, fetchOptions); }
 
-    public final @NonNull SelectEntities withoutAncestor() {
-      return this;
-    }
+    public final @NonNull SelectEntities withoutAncestor() { return this; }
 
-    public final @NonNull SelectEntities withAncestor(final @NonNull Entity ancestor) {
-      return withAncestor(ancestor.getKey());
-    }
+    public final @NonNull SelectEntities withAncestor(final @NonNull Entity ancestor) { return withAncestor(ancestor.getKey()); }
 
     public final @NonNull SelectEntities withAncestor(final @NonNull Key ancestorKey) {
       query.setAncestor(ancestorKey);

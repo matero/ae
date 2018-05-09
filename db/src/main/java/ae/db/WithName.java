@@ -28,10 +28,8 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.PropertyProjection;
-import com.google.appengine.api.users.User;
+import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface WithName extends java.io.Serializable {
   @NonNull Name modelIdentifier();
@@ -42,19 +40,15 @@ public interface WithName extends java.io.Serializable {
                 final @NonNull String field,
                 final @NonNull JsonStringNode jsonName,
                 final @NonNull String jsonPath,
-                final @Nullable Constraint... constraints) {
+                final @NonNull ImmutableList<Constraint> constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
     }
 
-    public @NonNull String of(final @NonNull Entity data) {
-      return read(data);
-    }
+    public @NonNull String of(final @NonNull Entity data) { return read(data); }
 
     public @NonNull String read(final @NonNull Entity data) { return read(data.getKey()); }
 
-    public @NonNull String of(final @NonNull Key key) {
-      return read(key);
-    }
+    public @NonNull String of(final @NonNull Key key) { return read(key); }
 
     public @NonNull String read(final Key key) { return key.getName(); }
 
@@ -67,16 +61,14 @@ public interface WithName extends java.io.Serializable {
     @Override public void validate(final @NonNull Entity data, final @NonNull Validation validation) {
       final String value = read(data);
       if (RequiredConstraint.INSTANCE.isInvalid(value)) {
-        validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this, value));
+        validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
       } else {
         if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value)) {
           validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value));
         }
-        if (constraints != null && constraints.length > 0) {
-          for (final Constraint constraint : constraints) {
-            if (constraint.isInvalid(value)) {
-              validation.reject(this, constraint.messageFor(this, value));
-            }
+        for (final Constraint constraint : constraints()) {
+          if (constraint.isInvalid(value)) {
+            validation.reject(this, constraint.messageFor(this, value));
           }
         }
       }

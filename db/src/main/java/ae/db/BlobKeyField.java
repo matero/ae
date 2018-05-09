@@ -23,14 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.datastore.PropertyProjection;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface BlobKeyField extends ScalarField<BlobKey> {
-  @Override default @NonNull Class<BlobKey> type() {
-    return BlobKey.class;
-  }
+  @Override default @NonNull Class<BlobKey> type() { return BlobKey.class; }
 }

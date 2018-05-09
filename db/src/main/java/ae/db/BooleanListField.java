@@ -26,7 +26,5 @@ package ae.db;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface BooleanListField extends ListField<Boolean> {
-  @Override default @NonNull Class<Boolean> elementType() {
-    return Boolean.class;
-  }
+  @Override default @NonNull Class<Boolean> elementType() { return Boolean.class; }
 }

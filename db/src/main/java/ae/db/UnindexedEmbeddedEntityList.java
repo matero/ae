@@ -25,6 +25,7 @@ package ae.db;
 
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -36,11 +37,9 @@ public final class UnindexedEmbeddedEntityList extends ListField.Unindexed<Embed
                                      final boolean required,
                                      final @NonNull JsonStringNode jsonName,
                                      final @NonNull String jsonPath,
-                                     final @Nullable Constraint... constraints) {
+                                     final @NonNull ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, EmbeddedEntityJsonSerializer.ARRAY, constraints);
   }
 
-  @Override public @NonNull Class<EmbeddedEntity> elementType() {
-    return EmbeddedEntity.class;
-  }
+  @Override public @NonNull Class<EmbeddedEntity> elementType() { return EmbeddedEntity.class; }
 }

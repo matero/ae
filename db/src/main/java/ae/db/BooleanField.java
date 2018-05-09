@@ -33,7 +33,5 @@ public interface BooleanField extends ScalarField<Boolean> {
     @NonNull FilterPredicate isFalse();
   }
 
-  @Override default @NonNull Class<Boolean> type() {
-    return Boolean.class;
-  }
+  @Override default @NonNull Class<Boolean> type() { return Boolean.class; }
 }

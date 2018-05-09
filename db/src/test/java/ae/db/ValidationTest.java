@@ -24,6 +24,7 @@
 package ae.db;
 
 import argo.jdom.JsonNode;
+
 import static argo.jdom.JsonNodeFactories.array;
 import static argo.jdom.JsonNodeFactories.field;
 import static argo.jdom.JsonNodeFactories.object;
@@ -37,33 +38,19 @@ import static ae.db.ActiveEntity.noConstraints;
 import static ae.db.ActiveEntity.property;
 import static ae.db.ActiveEntity.required;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+
 import org.junit.Test;
 
 public class ValidationTest {
-  @Test public void cant_be_created_with_null_success_message() {
-    // given
-    final String nullSuccessMessage = null;
-    // when
-    try {
-      Validation.withSuccessMessage(nullSuccessMessage);
-      fail("null success message should be rejected");
-    } // then
-    catch (final NullPointerException e) {
-      assertThat(e).hasNoCause().hasMessage("successMessage");
-    }
-  }
-
   @Test public void can_be_created_with_nonnull_success_message() {
     // given
     final String successMessage = "some message";
     // when
-    try {
-      Validation.withSuccessMessage(successMessage);
-    } // then
-    catch (final NullPointerException e) {
-      fail("non null success message should be accepted");
-    }
+    Validation v = Validation.withSuccessMessage(successMessage);
+    // then
+    assertThat(v.success()).isTrue();
+    assertThat(v.failure()).isFalse();
+    assertThat(v.successMessage).isEqualTo("some message");
   }
 
   @Test public void when_no_attr_is_rejected_then_the_validation_is_on_success() {
@@ -77,15 +64,14 @@ public class ValidationTest {
 
   @Test public void failed_validations_are_considered_on_failure_from_creation() {
     // given, an attr
-    final StringField attr = new StringField.UnindexedString(
-            canonicalName("attr"),
-            description("test attribute"),
-            property("attr"),
-            field("attr"),
-            required(false),
-            jsonName("attr"),
-            jsonPath("attr"),
-            noConstraints());
+    final StringField attr = new UnindexedString(canonicalName("attr"),
+                                                 description("test attribute"),
+                                                 property("attr"),
+                                                 field("attr"),
+                                                 required(false),
+                                                 jsonName("attr"),
+                                                 jsonPath("attr"),
+                                                 noConstraints());
 
     // and given, a failed validation on attr
     final Validation validation = Validation.failed(attr, "Message");
@@ -99,15 +85,14 @@ public class ValidationTest {
     // given, a validation
     final Validation validation = Validation.withSuccessMessage("Message");
     // and given, an attr
-    final StringField attr = new StringField.UnindexedString(
-            canonicalName("attr"),
-            description("test attribute"),
-            property("attr"),
-            field("attr"),
-            required(false),
-            jsonName("attr"),
-            jsonPath("attr"),
-            noConstraints());
+    final StringField attr = new UnindexedString(canonicalName("attr"),
+                                                 description("test attribute"),
+                                                 property("attr"),
+                                                 field("attr"),
+                                                 required(false),
+                                                 jsonName("attr"),
+                                                 jsonPath("attr"),
+                                                 noConstraints());
 
     // when the attr is rejected
     validation.reject(attr, "message");
@@ -129,33 +114,30 @@ public class ValidationTest {
     // given, a validation
     final Validation validation = Validation.withSuccessMessage("The Success Message");
     // and given, an 3 attrs
-    final StringField a = new StringField.UnindexedString(
-            canonicalName("a"),
-            description("test attribute a"),
-            property("a"),
-            field("a"),
-            required(false),
-            jsonName("a"),
-            jsonPath("a"),
-            noConstraints());
-    final StringField b = new StringField.UnindexedString(
-            canonicalName("b"),
-            description("test attribute b"),
-            property("b"),
-            field("b"),
-            required(false),
-            jsonName("b"),
-            jsonPath("b"),
-            noConstraints());
-    final StringField c = new StringField.UnindexedString(
-            canonicalName("c"),
-            description("test attribute c"),
-            property("c"),
-            field("c"),
-            required(false),
-            jsonName("c"),
-            jsonPath("c"),
-            noConstraints());
+    final StringField a = new UnindexedString(canonicalName("a"),
+                                              description("test attribute a"),
+                                              property("a"),
+                                              field("a"),
+                                              required(false),
+                                              jsonName("a"),
+                                              jsonPath("a"),
+                                              noConstraints());
+    final StringField b = new UnindexedString(canonicalName("b"),
+                                              description("test attribute b"),
+                                              property("b"),
+                                              field("b"),
+                                              required(false),
+                                              jsonName("b"),
+                                              jsonPath("b"),
+                                              noConstraints());
+    final StringField c = new UnindexedString(canonicalName("c"),
+                                              description("test attribute c"),
+                                              property("c"),
+                                              field("c"),
+                                              required(false),
+                                              jsonName("c"),
+                                              jsonPath("c"),
+                                              noConstraints());
 
     // when, a is rejected 1 time
     validation.reject(a, "'a' message error");

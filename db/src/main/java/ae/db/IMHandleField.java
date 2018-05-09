@@ -23,38 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.IMHandle;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface IMHandleField extends ScalarField<IMHandle> {
-  @Override default Class<IMHandle> type() {
-    return IMHandle.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<IMHandle> implements IMHandleField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, IMHandleJsonSerializer.INSTANCE, constraints);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<IMHandle> implements IMHandleField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, IMHandleJsonSerializer.INSTANCE, new PropertyProjection(property, IMHandle.class), constraints);
-    }
-  }
+  @Override default @NonNull Class<IMHandle> type() { return IMHandle.class; }
 }

@@ -3,8 +3,8 @@ package ae.db;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Rating;
+import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class IndexedRatingList extends ListField.Indexed<Rating> implements RatingListField {
   public IndexedRatingList(final @NonNull String canonicalName,
@@ -14,7 +14,8 @@ public final class IndexedRatingList extends ListField.Indexed<Rating> implement
                            final boolean required,
                            final @NonNull JsonStringNode jsonName,
                            final @NonNull String jsonPath,
-                           final @Nullable Constraint... constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, RatingJsonSerializer.ARRAY, new PropertyProjection(property, Rating.class), constraints);
+                           final @NonNull ImmutableList<Constraint> constraints) {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, RatingJsonSerializer.ARRAY,
+          new PropertyProjection(property, Rating.class), constraints);
   }
 }

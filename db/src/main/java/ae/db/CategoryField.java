@@ -23,52 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Category;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface CategoryField extends ScalarField<Category> {
-  @Override default Class<Category> type() {
-    return Category.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<Category> implements CategoryField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.INSTANCE, constraints);
-    }
-
-    @Override protected void validateNotNullValue(final Category value, final Validation validation) {
-      if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getCategory())) {
-        validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.getCategory()));
-      }
-      super.validateNotNullValue(value, validation);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<Category> implements CategoryField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.INSTANCE, new PropertyProjection(property, Category.class), constraints);
-    }
-
-    @Override protected void validateNotNullValue(final Category value, final Validation validation) {
-      if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getCategory())) {
-        validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.getCategory()));
-      }
-      super.validateNotNullValue(value, validation);
-    }
-  }
+  @Override default @NonNull Class<Category> type() { return Category.class; }
 }

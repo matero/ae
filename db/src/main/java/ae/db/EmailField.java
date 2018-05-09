@@ -23,52 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Email;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface EmailField extends ScalarField<Email> {
-  @Override default Class<Email> type() {
-    return Email.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<Email> implements EmailField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.INSTANCE, constraints);
-    }
-
-    @Override protected void validateNotNullValue(final Email value, final Validation validation) {
-      if (EmailConstraint.ForEmail.INSTANCE.isInvalid(value)) {
-        validation.reject(this, EmailConstraint.ForEmail.INSTANCE.messageFor(this, value));
-      }
-      super.validateNotNullValue(value, validation);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<Email> implements EmailField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.INSTANCE, new PropertyProjection(property, Email.class), constraints);
-    }
-
-    @Override protected void validateNotNullValue(final Email value, final Validation validation) {
-      if (EmailConstraint.ForEmail.INSTANCE.isInvalid(value)) {
-        validation.reject(this, EmailConstraint.ForEmail.INSTANCE.messageFor(this, value));
-      }
-      super.validateNotNullValue(value, validation);
-    }
-  }
+  @Override default @NonNull Class<Email> type() { return Email.class; }
 }

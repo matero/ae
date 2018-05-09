@@ -23,52 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PhoneNumber;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface PhoneNumberField extends ScalarField<PhoneNumber> {
-  @Override default Class<PhoneNumber> type() {
-    return PhoneNumber.class;
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<PhoneNumber> implements PhoneNumberField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, PhoneNumberJsonSerializer.INSTANCE, constraints);
-    }
-
-    @Override protected void validateNotNullValue(final PhoneNumber value, final Validation validation) {
-      if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getNumber())) {
-        validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.getNumber()));
-      }
-      super.validateNotNullValue(value, validation);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<PhoneNumber> implements PhoneNumberField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, PhoneNumberJsonSerializer.INSTANCE, new PropertyProjection(property, PhoneNumber.class), constraints);
-    }
-
-    @Override protected void validateNotNullValue(final PhoneNumber value, final Validation validation) {
-      if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getNumber())) {
-        validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.getNumber()));
-      }
-      super.validateNotNullValue(value, validation);
-    }
-  }
+  @Override default @NonNull Class<PhoneNumber> type() { return PhoneNumber.class; }
 }

@@ -23,49 +23,13 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyContainer;
-import com.google.appengine.api.datastore.PropertyProjection;
 import java.util.Date;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface DateField extends ScalarField<Date> {
 
-  @Override default Class<Date> type() {
-    return Date.class;
-  }
+  @Override default @NonNull Class<Date> type() { return Date.class; }
 
-  default void writeTimestamp(final PropertyContainer data) {
-    if (data == null) {
-      throw new NullPointerException("data");
-    }
-    write(data, new Date());
-  }
-
-  final class Unindexed extends ScalarField.Unindexed<Date> implements DateField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final JsonSerializer<Date> jsonSerializer,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
-    }
-  }
-
-  final class Indexed extends ScalarField.Indexed<Date> implements DateField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final JsonSerializer<Date> jsonSerializer,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, new PropertyProjection(property, Date.class), constraints);
-    }
-  }
+  default void writeTimestamp(final @NonNull PropertyContainer data) { write(data, new Date()); }
 }

@@ -23,40 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
-import com.google.appengine.api.datastore.PropertyProjection;
 import java.util.Date;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface DateListField extends ListField<Date> {
-  @Override default Class<Date> elementType() {
-    return Date.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<Date> implements DateListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final JsonSerializer<Date> jsonElementSerializer,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new JsonArraySerializer<>(jsonElementSerializer), constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<Date> implements DateListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final JsonSerializer<Date> jsonElementSerializer,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, new JsonArraySerializer<>(jsonElementSerializer), new PropertyProjection(property, Date.class), constraints);
-    }
-  }
+  @Override default @NonNull Class<Date> elementType() { return Date.class; }
 }

@@ -101,8 +101,9 @@
             <arg>-AprintErrorStack</arg>
             <!-- location of the annotated JDK, which comes from a Maven dependency -->
             <arg>-Xbootclasspath/p:${annotatedJdk}</arg>
-            <!-- Uncomment the following line to turn type-checking warnings into errors. -->
-            <!-- <arg>-Awarns</arg> -->
+            <arg>-Awarns</arg>
+            <arg>-Alint</arg>
+            <arg>-AskipUses="org\.assertj\."</arg>
           </compilerArgs>
         </configuration>
       </plugin>

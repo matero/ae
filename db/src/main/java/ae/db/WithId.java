@@ -28,6 +28,7 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -50,17 +51,14 @@ public interface WithId extends java.io.Serializable {
               final @NonNull String field,
               final @NonNull JsonStringNode jsonName,
               final @NonNull String jsonPath,
-              final @Nullable Constraint... constraints) {
+              final @NonNull ImmutableList<Constraint> constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
     }
 
-    @Override
-    void doValidate(final Long value, final Validation validation) {
-      if (constraints != null && constraints.length > 0) {
-        for (final Constraint constraint : constraints) {
-          if (constraint.isInvalid(value)) {
-            validation.reject(this, constraint.messageFor(this, value));
-          }
+    @Override void doValidate(final Long value, final Validation validation) {
+      for (final Constraint constraint : constraints()) {
+        if (constraint.isInvalid(value)) {
+          validation.reject(this, constraint.messageFor(this, value));
         }
       }
     }
@@ -72,20 +70,17 @@ public interface WithId extends java.io.Serializable {
                       final String field,
                       final JsonStringNode jsonName,
                       final String jsonPath,
-                      final Constraint... constraints) {
+                      final @NonNull ImmutableList<Constraint> constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
     }
 
-    @Override
-    void doValidate(final Long value, final Validation validation) {
+    @Override void doValidate(final Long value, final Validation validation) {
       if (value == 0L) {
-        validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this, value));
+        validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
       } else {
-        if (constraints != null && constraints.length > 0) {
-          for (final Constraint constraint : constraints) {
-            if (constraint.isInvalid(value)) {
-              validation.reject(this, constraint.messageFor(this, value));
-            }
+        for (final Constraint constraint : constraints()) {
+          if (constraint.isInvalid(value)) {
+            validation.reject(this, constraint.messageFor(this, value));
           }
         }
       }
@@ -99,24 +94,21 @@ abstract class BasicId extends ActiveEntity.Identifier {
           final @NonNull String field,
           final @NonNull JsonStringNode jsonName,
           final @NonNull String jsonPath,
-          final @Nullable Constraint... constraints) {
+          final @NonNull ImmutableList<Constraint> constraints) {
     super(canonicalName, description, field, jsonName, jsonPath, constraints);
   }
 
-  public long of(final @NonNull Entity data) {return read(data);}
+  public long of(final @NonNull Entity data) { return read(data); }
 
-  public long read(final @NonNull Entity data) {return read(data.getKey());}
+  public long read(final @NonNull Entity data) { return read(data.getKey()); }
 
-  public long of(final @NonNull Key key) {return read(key);}
+  public long of(final @NonNull Key key) { return read(key); }
 
-  public long read(final @NonNull Key key) {return key.getId();}
+  public long read(final @NonNull Key key) { return key.getId(); }
 
-  @Override public boolean isDefinedAt(final @NonNull Key key) {return key.getId() != 0;}
+  @Override public boolean isDefinedAt(final @NonNull Key key) { return key.getId() != 0; }
 
   @Override public @Nullable Long interpretJson(final @NonNull JsonNode json) {
-    if (json == null) {
-      throw new NullPointerException("json");
-    }
     if (json.isNullNode(jsonPath())) {
       return null;
     }
@@ -128,10 +120,10 @@ abstract class BasicId extends ActiveEntity.Identifier {
     }
   }
 
-  @Override public @NonNull JsonNode makeJsonValue(final @NonNull Key key) {return JsonNodeFactories.number(key.getId());}
+  @Override public @NonNull JsonNode makeJsonValue(final @NonNull Key key) { return JsonNodeFactories.number(key.getId()); }
 
   @Override public void validate(final @NonNull Entity data, final @NonNull Validation validation) {
-    final Long value = read(data);
+    final long value = read(data);
     doValidate(value, validation);
   }
 

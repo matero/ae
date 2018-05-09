@@ -42,9 +42,7 @@ public interface JsonSerializer<T> extends java.io.Serializable {
 final class NotSerializableToJson<T> implements JsonSerializer<T> {
   private final Class<T> type;
 
-  NotSerializableToJson(final Class<T> type) {
-    this.type = type;
-  }
+  NotSerializableToJson(final Class<T> type) { this.type = type; }
 
   @Override public @NonNull JsonNode toJson(final @Nullable T value) {
     throw new UnsupportedOperationException("JSON serialization of " + type.getCanonicalName() + " instances is not supported.");
@@ -60,11 +58,9 @@ final class NotSerializableToJson<T> implements JsonSerializer<T> {
 }
 
 final class JsonArraySerializer<E> implements JsonSerializer<List<@Nullable E>> {
-  private final JsonSerializer<E> elementJsonSerializer;
+  private final @NonNull JsonSerializer<E> elementJsonSerializer;
 
-  JsonArraySerializer(final JsonSerializer<E> elementJsonSerializer) {
-    this.elementJsonSerializer = elementJsonSerializer;
-  }
+  JsonArraySerializer(final @NonNull JsonSerializer<E> elementJsonSerializer) { this.elementJsonSerializer = elementJsonSerializer; }
 
   @Override public @NonNull JsonNode toJson(final @Nullable List<@Nullable E> value) {
     if (value == null) {

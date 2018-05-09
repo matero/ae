@@ -33,9 +33,7 @@ import java.util.Iterator;
 public abstract class SorteableSelect extends Select {
   private static final long serialVersionUID = 8141301362335037541L;
 
-  SorteableSelect(final @NonNull Query query, final @NonNull FetchOptions fetchOptions) {
-    super(query, fetchOptions);
-  }
+  SorteableSelect(final @NonNull Query query, final @NonNull FetchOptions fetchOptions) { super(query, fetchOptions); }
 
   public final @NonNull Select sortedBy(final @NonNull SortPredicate sort) {
     query.addSort(sort.getPropertyName(), sort.getDirection());

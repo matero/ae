@@ -23,45 +23,42 @@
  */
 package ae.db;
 
-import argo.jdom.JsonField;
-import argo.jdom.JsonNode;
 import static argo.jdom.JsonNodeFactories.array;
 import static argo.jdom.JsonNodeFactories.field;
 import static argo.jdom.JsonNodeFactories.object;
 import static argo.jdom.JsonNodeFactories.string;
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
+import argo.jdom.JsonField;
+import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Validation {
+public final class Validation {
   public static @NonNull Validation withSuccessMessage(final @NonNull String successMessage) { return new Validation(successMessage); }
 
   public static @NonNull Validation failed(final @NonNull Attr attr, final @NonNull String message) {
-    final Validation validation = new Validation(null);
+    final Validation validation = new Validation("");
     validation.reject(attr, message);
     return validation;
   }
 
-  private final @NonNull  LinkedHashMap<Attr, List<String>> errors;
-  private final @Nullable String                            successMessage;
+  private final @NonNull LinkedHashMap<Attr, List<String>> errors;
+  public final @NonNull String successMessage;
 
-  private Validation(final @Nullable String successMessage) {
+  private Validation(final @NonNull String successMessage) {
     this.errors = new LinkedHashMap<>();
     this.successMessage = successMessage;
   }
 
-  public boolean success() {
-    return errors.isEmpty();
-  }
+  public boolean success() { return errors.isEmpty(); }
 
-  public boolean failure() {
-    return !errors.isEmpty();
-  }
+  public boolean failure() { return !errors.isEmpty(); }
 
   public @NonNull List<@NonNull String> get(final @NonNull Attr attr) {
     if (errors.containsKey(attr)) {
@@ -79,9 +76,7 @@ public class Validation {
     }
   }
 
-  private @NonNull JsonField successField() {
-    return field("success", string(successMessage));
-  }
+  private @NonNull JsonField successField() { return field("success", string(successMessage)); }
 
   private @NonNull JsonField failureField() {
     final List<JsonNode> propertiesErrors = new java.util.ArrayList<>(errors.size());
@@ -100,6 +95,6 @@ public class Validation {
 
   public void reject(final @NonNull Attr attr, final @NonNull String message) {
     errors.putIfAbsent(attr, new LinkedList<>());
-    errors.get(attr).add(message);
+    castNonNull(errors.get(attr)).add(message);
   }
 }

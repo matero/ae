@@ -39,7 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public abstract class Select implements java.io.Serializable {
-  final @NonNull         Query        query;
+  final @NonNull Query query;
   private final @NonNull FetchOptions fetchOptions;
 
   protected Select(final @NonNull Query query, final @NonNull FetchOptions fetchOptions) {
@@ -47,29 +47,19 @@ public abstract class Select implements java.io.Serializable {
     this.fetchOptions = fetchOptions;
   }
 
-  public @NonNull List<@NonNull Entity> asList() {
-    return asList(DatastoreServiceFactory.getDatastoreService());
-  }
+  public @NonNull List<@NonNull Entity> asList() { return asList(DatastoreServiceFactory.getDatastoreService()); }
 
-  protected @NonNull List<@NonNull Entity> asList(final @NonNull BaseDatastoreService datastore) {
-    return prepare(datastore).asList(fetchOptions);
-  }
+  protected @NonNull List<@NonNull Entity> asList(final @NonNull BaseDatastoreService datastore) { return prepare(datastore).asList(fetchOptions); }
 
-  public @NonNull QueryResultList<@NonNull Entity> asQueryResultList() {
-    return asQueryResultList(DatastoreServiceFactory.getDatastoreService());
-  }
+  public @NonNull QueryResultList<@NonNull Entity> asQueryResultList() { return asQueryResultList(DatastoreServiceFactory.getDatastoreService()); }
 
   protected @NonNull QueryResultList<@NonNull Entity> asQueryResultList(final @NonNull BaseDatastoreService datastore) {
     return prepare(datastore).asQueryResultList(fetchOptions);
   }
 
-  public @NonNull Iterable<@NonNull Entity> asIterable() {
-    return asIterable(DatastoreServiceFactory.getDatastoreService());
-  }
+  public @NonNull Iterable<@NonNull Entity> asIterable() { return asIterable(DatastoreServiceFactory.getDatastoreService()); }
 
-  protected Iterable<Entity> asIterable(final BaseDatastoreService datastore) {
-    return prepare(datastore).asIterable(fetchOptions);
-  }
+  protected Iterable<Entity> asIterable(final BaseDatastoreService datastore) { return prepare(datastore).asIterable(fetchOptions); }
 
   public @NonNull QueryResultIterable<@NonNull Entity> asQueryResultIterable() {
     return asQueryResultIterable(DatastoreServiceFactory.getDatastoreService());
@@ -79,9 +69,7 @@ public abstract class Select implements java.io.Serializable {
     return prepare(datastore).asQueryResultIterable(fetchOptions);
   }
 
-  public @NonNull Iterator<@NonNull Entity> asIterator() {
-    return asIterator(DatastoreServiceFactory.getDatastoreService());
-  }
+  public @NonNull Iterator<@NonNull Entity> asIterator() { return asIterator(DatastoreServiceFactory.getDatastoreService()); }
 
   protected @NonNull Iterator<@NonNull Entity> asIterator(final @NonNull BaseDatastoreService datastore) {
     return prepare(datastore).asIterator(fetchOptions);

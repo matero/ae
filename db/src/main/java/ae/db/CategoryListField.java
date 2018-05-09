@@ -23,38 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Category;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface CategoryListField extends ListField<Category> {
-  @Override default Class<Category> elementType() {
-    return Category.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<Category> implements CategoryListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<Category> implements CategoryListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY, new PropertyProjection(property, Category.class), constraints);
-    }
-  }
+  @Override default @NonNull Class<Category> elementType() { return Category.class; }
 }

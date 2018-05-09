@@ -25,8 +25,8 @@ package ae.db;
 
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Text;
+import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class UnindexedTextList extends ListField.Unindexed<Text> {
   public UnindexedTextList(final @NonNull String canonicalName,
@@ -36,11 +36,9 @@ public final class UnindexedTextList extends ListField.Unindexed<Text> {
                            final boolean required,
                            final @NonNull JsonStringNode jsonName,
                            final @NonNull String jsonPath,
-                           final @Nullable Constraint... constraints) {
+                           final @NonNull ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, TextJsonSerializer.ARRAY, constraints);
   }
 
-  @Override public @NonNull Class<Text> elementType() {
-    return Text.class;
-  }
+  @Override public @NonNull Class<Text> elementType() { return Text.class; }
 }

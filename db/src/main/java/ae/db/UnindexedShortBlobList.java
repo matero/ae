@@ -2,8 +2,8 @@ package ae.db;
 
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.ShortBlob;
+import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class UnindexedShortBlobList extends ListField.Unindexed<ShortBlob> implements ShortBlobListField {
   public UnindexedShortBlobList(final @NonNull String canonicalName,
@@ -13,7 +13,7 @@ public final class UnindexedShortBlobList extends ListField.Unindexed<ShortBlob>
                                 final boolean required,
                                 final @NonNull JsonStringNode jsonName,
                                 final @NonNull String jsonPath,
-                                final @Nullable Constraint... constraints) {
+                                final @NonNull ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, ShortBlobJsonSerializer.ARRAY, constraints);
   }
 }

@@ -23,38 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Email;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface EmailListField extends ListField<Email> {
-  @Override default Class<Email> elementType() {
-    return Email.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<Email> implements EmailListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<Email> implements EmailListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.ARRAY, new PropertyProjection(property, Email.class), constraints);
-    }
-  }
+  @Override default @NonNull Class<Email> elementType() { return Email.class; }
 }

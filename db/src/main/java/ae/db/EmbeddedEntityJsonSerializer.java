@@ -29,6 +29,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.List;
 
 interface EmbeddedEntityJsonSerializer {
-  JsonSerializer<EmbeddedEntity>                 INSTANCE = new NotSerializableToJson<>(EmbeddedEntity.class);
-  JsonSerializer<List<@Nullable EmbeddedEntity>> ARRAY    = new JsonArrayNotSerializable<>(EmbeddedEntity.class);
+  JsonSerializer<EmbeddedEntity> INSTANCE = new NotSerializableToJson<>(EmbeddedEntity.class);
+  JsonSerializer<List<@Nullable EmbeddedEntity>> ARRAY = new JsonArrayNotSerializable<>(EmbeddedEntity.class);
 }

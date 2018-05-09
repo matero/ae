@@ -23,38 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.GeoPt;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface GeoPtListField extends ListField<GeoPt> {
-  @Override default Class<GeoPt> elementType() {
-    return GeoPt.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<GeoPt> implements GeoPtListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, GeoPtJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<GeoPt> implements GeoPtListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, GeoPtJsonSerializer.ARRAY, new PropertyProjection(property, GeoPt.class), constraints);
-    }
-  }
+  @Override default @NonNull Class<GeoPt> elementType() { return GeoPt.class; }
 }

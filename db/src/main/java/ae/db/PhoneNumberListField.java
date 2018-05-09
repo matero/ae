@@ -23,38 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PhoneNumber;
-import com.google.appengine.api.datastore.PropertyProjection;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface PhoneNumberListField extends ListField<PhoneNumber> {
-  @Override default Class<PhoneNumber> elementType() {
-    return PhoneNumber.class;
-  }
-
-  final class Unindexed extends ListField.Unindexed<PhoneNumber> implements PhoneNumberListField {
-    public Unindexed(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, PhoneNumberJsonSerializer.ARRAY, constraints);
-    }
-  }
-
-  final class Indexed extends ListField.Indexed<PhoneNumber> implements PhoneNumberListField {
-    public Indexed(final String canonicalName,
-                   final String description,
-                   final String property,
-                   final String field,
-                   final boolean required,
-                   final JsonStringNode jsonName,
-                   final String jsonPath,
-                   final Constraint... constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, PhoneNumberJsonSerializer.ARRAY, new PropertyProjection(property, PhoneNumber.class), constraints);
-    }
-  }
+  @Override default @NonNull Class<PhoneNumber> elementType() { return PhoneNumber.class; }
 }

@@ -3,8 +3,8 @@ package ae.db;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.PropertyProjection;
+import com.google.common.collect.ImmutableList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class IndexedBlobKeyList extends ListField.Indexed<BlobKey> implements BlobKeyListField {
   public IndexedBlobKeyList(final @NonNull String canonicalName,
@@ -14,7 +14,7 @@ public final class IndexedBlobKeyList extends ListField.Indexed<BlobKey> impleme
                             final boolean required,
                             final @NonNull JsonStringNode jsonName,
                             final @NonNull String jsonPath,
-                            final @Nullable Constraint... constraints) {
+                            final @NonNull ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, BlobKeyJsonSerializer.ARRAY, new PropertyProjection(property, BlobKey.class), constraints);
   }
 }

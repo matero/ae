@@ -24,16 +24,13 @@
 package ae.db;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
-public interface Constraint<T> extends java.io.Serializable {
-  boolean isInvalid(T value);
+public interface Constraint<@NonNull T> extends java.io.Serializable {
+  boolean isInvalid(@NonNull T value);
 
-  default @NonNull String completeName(final @NonNull Attr attr) {
-    return attr.canonicalName() + '.' + getName();
-  }
+  default @NonNull String completeName(final @NonNull Attr attr) { return attr.canonicalName() + '.' + getName(); }
 
-  @NonNull String messageFor(@NonNull Attr attr, T value);
+  @NonNull String messageFor(@NonNull Attr attr, @NonNull T value);
 
   @NonNull String getName();
 }

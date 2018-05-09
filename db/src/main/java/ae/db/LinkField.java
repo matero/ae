@@ -23,15 +23,9 @@
  */
 package ae.db;
 
-import argo.jdom.JsonNode;
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Link;
-import com.google.appengine.api.datastore.PropertyProjection;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface LinkField extends ScalarField<Link> {
-  @Override default @NonNull Class<Link> type() {
-    return Link.class;
-  }
+  @Override default @NonNull Class<Link> type() { return Link.class; }
 }
