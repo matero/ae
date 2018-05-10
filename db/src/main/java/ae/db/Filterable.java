@@ -26,40 +26,39 @@ package ae.db;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortPredicate;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 public interface Filterable<T> extends java.io.Serializable {
-  @NonNull PropertyProjection projection();
+  PropertyProjection projection();
 
-  @NonNull SortPredicate asc();
+  SortPredicate asc();
 
-  @NonNull SortPredicate desc();
+  SortPredicate desc();
 
-  @NonNull FilterPredicate isNull();
+  FilterPredicate isNull();
 
-  @NonNull FilterPredicate isNotNull();
+  FilterPredicate isNotNull();
 
-  @NonNull FilterPredicate eq(@Nullable T value);
+  FilterPredicate eq(@Nullable T value);
 
-  @NonNull FilterPredicate ne(@Nullable T value);
+  FilterPredicate ne(@Nullable T value);
 
-  @NonNull FilterPredicate lt(@Nullable T value);
+  FilterPredicate lt(@Nullable T value);
 
-  @NonNull FilterPredicate le(@Nullable T value);
+  FilterPredicate le(@Nullable T value);
 
-  @NonNull FilterPredicate gt(@Nullable T value);
+  FilterPredicate gt(@Nullable T value);
 
-  @NonNull FilterPredicate ge(@Nullable T value);
+  FilterPredicate ge(@Nullable T value);
 
-  @NonNull FilterPredicate in(@Nullable T... values);
+  FilterPredicate in(@Nullable T... values);
 
-  @NonNull FilterPredicate in(@Nullable Iterable<@Nullable T> values);
+  FilterPredicate in(@Nullable Iterable<@Nullable T> values);
 
-  @NonNull FilterPredicate in(@Nullable Iterator<@Nullable T> values);
+  FilterPredicate in(@Nullable Iterator<@Nullable T> values);
 
-  @NonNull FilterPredicate in(@Nullable Collection<@Nullable T> values);
+  FilterPredicate in(@Nullable Collection<@Nullable T> values);
 }

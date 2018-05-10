@@ -29,29 +29,30 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface WithId extends java.io.Serializable {
-  @NonNull Id modelIdentifier();
+  Id modelIdentifier();
 
-  @NonNull Entity make();
+  Entity make();
 
-  @NonNull Entity make(long id);
+  Entity make(long id);
 
-  @NonNull Key makeKey(long id);
+  Key makeKey(long id);
 
-  @NonNull Entity newEntity();
+  Entity newEntity();
 
-  @NonNull Entity newEntity(long id);
+  Entity newEntity(long id);
 
   final class Id extends BasicId {
-    public Id(final @NonNull String canonicalName,
-              final @NonNull String description,
-              final @NonNull String field,
-              final @NonNull JsonStringNode jsonName,
-              final @NonNull String jsonPath,
-              final @NonNull ImmutableList<Constraint> constraints) {
+    private static final long serialVersionUID = -4151154035733158003L;
+
+    public Id(final String canonicalName,
+              final String description,
+              final String field,
+              final JsonStringNode jsonName,
+              final String jsonPath,
+              final ImmutableList<Constraint> constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
     }
 
@@ -65,12 +66,14 @@ public interface WithId extends java.io.Serializable {
   }
 
   final class RequiredId extends BasicId {
+    private static final long serialVersionUID = 1462527284491866413L;
+
     public RequiredId(final String canonicalName,
                       final String description,
                       final String field,
                       final JsonStringNode jsonName,
                       final String jsonPath,
-                      final @NonNull ImmutableList<Constraint> constraints) {
+                      final ImmutableList<Constraint> constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
     }
 
@@ -89,26 +92,28 @@ public interface WithId extends java.io.Serializable {
 }
 
 abstract class BasicId extends ActiveEntity.Identifier {
-  BasicId(final @NonNull String canonicalName,
-          final @NonNull String description,
-          final @NonNull String field,
-          final @NonNull JsonStringNode jsonName,
-          final @NonNull String jsonPath,
-          final @NonNull ImmutableList<Constraint> constraints) {
+  private static final long serialVersionUID = -4697113054224153330L;
+
+  BasicId(final String canonicalName,
+          final String description,
+          final String field,
+          final JsonStringNode jsonName,
+          final String jsonPath,
+          final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, field, jsonName, jsonPath, constraints);
   }
 
-  public long of(final @NonNull Entity data) { return read(data); }
+  public long of(final Entity data) { return read(data); }
 
-  public long read(final @NonNull Entity data) { return read(data.getKey()); }
+  public long read(final Entity data) { return read(data.getKey()); }
 
-  public long of(final @NonNull Key key) { return read(key); }
+  public long of(final Key key) { return read(key); }
 
-  public long read(final @NonNull Key key) { return key.getId(); }
+  public long read(final Key key) { return key.getId(); }
 
-  @Override public boolean isDefinedAt(final @NonNull Key key) { return key.getId() != 0; }
+  @Override public boolean isDefinedAt(final Key key) { return key.getId() != 0; }
 
-  @Override public @Nullable Long interpretJson(final @NonNull JsonNode json) {
+  @Override public @Nullable Long interpretJson(final JsonNode json) {
     if (json.isNullNode(jsonPath())) {
       return null;
     }
@@ -120,12 +125,12 @@ abstract class BasicId extends ActiveEntity.Identifier {
     }
   }
 
-  @Override public @NonNull JsonNode makeJsonValue(final @NonNull Key key) { return JsonNodeFactories.number(key.getId()); }
+  @Override public JsonNode makeJsonValue(final Key key) { return JsonNodeFactories.number(key.getId()); }
 
-  @Override public void validate(final @NonNull Entity data, final @NonNull Validation validation) {
+  @Override public void validate(final Entity data, final Validation validation) {
     final long value = read(data);
     doValidate(value, validation);
   }
 
-  abstract void doValidate(final @NonNull Long value, final @NonNull Validation validation);
+  abstract void doValidate(final Long value, final Validation validation);
 }

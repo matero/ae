@@ -27,19 +27,19 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Category;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class IndexedIMHandleList extends ListField.Indexed<Category> implements CategoryListField {
-  public IndexedIMHandleList(final @NonNull String canonicalName,
-                             final @NonNull String description,
-                             final @NonNull String property,
-                             final @NonNull String field,
+  private static final long serialVersionUID = -2130075684828667423L;
+
+  public IndexedIMHandleList(final String canonicalName,
+                             final String description,
+                             final String property,
+                             final String field,
                              final boolean required,
-                             final @NonNull JsonStringNode jsonName,
-                             final @NonNull String jsonPath,
-                             final @NonNull ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY, new PropertyProjection(property,
-                                                                                                                                          Category.class),
-          constraints);
+                             final JsonStringNode jsonName,
+                             final String jsonPath,
+                             final ImmutableList<Constraint> constraints) {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY,
+          new PropertyProjection(property, Category.class), constraints);
   }
 }

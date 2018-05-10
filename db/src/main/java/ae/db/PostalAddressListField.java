@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.PostalAddress;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface PostalAddressListField extends ListField<PostalAddress> {
-  @Override default @NonNull Class<PostalAddress> elementType() { return PostalAddress.class; }
+  @Override default Class<PostalAddress> elementType() { return PostalAddress.class; }
 }

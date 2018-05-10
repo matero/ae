@@ -25,38 +25,34 @@ package ae.db;
 
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.*;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import com.google.appengine.api.datastore.Query.SortPredicate;
 
 import java.util.Iterator;
 
 public abstract class SorteableSelect extends Select {
   private static final long serialVersionUID = 8141301362335037541L;
 
-  SorteableSelect(final @NonNull Query query, final @NonNull FetchOptions fetchOptions) { super(query, fetchOptions); }
+  SorteableSelect(final Query query, final FetchOptions fetchOptions) { super(query, fetchOptions); }
 
-  public final @NonNull Select sortedBy(final @NonNull SortPredicate sort) {
+  public final Select sortedBy(final SortPredicate sort) {
     query.addSort(sort.getPropertyName(), sort.getDirection());
     return this;
   }
 
-  public final @NonNull Select sortedBy(final @NonNull SortPredicate s1, final @NonNull SortPredicate s2) {
+  public final Select sortedBy(final SortPredicate s1, final SortPredicate s2) {
     query.addSort(s1.getPropertyName(), s1.getDirection());
     query.addSort(s2.getPropertyName(), s2.getDirection());
     return this;
   }
 
-  public final @NonNull Select sortedBy(final @NonNull SortPredicate s1, final @NonNull SortPredicate s2, final @NonNull SortPredicate s3) {
+  public final Select sortedBy(final SortPredicate s1, final SortPredicate s2, final SortPredicate s3) {
     query.addSort(s1.getPropertyName(), s1.getDirection());
     query.addSort(s2.getPropertyName(), s2.getDirection());
     query.addSort(s3.getPropertyName(), s3.getDirection());
     return this;
   }
 
-  public final Select sortedBy(final @NonNull SortPredicate s1,
-                               final @NonNull SortPredicate s2,
-                               final @NonNull SortPredicate s3,
-                               final @NonNull SortPredicate... otherSorts) {
+  public final Select sortedBy(final SortPredicate s1, final SortPredicate s2, final SortPredicate s3, final SortPredicate... otherSorts) {
     query.addSort(s1.getPropertyName(), s1.getDirection());
     query.addSort(s2.getPropertyName(), s2.getDirection());
     query.addSort(s3.getPropertyName(), s3.getDirection());
@@ -66,7 +62,7 @@ public abstract class SorteableSelect extends Select {
     return this;
   }
 
-  public final @NonNull Select sortedBy(final @NonNull Iterable<@NonNull SortPredicate> sorts) {
+  public final Select sortedBy(final Iterable<SortPredicate> sorts) {
     final Iterator<Query.SortPredicate> i = sorts.iterator();
     while (i.hasNext()) {
       final SortPredicate sort = i.next();

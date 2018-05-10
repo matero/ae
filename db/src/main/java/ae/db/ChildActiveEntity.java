@@ -31,55 +31,56 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEntity {
-  protected ChildActiveEntity(final @NonNull String kind) { super(kind); }
+  private static final long serialVersionUID = -1172162463919296861L;
+
+  protected ChildActiveEntity(final String kind) { super(kind); }
 
   /* **************************************************************************
    * metadata facilities
    */
-  public abstract @NonNull Parent<P> modelParent();
+  public abstract Parent<P> modelParent();
 
-  @Override public final boolean isKindOf(final @NonNull Key key) { return super.isKindOf(key) && modelParent().isKindOf(key.getParent()); }
+  @Override public final boolean isKindOf(final Key key) { return super.isKindOf(key) && modelParent().isKindOf(key.getParent()); }
 
   public static final class Parent<P extends ActiveEntity> extends ActiveEntity.Identifier {
     private final P parent;
     private final boolean required;
 
-    public Parent(final @NonNull P parent,
-                  final @NonNull String canonicalName,
-                  final @NonNull String description,
-                  final @NonNull String field,
+    public Parent(final P parent,
+                  final String canonicalName,
+                  final String description,
+                  final String field,
                   final boolean required,
-                  final @NonNull JsonStringNode jsonName,
-                  final @NonNull String jsonPath,
-                  final @NonNull ImmutableList<Constraint> constraints) {
+                  final JsonStringNode jsonName,
+                  final String jsonPath,
+                  final ImmutableList<Constraint> constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
       this.parent = parent;
       this.required = required;
     }
 
-    public @NonNull P parent() { return parent; }
+    public P parent() { return parent; }
 
-    public boolean isKindOf(final @NonNull Key key) { return parent().isKindOf(key); }
+    public boolean isKindOf(final Key key) { return parent().isKindOf(key); }
 
-    @Override public boolean isDefinedAt(final @NonNull Key key) { return key.getParent() != null && parent().isKindOf(key.getParent()); }
+    @Override public boolean isDefinedAt(final Key key) { return key.getParent() != null && parent().isKindOf(key.getParent()); }
 
-    public @Nullable Key of(final @NonNull Entity data) { return read(data); }
+    public @Nullable Key of(final Entity data) { return read(data); }
 
-    public Key read(final @NonNull Entity data) { return data.getParent(); }
+    public Key read(final Entity data) { return data.getParent(); }
 
-    public Key of(final @NonNull Key key) { return read(key); }
+    public Key of(final Key key) { return read(key); }
 
-    public Key read(final @NonNull Key key) { return key.getParent(); }
+    public Key read(final Key key) { return key.getParent(); }
 
-    @Override public @NonNull JsonNode makeJsonValue(final @NonNull Key key) { return JsonNodeFactories.object(parent().jsonKeyFields(key)); }
+    @Override public JsonNode makeJsonValue(final Key key) { return JsonNodeFactories.object(parent().jsonKeyFields(key)); }
 
-    @Override public @Nullable Key interpretJson(final @NonNull JsonNode json) { return parent().keyFromJson(json.getNode(jsonPath())); }
+    @Override public @Nullable Key interpretJson(final JsonNode json) { return parent().keyFromJson(json.getNode(jsonPath())); }
 
-    @Override public void validate(final @NonNull Entity data, final @NonNull Validation validation) {
+    @Override public void validate(final Entity data, final Validation validation) {
       final Key value = read(data);
       if (value == null) {
         if (required) {
@@ -98,7 +99,7 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
   /* **************************************************************************
    * query building facilities
    */
-  public final @NonNull Query makeQuery(final @Nullable Entity parent) {
+  public final Query makeQuery(final @Nullable Entity parent) {
     if (parent == null) {
       return new Query(kind);
     } else {
@@ -106,7 +107,7 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
     }
   }
 
-  public final @NonNull Query makeQuery(final @Nullable Key parentKey) {
+  public final Query makeQuery(final @Nullable Key parentKey) {
     if (parentKey == null) {
       return new Query(kind);
     } else {
@@ -114,32 +115,32 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
     }
   }
 
-  public final @NonNull SelectChildEntities selectAll() {
+  public final SelectChildEntities selectAll() {
     return new SelectChildEntities(makeQuery(), FetchOptions.Builder.withDefaults());
   }
 
-  public final @NonNull SelectChildEntities selectKeys() {
+  public final SelectChildEntities selectKeys() {
     return new SelectChildEntities(makeQuery().setKeysOnly(), FetchOptions.Builder.withDefaults());
   }
 
-  public final @NonNull SelectChildEntities select(final @NonNull Filterable<?>... projectedProperties) {
+  public final SelectChildEntities select(final Filterable<?>... projectedProperties) {
     return new SelectChildEntities(projection(projectedProperties), FetchOptions.Builder.withDefaults());
   }
 
-  public final @NonNull SelectChildEntities select(final @NonNull Iterable<@NonNull Filterable<?>> projectedProperties) {
+  public final SelectChildEntities select(final Iterable<Filterable<?>> projectedProperties) {
     return new SelectChildEntities(projection(projectedProperties), FetchOptions.Builder.withDefaults());
   }
 
   public static final class SelectChildEntities extends RootActiveEntity.SelectEntities {
     private static final long serialVersionUID = 5591903627552341816L;
 
-    SelectChildEntities(final @NonNull Query query, final @NonNull FetchOptions fetchOptions) { super(query, fetchOptions); }
+    SelectChildEntities(final Query query, final FetchOptions fetchOptions) { super(query, fetchOptions); }
 
-    public final @NonNull SelectEntities withoutAncestor() { return this; }
+    public final SelectEntities withoutAncestor() { return this; }
 
-    public final @NonNull SelectEntities withAncestor(final @NonNull Entity ancestor) { return withAncestor(ancestor.getKey()); }
+    public final SelectEntities withAncestor(final Entity ancestor) { return withAncestor(ancestor.getKey()); }
 
-    public final @NonNull SelectEntities withAncestor(final @NonNull Key ancestorKey) {
+    public final SelectEntities withAncestor(final Key ancestorKey) {
       query.setAncestor(ancestorKey);
       return this;
     }

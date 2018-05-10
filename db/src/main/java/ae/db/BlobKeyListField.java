@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.blobstore.BlobKey;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface BlobKeyListField extends ListField<BlobKey> {
-  @Override default @NonNull Class<BlobKey> elementType() { return BlobKey.class; }
+  @Override default Class<BlobKey> elementType() { return BlobKey.class; }
 }

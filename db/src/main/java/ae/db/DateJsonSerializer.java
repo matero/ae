@@ -25,7 +25,7 @@ package ae.db;
 
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
-import org.checkerframework.checker.nullness.qual.NonNull;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.text.ParseException;
@@ -33,20 +33,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateJsonSerializer implements JsonSerializer<Date> {
-  private final @NonNull String datePattern;
+  private static final long serialVersionUID = -4321000415258159924L;
 
-  public DateJsonSerializer(final @NonNull String datePattern) {
+  private final String datePattern;
+
+  public DateJsonSerializer(final String datePattern) {
     this.datePattern = datePattern;
   }
 
-  @Override public @NonNull JsonNode toJson(final @Nullable Date value) {
+  @Override public JsonNode toJson(final @Nullable Date value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
     return JsonNodeFactories.string(new SimpleDateFormat(datePattern).format(value));
   }
 
-  @Override public @Nullable Date fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
+  @Override public @Nullable Date fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -60,7 +62,7 @@ public class DateJsonSerializer implements JsonSerializer<Date> {
     }
   }
 
-  @Override public @Nullable Date fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable Date fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

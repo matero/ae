@@ -24,14 +24,13 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface BooleanField extends ScalarField<Boolean> {
   interface Filter {
-    @NonNull FilterPredicate isTrue();
+    FilterPredicate isTrue();
 
-    @NonNull FilterPredicate isFalse();
+    FilterPredicate isFalse();
   }
 
-  @Override default @NonNull Class<Boolean> type() { return Boolean.class; }
+  @Override default Class<Boolean> type() { return Boolean.class; }
 }

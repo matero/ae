@@ -2,17 +2,18 @@ package ae.db;
 
 import argo.jdom.JsonStringNode;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class UnindexedBooleanList extends ListField.Unindexed<Boolean> implements BooleanListField {
-  public UnindexedBooleanList(final @NonNull String canonicalName,
-                              final @NonNull String description,
-                              final @NonNull String property,
-                              final @NonNull String field,
+  private static final long serialVersionUID = 2662937905239497982L;
+
+  public UnindexedBooleanList(final String canonicalName,
+                              final String description,
+                              final String property,
+                              final String field,
                               boolean required,
-                              final @NonNull JsonStringNode jsonName,
-                              final @NonNull String jsonPath,
-                        final @NonNull ImmutableList<Constraint> constraints) {
+                              final JsonStringNode jsonName,
+                              final String jsonPath,
+                              final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.ARRAY, constraints);
   }
 }

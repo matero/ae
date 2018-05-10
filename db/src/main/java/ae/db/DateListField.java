@@ -24,8 +24,7 @@
 package ae.db;
 
 import java.util.Date;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface DateListField extends ListField<Date> {
-  @Override default @NonNull Class<Date> elementType() { return Date.class; }
+  @Override default Class<Date> elementType() { return Date.class; }
 }

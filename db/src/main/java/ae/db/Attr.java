@@ -29,56 +29,52 @@ import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface Attr extends java.io.Serializable {
-  @NonNull String canonicalName();
+  String canonicalName();
 
-  @NonNull String description();
+  String description();
 
-  @NonNull String field();
+  String field();
 
-  @NonNull String property();
+  String property();
 
-  @NonNull JsonStringNode jsonName();
+  JsonStringNode jsonName();
 
-  @NonNull String jsonPath();
+  String jsonPath();
 
-  boolean isDefinedAt(@NonNull Entity data);
+  boolean isDefinedAt(Entity data);
 
-  default boolean isDefinedAt(final @NonNull JsonNode json) { return json.getFields().containsKey(jsonName()); }
+  default boolean isDefinedAt(final JsonNode json) { return json.getFields().containsKey(jsonName()); }
 
-  @NonNull JsonNode makeJsonValue(@NonNull Entity data);
+  JsonNode makeJsonValue(Entity data);
 
-  default @NonNull JsonField makeJsonField(final @NonNull Entity data) { return JsonNodeFactories.field(jsonName(), makeJsonValue(data)); }
+  default JsonField makeJsonField(final Entity data) { return JsonNodeFactories.field(jsonName(), makeJsonValue(data)); }
 
-  @Nullable Object interpretJson(@NonNull JsonNode json);
+  @Nullable Object interpretJson(JsonNode json);
 
-  @NonNull ImmutableList<@NonNull Constraint> constraints();
+  ImmutableList<Constraint> constraints();
 
-  void validate(@NonNull Entity data, @NonNull Validation validation);
+  void validate(Entity data, Validation validation);
 }
 
 abstract class AttrData implements Attr {
-  private final @NonNull String canonicalName;
+  private static final long serialVersionUID = -4466778777529645459L;
 
-  private final @NonNull String description;
+  private final String canonicalName;
+  private final String description;
+  private final String field;
+  private final JsonStringNode jsonName;
+  private final String jsonPath;
+  private final ImmutableList<Constraint> constraints;
 
-  private final @NonNull String field;
-
-  private final @NonNull JsonStringNode jsonName;
-
-  private final @NonNull String jsonPath;
-
-  private final @NonNull ImmutableList<@NonNull Constraint> constraints;
-
-  protected AttrData(final @NonNull String canonicalName,
-                     final @NonNull String description,
-                     final @NonNull String field,
-                     final @NonNull JsonStringNode jsonName,
-                     final @NonNull String jsonPath,
-                     final @NonNull ImmutableList<@NonNull Constraint> constraints) {
+  protected AttrData(final String canonicalName,
+                     final String description,
+                     final String field,
+                     final JsonStringNode jsonName,
+                     final String jsonPath,
+                     final ImmutableList<Constraint> constraints) {
     this.canonicalName = canonicalName;
     this.description = description;
     this.field = field;
@@ -87,15 +83,15 @@ abstract class AttrData implements Attr {
     this.constraints = constraints;
   }
 
-  @Override public final @NonNull String canonicalName() { return canonicalName; }
+  @Override public final String canonicalName() { return canonicalName; }
 
-  @Override public final @NonNull String description() { return description; }
+  @Override public final String description() { return description; }
 
-  @Override public final @NonNull String field() { return field; }
+  @Override public final String field() { return field; }
 
-  @Override public final @NonNull JsonStringNode jsonName() { return jsonName; }
+  @Override public final JsonStringNode jsonName() { return jsonName; }
 
-  @Override public final @NonNull String jsonPath() { return jsonPath; }
+  @Override public final String jsonPath() { return jsonPath; }
   
-  @Override public final @NonNull ImmutableList<@NonNull Constraint> constraints() { return constraints; }
+  @Override public final ImmutableList<Constraint> constraints() { return constraints; }
 }

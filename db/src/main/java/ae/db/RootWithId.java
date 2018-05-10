@@ -34,37 +34,37 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RootWithId extends RootActiveEntity implements WithId {
+  private static final long serialVersionUID = -4301518873000440300L;
   /**
    * Constructs an ROOT active entity with ID defining its kind.
    *
    * @param kind Kind of the active entity.
    */
-  protected RootWithId(final @NonNull String kind) { super(kind); }
+  protected RootWithId(final String kind) { super(kind); }
 
   /* **************************************************************************
    * entity construction facilities
    */
-  @Override public @NonNull Entity make() {
+  @Override public Entity make() {
     final Entity data = newEntity();
     init(data);
     return data;
   }
 
-  @Override public final @NonNull Entity newEntity() { return new Entity(this.kind); }
+  @Override public final Entity newEntity() { return new Entity(this.kind); }
 
-  @Override public @NonNull Entity make(final long id) {
+  @Override public Entity make(final long id) {
     final Entity data = newEntity(id);
     init(data);
     return data;
   }
 
-  @Override public final @NonNull Entity newEntity(final long id) { return new Entity(this.kind, id); }
+  @Override public final Entity newEntity(final long id) { return new Entity(this.kind, id); }
 
-  @Override public @NonNull Key makeKey(final long id) { return KeyFactory.createKey(this.kind, id); }
+  @Override public Key makeKey(final long id) { return KeyFactory.createKey(this.kind, id); }
 
   /* **************************************************************************
    * persistence methods
@@ -79,7 +79,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     }
   }
 
-  public @NonNull Entity getById(final long id) throws EntityNotFoundException {
+  public Entity getById(final long id) throws EntityNotFoundException {
     return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
   }
 
@@ -94,11 +94,11 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
   /* **************************************************************************
    * JSON Serialization
    */
-  @Override protected final @NonNull Iterable<JsonField> jsonKeyFields(final @NonNull Key key) {
+  @Override protected final Iterable<JsonField> jsonKeyFields(final Key key) {
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
   }
 
-  @Override public final @Nullable Key keyFromJson(final @NonNull JsonNode json) {
+  @Override public final @Nullable Key keyFromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }
@@ -110,7 +110,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     }
   }
 
-  @Override public @Nullable Entity fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable Entity fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }

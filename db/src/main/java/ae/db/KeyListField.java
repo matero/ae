@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.Key;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface KeyListField extends ListField<Key> {
-  @Override default @NonNull Class<Key> elementType() { return Key.class; }
+  @Override default Class<Key> elementType() { return Key.class; }
 }

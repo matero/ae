@@ -27,9 +27,10 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class IndexedKey extends ScalarField.Indexed<Key> implements KeyField {
+  private static final long serialVersionUID = -7809081019366457919L;
+
   public IndexedKey(final String canonicalName,
                     final String description,
                     final String property,
@@ -37,7 +38,7 @@ public final class IndexedKey extends ScalarField.Indexed<Key> implements KeyFie
                     final boolean required,
                     final JsonStringNode jsonName,
                     final String jsonPath,
-                    final @NonNull ImmutableList<Constraint> constraints) {
+                    final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, KeyJsonSerializer.INSTANCE,
           new PropertyProjection(property, Key.class), constraints);
   }

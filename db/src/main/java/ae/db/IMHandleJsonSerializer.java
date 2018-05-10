@@ -23,12 +23,15 @@
  */
 package ae.db;
 
+import static argo.jdom.JsonNodeFactories.field;
+import static argo.jdom.JsonNodeFactories.string;
+import static argo.jdom.JsonNodeFactories.object;
+import static argo.jdom.JsonNodeFactories.nullNode;
+
 import argo.jdom.JsonNode;
-import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.IMHandle;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.net.MalformedURLException;
@@ -39,19 +42,18 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
 
   static final JsonArraySerializer<IMHandle> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  private final JsonStringNode address  = JsonNodeFactories.string("addr");
-  private final JsonStringNode protocol = JsonNodeFactories.string("prot");
+  private final JsonStringNode address  = string("addr");
+  private final JsonStringNode protocol = string("prot");
 
-  @Override public @NonNull JsonNode toJson(final @Nullable IMHandle value) {
+  @Override public JsonNode toJson(final @Nullable IMHandle value) {
     if (value == null) {
-      return JsonNodeFactories.nullNode();
+      return nullNode();
     }
-    return JsonNodeFactories.object(
-        ImmutableList.of(JsonNodeFactories.field(address, JsonNodeFactories.string(value.getAddress())),
-                         JsonNodeFactories.field(protocol, JsonNodeFactories.string(value.getProtocol()))));
+    return object(ImmutableList.of(field(address, string(value.getAddress())),
+                                   field(protocol, string(value.getProtocol()))));
   }
 
-  @Override public @Nullable IMHandle fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
+  @Override public @Nullable IMHandle fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -61,7 +63,7 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
     }
   }
 
-  @Override public @Nullable IMHandle fromJson(final @NonNull  JsonNode json) {
+  @Override public @Nullable IMHandle fromJson(final  JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {
@@ -71,7 +73,7 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
     }
   }
 
-  @Nullable IMHandle makeImHandle(final @NonNull String addr, final @NonNull String prot) {
+  @Nullable IMHandle makeImHandle(final String addr, final String prot) {
     try {
       return new IMHandle(IMHandle.Scheme.valueOf(prot), addr);
     } catch (final IllegalArgumentException e) {

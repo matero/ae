@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.GeoPt;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface GeoPtListField extends ListField<GeoPt> {
-  @Override default @NonNull Class<GeoPt> elementType() { return GeoPt.class; }
+  @Override default Class<GeoPt> elementType() { return GeoPt.class; }
 }

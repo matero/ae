@@ -25,7 +25,6 @@ package ae.db;
 
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.List;
 
 interface EmbeddedEntityJsonSerializer {

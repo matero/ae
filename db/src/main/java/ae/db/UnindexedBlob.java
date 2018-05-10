@@ -26,22 +26,21 @@ package ae.db;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Blob;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class UnindexedBlob extends ScalarField.Unindexed<Blob> {
-  public UnindexedBlob(final @NonNull String canonicalName,
-                       final @NonNull String description,
-                       final @NonNull String property,
-                       final @NonNull String field,
+  private static final long serialVersionUID = 7038886177579514412L;
+
+  public UnindexedBlob(final String canonicalName,
+                       final String description,
+                       final String property,
+                       final String field,
                        final boolean required,
-                       final @NonNull JsonStringNode jsonName,
-                       final @NonNull String jsonPath,
-                       final @NonNull JsonSerializer<Blob> jsonSerializer,
-                       final @NonNull ImmutableList<Constraint> constraints) {
+                       final JsonStringNode jsonName,
+                       final String jsonPath,
+                       final JsonSerializer<Blob> jsonSerializer,
+                       final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
   }
 
-  @Override public @NonNull Class<Blob> type() {
-    return Blob.class;
-  }
+  @Override public Class<Blob> type() { return Blob.class; }
 }

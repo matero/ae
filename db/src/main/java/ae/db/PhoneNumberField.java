@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.PhoneNumber;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface PhoneNumberField extends ScalarField<PhoneNumber> {
-  @Override default @NonNull Class<PhoneNumber> type() { return PhoneNumber.class; }
+  @Override default Class<PhoneNumber> type() { return PhoneNumber.class; }
 }

@@ -24,7 +24,5 @@
 package ae.db;
 
 public interface LongField extends ScalarField<Long> {
-  @Override default Class<Long> type() {
-    return Long.class;
-  }
+  @Override default Class<Long> type() { return Long.class; }
 }

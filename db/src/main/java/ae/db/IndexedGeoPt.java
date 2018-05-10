@@ -27,17 +27,18 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class IndexedGeoPt extends ScalarField.Indexed<GeoPt> implements GeoPtField {
-  public IndexedGeoPt(final @NonNull String canonicalName,
-                      final @NonNull String description,
-                      final @NonNull String property,
-                      final @NonNull String field,
+  private static final long serialVersionUID = -9039997755445894537L;
+
+  public IndexedGeoPt(final String canonicalName,
+                      final String description,
+                      final String property,
+                      final String field,
                       final boolean required,
-                      final @NonNull JsonStringNode jsonName,
-                      final @NonNull String jsonPath,
-                      final @NonNull ImmutableList<Constraint> constraints) {
+                      final JsonStringNode jsonName,
+                      final String jsonPath,
+                      final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, GeoPtJsonSerializer.INSTANCE,
           new PropertyProjection(property, GeoPt.class), constraints);
   }

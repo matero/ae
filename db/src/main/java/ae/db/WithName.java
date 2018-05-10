@@ -29,36 +29,37 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface WithName extends java.io.Serializable {
-  @NonNull Name modelIdentifier();
+  Name modelIdentifier();
 
   final class Name extends ActiveEntity.Identifier {
-    public Name(final @NonNull String canonicalName,
-                final @NonNull String description,
-                final @NonNull String field,
-                final @NonNull JsonStringNode jsonName,
-                final @NonNull String jsonPath,
-                final @NonNull ImmutableList<Constraint> constraints) {
+    private static final long serialVersionUID = 571659316791906248L;
+
+    public Name(final String canonicalName,
+                final String description,
+                final String field,
+                final JsonStringNode jsonName,
+                final String jsonPath,
+                final ImmutableList<Constraint> constraints) {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
     }
 
-    public @NonNull String of(final @NonNull Entity data) { return read(data); }
+    public String of(final Entity data) { return read(data); }
 
-    public @NonNull String read(final @NonNull Entity data) { return read(data.getKey()); }
+    public String read(final Entity data) { return read(data.getKey()); }
 
-    public @NonNull String of(final @NonNull Key key) { return read(key); }
+    public String of(final Key key) { return read(key); }
 
-    public @NonNull String read(final Key key) { return key.getName(); }
+    public String read(final Key key) { return key.getName(); }
 
-    @Override public boolean isDefinedAt(final @NonNull Key key) { return key.getName() != null; }
+    @Override public boolean isDefinedAt(final Key key) { return key.getName() != null; }
 
-    @Override public @NonNull String interpretJson(final @NonNull JsonNode json) { return json.getNullableStringValue(jsonPath()); }
+    @Override public String interpretJson(final JsonNode json) { return json.getNullableStringValue(jsonPath()); }
 
-    @Override public @NonNull JsonNode makeJsonValue(final @NonNull Key key) { return JsonNodeFactories.string(key.getName()); }
+    @Override public JsonNode makeJsonValue(final Key key) { return JsonNodeFactories.string(key.getName()); }
 
-    @Override public void validate(final @NonNull Entity data, final @NonNull Validation validation) {
+    @Override public void validate(final Entity data, final Validation validation) {
       final String value = read(data);
       if (RequiredConstraint.INSTANCE.isInvalid(value)) {
         validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));

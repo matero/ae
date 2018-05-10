@@ -4,17 +4,18 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Rating;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class IndexedRating extends ScalarField.Indexed<Rating> implements RatingField {
-  public IndexedRating(final @NonNull String canonicalName,
-                       final @NonNull String description,
-                       final @NonNull String property,
-                       final @NonNull String field,
+  private static final long serialVersionUID = -5627937621013357958L;
+
+  public IndexedRating(final String canonicalName,
+                       final String description,
+                       final String property,
+                       final String field,
                        final boolean required,
-                       final @NonNull JsonStringNode jsonName,
-                       final @NonNull String jsonPath,
-                       final @NonNull ImmutableList<Constraint> constraints) {
+                       final JsonStringNode jsonName,
+                       final String jsonPath,
+                       final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, RatingJsonSerializer.INSTANCE,
           new PropertyProjection(property, Rating.class), constraints);
   }

@@ -23,14 +23,8 @@
  */
 package ae.db;
 
-import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Link;
-import com.google.appengine.api.datastore.PropertyProjection;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface LinkListField extends ListField<Link> {
-  @Override default @NonNull Class<Link> elementType() {
-    return Link.class;
-  }
+  @Override default Class<Link> elementType() { return Link.class; }
 }

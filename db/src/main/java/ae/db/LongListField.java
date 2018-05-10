@@ -23,10 +23,8 @@
  */
 package ae.db;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+
 
 public interface LongListField extends ListField<Long> {
-  @Override default @NonNull Class<Long> elementType() {
-    return Long.class;
-  }
+  @Override default Class<Long> elementType() { return Long.class; }
 }

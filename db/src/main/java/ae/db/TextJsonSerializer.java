@@ -23,10 +23,11 @@
  */
 package ae.db;
 
+import static argo.jdom.JsonNodeFactories.nullNode;
+import static argo.jdom.JsonNodeFactories.string;
+
 import argo.jdom.JsonNode;
-import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Text;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum TextJsonSerializer implements JsonSerializer<Text> {
@@ -34,14 +35,14 @@ enum TextJsonSerializer implements JsonSerializer<Text> {
 
   static final JsonArraySerializer<Text> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public @NonNull JsonNode toJson(final @Nullable Text value) {
+  @Override public JsonNode toJson(final @Nullable Text value) {
     if (value == null) {
-      return JsonNodeFactories.nullNode();
+      return nullNode();
     }
-    return JsonNodeFactories.string(value.getValue());
+    return string(value.getValue());
   }
 
-  @Override public @Nullable Text fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
+  @Override public @Nullable Text fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -49,7 +50,7 @@ enum TextJsonSerializer implements JsonSerializer<Text> {
     }
   }
 
-  @Override public @Nullable Text fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable Text fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

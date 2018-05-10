@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.GeoPt;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface GeoPtField extends ScalarField<GeoPt> {
-  @Override default @NonNull Class<GeoPt> type() { return GeoPt.class; }
+  @Override default Class<GeoPt> type() { return GeoPt.class; }
 }

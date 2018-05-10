@@ -23,10 +23,6 @@
  */
 package ae.db;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
 public interface StringListField extends ListField<String> {
-  @Override default @NonNull Class<String> elementType() {
-    return String.class;
-  }
+  @Override default Class<String> elementType() { return String.class; }
 }

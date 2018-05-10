@@ -27,17 +27,18 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PostalAddress;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class IndexedPostalAddress extends ScalarField.Indexed<PostalAddress> implements PostalAddressField {
-  public IndexedPostalAddress(final @NonNull String canonicalName,
-                      final @NonNull String description,
-                      final @NonNull String property,
-                      final @NonNull String field,
-                      final boolean required,
-                      final @NonNull JsonStringNode jsonName,
-                      final @NonNull String jsonPath,
-                      final @NonNull ImmutableList<Constraint> constraints) {
+  private static final long serialVersionUID = 9091307887407108860L;
+
+  public IndexedPostalAddress(final String canonicalName,
+                              final String description,
+                              final String property,
+                              final String field,
+                              final boolean required,
+                              final JsonStringNode jsonName,
+                              final String jsonPath,
+                              final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, PostalAddressJsonSerializer.INSTANCE,
           new PropertyProjection(property, PostalAddress.class), constraints);
   }

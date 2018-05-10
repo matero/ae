@@ -26,9 +26,10 @@ package ae.db;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class UnindexedKey extends ScalarField.Unindexed<Key> implements KeyField {
+  private static final long serialVersionUID = -8382153738429786384L;
+
   public UnindexedKey(final String canonicalName,
                       final String description,
                       final String property,
@@ -36,7 +37,7 @@ public final class UnindexedKey extends ScalarField.Unindexed<Key> implements Ke
                       final boolean required,
                       final JsonStringNode jsonName,
                       final String jsonPath,
-                      final @NonNull ImmutableList<Constraint> constraints) {
+                      final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, KeyJsonSerializer.INSTANCE, constraints);
   }
 }

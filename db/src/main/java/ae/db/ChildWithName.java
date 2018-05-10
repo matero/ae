@@ -29,67 +29,69 @@ import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveEntity<P> implements WithName {
-  protected ChildWithName(final @NonNull String kind) {
+  private static final long serialVersionUID = -7165772094949873742L;
+
+  protected ChildWithName(final String kind) {
     super(kind);
   }
 
   /* **************************************************************************
    * entity construction facilities
    */
-  public @NonNull Entity make(final @NonNull String name) {
+  public Entity make(final String name) {
     final Entity data = newEntity(name);
     init(data);
     return data;
   }
-  public @NonNull Entity make(final @NonNull Key key) {
+  public Entity make(final Key key) {
     final Entity data = newEntity(key);
     init(data);
     return data;
   }
 
-  public @NonNull Entity make(final @NonNull Entity parent, final @NonNull String name) {
+  public Entity make(final Entity parent, final String name) {
     final Entity data = newEntity(parent, name);
     init(data);
     return data;
   }
 
-  public @NonNull Entity make(final @NonNull Key parentKey, final @NonNull String name) {
+  public Entity make(final Key parentKey, final String name) {
     final Entity data = newEntity(parentKey, name);
     init(data);
     return data;
   }
 
-  public @NonNull Key makeKey(final @NonNull String name) {
+  public Key makeKey(final String name) {
     return KeyFactory.createKey(kind, name);
   }
 
-  public @NonNull Key makeKey(final @NonNull Entity parent, final @NonNull String name) {
+  public Key makeKey(final Entity parent, final String name) {
     return makeKey(parent.getKey(), name);
   }
 
-  public @NonNull Key makeKey(final @NonNull Key parentKey, final @NonNull String name) {
+  public Key makeKey(final Key parentKey, final String name) {
     if (!modelParent().isKindOf(parentKey)) {
       throw new IllegalArgumentException("[parentKey=" + parentKey + "] is not a possible parent for " + this + '.');
     }
     return KeyFactory.createKey(parentKey, kind, name);
   }
 
-  public @NonNull Entity newEntity(final @NonNull String name) { return new Entity(kind, name); }
+  public Entity newEntity(final String name) { return new Entity(kind, name); }
 
-  public @NonNull Entity newEntity(final @NonNull Key key) {
+  public Entity newEntity(final Key key) {
     if (isKindOf(key)) {
       throw new IllegalArgumentException("[key=" + key + "] is not a legal key for " + this + '.');
     }
     return new Entity(key);
   }
 
-  public @NonNull Entity newEntity(final @NonNull Entity parent, final @NonNull String name) { return newEntity(parent.getKey(), name); }
+  public Entity newEntity(final Entity parent, final String name) { return newEntity(parent.getKey(), name); }
 
-  public @NonNull Entity newEntity(final @NonNull Key parentKey, final @NonNull String name) {
+  public Entity newEntity(final Key parentKey, final String name) {
     if (!modelParent().isKindOf(parentKey)) {
       throw new IllegalArgumentException("[parentKey=" + parentKey + "] is not a possible parent for " + this + '.');
     }
@@ -99,15 +101,15 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
   /* **************************************************************************
    * persistence methods
    */
-  public void deleteByParentAndName(final @NonNull Entity parent, final @NonNull String name) {
+  public void deleteByParentAndName(final Entity parent, final String name) {
     DatastoreServiceFactory.getDatastoreService().delete(makeKey(parent, name));
   }
 
-  public void deleteByParentKeyAndName(final @NonNull Key parentKey, final @NonNull String name) {
+  public void deleteByParentKeyAndName(final Key parentKey, final String name) {
     DatastoreServiceFactory.getDatastoreService().delete(makeKey(parentKey, name));
   }
 
-  public @Nullable Entity findByParentAndName(final @NonNull Entity parent, final @NonNull String name) {
+  public @Nullable Entity findByParentAndName(final Entity parent, final String name) {
     try {
       return DatastoreServiceFactory.getDatastoreService().get(makeKey(parent, name));
     } catch (final EntityNotFoundException e) {
@@ -115,7 +117,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     }
   }
 
-  public @Nullable Entity findByParentKeyAndName(final @NonNull Key parentKey, final @NonNull String name) {
+  public @Nullable Entity findByParentKeyAndName(final Key parentKey, final String name) {
     try {
       return DatastoreServiceFactory.getDatastoreService().get(makeKey(parentKey, name));
     } catch (final EntityNotFoundException e) {
@@ -123,15 +125,15 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     }
   }
 
-  public @NonNull Entity getByParentAndName(final @NonNull Entity parent, final @NonNull String name) throws EntityNotFoundException {
+  public Entity getByParentAndName(final Entity parent, final String name) throws EntityNotFoundException {
     return DatastoreServiceFactory.getDatastoreService().get(makeKey(parent, name));
   }
 
-  public @NonNull Entity getByParentKeyAndName(final @NonNull Key parentKey, final @NonNull String name) throws EntityNotFoundException {
+  public Entity getByParentKeyAndName(final Key parentKey, final String name) throws EntityNotFoundException {
     return DatastoreServiceFactory.getDatastoreService().get(makeKey(parentKey, name));
   }
 
-  public boolean existsByParentAndName(final @NonNull Entity parent, final @NonNull String name) {
+  public boolean existsByParentAndName(final Entity parent, final String name) {
     final Query exists = makeQuery()
             .setKeysOnly()
             .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(parent, name)));
@@ -139,7 +141,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     return data != null;
   }
 
-  public boolean existsByParentKeyAndName(final @NonNull Key parentKey, final @NonNull String name) {
+  public boolean existsByParentKeyAndName(final Key parentKey, final String name) {
     final Query exists = makeQuery()
             .setKeysOnly()
             .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(parentKey, name)));
@@ -150,11 +152,11 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
   /* **************************************************************************
    * JSON Serialization
    */
-  @Override protected final @NonNull Iterable<@NonNull JsonField> jsonKeyFields(final @NonNull Key key) {
+  @Override protected final Iterable<JsonField> jsonKeyFields(final Key key) {
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key), modelParent().makeJsonFieldFrom(key));
   }
 
-  @Override public final @Nullable Key keyFromJson(final @NonNull JsonNode json) {
+  @Override public final @Nullable Key keyFromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }
@@ -170,7 +172,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     }
   }
 
-  @Override public @Nullable Entity fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable Entity fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }

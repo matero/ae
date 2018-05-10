@@ -24,10 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.Rating;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface RatingField extends ScalarField<Rating> {
-  @Override default @NonNull Class<Rating> type() {
-    return Rating.class;
-  }
+  @Override default Class<Rating> type() { return Rating.class; }
 }

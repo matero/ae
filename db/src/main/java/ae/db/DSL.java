@@ -32,41 +32,31 @@ public final class DSL {
     throw new UnsupportedOperationException();
   }
 
-
   /* methods to improve redeability on generated code */
   public static String canonicalName(final String value) {
     return value;
   }
-
   public static String description(final String value) {
     return value;
   }
-
   public static String propertyName(final String value) {
     return value;
   }
-
   public static String fieldName(final String value) {
     return value;
   }
-
   public static final boolean required = true;
   public static final boolean nullable = false;
-
   public static JsonStringNode jsonName(final String value) {
     return JsonNodeFactories.string(value);
   }
-
   public static String jsonPath(final String value) {
     return value;
   }
-
   public static final ImmutableList<Constraint> noConstraints = ImmutableList.of();
-
   public static final ImmutableList<Constraint> constraints(final Constraint constraint) {
     return ImmutableList.of(constraint);
   }
-
   public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2) {
     return ImmutableList.of(c1, c2);
   }

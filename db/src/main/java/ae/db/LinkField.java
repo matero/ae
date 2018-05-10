@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.Link;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface LinkField extends ScalarField<Link> {
-  @Override default @NonNull Class<Link> type() { return Link.class; }
+  @Override default Class<Link> type() { return Link.class; }
 }

@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.PhoneNumber;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface PhoneNumberListField extends ListField<PhoneNumber> {
-  @Override default @NonNull Class<PhoneNumber> elementType() { return PhoneNumber.class; }
+  @Override default Class<PhoneNumber> elementType() { return PhoneNumber.class; }
 }

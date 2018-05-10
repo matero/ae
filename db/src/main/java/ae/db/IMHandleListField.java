@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.IMHandle;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface IMHandleListField extends ListField<IMHandle> {
-  @Override default @NonNull Class<IMHandle> elementType() { return IMHandle.class; }
+  @Override default Class<IMHandle> elementType() { return IMHandle.class; }
 }

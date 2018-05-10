@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.Email;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface EmailField extends ScalarField<Email> {
-  @Override default @NonNull Class<Email> type() { return Email.class; }
+  @Override default Class<Email> type() { return Email.class; }
 }

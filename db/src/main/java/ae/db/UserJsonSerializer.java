@@ -23,12 +23,15 @@
  */
 package ae.db;
 
+import static argo.jdom.JsonNodeFactories.object;
+import static argo.jdom.JsonNodeFactories.field;
+import static argo.jdom.JsonNodeFactories.nullNode;
+import static argo.jdom.JsonNodeFactories.string;
+
 import argo.jdom.JsonNode;
-import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.users.User;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
@@ -38,26 +41,22 @@ enum UserJsonSerializer implements JsonSerializer<User> {
 
   static final JsonArraySerializer<User> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  private final JsonStringNode userId            = JsonNodeFactories.string("userId");
-  private final JsonStringNode email             = JsonNodeFactories.string("email");
-  private final JsonStringNode federatedIdentity = JsonNodeFactories.string("fedId");
-  private final JsonStringNode authDomain        = JsonNodeFactories.string("authDomain");
+  private final JsonStringNode userId = string("userId");
+  private final JsonStringNode email = string("email");
+  private final JsonStringNode federatedIdentity = string("fedId");
+  private final JsonStringNode authDomain = string("authDomain");
 
-  @Override public @NonNull JsonNode toJson(final @Nullable User value) {
+  @Override public JsonNode toJson(final @Nullable User value) {
     if (value == null) {
-      return JsonNodeFactories.nullNode();
+      return nullNode();
     }
-    return JsonNodeFactories.object(
-        ImmutableList.of(
-            JsonNodeFactories.field(userId, JsonNodeFactories.string(value.getUserId())),
-            JsonNodeFactories.field(email, JsonNodeFactories.string(value.getEmail())),
-            JsonNodeFactories.field(federatedIdentity, JsonNodeFactories.string(value.getFederatedIdentity())),
-            JsonNodeFactories.field(authDomain, JsonNodeFactories.string(value.getAuthDomain()))
-        )
-    );
+    return object(ImmutableList.of(field(userId, string(value.getUserId())),
+                                   field(email, string(value.getEmail())),
+                                   field(federatedIdentity, string(value.getFederatedIdentity())),
+                                   field(authDomain, string(value.getAuthDomain()))));
   }
 
-  @Override public @Nullable User fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
+  @Override public @Nullable User fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -66,7 +65,7 @@ enum UserJsonSerializer implements JsonSerializer<User> {
     }
   }
 
-  @Override public @Nullable User fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable User fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {
@@ -79,9 +78,9 @@ enum UserJsonSerializer implements JsonSerializer<User> {
     if (user == null) {
       return null;
     }
-    @NonNull final String  _email      = readNonNull(user, email);
-    @NonNull final String  _authDomain = readNonNull(user, authDomain);
-    @Nullable final String _userId     = readNullable(user, userId);
+    final String _email = readNonNull(user, email);
+    final String _authDomain = readNonNull(user, authDomain);
+    @Nullable final String _userId = readNullable(user, userId);
     if (_userId == null) {
       return new User(_email, _authDomain);
     } else {
@@ -94,7 +93,7 @@ enum UserJsonSerializer implements JsonSerializer<User> {
     }
   }
 
-  @NonNull String readNonNull(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field) {
+  String readNonNull(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field) {
     final JsonNode node = user.get(field);
     if (node == null) {
       throw new NullPointerException(field.toString());

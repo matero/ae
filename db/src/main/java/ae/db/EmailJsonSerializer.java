@@ -26,7 +26,6 @@ package ae.db;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Email;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum EmailJsonSerializer implements JsonSerializer<Email> {
@@ -34,22 +33,20 @@ enum EmailJsonSerializer implements JsonSerializer<Email> {
 
   static final JsonArraySerializer<Email> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public @NonNull JsonNode toJson(final @Nullable Email value) {
+  @Override public JsonNode toJson(final @Nullable Email value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
     return JsonNodeFactories.string(value.getEmail());
   }
-
-  @Override public @Nullable Email fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
+  @Override public @Nullable Email fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
       return new Email(json.getStringValue(jsonPath));
     }
   }
-
-  @Override public @Nullable Email fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable Email fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

@@ -30,63 +30,63 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RootWithName extends RootActiveEntity implements WithName {
+  private static final long serialVersionUID = -5374806570138213003L;
   /**
    * Constructs an ROOT active entity with ID defining its kind.
    *
    * @param kind Kind of the active entity.
    */
-  protected RootWithName(final @NonNull String kind) {
+  protected RootWithName(final String kind) {
     super(kind);
   }
 
   /* **************************************************************************
    * entity construction facilities
    */
-  public final @NonNull Entity make(final @NonNull String name) {
+  public final Entity make(final String name) {
     final Entity data = newEntity(name);
     init(data);
     return data;
   }
 
-  public final @NonNull Entity newEntity(final @NonNull String name) {
+  public final Entity newEntity(final String name) {
     return new Entity(kind, name);
   }
 
-  public final @NonNull Key makeKey(final @NonNull String name) {
+  public final Key makeKey(final String name) {
     return KeyFactory.createKey(kind, name);
   }
 
   /* **************************************************************************
    * persistence methods
    */
-  public @Nullable Entity findByName(final @NonNull String name) {
+  public @Nullable Entity findByName(final String name) {
     return find(makeKey(name));
   }
 
-  public @NonNull Entity getByName(final @NonNull String name) throws EntityNotFoundException {
+  public Entity getByName(final String name) throws EntityNotFoundException {
     return get(makeKey(name));
   }
 
-  public void deleteByName(final @NonNull String name) {
+  public void deleteByName(final String name) {
     delete(makeKey(name));
   }
 
-  public boolean existsByName(final @NonNull String name) {
+  public boolean existsByName(final String name) {
     return exists(makeKey(name));
   }
 
   /* **************************************************************************
    * JSON Serialization
    */
-  @Override protected final @NonNull Iterable<@NonNull JsonField> jsonKeyFields(final @NonNull Key key) {
+  @Override protected final Iterable<JsonField> jsonKeyFields(final Key key) {
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
   }
 
-  @Override public final @Nullable Key keyFromJson(final @NonNull JsonNode json) {
+  @Override public final @Nullable Key keyFromJson(final JsonNode json) {
     if (json == null || json.isNullNode()) {
       return null;
     }
@@ -94,7 +94,7 @@ public abstract class RootWithName extends RootActiveEntity implements WithName 
     return makeKey(name);
   }
 
-  @Override public @Nullable Entity fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable Entity fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }

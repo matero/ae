@@ -30,71 +30,71 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.NullnessUtil;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface Field<T> extends Attr {
-  @Override default boolean isDefinedAt(final @NonNull Entity data) { return data.hasProperty(property()); }
+  @Override default boolean isDefinedAt(final Entity data) { return data.hasProperty(property()); }
 
-  default boolean isDefinedAt(final @NonNull PropertyContainer data) { return data.hasProperty(property()); }
+  default boolean isDefinedAt(final PropertyContainer data) { return data.hasProperty(property()); }
 
-  @NonNull Class<T> type();
+  Class<T> type();
 
   boolean indexed();
 
   boolean required();
 
-  default @Nullable T of(final @NonNull PropertyContainer data) { return read(data); }
+  default @Nullable T of(final PropertyContainer data) { return read(data); }
 
-  @Nullable T read(final @NonNull PropertyContainer data);
+  @Nullable T read(final PropertyContainer data);
 
-  void write(@NonNull PropertyContainer data, @Nullable T value);
+  void write(PropertyContainer data, @Nullable T value);
 
-  default void write(final @NonNull PropertyContainer data, final @NonNull JsonNode json) { write(data, interpretJson(json)); }
+  default void write(final PropertyContainer data, final JsonNode json) { write(data, interpretJson(json)); }
 
-  @NonNull JsonNode makeJsonValue(@Nullable T value);
+  JsonNode makeJsonValue(@Nullable T value);
 
-  default @NonNull JsonField makeJsonFieldFrom(final @NonNull PropertyContainer data) { return makeJsonField(read(data)); }
+  default JsonField makeJsonFieldFrom(final PropertyContainer data) { return makeJsonField(read(data)); }
 
-  default @NonNull JsonField makeJsonField(final @Nullable T value) { return JsonNodeFactories.field(jsonName(), makeJsonValue(value)); }
+  default JsonField makeJsonField(final @Nullable T value) { return JsonNodeFactories.field(jsonName(), makeJsonValue(value)); }
 
-  @Override default @NonNull JsonNode makeJsonValue(final @NonNull Entity data) { return makeJsonValue(read(data)); }
+  @Override default JsonNode makeJsonValue(final Entity data) { return makeJsonValue(read(data)); }
 
-  default @NonNull JsonNode makeJsonValue(final @NonNull PropertyContainer data) { return makeJsonValue(read(data)); }
+  default JsonNode makeJsonValue(final PropertyContainer data) { return makeJsonValue(read(data)); }
 
-  @Override @Nullable T interpretJson(@NonNull JsonNode json);
+  @Override @Nullable T interpretJson(JsonNode json);
 }
 
 abstract class FieldData<T> extends AttrData implements Field<T> {
-  private final @NonNull String property;
-  private final boolean required;
-  private final @NonNull JsonSerializer<T> jsonSerializer;
+  private static final long serialVersionUID = -5509719667123101352L;
 
-  protected FieldData(final @NonNull String canonicalName,
-                      final @NonNull String description,
-                      final @NonNull String property,
-                      final @NonNull String field,
+  private final String property;
+  private final boolean required;
+  private final JsonSerializer<T> jsonSerializer;
+
+  protected FieldData(final String canonicalName,
+                      final String description,
+                      final String property,
+                      final String field,
                       final boolean required,
-                      final @NonNull JsonStringNode jsonName,
-                      final @NonNull String jsonPath,
-                      final @NonNull JsonSerializer<T> jsonSerializer,
-                      final @NonNull ImmutableList<@NonNull Constraint> constraints) {
+                      final JsonStringNode jsonName,
+                      final String jsonPath,
+                      final JsonSerializer<T> jsonSerializer,
+                      final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, field, jsonName, jsonPath, constraints);
     this.property = property;
     this.required = required;
     this.jsonSerializer = jsonSerializer;
   }
 
-  @Override public final @NonNull String property() { return property; }
+  @Override public final String property() { return property; }
 
   @Override public final boolean required() { return required; }
 
-  @Override public final @NonNull JsonNode makeJsonValue(final @Nullable  T value) { return jsonSerializer.toJson(value); }
+  @Override public final JsonNode makeJsonValue(final @Nullable  T value) { return jsonSerializer.toJson(value); }
 
-  @Override public final @Nullable T interpretJson(final @NonNull JsonNode json) { return jsonSerializer.fromJson(json, jsonPath()); }
+  @Override public final @Nullable T interpretJson(final JsonNode json) { return jsonSerializer.fromJson(json, jsonPath()); }
 
-  @Override public final void validate(final @NonNull Entity data, final @NonNull Validation validation) {
+  @Override public final void validate(final Entity data, final Validation validation) {
     final @Nullable T value = read(data);
     if (value == null) {
       if (required()) {
@@ -105,7 +105,7 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
     }
   }
 
-  protected void validateNotNullValue(final @NonNull T value, final @NonNull Validation validation) {
+  protected void validateNotNullValue(final T value, final Validation validation) {
     for (final Constraint constraint : constraints()) {
       if (constraint.isInvalid(value)) {
         validation.reject(this, constraint.messageFor(this, value));
@@ -121,9 +121,9 @@ enum RequiredConstraint implements Constraint<Object> {
     return value == null;
   }
 
-  public String messageFor(final @NonNull Attr attr) { return messageFor(attr, this); }
+  public String messageFor(final Attr attr) { return messageFor(attr, this); }
   
-  @Override public String messageFor(final @NonNull Attr attr, final @NonNull Object value) {
+  @Override public String messageFor(final Attr attr, final Object value) {
     final StringBuilder msg = new StringBuilder().append('\'').append(attr.description()).append("' es requerido.");
     return msg.toString();
   }

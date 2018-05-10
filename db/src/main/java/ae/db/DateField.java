@@ -25,11 +25,9 @@ package ae.db;
 
 import com.google.appengine.api.datastore.PropertyContainer;
 import java.util.Date;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface DateField extends ScalarField<Date> {
+  @Override default Class<Date> type() { return Date.class; }
 
-  @Override default @NonNull Class<Date> type() { return Date.class; }
-
-  default void writeTimestamp(final @NonNull PropertyContainer data) { write(data, new Date()); }
+  default void writeTimestamp(final PropertyContainer data) { write(data, new Date()); }
 }

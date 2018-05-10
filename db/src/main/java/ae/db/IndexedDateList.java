@@ -27,18 +27,19 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 import java.util.Date;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class IndexedDateList extends ListField.Indexed<Date> implements DateListField {
-  public IndexedDateList(final @NonNull String canonicalName,
-                         final @NonNull String description,
-                         final @NonNull String property,
-                         final @NonNull String field,
+  private static final long serialVersionUID = 5531867035605929248L;
+
+  public IndexedDateList(final String canonicalName,
+                         final String description,
+                         final String property,
+                         final String field,
                          final boolean required,
-                         final @NonNull JsonStringNode jsonName,
-                         final @NonNull String jsonPath,
-                         final @NonNull JsonSerializer<Date> jsonElementSerializer,
-                         final @NonNull ImmutableList<Constraint> constraints) {
+                         final JsonStringNode jsonName,
+                         final String jsonPath,
+                         final JsonSerializer<Date> jsonElementSerializer,
+                         final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, new JsonArraySerializer<>(jsonElementSerializer),
           new PropertyProjection(property, Date.class), constraints);
   }

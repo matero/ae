@@ -23,9 +23,10 @@
  */
 package ae.db;
 
+import static argo.jdom.JsonNodeFactories.string;
+import static argo.jdom.JsonNodeFactories.nullNode;
+
 import argo.jdom.JsonNode;
-import argo.jdom.JsonNodeFactories;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum StringJsonSerializer implements JsonSerializer<String> {
@@ -33,14 +34,14 @@ enum StringJsonSerializer implements JsonSerializer<String> {
 
   static final JsonArraySerializer<String> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public @NonNull JsonNode toJson(final @Nullable String value) {
+  @Override public JsonNode toJson(final @Nullable String value) {
     if (value == null) {
-      return JsonNodeFactories.nullNode();
+      return nullNode();
     }
-    return JsonNodeFactories.string(value);
+    return string(value);
   }
 
-  @Override public @Nullable String fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
+  @Override public @Nullable String fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -48,7 +49,7 @@ enum StringJsonSerializer implements JsonSerializer<String> {
     }
   }
 
-  @Override public @Nullable String fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable String fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

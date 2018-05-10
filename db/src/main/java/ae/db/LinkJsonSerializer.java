@@ -26,7 +26,6 @@ package ae.db;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Link;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum LinkJsonSerializer implements JsonSerializer<Link> {
@@ -34,14 +33,14 @@ enum LinkJsonSerializer implements JsonSerializer<Link> {
 
   static final JsonArraySerializer<Link> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public @NonNull JsonNode toJson(final @Nullable Link value) {
+  @Override public JsonNode toJson(final @Nullable Link value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
     return JsonNodeFactories.string(value.getValue());
   }
 
-  @Override public @Nullable Link fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
+  @Override public @Nullable Link fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -49,7 +48,7 @@ enum LinkJsonSerializer implements JsonSerializer<Link> {
     }
   }
 
-  @Override public @Nullable Link fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable Link fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

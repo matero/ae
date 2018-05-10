@@ -24,10 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.users.User;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface UserListField extends ListField<User> {
-  @Override default @NonNull Class<User> elementType() {
-    return User.class;
-  }
+  @Override default Class<User> elementType() { return User.class; }
 }

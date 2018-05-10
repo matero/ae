@@ -24,8 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.Category;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface CategoryListField extends ListField<Category> {
-  @Override default @NonNull Class<Category> elementType() { return Category.class; }
+  @Override default Class<Category> elementType() { return Category.class; }
 }

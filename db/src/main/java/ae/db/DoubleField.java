@@ -24,7 +24,5 @@
 package ae.db;
 
 public interface DoubleField extends ScalarField<Double> {
-  @Override default Class<Double> type() {
-    return Double.class;
-  }
+  @Override default Class<Double> type() { return Double.class; }
 }

@@ -23,12 +23,17 @@
  */
 package ae.db;
 
+import static argo.jdom.JsonNodeFactories.field;
+import static argo.jdom.JsonNodeFactories.string;
+import static argo.jdom.JsonNodeFactories.object;
+import static argo.jdom.JsonNodeFactories.nullNode;
+
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.NonNull;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
@@ -38,19 +43,18 @@ enum GeoPtJsonSerializer implements JsonSerializer<GeoPt> {
 
   static final JsonArraySerializer<GeoPt> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  private final JsonStringNode latitude = JsonNodeFactories.string("lat");
-  private final JsonStringNode longitude = JsonNodeFactories.string("lon");
+  private final JsonStringNode latitude = string("lat");
+  private final JsonStringNode longitude = string("lon");
 
-  @Override public @NonNull JsonNode toJson(final @Nullable GeoPt value) {
+  @Override public JsonNode toJson(final @Nullable GeoPt value) {
     if (value == null) {
-      return JsonNodeFactories.nullNode();
+      return nullNode();
     }
-    return JsonNodeFactories.object(
-            ImmutableList.of(JsonNodeFactories.field(latitude, JsonNodeFactories.number(Float.toString(value.getLatitude()))),
-                             JsonNodeFactories.field(longitude, JsonNodeFactories.number(Float.toString(value.getLongitude())))));
+    return object(ImmutableList.of(field(latitude, JsonNodeFactories.number(Float.toString(value.getLatitude()))),
+                                   field(longitude, JsonNodeFactories.number(Float.toString(value.getLongitude())))));
   }
 
-  @Override public @Nullable GeoPt fromJson(final @NonNull JsonNode json, final @NonNull String jsonPath) {
+  @Override public @Nullable GeoPt fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -59,7 +63,7 @@ enum GeoPtJsonSerializer implements JsonSerializer<GeoPt> {
     }
   }
 
-  @Override public @Nullable GeoPt fromJson(final @NonNull JsonNode json) {
+  @Override public @Nullable GeoPt fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {
@@ -68,11 +72,11 @@ enum GeoPtJsonSerializer implements JsonSerializer<GeoPt> {
     }
   }
 
-  @NonNull GeoPt makeGeoPt(final @NonNull Map<JsonStringNode, JsonNode> value) {
+  GeoPt makeGeoPt(final Map<JsonStringNode, JsonNode> value) {
     return new GeoPt(number(value, latitude, "lat"), number(value, longitude, "lon"));
   }
 
-  float number(final @NonNull Map<JsonStringNode, JsonNode> value, final @NonNull JsonStringNode node, final @NonNull String field) {
+  float number(final Map<JsonStringNode, JsonNode> value, final JsonStringNode node, final String field) {
     final JsonNode json = value.get(node);
     if (json == null || json.isNullNode()) {
       throw new NullPointerException(field);

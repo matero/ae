@@ -24,10 +24,7 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.ShortBlob;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface ShortBlobField extends ScalarField<ShortBlob> {
-  @Override default @NonNull Class<ShortBlob> type() {
-    return ShortBlob.class;
-  }
+  @Override default Class<ShortBlob> type() { return ShortBlob.class; }
 }
