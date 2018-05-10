@@ -23,7 +23,15 @@
  */
 package ae.db;
 
-import static ae.db.DSL.*;
+import static ae.db.DSL.canonicalName;
+import static ae.db.DSL.description;
+import static ae.db.DSL.propertyName;
+import static ae.db.DSL.fieldName;
+import static ae.db.DSL.required;
+import static ae.db.DSL.jsonName;
+import static ae.db.DSL.jsonPath;
+import static ae.db.DSL.noConstraints;
+import static ae.db.DSL.nullable;
 
 import argo.jdom.JsonNode;
 

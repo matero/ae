@@ -23,27 +23,30 @@
  */
 package ae.db;
 
-import ae.db.JsonArraySerializer;
-import ae.db.StringJsonSerializer;
-import argo.jdom.JsonNode;
-import argo.jdom.JsonNodeFactories;
-import java.util.Arrays;
-import java.util.List;
+import static argo.jdom.JsonNodeFactories.array;
+import static argo.jdom.JsonNodeFactories.object;
+import static argo.jdom.JsonNodeFactories.field;
+import static argo.jdom.JsonNodeFactories.nullNode;
+import static argo.jdom.JsonNodeFactories.string;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import argo.jdom.JsonNode;
+import java.util.List;
 import org.junit.Test;
 
 public class StringArrayJsonSerializerTest {
   private final JsonArraySerializer<String> serializer = StringJsonSerializer.ARRAY;
 
-  @Test
-  public void shoud_be_able_to_serialize_null() {
+  @Test public void shoud_be_able_to_serialize_null() {
     final JsonNode json = serializer.toJson(null);
     assertThat(json.isNullNode()).isTrue();
   }
 
-  @Test
-  public void shoud_be_able_to_serialize_non_null_strings() {
-    final JsonNode json = serializer.toJson(Arrays.asList("no null", "another", null));
+  @Test public void shoud_be_able_to_serialize_non_null_strings() {
+    //given:
+    final JsonNode json = serializer.toJson(asList("no null", "another", null));
+    //expect:
     assertThat(json.isNullNode()).isFalse();
     assertThat(json.isArrayNode()).isTrue();
     assertThat(json.getNullableStringValue(0)).isEqualTo("no null");
@@ -51,40 +54,26 @@ public class StringArrayJsonSerializerTest {
     assertThat(json.getNullableStringValue(2)).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_null_nodes() {
-    final List<String> lst = serializer.fromJson(JsonNodeFactories.nullNode());
+  @Test public void shoud_be_able_to_deserialize_null_nodes() {
+    final List<String> lst = serializer.fromJson(nullNode());
     assertThat(lst).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_non_null_node() {
-    final List<String> lst = serializer.fromJson(
-            JsonNodeFactories.array(JsonNodeFactories.string("no null"), JsonNodeFactories.nullNode(), JsonNodeFactories.string("another"))
-    );
+  @Test public void shoud_be_able_to_deserialize_non_null_node() {
+    final List<String> lst = serializer.fromJson(array(string("no null"), nullNode(), string("another")));
     assertThat(lst).containsExactly("no null", null, "another");
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_null_node_from_object_node() {
-    final JsonNode object = JsonNodeFactories.object(
-            JsonNodeFactories.field(JsonNodeFactories.string("attr1"), JsonNodeFactories.string("no null")),
-            JsonNodeFactories.field(JsonNodeFactories.string("attr2"), JsonNodeFactories.nullNode())
-    );
+  @Test public void shoud_be_able_to_deserialize_null_node_from_object_node() {
+    final JsonNode object = object(field(string("attr1"), string("no null")),
+                                   field(string("attr2"), nullNode()));
     final List<String> lst = serializer.fromJson(object, "attr2");
     assertThat(lst).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_non_null_node_from_object_node() {
-    final JsonNode object = JsonNodeFactories.object(
-            JsonNodeFactories.field(JsonNodeFactories.string("attr1"),
-                                    JsonNodeFactories.array(JsonNodeFactories.nullNode(),
-                                                            JsonNodeFactories.string("no null"),
-                                                            JsonNodeFactories.string("another"))),
-            JsonNodeFactories.field(JsonNodeFactories.string("attr2"),
-                                    JsonNodeFactories.string("no null"))
-    );
+  @Test public void shoud_be_able_to_deserialize_non_null_node_from_object_node() {
+    final JsonNode object = object(field(string("attr1"), array(nullNode(), string("no null"), string("another"))),
+                                   field(string("attr2"), string("no null")));
     final List<String> lst = serializer.fromJson(object, "attr1");
     assertThat(lst).containsExactly(null, "no null", "another");
   }
