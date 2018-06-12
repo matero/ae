@@ -27,6 +27,10 @@ import ae.db.Attr;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,31 +38,51 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 public abstract class ControllerWithThymeleafSupport extends Controller {
-  private final WebContext templateContext;
-  private final TemplateEngine templateEngine;
+  private WebContext templateContext;
+  private TemplateEngine templateEngine;
 
-  protected ControllerWithThymeleafSupport(final HttpServletRequest request, final HttpServletResponse response) {
-    this(request, response, null, null);
+  protected ControllerWithThymeleafSupport() {
+    this.templateContext = null;
+    this.templateEngine = null;
   }
-
+  
+  protected ControllerWithThymeleafSupport(final HttpServletRequest request, final HttpServletResponse response) {
+    super(request, response);
+  }
+  
   protected ControllerWithThymeleafSupport(final HttpServletRequest request,
                                            final HttpServletResponse response,
-                                           final WebContext webContext,
+                                           final WebContext templateContext,
                                            final TemplateEngine templateEngine) {
     super(request, response);
-    this.templateContext = webContext;
+    this.templateContext = templateContext;
     this.templateEngine = templateEngine;
   }
-
+  
+  protected final WebContext templateContext() {
+    return templateContext;
+  }
+  protected final void setTemplateContext(final WebContext templateContext) {
+    this.templateContext = templateContext;
+  }
+  protected final TemplateEngine templateEngine() {
+    return templateEngine;
+  }
+  protected final void setTemplateEngine(final TemplateEngine templateEngine) {
+    this.templateEngine = templateEngine;
+  }
+  
   @Override protected void setup() {
-    ctx("gae", AppengineDialect.INSTANCE);
-    if (isUserLoggedIn()) {
-      ctx("user_type", isUserAdmin() ? "adm" : "usr");
-      ctx("current_user", currentUser());
-      ctx("logout", logoutURL(request));
-    } else {
-      ctx("user", "none");
-      ctx("login", loginURL(request));
+    if (this.templateContext != null) {
+      ctx("gae", AppengineDialect.INSTANCE);
+      if (isUserLoggedIn()) {
+        ctx("user_type", isUserAdmin() ? "adm" : "usr");
+        ctx("current_user", currentUser());
+        ctx("logout", logoutURL(request()));
+      } else {
+        ctx("user", "none");
+        ctx("login", loginURL(request()));
+      }
     }
   }
 
@@ -232,4 +256,6 @@ public abstract class ControllerWithThymeleafSupport extends Controller {
             .put(attr10.property(), value10)
             .build();
   }
+  
+  @Retention(RetentionPolicy.CLASS) @Target(ElementType.METHOD) public @interface Template {}
 }

@@ -11,6 +11,7 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
+import java.util.logging.Logger;
 import javax.annotation.Generated;
 
 @Generated(
@@ -18,7 +19,7 @@ import javax.annotation.Generated;
     date = "2017-02-23"
 )
 abstract class __Competencia extends RootWithName {
-  protected static final Logger LOG = LoggerFactory.getLogger("processor.test.Competencia");
+  protected static final Logger LOG = Logger.getLogger("processor.test.Competencia");
 
   final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), fieldName("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints);
 

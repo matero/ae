@@ -26,14 +26,15 @@ package ae.routes.processor;
 import ae.web.ParameterizedRoute;
 import ae.web.Route;
 import com.google.common.collect.ImmutableList;
+import com.squareup.javapoet.ClassName;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
 final class Parameter {
-  final String     name;
+  final String name;
   final TypeMirror type;
-  final String     interpreterMethod;
+  final String interpreterMethod;
 
   Parameter(String name, TypeMirror type, String interpreterMethod) {
     this.name = name;
@@ -43,15 +44,15 @@ final class Parameter {
 }
 
 final class RouteDescriptor {
-  final Class<?>                 type;
-  final HttpVerb                 verb;
-  final String                   pattern;
-  final String                   regex;
-  final TypeElement              controller;
-  final String                   action;
+  final Class<?> type;
+  final HttpVerb verb;
+  final String pattern;
+  final String regex;
+  final TypeElement controller;
+  final String action;
   final ImmutableList<Parameter> parameters;
-  final String                   ctorArgs;
-  final boolean                  useCredentials;
+  final String ctorArgs;
+  final boolean useCredentials;
 
   RouteDescriptor(final HttpVerb verb,
                   final String pattern,
@@ -107,7 +108,13 @@ final class RouteDescriptor {
     return this.verb.name() + '_' + controllerQualifiedName().replace('.', '_') + '_' + action;
   }
 
-  String controllerQualifiedName() { return controller.getQualifiedName().toString(); }
+  String controllerQualifiedName() {
+    return controller.getQualifiedName().toString();
+  }
+
+  final ClassName controllerClass() {
+    return ClassName.bestGuess(controllerQualifiedName()+"_Impl");
+  }
 
   boolean isDynamic() {
     return type == ParameterizedRoute.class;
@@ -128,8 +135,16 @@ final class RouteDescriptor {
     }
   }
 
-  int parametersCount() { return parameters.size(); }
-  String parameterName(final int i) { return parameters.get(i).name; }
-  TypeMirror parameterType(final int i) { return parameters.get(i).type; }
-  String parameterInterpreterMethod(final int i) { return parameters.get(i).interpreterMethod; }
+  int parametersCount() {
+    return parameters.size();
+  }
+  String parameterName(final int i) {
+    return parameters.get(i).name;
+  }
+  TypeMirror parameterType(final int i) {
+    return parameters.get(i).type;
+  }
+  String parameterInterpreterMethod(final int i) {
+    return parameters.get(i).interpreterMethod;
+  }
 }

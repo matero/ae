@@ -23,9 +23,8 @@
  */
 package ae.routes.processor;
 
-import ae.OAuth2;
-import ae.Template;
 import ae.web.ControllerWithThymeleafSupport;
+import ae.web.OAuth2Flow;
 import com.google.common.collect.ImmutableList;
 import com.opencsv.CSVReader;
 
@@ -290,7 +289,7 @@ class RoutesReader {
   }
 
   boolean useCredentials(final ExecutableElement actionMethod) {
-    final OAuth2 oauth2 = actionMethod.getAnnotation(OAuth2.class);
+    final OAuth2Flow.OAuth2 oauth2 = actionMethod.getAnnotation(OAuth2Flow.OAuth2.class);
     return oauth2 != null;
   }
 
@@ -322,7 +321,7 @@ class RoutesReader {
   }
 
   String ctorArgumentsFor(final ExecutableElement actionMethod) {
-    final ae.Template template = actionMethod.getAnnotation(ae.Template.class);
+    final ControllerWithThymeleafSupport.Template template = actionMethod.getAnnotation(ControllerWithThymeleafSupport.Template.class);
     if (template != null) {
       return "request, response, webContext(request, response), templateEngine()";
     } else {

@@ -57,24 +57,59 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class Controller {
-  protected final HttpServletRequest request;
-  protected final HttpServletResponse response;
-
+  private HttpServletRequest request;
+  private HttpServletResponse response;
+  
+  protected Controller() {
+    // nothing to do
+  }
+  
   protected Controller(final HttpServletRequest request, final HttpServletResponse response) {
     this.request = request;
     this.response = response;
   }
 
+  protected final HttpServletRequest request() {
+    return request;
+  }
+  
+  protected final void setRequest(final HttpServletRequest request) {
+    this.request = request;
+  }
+  
+  protected final HttpServletResponse response() {
+    return response;
+  }
+  
+  protected final void setResponse(final HttpServletResponse response) {
+    this.response = response;
+  }
+  
+  
+  /**
+   * Configures the controller before it manages a request and generate a response.
+   * 
+   * Any initialization, validation, dependency injection, must go here. By default it doesn't do anything.
+   */
   protected void setup() {
     // nothing to do
   }
+  /**
+   * Frees resources taken by the controller.
+   * 
+   * By default it doesn't do anything.
+   */
   protected void teardown() {
     // nothing to do
   }
+
   /**
    * @return the logger to be used at the controller.
    */
-  protected abstract Logger log();
+  protected Logger log() {
+    return Logger.getLogger(getClass().getCanonicalName());
+  }
+  
   /* request manipulation ************************************************** */
   /**
    * Reads the text at the request body.

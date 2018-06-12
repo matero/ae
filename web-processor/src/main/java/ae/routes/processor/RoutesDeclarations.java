@@ -59,7 +59,7 @@ class RoutesDeclarations {
   }
 
   List<TypeElement> controllers() {
-    return routes.stream().distinct().map(route -> route.controller).collect(toList());
+    return routes.stream().map(route -> route.controller).distinct().collect(toList());
   }
 
   static class Builder {

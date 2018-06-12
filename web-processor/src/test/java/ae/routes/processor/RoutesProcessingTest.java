@@ -41,7 +41,7 @@ public class RoutesProcessingTest {
     GENERATION_DATE = calendar.getTime();
   }
 
-  final Compiler compiler = javac().withProcessors(new ControllerAndRoutesCompiler(GENERATION_DATE, new RoutersCodeBuilder(), new ArrayList<>()));
+  final Compiler compiler = javac().withProcessors(new ControllerAndRoutesCompiler(GENERATION_DATE, new RoutersCodeBuilder()));
 
   @Test public void should_compile_multiple_verb_routes() {
     final Compilation compilation = compiler.compile(
@@ -56,5 +56,8 @@ public class RoutesProcessingTest {
     assertThat(compilation)
             .generatedSourceFile("processor.test.RouterDefs")
             .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/routes/RouterDefs.java"));
+    assertThat(compilation)
+            .generatedSourceFile("book.Controller_Impl")
+            .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/book/Controller_Impl.java"));
   }
 }

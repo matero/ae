@@ -27,7 +27,6 @@ import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 import java.io.IOException;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -47,26 +46,24 @@ import ae.annotation.processor.AnnotationProcessor;
 @SupportedAnnotationTypes("ae.Router")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ControllerAndRoutesCompiler extends AnnotationProcessor {
-  private       RoutesReader       routesReader;
+  private RoutesReader routesReader;
+  private ControllerImplCodeBuilder controllerImplCodeBuilder;
   private final RoutersCodeBuilder routerBuilder;
-  private final List<TypeElement> controllers;
 
   public ControllerAndRoutesCompiler() {
-    this(new Date(), new RoutersCodeBuilder(), new LinkedList<>());
+    this(new Date(), new RoutersCodeBuilder());
   }
 
-  ControllerAndRoutesCompiler(final Date today, final RoutersCodeBuilder routerBuilder, List<TypeElement> controllers)  {
+  ControllerAndRoutesCompiler(final Date today, final RoutersCodeBuilder routerBuilder) {
     super(today);
     this.routerBuilder = routerBuilder;
-    this.controllers = controllers;
   }
 
   @Override
   public synchronized void init(final ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
-    routesReader = new RoutesReader(processingEnv.getElementUtils(),
-                                    processingEnv.getTypeUtils(),
-                                    processingEnv.getMessager());
+    this.routesReader = new RoutesReader(elements, types, messager);
+    this.controllerImplCodeBuilder = new ControllerImplCodeBuilder(elements, types);
   }
 
   @Override
@@ -99,13 +96,16 @@ public class ControllerAndRoutesCompiler extends AnnotationProcessor {
     final String superClass = readSuperClassCannonicalName(supertypes.get(0));
     final RoutesDeclarations.Builder builder = new RoutesDeclarations.Builder(superClass, today);
 
-    builder.packageName(elements.getPackageOf(routerClass).toString());
-    if (routesReader.readRoutes(router.routes(), builder)) {
+    builder.packageName(this.elements.getPackageOf(routerClass).toString());
+    if (this.routesReader.readRoutes(router.routes(), builder)) {
       final RoutesDeclarations routes = builder.build();
-      this.controllers.addAll(routes.controllers());
-      final JavaFile routerCode = routerBuilder.buildJavaCode(routes);
+      final JavaFile routerCode = this.routerBuilder.buildJavaCode(routes);
+      final List<JavaFile> controllersImpl = this.controllerImplCodeBuilder.buildJavaCode(routes);
       try {
         routerCode.writeTo(filer);
+        for (final JavaFile impl : controllersImpl) {
+          impl.writeTo(filer);
+        }
       } catch (final IOException e) {
         error(element, "could not write router code, reason: " + e.getMessage());
       }

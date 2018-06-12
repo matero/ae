@@ -120,17 +120,19 @@ class RoutersCodeBuilder {
         control = httpVerbHandler.beginControlFlow("if ($L.matches(request))", route.routeField());
       }
 
-      final ClassName controllerClass = ClassName.get(route.controller);
       if (route.useCredentials) {
         control.addStatement("handle(new $T($L), (controller) -> $T.Director.of(controller).authorize((c) -> c.$L($L)))",
-                             controllerClass,
+                             route.controllerClass(),
                              route.ctorArgs,
                              ClassName.get(OAuth2Flow.class),
                              route.action,
                              route.arguments());
       } else {
-        control.
-                addStatement("handle(new $T($L), (controller) -> controller.$L($L))", controllerClass, route.ctorArgs, route.action, route.arguments());
+        control.addStatement("handle(new $T($L), (controller) -> controller.$L($L))",
+                             route.controllerClass(),
+                             route.ctorArgs,
+                             route.action,
+                             route.arguments());
       }
 
       control.addStatement("return");

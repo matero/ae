@@ -23,16 +23,15 @@ import com.google.appengine.api.datastore.Text;
 import com.google.common.collect.ImmutableList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.annotation.Generated;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Generated(
     value = "ae-db",
     date = "2017-02-23"
 )
 abstract class __Competidor extends ChildWithId {
-  protected static final Logger LOG = LoggerFactory.getLogger("processor.test.Competidor");
+  protected static final Logger LOG = Logger.getLogger("processor.test.Competidor");
 
   final Id personId = new Id(canonicalName("processor.test.Competidor.personId"), description("Person Id"), fieldName("personId"), jsonName("personId"), jsonPath("personId"), noConstraints);
 

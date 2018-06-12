@@ -5,7 +5,7 @@ import ae.web.OAuth2Flow;
 import ae.web.ParameterizedRoute;
 import ae.web.Route;
 import ae.web.RouterServlet;
-import book.Controller;
+import book.Controller_Impl;
 import com.google.appengine.api.datastore.Cursor;
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -59,52 +59,52 @@ abstract class RouterDefs extends RouterServlet {
       ServletException, IOException {
     final String[] routeParameters = new String[]{null, null, null, null};
     if (GET_book_Controller_index.matches(request)) {
-      handle(new Controller(request, response), (controller) -> controller.index());
+      handle(new Controller_Impl(request, response), (controller) -> controller.index());
       return;
     }
     if (GET_book_Controller_create.matches(request)) {
-      handle(new Controller(request, response), (controller) -> controller.create());
+      handle(new Controller_Impl(request, response), (controller) -> controller.create());
       return;
     }
     if (GET_book_Controller_show.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new Controller(request, response, webContext(request, response), templateEngine()), (controller) -> controller.show(id));
+      handle(new Controller_Impl(request, response, webContext(request, response), templateEngine()), (controller) -> controller.show(id));
       return;
     }
     if (GET_book_Controller_edit.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new Controller(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
+      handle(new Controller_Impl(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
       return;
     }
     if (GET_book_Controller_foo.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       final String arg = Interpret.asString(routeParameters[1]);
-      handle(new Controller(request, response), (controller) -> OAuth2Flow.Director.of(controller).authorize((c) -> c.foo(id,arg)));
+      handle(new Controller_Impl(request, response), (controller) -> OAuth2Flow.Director.of(controller).authorize((c) -> c.foo(id,arg)));
       return;
     }
     if (GET_book_Controller_bar.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       final Cursor c = Interpret.asCursor(routeParameters[1]);
       final String arg = Interpret.asString(routeParameters[2]);
-      handle(new Controller(request, response), (controller) -> controller.bar(id,c,arg));
+      handle(new Controller_Impl(request, response), (controller) -> controller.bar(id,c,arg));
       return;
     }
     if (GET_gym_Controller_index.matches(request)) {
-      handle(new gym.Controller(request, response), (controller) -> controller.index());
+      handle(new gym.Controller_Impl(request, response), (controller) -> controller.index());
       return;
     }
     if (GET_gym_Controller_create.matches(request)) {
-      handle(new gym.Controller(request, response), (controller) -> controller.create());
+      handle(new gym.Controller_Impl(request, response), (controller) -> controller.create());
       return;
     }
     if (GET_gym_Controller_show.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new gym.Controller(request, response), (controller) -> controller.show(id));
+      handle(new gym.Controller_Impl(request, response), (controller) -> controller.show(id));
       return;
     }
     if (GET_gym_Controller_edit.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new gym.Controller(request, response), (controller) -> controller.edit(id));
+      handle(new gym.Controller_Impl(request, response), (controller) -> controller.edit(id));
       return;
     }
     unhandledGet(request, response);
@@ -114,11 +114,11 @@ abstract class RouterDefs extends RouterServlet {
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
     if (POST_book_Controller_save.matches(request)) {
-      handle(new Controller(request, response), (controller) -> controller.save());
+      handle(new Controller_Impl(request, response), (controller) -> controller.save());
       return;
     }
     if (POST_gym_Controller_save.matches(request)) {
-      handle(new gym.Controller(request, response), (controller) -> controller.save());
+      handle(new gym.Controller_Impl(request, response), (controller) -> controller.save());
       return;
     }
     unhandledPost(request, response);
@@ -130,12 +130,12 @@ abstract class RouterDefs extends RouterServlet {
     final String[] routeParameters = new String[]{null, null};
     if (PUT_book_Controller_update.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new Controller(request, response), (controller) -> controller.update(id));
+      handle(new Controller_Impl(request, response), (controller) -> controller.update(id));
       return;
     }
     if (PUT_gym_Controller_update.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new gym.Controller(request, response), (controller) -> controller.update(id));
+      handle(new gym.Controller_Impl(request, response), (controller) -> controller.update(id));
       return;
     }
     unhandledPut(request, response);
@@ -147,12 +147,12 @@ abstract class RouterDefs extends RouterServlet {
     final String[] routeParameters = new String[]{null, null};
     if (DELETE_book_Controller_delete.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new Controller(request, response), (controller) -> controller.delete(id));
+      handle(new Controller_Impl(request, response), (controller) -> controller.delete(id));
       return;
     }
     if (DELETE_gym_Controller_delete.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new gym.Controller(request, response), (controller) -> controller.delete(id));
+      handle(new gym.Controller_Impl(request, response), (controller) -> controller.delete(id));
       return;
     }
     unhandledDelete(request, response);
