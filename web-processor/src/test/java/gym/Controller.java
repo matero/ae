@@ -1,8 +1,7 @@
 package gym;
 
 import ae.OAuth2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -10,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class Controller extends ae.web.ControllerWithThymeleafSupport {
-  private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
+  private static final Logger LOG = Logger.getLogger(Controller.class.getCanonicalName());
 
   public Controller(final HttpServletRequest request, final HttpServletResponse response) {
     super(request, response);

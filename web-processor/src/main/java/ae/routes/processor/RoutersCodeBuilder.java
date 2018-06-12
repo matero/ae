@@ -40,23 +40,26 @@ import java.util.regex.Pattern;
 class RoutersCodeBuilder {
   private static final ClassName HTTP_SERVLET = ClassName.get(RouterServlet.class);
 
+  private final TypeName stringArray;
+
   RoutersCodeBuilder() {
+    stringArray = ArrayTypeName.of(ClassName.get(String.class));
   }
 
   JavaFile buildJavaCode(final RoutesDeclarations declarations) {
     final ClassName classname = ClassName.get(declarations.packageName, declarations.superClass);
     final TypeSpec.Builder router = TypeSpec.classBuilder(classname)
-                                            .superclass(HTTP_SERVLET)
-                                            .addModifiers(Modifier.ABSTRACT)
-                                            .addAnnotation(AnnotationSpec.builder(Generated.class)
-                                                                         .addMember("value", "$S", "AE/web-processor")
-                                                                         .addMember("comments", "$S", declarations.paths)
-                                                                         .addMember("date", "$S", declarations.date)
-                                                                         .build())
-                                            .addField(FieldSpec.builder(long.class,
-                                                                        "serialVersionUID",
-                                                                        Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-                                                               .initializer("$LL", declarations.serialVersionUID).build());
+            .superclass(HTTP_SERVLET)
+            .addModifiers(Modifier.ABSTRACT)
+            .addAnnotation(AnnotationSpec.builder(Generated.class)
+                    .addMember("value", "$S", "AE/web-processor")
+                    .addMember("comments", "$S", declarations.paths)
+                    .addMember("date", "$S", declarations.date)
+                    .build())
+            .addField(FieldSpec.builder(long.class,
+                                        "serialVersionUID",
+                                        Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                    .initializer("$LL", declarations.serialVersionUID).build());
 
     for (final HttpVerb httpVerb : HttpVerb.values()) {
       final ImmutableList<RouteDescriptor> routes = declarations.routesByVerb.get(httpVerb);
@@ -72,7 +75,7 @@ class RoutersCodeBuilder {
       router.addMethod(overrideVerbHandler(httpVerb, routes));
     }
 
-    return JavaFile.builder(classname.packageName(), router.build()).build();
+    return JavaFile.builder(classname.packageName(), router.build()).skipJavaLangImports(true).build();
   }
 
   static FieldSpec makeFieldFor(final RouteDescriptor route) {
@@ -89,15 +92,15 @@ class RoutersCodeBuilder {
 
   MethodSpec overrideVerbHandler(final HttpVerb httpVerb, final ImmutableList<RouteDescriptor> routes) {
     final MethodSpec.Builder httpVerbHandler = MethodSpec
-                                                   .methodBuilder(httpVerb.handler)
-                                                   .addAnnotation(Override.class)
-                                                   .addModifiers(Modifier.PUBLIC)
-                                                   .addParameter(HttpServletRequest.class, "request", Modifier.FINAL)
-                                                   .addParameter(HttpServletResponse.class, "response", Modifier.FINAL)
-                                                   .addException(ServletException.class)
-                                                   .addException(IOException.class);
+            .methodBuilder(httpVerb.handler)
+            .addAnnotation(Override.class)
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(HttpServletRequest.class, "request", Modifier.FINAL)
+            .addParameter(HttpServletResponse.class, "response", Modifier.FINAL)
+            .addException(ServletException.class)
+            .addException(IOException.class);
     if (hasDynamicRoutes(routes)) {
-      httpVerbHandler.addStatement("final String[] routeParameters = new String[$L]", maxParametersCountAt(routes));
+      httpVerbHandler.addStatement("final $T routeParameters = new $T{$L}", stringArray, stringArray, paramsInit(routes));
     }
 
     for (final RouteDescriptor route : routes) {
@@ -126,7 +129,8 @@ class RoutersCodeBuilder {
                              route.action,
                              route.arguments());
       } else {
-        control.addStatement("handle(new $T($L), (controller) -> controller.$L($L))", controllerClass, route.ctorArgs, route.action, route.arguments());
+        control.
+                addStatement("handle(new $T($L), (controller) -> controller.$L($L))", controllerClass, route.ctorArgs, route.action, route.arguments());
       }
 
       control.addStatement("return");
@@ -145,7 +149,16 @@ class RoutersCodeBuilder {
     return false;
   }
 
-  private Object maxParametersCountAt(final Iterable<RouteDescriptor> routes) {
+  private String paramsInit(final Iterable<RouteDescriptor> routes) {
+    final int maxParametersCount = maxParametersCountAt(routes);
+    final StringBuffer params= new StringBuffer(4*maxParametersCount+ 2*(maxParametersCount - 1)).append("null");
+    for (int i = 0; i < maxParametersCount; i++) {
+      params.append(", null");
+    }
+    return params.toString();
+  }
+
+  private int maxParametersCountAt(final Iterable<RouteDescriptor> routes) {
     int maxParametersCount = 0;
     for (final RouteDescriptor r : routes) {
       if (r.isDynamic()) {

@@ -11,11 +11,7 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
-import java.lang.Override;
-import java.lang.String;
 import javax.annotation.Generated;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Generated(
     value = "ae-db",
@@ -56,6 +52,9 @@ abstract class __Competencia extends RootWithName {
 
   @Override
   public JsonNode toJson(final Entity data) {
+    if (null == data) {
+      return JsonNodeFactories.nullNode();
+    }
     return JsonNodeFactories.object(ImmutableList.of(nombre.makeJsonFieldFrom(data)));
   }
 

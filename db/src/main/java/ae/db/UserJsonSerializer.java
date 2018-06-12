@@ -32,7 +32,6 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.users.User;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
 
@@ -46,7 +45,7 @@ enum UserJsonSerializer implements JsonSerializer<User> {
   private final JsonStringNode federatedIdentity = string("fedId");
   private final JsonStringNode authDomain = string("authDomain");
 
-  @Override public JsonNode toJson(final @Nullable User value) {
+  @Override public JsonNode toJson(final User value) {
     if (value == null) {
       return nullNode();
     }
@@ -56,7 +55,7 @@ enum UserJsonSerializer implements JsonSerializer<User> {
                                    field(authDomain, string(value.getAuthDomain()))));
   }
 
-  @Override public @Nullable User fromJson(final JsonNode json, final String jsonPath) {
+  @Override public User fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -65,26 +64,25 @@ enum UserJsonSerializer implements JsonSerializer<User> {
     }
   }
 
-  @Override public @Nullable User fromJson(final JsonNode json) {
+  @Override public User fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {
-      final Map<JsonStringNode, JsonNode> user = json.getObjectNode();
-      return jsonToUser(user);
+      return jsonToUser(json.getObjectNode());
     }
   }
 
-  @Nullable User jsonToUser(Map<JsonStringNode, JsonNode> user) {
+  User jsonToUser(final Map<JsonStringNode, JsonNode> user) {
     if (user == null) {
       return null;
     }
     final String _email = readNonNull(user, email);
     final String _authDomain = readNonNull(user, authDomain);
-    @Nullable final String _userId = readNullable(user, userId);
+    final String _userId = readNullable(user, userId);
     if (_userId == null) {
       return new User(_email, _authDomain);
     } else {
-      @Nullable final String _federatedIdentity = readNonNull(user, federatedIdentity);
+      final String _federatedIdentity = readNullable(user, federatedIdentity);
       if (_federatedIdentity == null) {
         return new User(_email, _authDomain, _userId);
       } else {
@@ -104,7 +102,7 @@ enum UserJsonSerializer implements JsonSerializer<User> {
     }
   }
 
-  @Nullable String readNullable(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field) {
+  String readNullable(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field) {
     final JsonNode node = user.get(field);
     if (node == null) {
       return null;

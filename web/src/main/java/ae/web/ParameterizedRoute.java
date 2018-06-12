@@ -27,7 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
-public class ParameterizedRoute implements java.io.Serializable {
+public final class ParameterizedRoute implements java.io.Serializable {
+  private static final long serialVersionUID = -5348318310957123564L;
 
   private final String uriPattern;
   private final Pattern regex;
@@ -37,18 +38,11 @@ public class ParameterizedRoute implements java.io.Serializable {
     this.regex = regex;
   }
 
-  @Override
-  public String toString() {
-    return "ParameterizedRoute{" + uriPattern + '}';
-  }
+  @Override public String toString() { return "ParameterizedRoute{" + uriPattern + '}'; }
 
-  @Override
-  public int hashCode() {
-    return regex.hashCode();
-  }
+  @Override public int hashCode() { return regex.hashCode(); }
 
-  @Override
-  public boolean equals(final Object that) {
+  @Override public boolean equals(final Object that) {
     if (this == that) {
       return true;
     }
@@ -77,7 +71,5 @@ public class ParameterizedRoute implements java.io.Serializable {
     }
   }
 
-  private String getPathParameterRegexGroupName(final int pathParameterIndex) {
-    return "p" + pathParameterIndex;
-  }
+  private String getPathParameterRegexGroupName(final int pathParameterIndex) { return "p" + pathParameterIndex; }
 }

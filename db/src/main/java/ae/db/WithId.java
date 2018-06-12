@@ -29,7 +29,6 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface WithId extends java.io.Serializable {
   Id modelIdentifier();
@@ -113,16 +112,12 @@ abstract class BasicId extends ActiveEntity.Identifier {
 
   @Override public boolean isDefinedAt(final Key key) { return key.getId() != 0; }
 
-  @Override public @Nullable Long interpretJson(final JsonNode json) {
+  @Override public Long interpretJson(final JsonNode json) {
     if (json.isNullNode(jsonPath())) {
       return null;
     }
     final String id = json.getNumberValue(jsonPath());
-    if (id == null) {
-      return null;
-    } else {
-      return Long.parseLong(id);
-    }
+    return Long.parseLong(id);
   }
 
   @Override public JsonNode makeJsonValue(final Key key) { return JsonNodeFactories.number(key.getId()); }

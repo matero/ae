@@ -34,8 +34,6 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.common.collect.ImmutableList;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Map;
 
 enum GeoPtJsonSerializer implements JsonSerializer<GeoPt> {
@@ -46,7 +44,7 @@ enum GeoPtJsonSerializer implements JsonSerializer<GeoPt> {
   private final JsonStringNode latitude = string("lat");
   private final JsonStringNode longitude = string("lon");
 
-  @Override public JsonNode toJson(final @Nullable GeoPt value) {
+  @Override public JsonNode toJson(final GeoPt value) {
     if (value == null) {
       return nullNode();
     }
@@ -54,7 +52,7 @@ enum GeoPtJsonSerializer implements JsonSerializer<GeoPt> {
                                    field(longitude, JsonNodeFactories.number(Float.toString(value.getLongitude())))));
   }
 
-  @Override public @Nullable GeoPt fromJson(final JsonNode json, final String jsonPath) {
+  @Override public GeoPt fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -63,7 +61,7 @@ enum GeoPtJsonSerializer implements JsonSerializer<GeoPt> {
     }
   }
 
-  @Override public @Nullable GeoPt fromJson(final JsonNode json) {
+  @Override public GeoPt fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {
@@ -81,10 +79,6 @@ enum GeoPtJsonSerializer implements JsonSerializer<GeoPt> {
     if (json == null || json.isNullNode()) {
       throw new NullPointerException(field);
     }
-    final String numberValue = json.getNumberValue();
-    if (numberValue == null) {
-      throw new NullPointerException(field);
-    }
-    return Float.parseFloat(numberValue);
+    return Float.parseFloat(json.getNumberValue());
   }
 }

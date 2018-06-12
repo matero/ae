@@ -26,7 +26,6 @@ package ae.db;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Blob;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.Base64;
 
 enum BlobJsonSerializer implements JsonSerializer<Blob> {
@@ -34,14 +33,14 @@ enum BlobJsonSerializer implements JsonSerializer<Blob> {
 
   static final JsonArraySerializer<Blob> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final @Nullable Blob value) {
+  @Override public JsonNode toJson(final Blob value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
     return JsonNodeFactories.string(Base64.getEncoder().encodeToString(value.getBytes()));
   }
 
-  @Override public @Nullable Blob fromJson(final JsonNode json, final String jsonPath) {
+  @Override public Blob fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -49,7 +48,7 @@ enum BlobJsonSerializer implements JsonSerializer<Blob> {
     }
   }
 
-  @Override public @Nullable Blob fromJson(final JsonNode json) {
+  @Override public Blob fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

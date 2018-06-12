@@ -23,8 +23,6 @@
  */
 package ae.db;
 
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
-
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.PropertyProjection;
@@ -35,8 +33,6 @@ import com.google.appengine.api.datastore.Query.SortPredicate;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -46,18 +42,18 @@ import java.util.List;
  */
 public interface ScalarField<T> extends Field<T> {
 
-  default @Nullable T asModelValue(final @Nullable Object value) { return type().cast(value); }
+  default T asModelValue(final Object value) { return type().cast(value); }
 
-  default @Nullable Object asDatastoreValue(final @Nullable T value) { return value; }
+  default Object asDatastoreValue(final T value) { return value; }
 
-  default @Nullable ArrayList<@Nullable Object> asDatastoreValues(final @Nullable T... values) {
+  default ArrayList<Object> asDatastoreValues(final T ... values) {
     if (values == null) {
       return null;
     }
     if (values.length == 0) {
       return new ArrayList<>();
     } else {
-      final ArrayList<@Nullable Object> result = new ArrayList<>(values.length);
+      final ArrayList<Object> result = new ArrayList<>(values.length);
       for (final T value : values) {
         result.add(asDatastoreValue(value));
       }
@@ -65,11 +61,11 @@ public interface ScalarField<T> extends Field<T> {
     }
   }
 
-  default @Nullable List<@Nullable Object> asDatastoreValues(final @Nullable Iterable<@Nullable T> values) {
+  default List<Object> asDatastoreValues(final Iterable<T> values) {
     if (values == null) {
       return null;
     }
-    final ArrayList<@Nullable Object> result = new ArrayList<>();
+    final ArrayList<Object> result = new ArrayList<>();
     for (final T value : values) {
       result.add(asDatastoreValue(value));
     }
@@ -77,11 +73,11 @@ public interface ScalarField<T> extends Field<T> {
     return result;
   }
 
-  default @Nullable ArrayList<@Nullable Object> asDatastoreValues(final @Nullable Iterator<@Nullable T> values) {
+  default ArrayList<Object> asDatastoreValues(final Iterator<T> values) {
     if (values == null) {
       return null;
     }
-    final ArrayList<@Nullable Object> result = new ArrayList<>();
+    final ArrayList<Object> result = new ArrayList<>();
     while (values.hasNext()) {
       result.add(asDatastoreValue(values.next()));
     }
@@ -89,14 +85,14 @@ public interface ScalarField<T> extends Field<T> {
     return result;
   }
 
-  default @Nullable ArrayList<@Nullable Object> asDatastoreValues(final @Nullable Collection<@Nullable T> values) {
+  default ArrayList<Object> asDatastoreValues(final Collection<T> values) {
     if (values == null) {
       return null;
     }
     if (values.isEmpty()) {
       return new ArrayList<>();
     } else {
-      final ArrayList<@Nullable Object> result = new ArrayList<>(values.size());
+      final ArrayList<Object> result = new ArrayList<>(values.size());
       for (final T value : values) {
         result.add(asDatastoreValue(value));
       }
@@ -104,14 +100,14 @@ public interface ScalarField<T> extends Field<T> {
     }
   }
 
-  default @Nullable List<@Nullable T> asModelValues(final @Nullable Object... values) {
+  default List<T> asModelValues(final Object ... values) {
     if (values == null) {
       return null;
     }
     if (values.length == 0) {
       return new ArrayList<>();
     } else {
-      final ArrayList<@Nullable T> result = new ArrayList<>(values.length);
+      final ArrayList<T> result = new ArrayList<>(values.length);
       for (final Object value : values) {
         result.add(asModelValue(value));
       }
@@ -119,11 +115,11 @@ public interface ScalarField<T> extends Field<T> {
     }
   }
 
-  default @Nullable ArrayList<@Nullable T> asModelValues(final @Nullable Iterable<@Nullable Object> values) {
+  default ArrayList<T> asModelValues(final Iterable<Object> values) {
     if (values == null) {
       return null;
     }
-    final ArrayList<@Nullable T> result = new ArrayList<>();
+    final ArrayList<T> result = new ArrayList<>();
     for (final Object value : values) {
       result.add(asModelValue(value));
     }
@@ -131,11 +127,11 @@ public interface ScalarField<T> extends Field<T> {
     return result;
   }
 
-  default @Nullable ArrayList<@Nullable T> asModelValues(final @Nullable Iterator<@Nullable Object> values) {
+  default ArrayList<T> asModelValues(final Iterator<Object> values) {
     if (values == null) {
       return null;
     }
-    final ArrayList<@Nullable T> result = new ArrayList<>();
+    final ArrayList<T> result = new ArrayList<>();
     while (values.hasNext()) {
       result.add(asModelValue(values.next()));
     }
@@ -143,11 +139,11 @@ public interface ScalarField<T> extends Field<T> {
     return result;
   }
 
-  default @Nullable ArrayList<@Nullable T> asModelValues(final @Nullable Collection<@Nullable Object> values) {
+  default ArrayList<T> asModelValues(final Collection<Object> values) {
     if (values == null) {
       return null;
     }
-    final ArrayList<@Nullable T> result = new ArrayList<>();
+    final ArrayList<T> result = new ArrayList<>();
     if (!values.isEmpty()) {
       for (final Object value : values) {
         result.add(asModelValue(value));
@@ -157,7 +153,7 @@ public interface ScalarField<T> extends Field<T> {
     return result;
   }
 
-  @Override default @Nullable T read(final PropertyContainer data) { return asModelValue(data.getProperty(property())); }
+  @Override default T read(final PropertyContainer data) { return asModelValue(data.getProperty(property())); }
 
   /**
    * unindexed scalar properties
@@ -177,8 +173,8 @@ public interface ScalarField<T> extends Field<T> {
 
     @Override public final boolean indexed() { return false; }
 
-    @Override public final void write(final PropertyContainer data, final @Nullable T value) {
-      data.setUnindexedProperty(property(), castNonNull(asDatastoreValue(value)));
+    @Override public final void write(final PropertyContainer data, final T value) {
+      data.setUnindexedProperty(property(), asDatastoreValue(value));
     }
   }
 
@@ -206,22 +202,22 @@ public interface ScalarField<T> extends Field<T> {
       this.projection = projection;
       this.asc = new Query.SortPredicate(property, Query.SortDirection.ASCENDING);
       this.desc = new Query.SortPredicate(property, Query.SortDirection.DESCENDING);
-      this.isNull = new FilterPredicate(property, FilterOperator.EQUAL, castNonNull(null));
-      this.isNotNull = new FilterPredicate(property, FilterOperator.NOT_EQUAL, castNonNull(null));
+      this.isNull = new FilterPredicate(property, FilterOperator.EQUAL, null);
+      this.isNotNull = new FilterPredicate(property, FilterOperator.NOT_EQUAL, null);
     }
 
     @Override public final boolean indexed() { return true; }
 
-    @Override public final void write(final PropertyContainer data, final @Nullable T value) {
-      data.setIndexedProperty(property(), castNonNull(asDatastoreValue(value)));
+    @Override public final void write(final PropertyContainer data, final T value) {
+      data.setIndexedProperty(property(), asDatastoreValue(value));
     }
 
     @Override public final FilterPredicate isNull() { return isNull; }
 
     @Override public final FilterPredicate isNotNull() { return isNotNull; }
 
-    @Override public final FilterPredicate eq(final @Nullable T value) {
-      return new FilterPredicate(field(), FilterOperator.EQUAL, castNonNull(asDatastoreValue(value)));
+    @Override public final FilterPredicate eq(final T value) {
+      return new FilterPredicate(field(), FilterOperator.EQUAL, asDatastoreValue(value));
     }
 
     @Override public final PropertyProjection projection() { return projection; }
@@ -230,40 +226,40 @@ public interface ScalarField<T> extends Field<T> {
 
     @Override public final SortPredicate desc() { return desc; }
 
-    @Override public final FilterPredicate ne(final @Nullable T value) {
-      return new FilterPredicate(field(), FilterOperator.NOT_EQUAL, castNonNull(asDatastoreValue(value)));
+    @Override public final FilterPredicate ne(final T value) {
+      return new FilterPredicate(field(), FilterOperator.NOT_EQUAL, asDatastoreValue(value));
     }
 
-    @Override public final FilterPredicate lt(final @Nullable T value) {
-      return new FilterPredicate(field(), FilterOperator.LESS_THAN, castNonNull(asDatastoreValue(value)));
+    @Override public final FilterPredicate lt(final T value) {
+      return new FilterPredicate(field(), FilterOperator.LESS_THAN, asDatastoreValue(value));
     }
 
-    @Override public final FilterPredicate le(final @Nullable T value) {
-      return new FilterPredicate(field(), FilterOperator.LESS_THAN_OR_EQUAL, castNonNull(asDatastoreValue(value)));
+    @Override public final FilterPredicate le(final T value) {
+      return new FilterPredicate(field(), FilterOperator.LESS_THAN_OR_EQUAL, asDatastoreValue(value));
     }
 
-    @Override public final FilterPredicate gt(final @Nullable T value) {
-      return new FilterPredicate(field(), FilterOperator.GREATER_THAN, castNonNull(asDatastoreValue(value)));
+    @Override public final FilterPredicate gt(final T value) {
+      return new FilterPredicate(field(), FilterOperator.GREATER_THAN, asDatastoreValue(value));
     }
 
-    @Override public final FilterPredicate ge(final @Nullable T value) {
-      return new FilterPredicate(field(), FilterOperator.GREATER_THAN_OR_EQUAL, castNonNull(asDatastoreValue(value)));
+    @Override public final FilterPredicate ge(final T value) {
+      return new FilterPredicate(field(), FilterOperator.GREATER_THAN_OR_EQUAL, asDatastoreValue(value));
     }
 
-    @Override public final FilterPredicate in(final @Nullable T... values) {
-      return new FilterPredicate(field(), FilterOperator.IN, castNonNull(asDatastoreValues(values)));
+    @Override public final FilterPredicate in(final T... values) {
+      return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
     }
 
-    @Override public final FilterPredicate in(final @Nullable Iterable<@Nullable T> values) {
-      return new FilterPredicate(field(), FilterOperator.IN, castNonNull(asDatastoreValues(values)));
+    @Override public final FilterPredicate in(final Iterable<T> values) {
+      return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
     }
 
-    @Override public final FilterPredicate in(final @Nullable Iterator<@Nullable T> values) {
-      return new FilterPredicate(field(), FilterOperator.IN, castNonNull(asDatastoreValues(values)));
+    @Override public final FilterPredicate in(final Iterator<T> values) {
+      return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
     }
 
-    @Override public final FilterPredicate in(final @Nullable Collection<@Nullable T> values) {
-      return new FilterPredicate(field(), FilterOperator.IN, castNonNull(asDatastoreValues(values)));
+    @Override public final FilterPredicate in(final Collection<T> values) {
+      return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
     }
   }
 }

@@ -43,7 +43,6 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.slf4j.Logger;
 import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 import ae.db.ChildWithId;
@@ -55,9 +54,9 @@ import ae.db.Validation;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.WildcardTypeName;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 class ModelBaseClassCodeGenerator implements CodeGenerator {
 
@@ -80,7 +79,7 @@ class ModelBaseClassCodeGenerator implements CodeGenerator {
 
 abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
   private static final ClassName LOGGER_CLASS = ClassName.get(Logger.class);
-  private static final ClassName LOGGER_FACTORY_CLASS = ClassName.get(LoggerFactory.class);
+  private static final ClassName LOGGER_FACTORY_CLASS = ClassName.get(Logger.class);
   final M model;
   final TypeSpec.Builder baseModelClass;
   final ClassName modelClass;
@@ -96,6 +95,7 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
   JavaFile build() {
     return JavaFile.builder(model.packageName, baseModel())
                    .addStaticImport(ClassName.get(ae.db.DSL.class), "*")
+                   .skipJavaLangImports(true)
                    .build();
   }
 
@@ -247,11 +247,11 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
             .addAnnotation(Override.class)
             .addModifiers(Modifier.PUBLIC)
             .returns(ClassName.get(JsonNode.class))
-            .addParameter(Entity.class, "data", Modifier.FINAL)
-            .addStatement("return $T.object($T.of($L))",
-                          ClassName.get(JsonNodeFactories.class),
-                          ClassName.get(ImmutableList.class),
-                          fields.toString())
+            .addParameter(TypeName.get(Entity.class), "data", Modifier.FINAL)
+            .beginControlFlow("if (null == data)")
+              .addStatement("return $T.nullNode()", ClassName.get(JsonNodeFactories.class))
+              .endControlFlow()
+            .addStatement("return $T.object($T.of($L))", ClassName.get(JsonNodeFactories.class), ClassName.get(ImmutableList.class), fields.toString())
             .build();
   }
 
@@ -340,6 +340,7 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
                 .addStatement("return $L.read(data)", field.name)
                 .build()
         );
+        
         baseModelClass.addMethod(methodBuilder(field.name)
                 .addModifiers(field.modifiers)
                 .returns(TypeName.VOID)

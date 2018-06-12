@@ -29,7 +29,6 @@ import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface Attr extends java.io.Serializable {
   String canonicalName();
@@ -52,7 +51,7 @@ public interface Attr extends java.io.Serializable {
 
   default JsonField makeJsonField(final Entity data) { return JsonNodeFactories.field(jsonName(), makeJsonValue(data)); }
 
-  @Nullable Object interpretJson(JsonNode json);
+  Object interpretJson(JsonNode json);
 
   ImmutableList<Constraint> constraints();
 

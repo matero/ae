@@ -29,7 +29,6 @@ import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEntity<P> implements WithId {
   private static final long serialVersionUID = 240124574244515721L;
@@ -124,7 +123,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
    */
   public void deleteById(final long id) { DatastoreServiceFactory.getDatastoreService().delete(makeKey(id)); }
 
-  public @Nullable Entity findById(final long id) {
+  public Entity findById(final long id) {
     try {
       return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
     } catch (final EntityNotFoundException e) {
@@ -152,7 +151,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     DatastoreServiceFactory.getDatastoreService().delete(makeKey(parentKey, id));
   }
 
-  public @Nullable Entity findByParentAndId(final Entity parent, final long id) {
+  public Entity findByParentAndId(final Entity parent, final long id) {
     try {
       return DatastoreServiceFactory.getDatastoreService().get(makeKey(parent, id));
     } catch (final EntityNotFoundException e) {
@@ -160,7 +159,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     }
   }
 
-  public @Nullable Entity findByParentKeyAndId(final Key parentKey, final long id) {
+  public Entity findByParentKeyAndId(final Key parentKey, final long id) {
     try {
       return DatastoreServiceFactory.getDatastoreService().get(makeKey(parentKey, id));
     } catch (final EntityNotFoundException e) {
@@ -199,7 +198,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key), modelParent().makeJsonFieldFrom(key));
   }
 
-  @Override public final @Nullable Key keyFromJson(final JsonNode json) {
+  @Override public final Key keyFromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }
@@ -220,7 +219,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     }
   }
 
-  @Override public @Nullable Entity fromJson(final JsonNode json) {
+  @Override public Entity fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }

@@ -10,29 +10,13 @@
   <name>AE/db</name>
   <description>ActiveEngine abstractions over datastore low-level API.</description>
 
-  <properties>
-    <annotatedJdk>${org.checkerframework:jdk8:jar}</annotatedJdk>
-  </properties>
-
   <dependencies>
-    <dependency>
-      <groupId>org.checkerframework</groupId>
-      <artifactId>checker-qual</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.checkerframework</groupId>
-      <artifactId>jdk8</artifactId>
-    </dependency>
     <!-- ================================================================ -->
     <!-- GAE Compile/runtime dependencies                                 -->
     <!-- ================================================================ -->
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
     </dependency>
     <!-- ================================================================ -->
     <!-- utilities                                                        -->
@@ -83,25 +67,6 @@
             <Xmaxerrs>10000</Xmaxerrs>
             <Xmaxwarns>10000</Xmaxwarns>
           </compilerArguments>
-          <annotationProcessorPaths>
-            <path>
-              <groupId>org.checkerframework</groupId>
-              <artifactId>checker</artifactId>
-              <version>2.5.1</version>
-            </path>
-          </annotationProcessorPaths>
-          <annotationProcessors>
-            <!-- Add all the checkers you want to enable here -->
-            <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
-          </annotationProcessors>
-          <compilerArgs>
-            <arg>-AprintErrorStack</arg>
-            <!-- location of the annotated JDK, which comes from a Maven dependency -->
-            <arg>-Xbootclasspath/p:${annotatedJdk}</arg>
-            <arg>-Awarns</arg>
-            <arg>-Alint</arg>
-            <arg>-AskipUses="org\.assertj\."</arg>
-          </compilerArgs>
         </configuration>
       </plugin>
     </plugins>

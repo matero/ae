@@ -43,33 +43,42 @@ import com.google.appengine.api.users.UserServiceFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
 
 public abstract class Controller {
   protected final HttpServletRequest request;
   protected final HttpServletResponse response;
+
   protected Controller(final HttpServletRequest request, final HttpServletResponse response) {
     this.request = request;
     this.response = response;
   }
+
   protected void setup() {
     // nothing to do
   }
   protected void teardown() {
     // nothing to do
   }
-  /** @return the logger to be used at the controller. */
+  /**
+   * @return the logger to be used at the controller.
+   */
   protected abstract Logger log();
   /* request manipulation ************************************************** */
   /**
    * Reads the text at the request body.
+   *
    * @return the raw text at the {@link HttpServletRequest} associated to the controller.
    * @throws IOException if some problem occurs while reading the text.
    */
@@ -106,12 +115,120 @@ public abstract class Controller {
   protected static final String location(final String value) {
     return value;
   }
-  protected void forwardTo(final String location) throws ServletException {
-    log().debug("Forwarding (to {})", location);
+
+  protected final void log(LogRecord record) {
+    log().log(record);
+  }
+  protected final void log(Level level, String msg) {
+    log().log(level, msg);
+  }
+  protected final void log(Level level, Supplier<String> msgSupplier) {
+    log().log(level, msgSupplier);
+  }
+  protected final void log(Level level, String msg, Object param1) {
+    log().log(level, msg, param1);
+  }
+  protected final void log(Level level, String msg, Object[] params) {
+    log().log(level, msg, params);
+  }
+  protected final void log(Level level, String msg, Throwable thrown) {
+    log().log(level, msg, thrown);
+  }
+  protected final void log(Level level, Throwable thrown, Supplier<String> msgSupplier) {
+    log().log(level, thrown, msgSupplier);
+  }
+  protected final void logp(Level level, String sourceClass, String sourceMethod, String msg) {
+    log().logp(level, sourceClass, sourceMethod, msg);
+  }
+  protected final void logp(Level level, String sourceClass, String sourceMethod, Supplier<String> msgSupplier) {
+    log().logp(level, sourceClass, sourceMethod, msgSupplier);
+  }
+  protected final void logp(Level level, String sourceClass, String sourceMethod, String msg, Object param1) {
+    log().logp(level, sourceClass, sourceMethod, msg, param1);
+  }
+  protected final void logp(Level level, String sourceClass, String sourceMethod, String msg, Object[] params) {
+    log().logp(level, sourceClass, sourceMethod, msg, params);
+  }
+  protected final void logp(Level level, String sourceClass, String sourceMethod, String msg, Throwable thrown) {
+    log().logp(level, sourceClass, sourceMethod, msg, thrown);
+  }
+  protected final void logp(Level level, String sourceClass, String sourceMethod, Throwable thrown, Supplier<String> msgSupplier) {
+    log().logp(level, sourceClass, sourceMethod, thrown, msgSupplier);
+  }
+  protected final void logrb(Level level, String sourceClass, String sourceMethod, ResourceBundle bundle, String msg, Object... params) {
+    log().logrb(level, sourceClass, sourceMethod, bundle, msg, params);
+  }
+  protected final void logrb(Level level, String sourceClass, String sourceMethod, ResourceBundle bundle, String msg, Throwable thrown) {
+    log().logrb(level, sourceClass, sourceMethod, bundle, msg, thrown);
+  }
+  protected final void entering(String sourceClass, String sourceMethod) {
+    log().entering(sourceClass, sourceMethod);
+  }
+  protected final void entering(String sourceClass, String sourceMethod, Object param1) {
+    log().entering(sourceClass, sourceMethod, param1);
+  }
+  protected final void entering(String sourceClass, String sourceMethod, Object[] params) {
+    log().entering(sourceClass, sourceMethod, params);
+  }
+  protected final void exiting(String sourceClass, String sourceMethod) {
+    log().exiting(sourceClass, sourceMethod);
+  }
+  protected final void exiting(String sourceClass, String sourceMethod, Object result) {
+    log().exiting(sourceClass, sourceMethod, result);
+  }
+  protected final void throwing(String sourceClass, String sourceMethod, Throwable thrown) {
+    log().throwing(sourceClass, sourceMethod, thrown);
+  }
+  protected final void severe(String msg) {
+    log().severe(msg);
+  }
+  protected final void warning(String msg) {
+    log().warning(msg);
+  }
+  protected final void info(String msg) {
+    log().info(msg);
+  }
+  protected final void fine(String msg) {
+    log().fine(msg);
+  }
+  protected final void finer(String msg) {
+    log().finer(msg);
+  }
+  protected final void finest(String msg) {
+    log().finest(msg);
+  }
+  protected final void severe(Supplier<String> msgSupplier) {
+    log().severe(msgSupplier);
+  }
+  protected final void warning(Supplier<String> msgSupplier) {
+    log().warning(msgSupplier);
+  }
+  protected final void info(Supplier<String> msgSupplier) {
+    log().info(msgSupplier);
+  }
+  protected final void fine(final Supplier<String> msgSupplier) {
+    log().fine(msgSupplier);
+  }
+  protected final void finer(final Supplier<String> msgSupplier) {
+    log().finer(msgSupplier);
+  }
+  protected final void finest(final Supplier<String> msgSupplier) {
+    log().finest(msgSupplier);
+  }
+  protected final boolean isLoggable(final Level level) {
+    return log().isLoggable(level);
+  }
+
+  protected void forward(final String location) throws ServletException {
+    if (isLoggable(Level.FINER)) {
+      finer("Forwarding (to "+location+")");
+    }
     try {
       request.getRequestDispatcher(location).forward(request, response);
     } catch (final IOException e) {
-      log().warn("Forward failure", e);
+      if (isLoggable(Level.WARNING)) {
+        log(Level.WARNING, "Forward failure", e);
+      }
     }
   }
   /**
@@ -119,38 +236,46 @@ public abstract class Controller {
    *
    * @param location Where to redirectTo
    */
-  protected void redirectTo(final String location) {
-    log().debug("Redirecting ('Found', {} to {})", HttpServletResponse.SC_FOUND, location + ')');
+  protected void redirect(final String location) {
+    if (isLoggable(Level.FINER)) {
+      finer("Redirecting ('Found', "+HttpServletResponse.SC_FOUND+" to "+location+')');
+    }
     try {
       response.sendRedirect(location);
     } catch (final IOException e) {
-      log().warn("Redirect failure", e);
+      if (isLoggable(Level.WARNING)) {
+        log(Level.WARNING, "Redirect failure", e);
+      }
     }
   }
   /**
    * Trigger a browser redirectTo named specific http 3XX status code.
    *
-   * @param location       Where to redirectTo permanently
+   * @param location Where to redirectTo permanently
    * @param httpStatusCode the http status code
    */
-  protected void redirectTo(final String location, final StatusCode httpStatusCode) {
-    redirectTo(location, httpStatusCode.value);
+  protected void redirect(final String location, final StatusCode httpStatusCode) {
+    redirect(location, httpStatusCode.value);
   }
   /**
    * Trigger a browser redirectTo named specific http 3XX status code.
    *
-   * @param location       Where to redirectTo permanently
+   * @param location Where to redirectTo permanently
    * @param httpStatusCode the http status code
    */
-  protected void redirectTo(final String location, final int httpStatusCode) {
-    log().warn("Redirecting ({} to {})", httpStatusCode, location);
+  protected void redirect(final String location, final int httpStatusCode) {
+    if (isLoggable(Level.FINER)) {
+      finer("Redirecting ("+httpStatusCode+" to "+location+')');
+    }
     response.setStatus(httpStatusCode);
     response.setHeader("Location", location);
     response.setHeader("Connection", "close");
     try {
       response.sendError(httpStatusCode);
-    } catch (final IOException e) {
-      log().warn("Exception when trying to redirect permanently", e);
+    } catch (final IOException e) {      
+      if (isLoggable(Level.WARNING)) {
+        log(Level.WARNING, "Exception when trying to redirect permanently", e);
+      }
     }
   }
   protected String format(final JsonNode json) {
@@ -244,13 +369,16 @@ public abstract class Controller {
     final User current = currentUser();
     if (current == null) {
       return null;
+    } else {
+      return current.getUserId();
     }
-    return current.getUserId();
   }
   protected final User currentUser() {
     return UserServiceFactory.getUserService().getCurrentUser();
   }
+
   public static class ParameterNotDefinedException extends RuntimeException {
+    private static final long serialVersionUID = 7433715562801447600L;
     public ParameterNotDefinedException(final String parameterName) {
       super(parameterName);
     }
@@ -277,7 +405,10 @@ public abstract class Controller {
   public synchronized static final void useCompactJsonFormat() {
     JSON_FORMATTER = COMPACT_JSON;
   }
-  protected static final class StatusCode {
+
+  protected static final class StatusCode implements Serializable {
+    private static final long serialVersionUID = -6286655551639670356L;
+
     public static final StatusCode OK = new StatusCode(200);
     public static final StatusCode CREATED = new StatusCode(201);
     public static final StatusCode ACCEPTED = new StatusCode(202);
@@ -301,22 +432,25 @@ public abstract class Controller {
     public static final StatusCode OVERLOADED = new StatusCode(502);
     public static final StatusCode SERVICE_UNAVAILABLE = new StatusCode(503);
     public static final StatusCode GATEWAY_TIMEOUT = new StatusCode(504);
+
     private final int value;
+
     private StatusCode(final int value) {
       this.value = value;
     }
+
     public static final StatusCode of(final int value) {
       if (value < 0) {
         throw new IllegalArgumentException("value < 0");
       }
       return new StatusCode(value);
     }
-    @Override
-    public int hashCode() {
+
+    @Override public int hashCode() {
       return Integer.hashCode(value);
     }
-    @Override
-    public boolean equals(final Object obj) {
+
+    @Override public boolean equals(final Object obj) {
       if (this == obj) {
         return true;
       }
@@ -326,15 +460,19 @@ public abstract class Controller {
       }
       return false;
     }
-    @Override
-    public String toString() {
+
+    @Override public String toString() {
       return "StatusCode{" + value + '}';
     }
   }
+
   protected void set(final StatusCode statusCode) {
     response.setStatus(statusCode.value);
   }
-  protected static final class ContentType {
+
+  protected static final class ContentType implements Serializable {
+    private static final long serialVersionUID = 1854942737463033587L;
+
     public static final ContentType APPLICATION_FORM_URLENCODED = new ContentType("application/x-www-form-urlencoded");
     public static final ContentType APPLICATION_JSON = new ContentType("application/json");
     public static final ContentType APPLICATION_XML = new ContentType("application/xml");
@@ -344,22 +482,22 @@ public abstract class Controller {
     public static final ContentType TEXT_PLAIN = new ContentType("text/plain");
     public static final ContentType APPLICATION_OCTET_STREAM = new ContentType("application/octet-stream");
     public static final ContentType MULTIPART_FORM_DATA = new ContentType("multipart/form-data");
+
     private final String value;
+
     private ContentType(final String value) {
       this.value = value;
     }
+
     public static final ContentType of(final String value) {
-      if (value == null) {
-        throw new NullPointerException("value");
-      }
       return new ContentType(value);
     }
-    @Override
-    public int hashCode() {
+
+    @Override public int hashCode() {
       return value.hashCode();
     }
-    @Override
-    public boolean equals(final Object obj) {
+
+    @Override public boolean equals(final Object obj) {
       if (this == obj) {
         return true;
       }
@@ -369,15 +507,17 @@ public abstract class Controller {
       }
       return false;
     }
-    @Override
-    public String toString() {
+
+    @Override public String toString() {
       return "ContentType{" + value + '}';
     }
   }
+
   protected void set(final ContentType contentType) {
     response.setContentType(contentType.value);
   }
-  protected final static class Header {
+
+  protected final static class Header implements Serializable {
     public static final Header ACCEPT = new Header("Accept");
     public static final Header ACCEPT_CHARSET = new Header("Accept-Charset");
     public static final Header ACCEPT_ENCODING = new Header("Accept-Encoding");
@@ -401,22 +541,22 @@ public abstract class Controller {
     public static final Header HOST = new Header("Host");
     public static final Header LAST_MODIFIED = new Header("Last-Modified");
     public static final Header LOCATION = new Header("Location");
+
     private final String name;
+
     private Header(final String value) {
       this.name = value;
     }
+
     public static final Header of(final String value) {
-      if (value == null) {
-        throw new NullPointerException("value");
-      }
       return new Header(value);
     }
-    @Override
-    public int hashCode() {
+
+    @Override public int hashCode() {
       return name.hashCode();
     }
-    @Override
-    public boolean equals(final Object obj) {
+
+    @Override public boolean equals(final Object obj) {
       if (this == obj) {
         return true;
       }
@@ -431,6 +571,7 @@ public abstract class Controller {
       return "Header{" + name + '}';
     }
   }
+
   protected void set(final Header header, final String value) {
     response.setHeader(header.name, value);
   }
@@ -455,30 +596,32 @@ public abstract class Controller {
   protected void add(final Header header, final long timestamp) {
     response.addDateHeader(header.name, timestamp);
   }
+
   public static abstract class HttpParameter<T> {
-    @FunctionalInterface
-    public interface ValueInterpreter<T> {
+    @FunctionalInterface public interface ValueInterpreter<T> {
       T from(String rawValue);
     }
+
     private final String name;
     private final boolean required;
     private final Supplier<T> defaultValue;
     private final ValueInterpreter<T> interpretValue;
-    protected HttpParameter(final String name,
-                            final boolean required,
-                            final ValueInterpreter<T> interpretValue,
-                            final Supplier<T> defaultValue) {
+
+    protected HttpParameter(final String name, final boolean required, final ValueInterpreter<T> interpretValue, final Supplier<T> defaultValue) {
       this.name = name;
       this.required = required;
       this.defaultValue = defaultValue;
       this.interpretValue = interpretValue;
     }
+
     public final boolean isDefinedAt(final HttpServletRequest request) {
       return request.getParameterMap().containsKey(name);
     }
+
     public final boolean isDefinedAt(final Map<String, String> parameters) {
       return parameters.containsKey(name);
     }
+
     public final T of(final HttpServletRequest request) {
       if (isDefinedAt(request)) {
         return interpret(read(request));
@@ -489,6 +632,7 @@ public abstract class Controller {
         return defaultValue.get();
       }
     }
+
     public final T of(final Map<String, String> parameters) {
       if (isDefinedAt(parameters)) {
         return interpret(read(parameters));
@@ -502,25 +646,33 @@ public abstract class Controller {
     protected final T interpret(String raw) {
       return interpretValue.from(raw);
     }
+
     protected final String read(final HttpServletRequest request) {
       return request.getParameter(name);
     }
+
     protected final String read(final Map<String, String> parameters) {
       return parameters.get(name);
     }
   }
+
   protected static final HttpParameter.ValueInterpreter<String> trimmed = Interpret::asTrimmedString;
+
   protected static final String name(final String value) {
-    if (value == null || value.isEmpty()) {
+    if (value.isEmpty()) {
       throw new IllegalArgumentException("name must be a defined non empty string");
     }
     return value;
   }
+
   protected static <T> Supplier<T> byDefault(final T defaultValue) {
     return () -> defaultValue;
   }
+
   protected static final boolean required = true;
+
   protected static final boolean notRequired = true;
+
   public static final class StringParameter extends HttpParameter<String> {
     static final ValueInterpreter<String> DEFAULT_INTERPRETER = Interpret::asString;
     static final Supplier<String> NULL_DEFAULT_VALUE = () -> null;
@@ -550,6 +702,7 @@ public abstract class Controller {
       super(name, required, interpretValue, defaultValue);
     }
   }
+
   public static final class UrlParameter extends HttpParameter<URL> {
     static final ValueInterpreter<URL> DEFAULT_INTERPRETER = Interpret::asUrl;
     static final Supplier<URL> NULL_DEFAULT_VALUE = () -> null;
@@ -578,6 +731,7 @@ public abstract class Controller {
       super(name, required, interpretValue, defaultValue);
     }
   }
+
   public static final class CursorParameter extends HttpParameter<Cursor> {
     static final ValueInterpreter<Cursor> DEFAULT_INTERPRETER = Interpret::asCursor;
     static final Supplier<Cursor> NULL_DEFAULT_VALUE = () -> null;
@@ -607,6 +761,7 @@ public abstract class Controller {
       super(name, required, interpretValue, defaultValue);
     }
   }
+
   public static final class IntegerParameter extends HttpParameter<Integer> {
     static final ValueInterpreter<Integer> DEFAULT_INTERPRETER = Interpret::asInteger;
     static final Supplier<Integer> NULL_DEFAULT_VALUE = () -> null;
@@ -636,6 +791,7 @@ public abstract class Controller {
       super(name, required, interpretValue, defaultValue);
     }
   }
+
   public static final class LongParameter extends HttpParameter<Long> {
     static final ValueInterpreter<Long> DEFAULT_INTERPRETER = Interpret::asLong;
     static final Supplier<Long> NULL_DEFAULT_VALUE = () -> null;
@@ -668,8 +824,8 @@ public abstract class Controller {
   private static final JsonStringNode data = JsonNodeFactories.string("data");
   protected JsonNode buildPage(final ActiveEntity ae, final QueryResultList<Entity> page) {
     return JsonNodeFactories.object(
-        JsonNodeFactories.field(cursor, JsonNodeFactories.string(page.getCursor().toWebSafeString())),
-        JsonNodeFactories.field(data, ae.toJson(page))
+            JsonNodeFactories.field(cursor, JsonNodeFactories.string(page.getCursor().toWebSafeString())),
+            JsonNodeFactories.field(data, ae.toJson(page))
     );
   }
   protected DatastoreService datastore() {

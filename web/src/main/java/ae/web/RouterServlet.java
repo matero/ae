@@ -24,7 +24,6 @@
 package ae.web;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,12 +33,11 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 public abstract class RouterServlet extends HttpServlet {
+  private static final long serialVersionUID = -8511948712493790911L;
 
-  private TemplateEngine templateEngine;
+  @SuppressWarnings("initialization.fields.uninitialized") private TemplateEngine templateEngine;
 
-  protected RouterServlet() {
-    // nothing more to do
-  }
+  protected RouterServlet() { /* nothing more to do */ }
 
   protected void unhandledDelete(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     super.doDelete(request, response);

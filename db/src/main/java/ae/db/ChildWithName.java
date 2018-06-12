@@ -30,7 +30,6 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveEntity<P> implements WithName {
   private static final long serialVersionUID = -7165772094949873742L;
@@ -109,7 +108,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     DatastoreServiceFactory.getDatastoreService().delete(makeKey(parentKey, name));
   }
 
-  public @Nullable Entity findByParentAndName(final Entity parent, final String name) {
+  public Entity findByParentAndName(final Entity parent, final String name) {
     try {
       return DatastoreServiceFactory.getDatastoreService().get(makeKey(parent, name));
     } catch (final EntityNotFoundException e) {
@@ -117,7 +116,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     }
   }
 
-  public @Nullable Entity findByParentKeyAndName(final Key parentKey, final String name) {
+  public Entity findByParentKeyAndName(final Key parentKey, final String name) {
     try {
       return DatastoreServiceFactory.getDatastoreService().get(makeKey(parentKey, name));
     } catch (final EntityNotFoundException e) {
@@ -156,7 +155,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key), modelParent().makeJsonFieldFrom(key));
   }
 
-  @Override public final @Nullable Key keyFromJson(final JsonNode json) {
+  @Override public final Key keyFromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }
@@ -172,7 +171,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     }
   }
 
-  @Override public @Nullable Entity fromJson(final JsonNode json) {
+  @Override public Entity fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }

@@ -141,7 +141,7 @@ public final class Interpret {
     if (raw == null) {
       return null;
     } else {
-      return Character.valueOf(raw.charAt(0));
+      return raw.charAt(0);
     }
   }
 
@@ -161,7 +161,9 @@ public final class Interpret {
     }
   }
 
-  public static String asString(final String raw) { return raw; }
+  public static String asString(final String raw) {
+    return raw;
+  }
 
   public static String asTrimmedString(final String raw) {
     if (raw == null) {

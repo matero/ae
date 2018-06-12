@@ -38,8 +38,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
+import java.util.logging.Logger;
 
 /**
  * ActiveRecord over google appengine datastore's {@link Entity}.
@@ -82,7 +81,7 @@ public abstract class ActiveEntity implements Serializable {
 
   public boolean isKindOf(final Key key) { return kind.equals(key.getKind()); }
 
-  public @Nullable Key keyFrom(final @Nullable String webSafeKey) {
+  public Key keyFrom(final String webSafeKey) {
     if (webSafeKey == null) {
       return null;
     }
@@ -105,9 +104,9 @@ public abstract class ActiveEntity implements Serializable {
   /* **************************************************************************
    * json serialization methods
    */
-  public abstract JsonNode toJson(final @Nullable Entity data);
+  public abstract JsonNode toJson(final Entity data);
 
-  public JsonNode toJson(final @Nullable Entity... elements) {
+  public JsonNode toJson(final Entity ... elements) {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
     }
@@ -121,7 +120,7 @@ public abstract class ActiveEntity implements Serializable {
     return JsonNodeFactories.array(nodes);
   }
 
-  public JsonNode toJson(final @Nullable Collection<Entity> elements) {
+  public JsonNode toJson(final Collection<Entity> elements) {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
     }
@@ -135,7 +134,7 @@ public abstract class ActiveEntity implements Serializable {
     return JsonNodeFactories.array(nodes);
   }
 
-  public JsonNode toJson(final @Nullable Iterable<Entity> elements) {
+  public JsonNode toJson(final Iterable<Entity> elements) {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
     }
@@ -146,7 +145,7 @@ public abstract class ActiveEntity implements Serializable {
     return JsonNodeFactories.array(nodes);
   }
 
-  public JsonNode toJson(final @Nullable Iterator<Entity> elements) {
+  public JsonNode toJson(final Iterator<Entity> elements) {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
     }
@@ -161,9 +160,9 @@ public abstract class ActiveEntity implements Serializable {
     }
   }
 
-  public abstract @Nullable Entity fromJson(JsonNode data);
+  public abstract Entity fromJson(JsonNode data);
 
-  public abstract @Nullable Key keyFromJson(JsonNode json);
+  public abstract Key keyFromJson(JsonNode json);
 
   protected abstract Iterable<JsonField> jsonKeyFields(Key key);
 
@@ -191,7 +190,7 @@ public abstract class ActiveEntity implements Serializable {
     DatastoreServiceFactory.getDatastoreService().delete(key);
   }
 
-  public @Nullable Entity find(final Key key) {
+  public Entity find(final Key key) {
     if (!isKindOf(key)) {
       throw new IllegalArgumentException("Key '" + key + "' does not represent " + getClass().getCanonicalName());
     }

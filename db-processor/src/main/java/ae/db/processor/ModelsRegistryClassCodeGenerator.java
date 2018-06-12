@@ -26,7 +26,6 @@ package ae.db.processor;
 import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -76,12 +75,13 @@ final class ModelsRegistryJavaClassBuilder {
   }
 
   JavaFile build() {
-    return JavaFile.builder(registryClass.packageName(), modelsRegistryClass()).build();
+    return JavaFile.builder(registryClass.packageName(), modelsRegistryClass())
+            .skipJavaLangImports(true)
+            .build();
   }
 
   private TypeSpec modelsRegistryClass() {
     defineGenerated();
-    defineLogger();
     defineConstructor();
     defineFields();
     return classBuilder.build();
@@ -94,35 +94,25 @@ final class ModelsRegistryJavaClassBuilder {
             .build());
   }
 
-  void defineLogger() {
-    classBuilder.addField(
-            FieldSpec.builder(LOGGER_CLASS, "LOG", Modifiers.PRIVATE_STATIC_FINAL)
-                    .initializer("$T.getLogger($S)", LOGGER_CLASS, registryClass).build()
-    );
-  }
-
   void defineConstructor() {
     MethodSpec.Builder ctor = MethodSpec.constructorBuilder()
             .addModifiers(Modifier.PRIVATE)
-            .addStatement("new $T(\"$T can't be instantiated.\")",
-                          UnsupportedOperationException.class,
-                          registryClass);
+            .addStatement("new $T(\"$T can't be instantiated.\")", UnsupportedOperationException.class, registryClass);
     classBuilder.addMethod(ctor.build());
   }
 
   void defineFields() {
     for (final MetaModel model : models.byPackage.get(registryClass.packageName())) {
       final ClassName modelClass = ClassName.get(model.packageName, model.name);
-      classBuilder.addField(FieldSpec.builder(modelClass,
-                                              model.name,
-                                              model.modifiers.toArray(new Modifier[0]))
-              .addModifiers(Modifier.STATIC, Modifier.FINAL)
-              .build()
-      );
-      classBuilder.addStaticBlock(CodeBlock.builder()
-              .addStatement("$L = new $T()", model.name, modelClass)
-              .addStatement("LOG.finest($S)", registryClass.toString() + '.' + model.name + " defined")
-              .build());
+      classBuilder.addField(
+              FieldSpec.builder(modelClass, model.name, modifiersOf(model))
+                       .addModifiers(Modifier.STATIC, Modifier.FINAL)
+                      .initializer("new $T()", modelClass)
+                      .build());
     }
+  }
+
+  private static Modifier[] modifiersOf(final MetaModel model) {
+    return model.modifiers.toArray(new Modifier[0]);
   }
 }

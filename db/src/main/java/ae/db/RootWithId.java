@@ -34,7 +34,6 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RootWithId extends RootActiveEntity implements WithId {
   private static final long serialVersionUID = -4301518873000440300L;
@@ -71,7 +70,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
    */
   public void deleteById(final long id) { DatastoreServiceFactory.getDatastoreService().delete(makeKey(id)); }
 
-  public @Nullable Entity findById(final long id) {
+  public Entity findById(final long id) {
     try {
       return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
     } catch (final EntityNotFoundException e) {
@@ -98,11 +97,11 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
   }
 
-  @Override public final @Nullable Key keyFromJson(final JsonNode json) {
+  @Override public final Key keyFromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }
-    final @Nullable Long id = modelIdentifier().interpretJson(json);
+    final Long id = modelIdentifier().interpretJson(json);
     if (id == null) {
       return newEntity().getKey();
     } else {
@@ -110,11 +109,11 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     }
   }
 
-  @Override public @Nullable Entity fromJson(final JsonNode json) {
+  @Override public Entity fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }
-    final @Nullable Long id = modelIdentifier().interpretJson(json);
+    final Long id = modelIdentifier().interpretJson(json);
     final Entity data;
     if (id == null) {
       data = make();

@@ -27,7 +27,6 @@ import static argo.jdom.JsonNodeFactories.array;
 import static argo.jdom.JsonNodeFactories.field;
 import static argo.jdom.JsonNodeFactories.object;
 import static argo.jdom.JsonNodeFactories.string;
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import argo.jdom.JsonField;
 import argo.jdom.JsonNode;
@@ -94,6 +93,6 @@ public final class Validation {
 
   public void reject(final Attr attr, final String message) {
     errors.putIfAbsent(attr, new LinkedList<>());
-    castNonNull(errors.get(attr)).add(message);
+    errors.get(attr).add(message);
   }
 }

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import ae.Model;
 import ae.Record;
+import com.google.appengine.api.datastore.Key;
 
 @Model
 class Competencia extends __Competencia {
@@ -61,6 +62,7 @@ public class Competidor extends __Competidor {
     @required @indexed Email email;
     Email emailEmergencias;
     @notBlank Text info;
+    List<Key> participaciones;    
   };
 
   List<Entity> findByApodo(final String valor) {

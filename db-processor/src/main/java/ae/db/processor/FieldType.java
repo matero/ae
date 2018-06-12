@@ -68,6 +68,7 @@ interface FieldType {
   ClassName STRING = ClassName.get(String.class);
   ClassName TEXT = ClassName.get(Text.class);
   ClassName USER = ClassName.get(User.class);
+  
   TypeName BIG_DECIMAL_LIST = ParameterizedTypeName.get(LIST, BIG_DECIMAL);
   TypeName BLOB_LIST = ParameterizedTypeName.get(LIST, BLOB);
   TypeName BLOB_KEY_LIST = ParameterizedTypeName.get(LIST, BLOB_KEY);
@@ -88,5 +89,5 @@ interface FieldType {
   TypeName SHORT_BLOB_LIST = ParameterizedTypeName.get(LIST, SHORT_BLOB);
   TypeName STRING_LIST = ParameterizedTypeName.get(LIST, STRING);
   TypeName TEXT_LIST = ParameterizedTypeName.get(LIST, TEXT);
-  TypeName USER_LIST = ParameterizedTypeName.get(LIST, USER);
+  TypeName USER_LIST = ParameterizedTypeName.get(LIST, USER);  
 }

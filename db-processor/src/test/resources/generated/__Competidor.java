@@ -8,6 +8,7 @@ import ae.db.DateJsonSerializer;
 import ae.db.Field;
 import ae.db.IndexedDate;
 import ae.db.IndexedEmail;
+import ae.db.IndexedKeyList;
 import ae.db.IndexedPhoneNumber;
 import ae.db.IndexedString;
 import ae.db.UnindexedText;
@@ -20,9 +21,8 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PhoneNumber;
 import com.google.appengine.api.datastore.Text;
 import com.google.common.collect.ImmutableList;
-import java.lang.Override;
-import java.lang.String;
 import java.util.Date;
+import java.util.List;
 import javax.annotation.Generated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +64,11 @@ abstract class __Competidor extends ChildWithId {
 
   final UnindexedText info = new UnindexedText(canonicalName("processor.test.Competidor.info"), description("Info"), propertyName("info"), fieldName("info"), nullable, jsonName("info"), jsonPath("info"), constraints(ae.db.NotBlankConstraint.ForText.INSTANCE));
 
-  private final ImmutableList<Attr> _attrs = ImmutableList.of(personId, competencia, nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info);
+  final IndexedKeyList participaciones = new IndexedKeyList(canonicalName("processor.test.Competidor.participaciones"), description("Participaciones"), propertyName("participaciones"), fieldName("participaciones"), nullable, jsonName("participaciones"), jsonPath("participaciones"), noConstraints);
 
-  private final ImmutableList<Field<?>> _fields = ImmutableList.of(nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info);
+  private final ImmutableList<Attr> _attrs = ImmutableList.of(personId, competencia, nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info, participaciones);
+
+  private final ImmutableList<Field<?>> _fields = ImmutableList.of(nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info, participaciones);
 
   __Competidor() {
     super("competidores");
@@ -94,7 +96,10 @@ abstract class __Competidor extends ChildWithId {
 
   @Override
   public JsonNode toJson(final Entity data) {
-    return JsonNodeFactories.object(ImmutableList.of(personId.makeJsonFieldFrom(data),nombreVisible.makeJsonFieldFrom(data),nombres.makeJsonFieldFrom(data),apellidos.makeJsonFieldFrom(data),prefijo.makeJsonFieldFrom(data),sufijo.makeJsonFieldFrom(data),apodo.makeJsonFieldFrom(data),nacimiento.makeJsonFieldFrom(data),sexo.makeJsonFieldFrom(data),telefonoPersonal.makeJsonFieldFrom(data),telefonoEmergencias.makeJsonFieldFrom(data),email.makeJsonFieldFrom(data),emailEmergencias.makeJsonFieldFrom(data),info.makeJsonFieldFrom(data)));
+    if (null == data) {
+      return JsonNodeFactories.nullNode();
+    }
+    return JsonNodeFactories.object(ImmutableList.of(personId.makeJsonFieldFrom(data),nombreVisible.makeJsonFieldFrom(data),nombres.makeJsonFieldFrom(data),apellidos.makeJsonFieldFrom(data),prefijo.makeJsonFieldFrom(data),sufijo.makeJsonFieldFrom(data),apodo.makeJsonFieldFrom(data),nacimiento.makeJsonFieldFrom(data),sexo.makeJsonFieldFrom(data),telefonoPersonal.makeJsonFieldFrom(data),telefonoEmergencias.makeJsonFieldFrom(data),email.makeJsonFieldFrom(data),emailEmergencias.makeJsonFieldFrom(data),info.makeJsonFieldFrom(data),participaciones.makeJsonFieldFrom(data)));
   }
 
   @Override
@@ -112,6 +117,7 @@ abstract class __Competidor extends ChildWithId {
     email.write(data, json);
     emailEmergencias.write(data, json);
     info.write(data, json);
+    participaciones.write(data, json);
   }
 
   @Override
@@ -254,6 +260,14 @@ abstract class __Competidor extends ChildWithId {
     info.write(data, newValue);
   }
 
+  final List<Key> participaciones(final Entity data) {
+    return participaciones.read(data);
+  }
+
+  final void participaciones(final Entity data, final List<Key> newValue) {
+    participaciones.write(data, newValue);
+  }
+
   final Competidor.Builder with(final Entity parent) {
     return new Builder(make(parent));
   }
@@ -347,6 +361,11 @@ abstract class __Competidor extends ChildWithId {
 
     final Competidor.Builder info(final Text value) {
       info.write(this.entity, value);
+      return this;
+    }
+
+    final Competidor.Builder participaciones(final List<Key> value) {
+      participaciones.write(this.entity, value);
       return this;
     }
   }
@@ -472,6 +491,15 @@ abstract class __Competidor extends ChildWithId {
 
     final Competidor.Wrapper info(final Text value) {
       info.write(this.entity, value);
+      return this;
+    }
+
+    final List<Key> participaciones() {
+      return participaciones.read(this.entity);
+    }
+
+    final Competidor.Wrapper participaciones(final List<Key> value) {
+      participaciones.write(this.entity, value);
       return this;
     }
   }

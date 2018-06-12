@@ -25,16 +25,15 @@ package ae.db;
 
 import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonNode;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public interface JsonSerializer<T> extends java.io.Serializable {
-  JsonNode toJson(@Nullable T value);
+  JsonNode toJson(T value);
 
-  @Nullable T fromJson(JsonNode json, String jsonPath);
+  T fromJson(JsonNode json, String jsonPath);
 
-  @Nullable T fromJson(JsonNode json);
+  T fromJson(JsonNode json);
 }
 
 final class NotSerializableToJson<T> implements JsonSerializer<T> {
@@ -44,27 +43,27 @@ final class NotSerializableToJson<T> implements JsonSerializer<T> {
 
   NotSerializableToJson(final Class<T> type) { this.type = type; }
 
-  @Override public JsonNode toJson(final @Nullable T value) {
+  @Override public JsonNode toJson(final T value) {
     throw new UnsupportedOperationException("JSON serialization of " + type.getCanonicalName() + " instances is not supported.");
   }
 
-  @Override public @Nullable T fromJson(final JsonNode json, final String jsonPath) {
+  @Override public T fromJson(final JsonNode json, final String jsonPath) {
     throw new UnsupportedOperationException("JSON serialization of " + type.getCanonicalName() + " instances is not supported.");
   }
 
-  @Override public @Nullable T fromJson(final JsonNode json) {
+  @Override public T fromJson(final JsonNode json) {
     throw new UnsupportedOperationException("JSON serialization of " + type.getCanonicalName() + " instances is not supported.");
   }
 }
 
-final class JsonArraySerializer<E> implements JsonSerializer<List<@Nullable E>> {
+final class JsonArraySerializer<E> implements JsonSerializer<List<E>> {
   private static final long serialVersionUID = 4918464142238788334L;
 
   private final JsonSerializer<E> elementJsonSerializer;
 
   JsonArraySerializer(final JsonSerializer<E> elementJsonSerializer) { this.elementJsonSerializer = elementJsonSerializer; }
 
-  @Override public JsonNode toJson(final @Nullable List<@Nullable E> value) {
+  @Override public JsonNode toJson(final List<E> value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
@@ -75,7 +74,7 @@ final class JsonArraySerializer<E> implements JsonSerializer<List<@Nullable E>> 
     return JsonNodeFactories.array(elements);
   }
 
-  @Override public @Nullable List<@Nullable E> fromJson(final JsonNode json, final String jsonPath) {
+  @Override public List<E> fromJson(final JsonNode json, final String jsonPath) {
     if (!json.isNode(jsonPath)) {
       return null;
     }
@@ -86,10 +85,7 @@ final class JsonArraySerializer<E> implements JsonSerializer<List<@Nullable E>> 
     return interpret(array);
   }
 
-  @Override @Nullable public List<@Nullable E> fromJson(final JsonNode json) {
-    if (json == null) {
-      return null;
-    }
+  @Override public List<E> fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }
@@ -97,11 +93,11 @@ final class JsonArraySerializer<E> implements JsonSerializer<List<@Nullable E>> 
     return interpret(array);
   }
 
-  List<@Nullable E> interpret(final List<JsonNode> array) {
+  List<E> interpret(final List<JsonNode> array) {
     if (array.isEmpty()) {
       return new ArrayList<>(2);
     }
-    final ArrayList<@Nullable E> result = new ArrayList<>(array.size());
+    final ArrayList<E> result = new ArrayList<>(array.size());
     for (final JsonNode element : array) {
       result.add(elementJsonSerializer.fromJson(element));
     }
@@ -109,7 +105,7 @@ final class JsonArraySerializer<E> implements JsonSerializer<List<@Nullable E>> 
   }
 }
 
-final class JsonArrayNotSerializable<E> implements JsonSerializer<List<@Nullable E>> {
+final class JsonArrayNotSerializable<E> implements JsonSerializer<List<E>> {
   private static final long serialVersionUID = 7734862022007766383L;
 
   private final Class<E> elementType;
@@ -118,15 +114,15 @@ final class JsonArrayNotSerializable<E> implements JsonSerializer<List<@Nullable
     this.elementType = elementType;
   }
 
-  @Override public JsonNode toJson(final @Nullable List<@Nullable E> value) {
+  @Override public JsonNode toJson(final List<E> value) {
     throw new UnsupportedOperationException("JSON serialization of " + elementType.getCanonicalName() + " arrays is not supported.");
   }
 
-  @Override public @Nullable List<@Nullable E> fromJson(final JsonNode json, final String jsonPath) {
+  @Override public List<E> fromJson(final JsonNode json, final String jsonPath) {
     throw new UnsupportedOperationException("JSON serialization of " + elementType.getCanonicalName() + " arrays is not supported.");
   }
 
-  @Override public @Nullable List<@Nullable E> fromJson(final JsonNode json) {
+  @Override public List<E> fromJson(final JsonNode json) {
     throw new UnsupportedOperationException("JSON serialization of " + elementType.getCanonicalName() + " arrays is not supported.");
   }
 }

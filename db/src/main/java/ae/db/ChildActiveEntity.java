@@ -31,7 +31,6 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEntity {
   private static final long serialVersionUID = -1172162463919296861L;
@@ -46,6 +45,8 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
   @Override public final boolean isKindOf(final Key key) { return super.isKindOf(key) && modelParent().isKindOf(key.getParent()); }
 
   public static final class Parent<P extends ActiveEntity> extends ActiveEntity.Identifier {
+    private static final long serialVersionUID = -8377743561105112889L;
+  
     private final P parent;
     private final boolean required;
 
@@ -68,7 +69,7 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
     @Override public boolean isDefinedAt(final Key key) { return key.getParent() != null && parent().isKindOf(key.getParent()); }
 
-    public @Nullable Key of(final Entity data) { return read(data); }
+    public Key of(final Entity data) { return read(data); }
 
     public Key read(final Entity data) { return data.getParent(); }
 
@@ -78,7 +79,7 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
     @Override public JsonNode makeJsonValue(final Key key) { return JsonNodeFactories.object(parent().jsonKeyFields(key)); }
 
-    @Override public @Nullable Key interpretJson(final JsonNode json) { return parent().keyFromJson(json.getNode(jsonPath())); }
+    @Override public Key interpretJson(final JsonNode json) { return parent().keyFromJson(json.getNode(jsonPath())); }
 
     @Override public void validate(final Entity data, final Validation validation) {
       final Key value = read(data);
@@ -99,7 +100,7 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
   /* **************************************************************************
    * query building facilities
    */
-  public final Query makeQuery(final @Nullable Entity parent) {
+  public final Query makeQuery(final Entity parent) {
     if (parent == null) {
       return new Query(kind);
     } else {
@@ -107,7 +108,7 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
     }
   }
 
-  public final Query makeQuery(final @Nullable Key parentKey) {
+  public final Query makeQuery(final Key parentKey) {
     if (parentKey == null) {
       return new Query(kind);
     } else {

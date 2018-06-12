@@ -30,7 +30,6 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RootWithName extends RootActiveEntity implements WithName {
   private static final long serialVersionUID = -5374806570138213003L;
@@ -63,7 +62,7 @@ public abstract class RootWithName extends RootActiveEntity implements WithName 
   /* **************************************************************************
    * persistence methods
    */
-  public @Nullable Entity findByName(final String name) {
+  public Entity findByName(final String name) {
     return find(makeKey(name));
   }
 
@@ -86,19 +85,26 @@ public abstract class RootWithName extends RootActiveEntity implements WithName 
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
   }
 
-  @Override public final @Nullable Key keyFromJson(final JsonNode json) {
+  @Override public final Key keyFromJson(final JsonNode json) {
     if (json == null || json.isNullNode()) {
       return null;
     }
     final String name = modelIdentifier().interpretJson(json);
-    return makeKey(name);
+    if (name == null) {
+      return null;
+    } else {
+      return makeKey(name);
+    }
   }
 
-  @Override public @Nullable Entity fromJson(final JsonNode json) {
+  @Override public Entity fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     }
     final String name = modelIdentifier().interpretJson(json);
+    if (name == null) {
+      throw new IllegalArgumentException("no " + modelIdentifier().field() + " defined.");
+    }
     final Entity data = make(name);
     updatePropertiesWithJsonContents(data, json);
     return data;

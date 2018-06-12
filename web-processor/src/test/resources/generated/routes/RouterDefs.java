@@ -8,8 +8,6 @@ import ae.web.RouterServlet;
 import book.Controller;
 import com.google.appengine.api.datastore.Cursor;
 import java.io.IOException;
-import java.lang.Override;
-import java.lang.String;
 import java.util.regex.Pattern;
 import javax.annotation.Generated;
 import javax.servlet.ServletException;
@@ -58,8 +56,8 @@ abstract class RouterDefs extends RouterServlet {
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws
-                                                                                          ServletException, IOException {
-    final String[] routeParameters = new String[3];
+      ServletException, IOException {
+    final String[] routeParameters = new String[]{null, null, null, null};
     if (GET_book_Controller_index.matches(request)) {
       handle(new Controller(request, response), (controller) -> controller.index());
       return;
@@ -114,7 +112,7 @@ abstract class RouterDefs extends RouterServlet {
 
   @Override
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws
-                                                                                           ServletException, IOException {
+      ServletException, IOException {
     if (POST_book_Controller_save.matches(request)) {
       handle(new Controller(request, response), (controller) -> controller.save());
       return;
@@ -128,8 +126,8 @@ abstract class RouterDefs extends RouterServlet {
 
   @Override
   public void doPut(final HttpServletRequest request, final HttpServletResponse response) throws
-                                                                                          ServletException, IOException {
-    final String[] routeParameters = new String[1];
+      ServletException, IOException {
+    final String[] routeParameters = new String[]{null, null};
     if (PUT_book_Controller_update.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       handle(new Controller(request, response), (controller) -> controller.update(id));
@@ -145,8 +143,8 @@ abstract class RouterDefs extends RouterServlet {
 
   @Override
   public void doDelete(final HttpServletRequest request, final HttpServletResponse response) throws
-                                                                                             ServletException, IOException {
-    final String[] routeParameters = new String[1];
+      ServletException, IOException {
+    final String[] routeParameters = new String[]{null, null};
     if (DELETE_book_Controller_delete.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       handle(new Controller(request, response), (controller) -> controller.delete(id));

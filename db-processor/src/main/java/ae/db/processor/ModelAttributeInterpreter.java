@@ -45,9 +45,13 @@ import javax.lang.model.util.Types;
 import ae.db.EmailConstraint;
 import ae.db.NotBlankConstraint;
 import ae.Record;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import javax.lang.model.type.DeclaredType;
 
 abstract class ModelAttributeInterpreter {
   final Types types;
+  final Elements elements;
 
   final TypeMirror categoryClass;
   final TypeMirror emailClass;
@@ -55,14 +59,14 @@ abstract class ModelAttributeInterpreter {
   final TypeMirror phoneNumberClass;
   final TypeMirror stringClass;
   final TypeMirror textClass;
+  final TypeMirror listClass;
 
-  ModelAttributeInterpreter(final ProcessingEnvironment environment) {
-    this(environment.getTypeUtils(), environment.getElementUtils());
-  }
+  ModelAttributeInterpreter(final ProcessingEnvironment environment) { this(environment.getTypeUtils(), environment.getElementUtils()); }
 
   ModelAttributeInterpreter(final Types typeUtils, final Elements elements) {
     this.types = typeUtils;
-
+    this.elements = elements;
+    this.listClass = elements.getTypeElement(List.class.getCanonicalName()).asType();
     this.categoryClass = elements.getTypeElement(Category.class.getCanonicalName()).asType();
     this.emailClass = elements.getTypeElement(Email.class.getCanonicalName()).asType();
     this.postalAddressClass = elements.getTypeElement(PostalAddress.class.getCanonicalName()).asType();
@@ -120,7 +124,21 @@ abstract class ModelAttributeInterpreter {
       return ClassName.get(type);
     }
     if (TypeKind.DECLARED == type.getKind()) {
-      return ClassName.get(type);
+      String typename = type.toString();
+      if ("java.util.List".equals(typename) || typename.startsWith("java.util.List<")) {
+        final DeclaredType listElement = (DeclaredType) type;
+        final List<? extends TypeMirror> listElementClass = listElement.getTypeArguments();
+        final TypeName t;
+        if (listElementClass.isEmpty()) {
+          t = ClassName.get(Object.class);
+        } else {
+          final TypeMirror asType = listElementClass.get(0);
+          t = ClassName.get(asType);
+        }
+        return ParameterizedTypeName.get(ClassName.get(List.class), t);
+      } else {
+        return ClassName.get(type);
+      }
     }
     throw new ModelException(variable, "type not supported");
   }

@@ -32,7 +32,6 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.IMHandle;
 import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,7 +44,7 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
   private final JsonStringNode address  = string("addr");
   private final JsonStringNode protocol = string("prot");
 
-  @Override public JsonNode toJson(final @Nullable IMHandle value) {
+  @Override public JsonNode toJson(final IMHandle value) {
     if (value == null) {
       return nullNode();
     }
@@ -53,7 +52,7 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
                                    field(protocol, string(value.getProtocol()))));
   }
 
-  @Override public @Nullable IMHandle fromJson(final JsonNode json, final String jsonPath) {
+  @Override public IMHandle fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -63,7 +62,7 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
     }
   }
 
-  @Override public @Nullable IMHandle fromJson(final  JsonNode json) {
+  @Override public IMHandle fromJson(final  JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {
@@ -73,7 +72,7 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
     }
   }
 
-  @Nullable IMHandle makeImHandle(final String addr, final String prot) {
+  IMHandle makeImHandle(final String addr, final String prot) {
     try {
       return new IMHandle(IMHandle.Scheme.valueOf(prot), addr);
     } catch (final IllegalArgumentException e) {

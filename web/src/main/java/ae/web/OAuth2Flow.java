@@ -32,7 +32,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 public interface OAuth2Flow {
-
   AuthorizationCodeFlow flow();
 
   default AuthorizationCodeRequestUrl authorizationUrl() {
@@ -44,7 +43,6 @@ public interface OAuth2Flow {
   void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) throws ServletException, IOException;
 
   final class Director<H extends Controller & OAuth2Flow> {
-
     /**
      * Persisted credential associated with the current request or {@code null} for none.
      */

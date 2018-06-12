@@ -26,21 +26,20 @@ package ae.db;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.PostalAddress;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum PostalAddressJsonSerializer implements JsonSerializer<PostalAddress> {
   INSTANCE;
 
   static final JsonArraySerializer<PostalAddress> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final @Nullable PostalAddress value) {
+  @Override public JsonNode toJson(final PostalAddress value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
     return JsonNodeFactories.string(value.getAddress());
   }
 
-  @Override public @Nullable PostalAddress fromJson(final JsonNode json, final String jsonPath) {
+  @Override public PostalAddress fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -48,7 +47,7 @@ enum PostalAddressJsonSerializer implements JsonSerializer<PostalAddress> {
     }
   }
 
-  @Override public @Nullable PostalAddress fromJson(final JsonNode json) {
+  @Override public PostalAddress fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

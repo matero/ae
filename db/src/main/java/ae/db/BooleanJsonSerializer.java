@@ -25,21 +25,20 @@ package ae.db;
 
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum BooleanJsonSerializer implements JsonSerializer<Boolean> {
   INSTANCE;
 
   static final JsonArraySerializer<Boolean> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final @Nullable Boolean value) {
+  @Override public JsonNode toJson(final Boolean value) {
     if (value == null) {
       return JsonNodeFactories.nullNode();
     }
     return JsonNodeFactories.booleanNode(value);
   }
 
-  @Override public @Nullable Boolean fromJson(final JsonNode json, final String jsonPath) {
+  @Override public Boolean fromJson(final JsonNode json, final String jsonPath) {
     if (json.isNullNode(jsonPath)) {
       return null;
     } else {
@@ -47,7 +46,7 @@ enum BooleanJsonSerializer implements JsonSerializer<Boolean> {
     }
   }
 
-  @Override public @Nullable Boolean fromJson(final JsonNode json) {
+  @Override public Boolean fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

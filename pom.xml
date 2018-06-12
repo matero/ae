@@ -58,8 +58,8 @@
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
     <archiveClasses>true</archiveClasses>
-    <checkerframework.target.version>2.5.1</checkerframework.target.version>
     <appengine.target.version>1.9.63</appengine.target.version>
+    <slf4j.target.version>1.7.25</slf4j.target.version>
     <checkVersions>false</checkVersions>
 
     <netbeans.hint.license>mit</netbeans.hint.license>
@@ -79,7 +79,6 @@
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
         <version>3.1.0</version>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -90,25 +89,23 @@
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.7.25</version>
+        <artifactId>slf4j-jdk14</artifactId>
+        <version>${slf4j.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>log4j-over-slf4j</artifactId>
+        <version>${slf4j.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${slf4j.target.version}</version>
       </dependency>
       <dependency>
         <groupId>net.sourceforge.argo</groupId>
         <artifactId>argo</artifactId>
         <version>5.3</version>
-      </dependency>
-      
-      <!-- Annotations from the Checker Framework: nullness, interning, locking, ... -->
-      <dependency>
-        <groupId>org.checkerframework</groupId>
-        <artifactId>checker-qual</artifactId>
-        <version>${checkerframework.target.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.checkerframework</groupId>
-        <artifactId>jdk8</artifactId>
-        <version>${checkerframework.target.version}</version>
       </dependency>
 
       <!-- ================================================================ -->
@@ -122,7 +119,7 @@
       <dependency>
         <groupId>com.squareup</groupId>
         <artifactId>javapoet</artifactId>
-        <version>1.10.0</version>
+        <version>1.11.1</version>
       </dependency>
       <dependency>
         <groupId>com.opencsv</groupId>

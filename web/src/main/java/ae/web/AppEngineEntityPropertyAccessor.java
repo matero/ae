@@ -25,7 +25,6 @@ package ae.web;
 
 import com.google.appengine.api.datastore.Entity;
 import java.util.Map;
-import java.util.logging.Logger;
 import ognl.ASTProperty;
 import ognl.Node;
 import ognl.OgnlContext;
@@ -90,7 +89,8 @@ public enum AppEngineEntityPropertyAccessor implements PropertyAccessor {
   }
 
   private Node currentNodeOf(final Map context, final Object name) throws IllegalStateException {
-    final Node currentNode = ((OgnlContext) context).getCurrentNode().jjtGetParent();
+    final OgnlContext ognlCtx = (OgnlContext) context;
+    final Node currentNode = ognlCtx.getCurrentNode().jjtGetParent();
     if (currentNode == null) {
       throw new IllegalStateException("node is null for '"+name+'\'');
     }
@@ -103,7 +103,8 @@ public enum AppEngineEntityPropertyAccessor implements PropertyAccessor {
 
   private boolean hasIndexedAccess(final Node node) {
     if (node instanceof ASTProperty) {
-      return ((ASTProperty) node).isIndexedAccess();
+      final ASTProperty astProperty = (ASTProperty) node;
+      return astProperty.isIndexedAccess();
     }
     return false;
   }
