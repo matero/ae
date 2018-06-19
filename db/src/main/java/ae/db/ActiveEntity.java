@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 /**
@@ -177,6 +178,12 @@ public abstract class ActiveEntity implements Serializable {
     }
     return DatastoreServiceFactory.getDatastoreService().put(data);
   }
+  public final Future<Key> saveAsync(final Entity data) {
+    if (!isKindOf(data)) {
+      throw new IllegalArgumentException("Entity with key '" + data.getKey() + "' does not represent " + getClass().getCanonicalName());
+    }
+    return DatastoreServiceFactory.getAsyncDatastoreService().put(data);
+  }
 
   /**
    * Deletes the entity identified by the key
@@ -188,6 +195,12 @@ public abstract class ActiveEntity implements Serializable {
       throw new IllegalArgumentException("Key '" + key + "' does not represent " + getClass().getCanonicalName());
     }
     DatastoreServiceFactory.getDatastoreService().delete(key);
+  }
+  public void deleteAsync(final Key key) {
+    if (!isKindOf(key)) {
+      throw new IllegalArgumentException("Key '" + key + "' does not represent " + getClass().getCanonicalName());
+    }
+    DatastoreServiceFactory.getAsyncDatastoreService().delete(key);
   }
 
   public Entity find(final Key key) {
