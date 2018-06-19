@@ -37,9 +37,12 @@ import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.collect.ImmutableList;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -59,11 +62,11 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class Controller {
   private HttpServletRequest request;
   private HttpServletResponse response;
-  
+
   protected Controller() {
     // nothing to do
   }
-  
+
   protected Controller(final HttpServletRequest request, final HttpServletResponse response) {
     this.request = request;
     this.response = response;
@@ -72,23 +75,22 @@ public abstract class Controller {
   protected final HttpServletRequest request() {
     return request;
   }
-  
+
   protected final void setRequest(final HttpServletRequest request) {
     this.request = request;
   }
-  
+
   protected final HttpServletResponse response() {
     return response;
   }
-  
+
   protected final void setResponse(final HttpServletResponse response) {
     this.response = response;
   }
-  
-  
+
   /**
    * Configures the controller before it manages a request and generate a response.
-   * 
+   *
    * Any initialization, validation, dependency injection, must go here. By default it doesn't do anything.
    */
   protected void setup() {
@@ -96,7 +98,7 @@ public abstract class Controller {
   }
   /**
    * Frees resources taken by the controller.
-   * 
+   *
    * By default it doesn't do anything.
    */
   protected void teardown() {
@@ -109,7 +111,7 @@ public abstract class Controller {
   protected Logger log() {
     return Logger.getLogger(getClass().getCanonicalName());
   }
-  
+
   /* request manipulation ************************************************** */
   /**
    * Reads the text at the request body.
@@ -256,7 +258,7 @@ public abstract class Controller {
 
   protected void forward(final String location) throws ServletException {
     if (isLoggable(Level.FINER)) {
-      finer("Forwarding (to "+location+")");
+      finer("Forwarding (to " + location + ")");
     }
     try {
       request.getRequestDispatcher(location).forward(request, response);
@@ -273,7 +275,7 @@ public abstract class Controller {
    */
   protected void redirect(final String location) {
     if (isLoggable(Level.FINER)) {
-      finer("Redirecting ('Found', "+HttpServletResponse.SC_FOUND+" to "+location+')');
+      finer("Redirecting ('Found', " + HttpServletResponse.SC_FOUND + " to " + location + ')');
     }
     try {
       response.sendRedirect(location);
@@ -300,14 +302,14 @@ public abstract class Controller {
    */
   protected void redirect(final String location, final int httpStatusCode) {
     if (isLoggable(Level.FINER)) {
-      finer("Redirecting ("+httpStatusCode+" to "+location+')');
+      finer("Redirecting (" + httpStatusCode + " to " + location + ')');
     }
     response.setStatus(httpStatusCode);
     response.setHeader("Location", location);
     response.setHeader("Connection", "close");
     try {
       response.sendError(httpStatusCode);
-    } catch (final IOException e) {      
+    } catch (final IOException e) {
       if (isLoggable(Level.WARNING)) {
         log(Level.WARNING, "Exception when trying to redirect permanently", e);
       }
@@ -632,6 +634,13 @@ public abstract class Controller {
     response.addDateHeader(header.name, timestamp);
   }
 
+  protected final <T> T get(final HttpParameter<T> parameter) {
+    return parameter.of(request);
+  }
+  protected final boolean has(final HttpParameter<?> parameter) {
+    return parameter.isDefinedAt(request);
+  }
+
   public static abstract class HttpParameter<T> {
     @FunctionalInterface public interface ValueInterpreter<T> {
       T from(String rawValue);
@@ -868,5 +877,154 @@ public abstract class Controller {
   }
   protected AsyncDatastoreService asyncDatastore() {
     return DatastoreServiceFactory.getAsyncDatastoreService();
+  }
+
+  protected interface option {
+    IntegerParameter chunkSize = new IntegerParameter("chunkSize", notRequired);
+    CursorParameter endCursor = new CursorParameter("endCursor", notRequired);
+    IntegerParameter limit = new IntegerParameter("limit", notRequired);
+    IntegerParameter offset = new IntegerParameter("offset", notRequired);
+    IntegerParameter prefetchSize = new IntegerParameter("prefetchSize", notRequired);
+    CursorParameter startCursor = new CursorParameter("startCursor", notRequired);
+  }
+
+  protected final FetchOptions requestFetchOptions() {
+    final FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
+
+    if (has(option.chunkSize)) {
+      fetchOptions.chunkSize(get(option.chunkSize));
+    }
+    if (has(option.endCursor)) {
+      fetchOptions.endCursor(get(option.endCursor));
+    }
+    if (has(option.limit)) {
+      fetchOptions.limit(get(option.limit));
+    }
+    if (has(option.offset)) {
+      fetchOptions.offset(get(option.offset));
+    }
+    if (has(option.prefetchSize)) {
+      fetchOptions.prefetchSize(get(option.prefetchSize));
+    }
+    if (has(option.startCursor)) {
+      fetchOptions.startCursor(get(option.startCursor));
+    }
+
+    return fetchOptions;
+  }
+
+  private static final StringParameter sortedBy = new StringParameter("sortedBy", notRequired);
+  protected final Iterable<Query.SortPredicate> requestSorts() {
+    if (has(sortedBy)) {
+      final String sortPredicatesSeparatedByCommas = get(sortedBy);
+
+      if (!sortPredicatesSeparatedByCommas.isEmpty()) {
+        final String[] sortPredicates = sortPredicatesSeparatedByCommas.split(",");
+        switch (sortPredicates.length) {
+          case 1:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]));
+          case 2:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]), asQuerySortPredicate(sortPredicates[1]));
+          case 3:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]));
+          case 4:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]),
+                                    asQuerySortPredicate(sortPredicates[3]),
+                                    asQuerySortPredicate(sortPredicates[4]));
+          case 5:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]),
+                                    asQuerySortPredicate(sortPredicates[3]),
+                                    asQuerySortPredicate(sortPredicates[4]));
+          case 6:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]),
+                                    asQuerySortPredicate(sortPredicates[3]),
+                                    asQuerySortPredicate(sortPredicates[4]),
+                                    asQuerySortPredicate(sortPredicates[5]));
+          case 7:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]),
+                                    asQuerySortPredicate(sortPredicates[3]),
+                                    asQuerySortPredicate(sortPredicates[4]),
+                                    asQuerySortPredicate(sortPredicates[5]),
+                                    asQuerySortPredicate(sortPredicates[6]));
+          case 8:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]),
+                                    asQuerySortPredicate(sortPredicates[3]),
+                                    asQuerySortPredicate(sortPredicates[4]),
+                                    asQuerySortPredicate(sortPredicates[5]),
+                                    asQuerySortPredicate(sortPredicates[6]));
+          case 9:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]),
+                                    asQuerySortPredicate(sortPredicates[3]),
+                                    asQuerySortPredicate(sortPredicates[4]),
+                                    asQuerySortPredicate(sortPredicates[5]),
+                                    asQuerySortPredicate(sortPredicates[6]),
+                                    asQuerySortPredicate(sortPredicates[7]),
+                                    asQuerySortPredicate(sortPredicates[8]));
+          case 10:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]),
+                                    asQuerySortPredicate(sortPredicates[3]),
+                                    asQuerySortPredicate(sortPredicates[4]),
+                                    asQuerySortPredicate(sortPredicates[5]),
+                                    asQuerySortPredicate(sortPredicates[6]),
+                                    asQuerySortPredicate(sortPredicates[7]),
+                                    asQuerySortPredicate(sortPredicates[8]),
+                                    asQuerySortPredicate(sortPredicates[9]));
+          case 11:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]),
+                                    asQuerySortPredicate(sortPredicates[3]),
+                                    asQuerySortPredicate(sortPredicates[4]),
+                                    asQuerySortPredicate(sortPredicates[5]),
+                                    asQuerySortPredicate(sortPredicates[6]),
+                                    asQuerySortPredicate(sortPredicates[7]),
+                                    asQuerySortPredicate(sortPredicates[8]),
+                                    asQuerySortPredicate(sortPredicates[9]),
+                                    asQuerySortPredicate(sortPredicates[10]));
+          case 12:
+            return ImmutableList.of(asQuerySortPredicate(sortPredicates[0]),
+                                    asQuerySortPredicate(sortPredicates[1]),
+                                    asQuerySortPredicate(sortPredicates[2]),
+                                    asQuerySortPredicate(sortPredicates[3]),
+                                    asQuerySortPredicate(sortPredicates[4]),
+                                    asQuerySortPredicate(sortPredicates[5]),
+                                    asQuerySortPredicate(sortPredicates[6]),
+                                    asQuerySortPredicate(sortPredicates[7]),
+                                    asQuerySortPredicate(sortPredicates[8]),
+                                    asQuerySortPredicate(sortPredicates[9]),
+                                    asQuerySortPredicate(sortPredicates[10]),
+                                    asQuerySortPredicate(sortPredicates[11]));
+          default:
+            throw new IllegalArgumentException("too much sort predicates defined at request (sortedBy=" + sortPredicatesSeparatedByCommas + ')');
+        }
+      }
+    }
+    return ImmutableList.of();
+  }
+  protected final Query.SortPredicate asQuerySortPredicate(final String value) {
+    switch (value.charAt(0)) {
+      case '-':
+        return new Query.SortPredicate(value.substring(1), Query.SortDirection.DESCENDING);
+      case '+':
+        return new Query.SortPredicate(value.substring(1), Query.SortDirection.ASCENDING);
+      default:
+        return new Query.SortPredicate(value, Query.SortDirection.ASCENDING);
+    }
   }
 }
