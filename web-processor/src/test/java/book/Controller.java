@@ -28,6 +28,10 @@ public class Controller extends ae.web.ControllerWithThymeleafSupport implements
     // nothing to do
   }
 
+  @Template public void htmlIndex() {
+    // nothing to do
+  }
+
   public void create() {
     // nothing to do
   }

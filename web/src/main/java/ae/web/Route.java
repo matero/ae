@@ -26,6 +26,8 @@ package ae.web;
 import javax.servlet.http.HttpServletRequest;
 
 public final class Route implements java.io.Serializable {
+  private static final long serialVersionUID = -5338049506118103698L;
+
   private final String uri;
 
   public Route(final String routeUri) { uri = routeUri; }

@@ -4,6 +4,10 @@ public class Controller extends ae.web.ControllerWithThymeleafSupport {
   public void index() {
     // nothing to do
   }
+  
+  @Template public void htmlIndex() {
+    // nothing to do
+  }
 
   public void create() {
     // nothing to do

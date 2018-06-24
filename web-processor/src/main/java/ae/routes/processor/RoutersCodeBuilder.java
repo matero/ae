@@ -27,7 +27,9 @@ import ae.web.Interpret;
 import ae.web.OAuth2Flow;
 import ae.web.RouterServlet;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.UnmodifiableIterator;
 import com.squareup.javapoet.*;
+import com.squareup.javapoet.MethodSpec.Builder;
 
 import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
@@ -68,8 +70,12 @@ class RoutersCodeBuilder {
         continue;
       }
 
+      String last = "";
       for (final RouteDescriptor route : routes) {
-        router.addField(makeFieldFor(route));
+        if (!last.equals(route.pattern)) {
+          router.addField(makeFieldFor(route));
+          last = route.pattern;
+        }
       }
 
       router.addMethod(overrideVerbHandler(httpVerb, routes));
@@ -103,13 +109,16 @@ class RoutersCodeBuilder {
       httpVerbHandler.addStatement("final $T routeParameters = new $T{$L}", stringArray, stringArray, paramsInit(routes));
     }
 
-    for (final RouteDescriptor route : routes) {
-      final MethodSpec.Builder control;
+    final UnmodifiableIterator<RouteDescriptor> iRoutes = routes.iterator();
+    while (iRoutes.hasNext()) {
+      RouteDescriptor route = iRoutes.next();
+
+      final MethodSpec.Builder ifMatchesRoute;
       if (route.isDynamic()) {
         final ClassName interpreterClass = ClassName.get(Interpret.class);
-        control = httpVerbHandler.beginControlFlow("if ($L.matches(request, routeParameters))", route.routeField());
+        ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request, routeParameters))", route.routeField());
         for (int i = 0; i < route.parametersCount(); i++) {
-          control.addStatement("final $T $L = $T.$L(routeParameters[$L])",
+          ifMatchesRoute.addStatement("final $T $L = $T.$L(routeParameters[$L])",
                                route.parameterType(i),
                                route.parameterName(i),
                                interpreterClass,
@@ -117,25 +126,20 @@ class RoutersCodeBuilder {
                                i);
         }
       } else {
-        control = httpVerbHandler.beginControlFlow("if ($L.matches(request))", route.routeField());
+        ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request))", route.routeField());
       }
 
-      if (route.useCredentials) {
-        control.addStatement("handle(new $T($L), (controller) -> $T.Director.of(controller).authorize((c) -> c.$L($L)))",
-                             route.controllerClass(),
-                             route.ctorArgs,
-                             ClassName.get(OAuth2Flow.class),
-                             route.action,
-                             route.arguments());
-      } else {
-        control.addStatement("handle(new $T($L), (controller) -> controller.$L($L))",
-                             route.controllerClass(),
-                             route.ctorArgs,
-                             route.action,
-                             route.arguments());
+      final String last = route.pattern;
+      while (last.equals(route.pattern)) {
+        if (route.hasHeaderSelection()) {
+          final MethodSpec.Builder selector = ifMatchesRoute.beginControlFlow(route.headersFilterExpr(), route.headersFilterArgs());
+          addHandle(selector, route);
+          ifMatchesRoute.endControlFlow();
+        } else {
+          addHandle(ifMatchesRoute, route);
+        }
+        route = iRoutes.next();
       }
-
-      control.addStatement("return");
       httpVerbHandler.endControlFlow();
     }
     httpVerbHandler.addStatement("$L(request, response)", httpVerb.unhandled);
@@ -153,7 +157,7 @@ class RoutersCodeBuilder {
 
   private String paramsInit(final Iterable<RouteDescriptor> routes) {
     final int maxParametersCount = maxParametersCountAt(routes);
-    final StringBuffer params= new StringBuffer(4*maxParametersCount+ 2*(maxParametersCount - 1)).append("null");
+    final StringBuffer params = new StringBuffer(4 * maxParametersCount + 2 * (maxParametersCount - 1)).append("null");
     for (int i = 0; i < maxParametersCount; i++) {
       params.append(", null");
     }
@@ -170,5 +174,22 @@ class RoutersCodeBuilder {
       }
     }
     return maxParametersCount;
+  }
+  void addHandle(final MethodSpec.Builder control, final RouteDescriptor route) {
+    if (route.useCredentials) {
+      control.addStatement("handle(new $T($L), (controller) -> $T.Director.of(controller).authorize((c) -> c.$L($L)))",
+                           route.controllerClass(),
+                           route.ctorArgs,
+                           ClassName.get(OAuth2Flow.class),
+                           route.action,
+                           route.arguments());
+    } else {
+      control.addStatement("handle(new $T($L), (controller) -> controller.$L($L))",
+                           route.controllerClass(),
+                           route.ctorArgs,
+                           route.action,
+                           route.arguments());
+    }
+    control.addStatement("return");
   }
 }

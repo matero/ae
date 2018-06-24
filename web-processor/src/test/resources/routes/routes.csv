@@ -1,7 +1,8 @@
  HTTP Method | URI                      | Controller      | Action
 -------------+--------------------------+-----------------+-------------
      GET     | /books                   | book.Controller | index
-     GET     | /books/create            | book.Controller | create
+     GET     | /books  Accept:text/html |                 | htmlIndex
+     GET     | /books/create            |                 | create
     POST     | /books                   |                 | save
      GET     | /books/${id}             |                 | show
      GET     | /books/${id}/edit        |                 | edit
@@ -11,4 +12,5 @@
      GET     | /books/${id}/{$c}/{$arg} |                 | bar
 -------------+--------------------------+-----------------+-------------
   RESOURCE   | /gyms                    | gym.Controller  |
+     GET     | /gyms   Accept:text/html |                 | htmlIndex
 -------------+--------------------------+-----------------+-------------

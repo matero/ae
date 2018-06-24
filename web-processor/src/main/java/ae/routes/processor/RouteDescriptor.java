@@ -26,6 +26,7 @@ package ae.routes.processor;
 import ae.web.ParameterizedRoute;
 import ae.web.Route;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.squareup.javapoet.ClassName;
 
 import javax.lang.model.element.TypeElement;
@@ -44,6 +45,8 @@ final class Parameter {
 }
 
 final class RouteDescriptor {
+  private static final ImmutableMap<String, String> DEFAULT_HEADER = ImmutableMap.of("Content-Type", "application/json");
+
   final Class<?> type;
   final HttpVerb verb;
   final String pattern;
@@ -53,6 +56,7 @@ final class RouteDescriptor {
   final ImmutableList<Parameter> parameters;
   final String ctorArgs;
   final boolean useCredentials;
+  final ImmutableMap<String, String> headers;
 
   RouteDescriptor(final HttpVerb verb,
                   final String pattern,
@@ -60,7 +64,17 @@ final class RouteDescriptor {
                   final TypeElement controller,
                   final String action,
                   final String ctorArgs) {
-    this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs);
+    this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs, DEFAULT_HEADER);
+  }
+
+  RouteDescriptor(final HttpVerb verb,
+                  final String pattern,
+                  final boolean useCredentials,
+                  final TypeElement controller,
+                  final String action,
+                  final String ctorArgs,
+                  final ImmutableMap<String, String> headers) {
+    this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs, headers);
   }
 
   RouteDescriptor(final HttpVerb verb,
@@ -71,6 +85,18 @@ final class RouteDescriptor {
                   final String action,
                   final ImmutableList<Parameter> parameters,
                   final String ctorArgs) {
+    this(verb, pattern, pattern, useCredentials, controller, action, parameters, ctorArgs, DEFAULT_HEADER);
+  }
+
+  RouteDescriptor(final HttpVerb verb,
+                  final String pattern,
+                  final String regex,
+                  final boolean useCredentials,
+                  final TypeElement controller,
+                  final String action,
+                  final ImmutableList<Parameter> parameters,
+                  final String ctorArgs,
+                  final ImmutableMap<String, String> headers) {
     this.type = parameters.isEmpty() ? Route.class : ParameterizedRoute.class;
     this.verb = verb;
     this.pattern = pattern;
@@ -80,6 +106,7 @@ final class RouteDescriptor {
     this.parameters = parameters;
     this.ctorArgs = ctorArgs;
     this.action = action;
+    this.headers = headers;
   }
 
   @Override public int hashCode() {
@@ -101,7 +128,7 @@ final class RouteDescriptor {
   }
 
   @Override public String toString() {
-    return "Route{type=" + type + "verb=" + verb + ", pattern=" + pattern + ", controller=" + controller + '}';
+    return "Route{type=" + type + "verb=" + verb + ", pattern=" + pattern + ", controller=" + controller + ", headers=" + headers + '}';
   }
 
   String routeField() {
@@ -113,7 +140,7 @@ final class RouteDescriptor {
   }
 
   final ClassName controllerClass() {
-    return ClassName.bestGuess(controllerQualifiedName()+"_Impl");
+    return ClassName.bestGuess(controllerQualifiedName() + "_Impl");
   }
 
   boolean isDynamic() {
@@ -138,6 +165,7 @@ final class RouteDescriptor {
   int parametersCount() {
     return parameters.size();
   }
+
   String parameterName(final int i) {
     return parameters.get(i).name;
   }
@@ -146,5 +174,28 @@ final class RouteDescriptor {
   }
   String parameterInterpreterMethod(final int i) {
     return parameters.get(i).interpreterMethod;
+  }
+
+  String headersFilterExpr() {
+    headers.entrySet();
+    final StringBuilder expr = new StringBuilder().append("if ($S.equals(request.getHeader($S))");
+    for (int i = 1, headersCount = headers.keySet().size(); i < headersCount; i++) {
+      expr.append(" && $S.equals(request.getHeader($S))");
+    }
+    expr.append(')');
+    return expr.toString();
+  }
+
+  Object[] headersFilterArgs() {
+    final Object[] args = new Object[headers.size() * 2];
+    int i = 0;
+    for (final String headerName : headers.keySet()) {
+      args[i++] = headers.get(headerName);
+      args[i++] = headerName;
+    }
+    return args;
+  }
+  boolean hasHeaderSelection() {
+    return !headers.isEmpty();
   }
 }

@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableListMultimap;
 
 import javax.lang.model.element.TypeElement;
 import java.text.DateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -89,7 +90,7 @@ class RoutesDeclarations {
             final DateFormat dateFormat,
             final String superClass) {
       this.routes = routes;
-      this.routesByVerb = routesByVerb;
+      this.routesByVerb = routesByVerb.orderValuesBy(ComparingRouteDescriptor.BY_PATTERN_AND_HEADERS_COUNT);
       this.paths = paths;
       this.today = today;
       this.dateFormat = dateFormat;
@@ -106,7 +107,7 @@ class RoutesDeclarations {
     }
 
     void addRoutes(final Iterable<RouteDescriptor> routes) {
-      for (RouteDescriptor r: routes) {
+      for (RouteDescriptor r : routes) {
         addRoute(r);
       }
     }
@@ -128,6 +129,20 @@ class RoutesDeclarations {
                                     packageName,
                                     superClass,
                                     today.getTime());
+    }
+
+    enum ComparingRouteDescriptor implements Comparator<RouteDescriptor> {
+      BY_PATTERN_AND_HEADERS_COUNT;
+
+      @Override
+      public int compare(final RouteDescriptor a, final RouteDescriptor b) {
+        final int patternCmp = a.pattern.compareTo(b.pattern);
+        if (patternCmp == 0) {
+          return b.headers.size() - a.headers.size();
+        } else {
+          return patternCmp;
+        }
+      }
     }
   }
 }
