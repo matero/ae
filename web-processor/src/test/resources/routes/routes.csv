@@ -1,16 +1,18 @@
- HTTP Method | URI                      | Controller      | Action
--------------+--------------------------+-----------------+-------------
-     GET     | /books                   | book.Controller | index
-     GET     | /books  Accept:text/html |                 | htmlIndex
-     GET     | /books/create            |                 | create
-    POST     | /books                   |                 | save
-     GET     | /books/${id}             |                 | show
-     GET     | /books/${id}/edit        |                 | edit
-     PUT     | /books/${id}             |                 | update
-   DELETE    | /books/${id}             |                 | delete
-     GET     | /books/${id}/{$arg}      |                 | foo
-     GET     | /books/${id}/{$c}/{$arg} |                 | bar
--------------+--------------------------+-----------------+-------------
-  RESOURCE   | /gyms                    | gym.Controller  |
-     GET     | /gyms   Accept:text/html |                 | htmlIndex
--------------+--------------------------+-----------------+-------------
+ HTTP Method | URI                       | Controller          | Action
+-------------+---------------------------+---------------------+-------------
+     GET     | /book                     | book.Controller     | index
+     GET     | /book  Accept:text/html   |                     | htmlIndex
+     GET     | /book/create              |                     | create
+    POST     | /book                     |                     | save
+     GET     | /book/${id}               |                     | show
+     GET     | /book/${id}/edit          |                     | edit
+     PUT     | /book/${id}               |                     | update
+   DELETE    | /book/${id}               |                     | delete
+     GET     | /book/${id}/{$arg}        |                     | foo
+     GET     | /book/${id}/{$c}/{$arg}   |                     | bar
+-------------+---------------------------+---------------------+-------------
+  RESOURCE   | /gym                      | gym.Controller      |
+     GET     | /gym     Accept:text/html |                     | htmlIndex
+-------------+---------------------------+---------------------+-------------
+  RESOURCE   | /client                   | client.Controller   | 
+     GET     | /client  Accept:text/html |                     | htmlIndex

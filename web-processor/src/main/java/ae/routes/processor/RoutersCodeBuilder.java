@@ -29,7 +29,7 @@ import ae.web.RouterServlet;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.UnmodifiableIterator;
 import com.squareup.javapoet.*;
-import com.squareup.javapoet.MethodSpec.Builder;
+import com.squareup.javapoet.TypeSpec.Builder;
 
 import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
@@ -63,6 +63,13 @@ class RoutersCodeBuilder {
                                         Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
                     .initializer("$LL", declarations.serialVersionUID).build());
 
+    addRouteFields(router, declarations);
+    addRouteHandlers(router, declarations);
+
+    return JavaFile.builder(classname.packageName(), router.build()).skipJavaLangImports(true).build();
+  }
+
+  void addRouteFields(final TypeSpec.Builder router, final RoutesDeclarations declarations) {
     for (final HttpVerb httpVerb : HttpVerb.values()) {
       final ImmutableList<RouteDescriptor> routes = declarations.routesByVerb.get(httpVerb);
 
@@ -77,14 +84,10 @@ class RoutersCodeBuilder {
           last = route.pattern;
         }
       }
-
-      router.addMethod(overrideVerbHandler(httpVerb, routes));
     }
-
-    return JavaFile.builder(classname.packageName(), router.build()).skipJavaLangImports(true).build();
   }
 
-  static FieldSpec makeFieldFor(final RouteDescriptor route) {
+  FieldSpec makeFieldFor(final RouteDescriptor route) {
     final FieldSpec.Builder property = FieldSpec.builder(TypeName.get(route.type),
                                                          route.routeField(),
                                                          Modifier.PRIVATE, Modifier.FINAL);
@@ -94,6 +97,18 @@ class RoutersCodeBuilder {
       property.initializer("new $T($S)", route.type, route.pattern);
     }
     return property.build();
+  }
+
+  void addRouteHandlers(final TypeSpec.Builder router, final RoutesDeclarations declarations) {
+    for (final HttpVerb httpVerb : HttpVerb.values()) {
+      final ImmutableList<RouteDescriptor> routes = declarations.routesByVerb.get(httpVerb);
+
+      if (routes.isEmpty()) {
+        continue;
+      }
+
+      router.addMethod(overrideVerbHandler(httpVerb, routes));
+    }
   }
 
   MethodSpec overrideVerbHandler(final HttpVerb httpVerb, final ImmutableList<RouteDescriptor> routes) {
@@ -110,9 +125,8 @@ class RoutersCodeBuilder {
     }
 
     final UnmodifiableIterator<RouteDescriptor> iRoutes = routes.iterator();
+    RouteDescriptor route = iRoutes.next();
     while (iRoutes.hasNext()) {
-      RouteDescriptor route = iRoutes.next();
-
       final MethodSpec.Builder ifMatchesRoute;
       if (route.isDynamic()) {
         final ClassName interpreterClass = ClassName.get(Interpret.class);
@@ -140,6 +154,7 @@ class RoutersCodeBuilder {
         }
         route = iRoutes.next();
       }
+      
       httpVerbHandler.endControlFlow();
     }
     httpVerbHandler.addStatement("$L(request, response)", httpVerb.unhandled);

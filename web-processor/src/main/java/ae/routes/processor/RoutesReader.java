@@ -188,15 +188,40 @@ class RoutesReader {
   }
 
   private ImmutableList<RouteDescriptor> restResource(final String path, final TypeElement controller) {
-    return ImmutableList.of(
-            makeRouteFrom(HttpVerb.GET, path, controller, "index"),
-            makeRouteFrom(HttpVerb.GET, path + "/create", controller, "create"),
-            makeRouteFrom(HttpVerb.POST, path, controller, "save"),
-            makeRouteFrom(HttpVerb.GET, path + "/${id}", controller, "show"),
-            makeRouteFrom(HttpVerb.GET, path + "/${id}/edit", controller, "edit"),
-            makeRouteFrom(HttpVerb.PUT, path + "/${id}", controller, "update"),
-            makeRouteFrom(HttpVerb.DELETE, path + "/${id}", controller, "delete")
-    );
+    final ImmutableList.Builder<RouteDescriptor> routes = ImmutableList.builder();
+    buildRouteInto(routes, HttpVerb.GET, path, controller, "index");
+    buildRouteInto(routes, HttpVerb.GET, path + "/create", controller, "create");
+    buildRouteInto(routes, HttpVerb.POST, path, controller, "save");
+    buildRouteInto(routes, HttpVerb.GET, path + "/${id}", controller, "show");
+    buildRouteInto(routes, HttpVerb.GET, path + "/${id}/edit", controller, "edit");
+    buildRouteInto(routes, HttpVerb.PUT, path + "/${id}", controller, "update");
+    buildRouteInto(routes, HttpVerb.DELETE, path + "/${id}", controller, "delete");
+
+    return routes.build();
+  }
+
+  private void buildRouteInto(final ImmutableList.Builder<RouteDescriptor> routes,
+                              final HttpVerb verb,
+                              final String uri,
+                              final TypeElement controller,
+                              final String action) {
+    final RouteDescriptor route = tryMakeRouteFrom(verb, uri, controller, action);
+    if (route != null) {
+      routes.add(route);
+    }
+  }
+
+  private RouteDescriptor tryMakeRouteFrom(final HttpVerb verb, final String uri, final TypeElement controller, final String action) {
+    if (action == null) {
+      printError("Action not defined.");
+      return null;
+    }
+    final ExecutableElement actionMethod = findMethod(controller, action);
+    if (actionMethod == null) {
+      printWarning("Action '" + controller.getQualifiedName() + '#' + action + "' not found, not defining a route for it.");
+      return null;
+    }
+    return makeRouteFrom(verb, uri, controller, action);
   }
 
   private RouteDescriptor makeRouteFrom(final HttpVerb verb, final String uri, final TypeElement controller, final String action) {
@@ -388,14 +413,14 @@ final class PathSpec {
     }
     return false;
   }
-  
+
   boolean isStatic() {
     return regex == null;
   }
 
   static PathSpec from(final String value) {
     final String[] parts = value.split(PathSpec.SEPARATOR);
-    
+
     final String pattern = parts[PATTERN];
     final String regex = findRegex(pattern);
     final ImmutableList<String> parameterNames = findParameterNames(pattern);
@@ -411,7 +436,7 @@ final class PathSpec {
     }
     return new PathSpec(pattern, regex, parameterNames, headers.build());
   }
-  
+
   /**
    * Transforms an url pattern like "/{name}/id/*" into a regex like "/([^/]*)/id/*."
    * <p/>

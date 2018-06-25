@@ -1,6 +1,7 @@
 package processor.test;
 
 import ae.web.Interpret;
+import ae.web.OAuth2Flow;
 import ae.web.ParameterizedRoute;
 import ae.web.Route;
 import ae.web.RouterServlet;
@@ -21,37 +22,43 @@ import javax.servlet.http.HttpServletResponse;
 abstract class RouterDefs extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 
-  private final Route GET_book_Controller_htmlIndex = new Route("/books");
+  private final Route GET_book_Controller_htmlIndex = new Route("/book");
 
-  private final ParameterizedRoute GET_book_Controller_show = new ParameterizedRoute("/books/${id}", Pattern.compile("/books/$(?<p0>[^/]+)"));
+  private final ParameterizedRoute GET_book_Controller_show = new ParameterizedRoute("/book/${id}", Pattern.compile("/book/$(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute GET_book_Controller_edit = new ParameterizedRoute("/books/${id}/edit", Pattern.compile("/books/$(?<p0>[^/]+)/edit"));
+  private final ParameterizedRoute GET_book_Controller_edit = new ParameterizedRoute("/book/${id}/edit", Pattern.compile("/book/$(?<p0>[^/]+)/edit"));
 
-  private final ParameterizedRoute GET_book_Controller_foo = new ParameterizedRoute("/books/${id}/{$arg}", Pattern.compile("/books/$(?<p0>[^/]+)/(?<p1>[^/]+)"));
+  private final ParameterizedRoute GET_book_Controller_foo = new ParameterizedRoute("/book/${id}/{$arg}", Pattern.compile("/book/$(?<p0>[^/]+)/(?<p1>[^/]+)"));
 
-  private final ParameterizedRoute GET_book_Controller_bar = new ParameterizedRoute("/books/${id}/{$c}/{$arg}", Pattern.compile("/books/$(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
+  private final ParameterizedRoute GET_book_Controller_bar = new ParameterizedRoute("/book/${id}/{$c}/{$arg}", Pattern.compile("/book/$(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
 
-  private final Route GET_book_Controller_create = new Route("/books/create");
+  private final Route GET_book_Controller_create = new Route("/book/create");
 
-  private final Route GET_gym_Controller_htmlIndex = new Route("/gyms");
+  private final Route GET_client_Controller_htmlIndex = new Route("/client");
 
-  private final ParameterizedRoute GET_gym_Controller_show = new ParameterizedRoute("/gyms/${id}", Pattern.compile("/gyms/$(?<p0>[^/]+)"));
+  private final Route GET_client_Controller_create = new Route("/client/create");
 
-  private final ParameterizedRoute GET_gym_Controller_edit = new ParameterizedRoute("/gyms/${id}/edit", Pattern.compile("/gyms/$(?<p0>[^/]+)/edit"));
+  private final Route GET_gym_Controller_htmlIndex = new Route("/gym");
 
-  private final Route GET_gym_Controller_create = new Route("/gyms/create");
+  private final ParameterizedRoute GET_gym_Controller_show = new ParameterizedRoute("/gym/${id}", Pattern.compile("/gym/$(?<p0>[^/]+)"));
 
-  private final Route POST_book_Controller_save = new Route("/books");
+  private final ParameterizedRoute GET_gym_Controller_edit = new ParameterizedRoute("/gym/${id}/edit", Pattern.compile("/gym/$(?<p0>[^/]+)/edit"));
 
-  private final Route POST_gym_Controller_save = new Route("/gyms");
+  private final Route GET_gym_Controller_create = new Route("/gym/create");
 
-  private final ParameterizedRoute PUT_book_Controller_update = new ParameterizedRoute("/books/${id}", Pattern.compile("/books/$(?<p0>[^/]+)"));
+  private final Route POST_book_Controller_save = new Route("/book");
 
-  private final ParameterizedRoute PUT_gym_Controller_update = new ParameterizedRoute("/gyms/${id}", Pattern.compile("/gyms/$(?<p0>[^/]+)"));
+  private final Route POST_client_Controller_save = new Route("/client");
 
-  private final ParameterizedRoute DELETE_book_Controller_delete = new ParameterizedRoute("/books/${id}", Pattern.compile("/books/$(?<p0>[^/]+)"));
+  private final Route POST_gym_Controller_save = new Route("/gym");
 
-  private final ParameterizedRoute DELETE_gym_Controller_delete = new ParameterizedRoute("/gyms/${id}", Pattern.compile("/gyms/$(?<p0>[^/]+)"));
+  private final ParameterizedRoute PUT_book_Controller_update = new ParameterizedRoute("/book/${id}", Pattern.compile("/book/$(?<p0>[^/]+)"));
+
+  private final ParameterizedRoute PUT_gym_Controller_update = new ParameterizedRoute("/gym/${id}", Pattern.compile("/gym/$(?<p0>[^/]+)"));
+
+  private final ParameterizedRoute DELETE_book_Controller_delete = new ParameterizedRoute("/book/${id}", Pattern.compile("/book/$(?<p0>[^/]+)"));
+
+  private final ParameterizedRoute DELETE_gym_Controller_delete = new ParameterizedRoute("/gym/${id}", Pattern.compile("/gym/$(?<p0>[^/]+)"));
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws
@@ -65,9 +72,20 @@ abstract class RouterDefs extends RouterServlet {
       handle(new Controller_Impl(request, response), (controller) -> controller.index());
       return;
     }
+    if (GET_book_Controller_show.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new Controller_Impl(request, response, webContext(request, response), templateEngine()), (controller) -> controller.show(id));
+      return;
+    }
     if (GET_book_Controller_edit.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       handle(new Controller_Impl(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
+      return;
+    }
+    if (GET_book_Controller_foo.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      final String arg = Interpret.asString(routeParameters[1]);
+      handle(new Controller_Impl(request, response), (controller) -> OAuth2Flow.Director.of(controller).authorize((c) -> c.foo(id,arg)));
       return;
     }
     if (GET_book_Controller_bar.matches(request, routeParameters)) {
@@ -77,12 +95,33 @@ abstract class RouterDefs extends RouterServlet {
       handle(new Controller_Impl(request, response), (controller) -> controller.bar(id,c,arg));
       return;
     }
+    if (GET_book_Controller_create.matches(request)) {
+      handle(new Controller_Impl(request, response), (controller) -> controller.create());
+      return;
+    }
+    if (GET_client_Controller_htmlIndex.matches(request)) {
+      if ("text/html".equals(request.getHeader("Accept"))) {
+        handle(new client.Controller_Impl(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
+        return;
+      }
+      handle(new client.Controller_Impl(request, response), (controller) -> controller.index());
+      return;
+    }
+    if (GET_client_Controller_create.matches(request)) {
+      handle(new client.Controller_Impl(request, response, webContext(request, response), templateEngine()), (controller) -> controller.create());
+      return;
+    }
     if (GET_gym_Controller_htmlIndex.matches(request)) {
       if ("text/html".equals(request.getHeader("Accept"))) {
         handle(new gym.Controller_Impl(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
         return;
       }
       handle(new gym.Controller_Impl(request, response), (controller) -> controller.index());
+      return;
+    }
+    if (GET_gym_Controller_show.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new gym.Controller_Impl(request, response), (controller) -> controller.show(id));
       return;
     }
     if (GET_gym_Controller_edit.matches(request, routeParameters)) {
@@ -98,6 +137,10 @@ abstract class RouterDefs extends RouterServlet {
       ServletException, IOException {
     if (POST_book_Controller_save.matches(request)) {
       handle(new Controller_Impl(request, response), (controller) -> controller.save());
+      return;
+    }
+    if (POST_client_Controller_save.matches(request)) {
+      handle(new client.Controller_Impl(request, response), (controller) -> controller.save());
       return;
     }
     unhandledPost(request, response);
