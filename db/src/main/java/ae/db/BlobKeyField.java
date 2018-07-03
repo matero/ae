@@ -24,7 +24,34 @@
 package ae.db;
 
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.datastore.PropertyContainer;
 
 public interface BlobKeyField extends ScalarField<BlobKey> {
-  @Override default Class<BlobKey> type() { return BlobKey.class; }
+  @Override default Class<BlobKey> type() {
+    return BlobKey.class;
+  }
+
+  default void set(final PropertyContainer data, final CharSequence rawValue) {
+    write(data, rawValue);
+  }
+
+  default void write(final PropertyContainer data, final CharSequence rawValue) {
+    if (rawValue == null) {
+      write(data, (BlobKey) null);
+    } else {
+      write(data, new BlobKey(rawValue.toString()));
+    }
+  }
+
+  default void set(final PropertyContainer data, final String rawValue) {
+    write(data, rawValue);
+  }
+
+  default void write(final PropertyContainer data, final String rawValue) {
+    if (rawValue == null) {
+      write(data, (BlobKey) null);
+    } else {
+      write(data, new BlobKey(rawValue));
+    }
+  }
 }

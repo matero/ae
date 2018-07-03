@@ -880,22 +880,22 @@ public abstract class Controller {
   }
 
   protected interface option {
-    IntegerParameter chunkSize = new IntegerParameter("chunkSize", notRequired);
-    CursorParameter endCursor = new CursorParameter("endCursor", notRequired);
+    IntegerParameter chunk = new IntegerParameter("chunk", notRequired);
+    CursorParameter end = new CursorParameter("end", notRequired);
     IntegerParameter limit = new IntegerParameter("limit", notRequired);
     IntegerParameter offset = new IntegerParameter("offset", notRequired);
-    IntegerParameter prefetchSize = new IntegerParameter("prefetchSize", notRequired);
-    CursorParameter startCursor = new CursorParameter("startCursor", notRequired);
+    IntegerParameter prefetch = new IntegerParameter("prefetch", notRequired);
+    CursorParameter start = new CursorParameter("start", notRequired);
   }
 
   protected final FetchOptions requestFetchOptions() {
     final FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
 
-    if (has(option.chunkSize)) {
-      fetchOptions.chunkSize(get(option.chunkSize));
+    if (has(option.chunk)) {
+      fetchOptions.chunkSize(get(option.chunk));
     }
-    if (has(option.endCursor)) {
-      fetchOptions.endCursor(get(option.endCursor));
+    if (has(option.end)) {
+      fetchOptions.endCursor(get(option.end));
     }
     if (has(option.limit)) {
       fetchOptions.limit(get(option.limit));
@@ -903,20 +903,20 @@ public abstract class Controller {
     if (has(option.offset)) {
       fetchOptions.offset(get(option.offset));
     }
-    if (has(option.prefetchSize)) {
-      fetchOptions.prefetchSize(get(option.prefetchSize));
+    if (has(option.prefetch)) {
+      fetchOptions.prefetchSize(get(option.prefetch));
     }
-    if (has(option.startCursor)) {
-      fetchOptions.startCursor(get(option.startCursor));
+    if (has(option.start)) {
+      fetchOptions.startCursor(get(option.start));
     }
 
     return fetchOptions;
   }
 
-  private static final StringParameter sortedBy = new StringParameter("sortedBy", notRequired);
+  private static final StringParameter sort = new StringParameter("sort", notRequired);
   protected final Iterable<Query.SortPredicate> requestSorts() {
-    if (has(sortedBy)) {
-      final String sortPredicatesSeparatedByCommas = get(sortedBy);
+    if (has(sort)) {
+      final String sortPredicatesSeparatedByCommas = get(sort);
 
       if (!sortPredicatesSeparatedByCommas.isEmpty()) {
         final String[] sortPredicates = sortPredicatesSeparatedByCommas.split(",");

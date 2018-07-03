@@ -42,5 +42,7 @@ public final class UnindexedBlob extends ScalarField.Unindexed<Blob> {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
   }
 
-  @Override public Class<Blob> type() { return Blob.class; }
+  @Override public Class<Blob> type() {
+    return Blob.class;
+  }
 }

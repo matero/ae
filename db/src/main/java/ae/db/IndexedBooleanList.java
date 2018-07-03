@@ -48,7 +48,11 @@ public final class IndexedBooleanList extends ListField.Indexed<Boolean> impleme
     this.isFalse = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.FALSE);
   }
 
-  @Override public FilterPredicate isTrue() { return isTrue; }
+  @Override public FilterPredicate isTrue() {
+    return isTrue;
+  }
 
-  @Override public FilterPredicate isFalse() { return isFalse; }
+  @Override public FilterPredicate isFalse() {
+    return isFalse;
+  }
 }

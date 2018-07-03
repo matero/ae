@@ -48,19 +48,29 @@ public abstract class Select implements java.io.Serializable {
     this.fetchOptions = fetchOptions;
   }
 
-  public List<Entity> asList() { return asList(DatastoreServiceFactory.getDatastoreService()); }
+  public List<Entity> asList() {
+    return asList(DatastoreServiceFactory.getDatastoreService());
+  }
 
-  protected List<Entity> asList(final BaseDatastoreService datastore) { return prepare(datastore).asList(fetchOptions); }
+  protected List<Entity> asList(final BaseDatastoreService datastore) {
+    return prepare(datastore).asList(fetchOptions);
+  }
 
-  public QueryResultList<Entity> asQueryResultList() { return asQueryResultList(DatastoreServiceFactory.getDatastoreService()); }
+  public QueryResultList<Entity> asQueryResultList() {
+    return asQueryResultList(DatastoreServiceFactory.getDatastoreService());
+  }
 
   protected QueryResultList<Entity> asQueryResultList(final BaseDatastoreService datastore) {
     return prepare(datastore).asQueryResultList(fetchOptions);
   }
 
-  public Iterable<Entity> asIterable() { return asIterable(DatastoreServiceFactory.getDatastoreService()); }
+  public Iterable<Entity> asIterable() {
+    return asIterable(DatastoreServiceFactory.getDatastoreService());
+  }
 
-  protected Iterable<Entity> asIterable(final BaseDatastoreService datastore) { return prepare(datastore).asIterable(fetchOptions); }
+  protected Iterable<Entity> asIterable(final BaseDatastoreService datastore) {
+    return prepare(datastore).asIterable(fetchOptions);
+  }
 
   public QueryResultIterable<Entity> asQueryResultIterable() {
     return asQueryResultIterable(DatastoreServiceFactory.getDatastoreService());
@@ -70,7 +80,9 @@ public abstract class Select implements java.io.Serializable {
     return prepare(datastore).asQueryResultIterable(fetchOptions);
   }
 
-  public Iterator<Entity> asIterator() { return asIterator(DatastoreServiceFactory.getDatastoreService()); }
+  public Iterator<Entity> asIterator() {
+    return asIterator(DatastoreServiceFactory.getDatastoreService());
+  }
 
   protected Iterator<Entity> asIterator(final BaseDatastoreService datastore) {
     return prepare(datastore).asIterator(fetchOptions);

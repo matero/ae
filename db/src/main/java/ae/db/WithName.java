@@ -45,19 +45,33 @@ public interface WithName extends java.io.Serializable {
       super(canonicalName, description, field, jsonName, jsonPath, constraints);
     }
 
-    public String of(final Entity data) { return read(data); }
+    public String of(final Entity data) {
+      return read(data);
+    }
 
-    public String read(final Entity data) { return read(data.getKey()); }
+    public String read(final Entity data) {
+      return read(data.getKey());
+    }
 
-    public String of(final Key key) { return read(key); }
+    public String of(final Key key) {
+      return read(key);
+    }
 
-    public String read(final Key key) { return key.getName(); }
+    public String read(final Key key) {
+      return key.getName();
+    }
 
-    @Override public boolean isDefinedAt(final Key key) { return key.getName() != null; }
+    @Override public boolean isDefinedAt(final Key key) {
+      return key.getName() != null;
+    }
 
-    @Override public String interpretJson(final JsonNode json) { return json.getNullableStringValue(jsonPath()); }
+    @Override public String interpretJson(final JsonNode json) {
+      return json.getNullableStringValue(jsonPath());
+    }
 
-    @Override public JsonNode makeJsonValue(final Key key) { return JsonNodeFactories.string(key.getName()); }
+    @Override public JsonNode makeJsonValue(final Key key) {
+      return JsonNodeFactories.string(key.getName());
+    }
 
     @Override public void validate(final Entity data, final Validation validation) {
       final String value = read(data);

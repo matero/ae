@@ -38,7 +38,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public final class Validation {
-  public static Validation withSuccessMessage(final String successMessage) { return new Validation(successMessage); }
+  public static Validation withSuccessMessage(final String successMessage) {
+    return new Validation(successMessage);
+  }
 
   public static Validation failed(final Attr attr, final String message) {
     final Validation validation = new Validation("");
@@ -54,9 +56,13 @@ public final class Validation {
     this.successMessage = successMessage;
   }
 
-  public boolean success() { return errors.isEmpty(); }
+  public boolean success() {
+    return errors.isEmpty();
+  }
 
-  public boolean failure() { return !errors.isEmpty(); }
+  public boolean failure() {
+    return !errors.isEmpty();
+  }
 
   public List<String> get(final Attr attr) {
     if (errors.containsKey(attr)) {
@@ -74,7 +80,9 @@ public final class Validation {
     }
   }
 
-  private JsonField successField() { return field("success", string(successMessage)); }
+  private JsonField successField() {
+    return field("success", string(successMessage));
+  }
 
   private JsonField failureField() {
     final List<JsonNode> propertiesErrors = new java.util.ArrayList<>(errors.size());

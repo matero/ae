@@ -35,18 +35,22 @@ import com.google.common.collect.ImmutableList;
 public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEntity {
   private static final long serialVersionUID = -1172162463919296861L;
 
-  protected ChildActiveEntity(final String kind) { super(kind); }
+  protected ChildActiveEntity(final String kind) {
+    super(kind);
+  }
 
   /* **************************************************************************
    * metadata facilities
    */
   public abstract Parent<P> modelParent();
 
-  @Override public final boolean isKindOf(final Key key) { return super.isKindOf(key) && modelParent().isKindOf(key.getParent()); }
+  @Override public final boolean isKindOf(final Key key) {
+    return super.isKindOf(key) && modelParent().isKindOf(key.getParent());
+  }
 
   public static final class Parent<P extends ActiveEntity> extends ActiveEntity.Identifier {
     private static final long serialVersionUID = -8377743561105112889L;
-  
+
     private final P parent;
     private final boolean required;
 
@@ -63,23 +67,41 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
       this.required = required;
     }
 
-    public P parent() { return parent; }
+    public P parent() {
+      return parent;
+    }
 
-    public boolean isKindOf(final Key key) { return parent().isKindOf(key); }
+    public boolean isKindOf(final Key key) {
+      return parent().isKindOf(key);
+    }
 
-    @Override public boolean isDefinedAt(final Key key) { return key.getParent() != null && parent().isKindOf(key.getParent()); }
+    @Override public boolean isDefinedAt(final Key key) {
+      return key.getParent() != null && parent().isKindOf(key.getParent());
+    }
 
-    public Key of(final Entity data) { return read(data); }
+    public Key of(final Entity data) {
+      return read(data);
+    }
 
-    public Key read(final Entity data) { return data.getParent(); }
+    public Key read(final Entity data) {
+      return data.getParent();
+    }
 
-    public Key of(final Key key) { return read(key); }
+    public Key of(final Key key) {
+      return read(key);
+    }
 
-    public Key read(final Key key) { return key.getParent(); }
+    public Key read(final Key key) {
+      return key.getParent();
+    }
 
-    @Override public JsonNode makeJsonValue(final Key key) { return JsonNodeFactories.object(parent().jsonKeyFields(key)); }
+    @Override public JsonNode makeJsonValue(final Key key) {
+      return JsonNodeFactories.object(parent().jsonKeyFields(key));
+    }
 
-    @Override public Key interpretJson(final JsonNode json) { return parent().keyFromJson(json.getNode(jsonPath())); }
+    @Override public Key interpretJson(final JsonNode json) {
+      return parent().keyFromJson(json.getNode(jsonPath()));
+    }
 
     @Override public void validate(final Entity data, final Validation validation) {
       final Key value = read(data);
@@ -135,11 +157,17 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
   public static final class SelectChildEntities extends RootActiveEntity.SelectEntities {
     private static final long serialVersionUID = 5591903627552341816L;
 
-    SelectChildEntities(final Query query, final FetchOptions fetchOptions) { super(query, fetchOptions); }
+    SelectChildEntities(final Query query, final FetchOptions fetchOptions) {
+      super(query, fetchOptions);
+    }
 
-    public final SelectEntities withoutAncestor() { return this; }
+    public final SelectEntities withoutAncestor() {
+      return this;
+    }
 
-    public final SelectEntities withAncestor(final Entity ancestor) { return withAncestor(ancestor.getKey()); }
+    public final SelectEntities withAncestor(final Entity ancestor) {
+      return withAncestor(ancestor.getKey());
+    }
 
     public final SelectEntities withAncestor(final Key ancestorKey) {
       query.setAncestor(ancestorKey);

@@ -14,7 +14,7 @@ public final class UnindexedLink extends ScalarField.Unindexed<Link> implements 
                        final boolean required,
                        final JsonStringNode jsonName,
                        final String jsonPath,
-                      final ImmutableList<Constraint> constraints) {
+                       final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, LinkJsonSerializer.INSTANCE, constraints);
   }
 }

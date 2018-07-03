@@ -24,7 +24,34 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.PostalAddress;
+import com.google.appengine.api.datastore.PropertyContainer;
 
 public interface PostalAddressField extends ScalarField<PostalAddress> {
-  @Override default Class<PostalAddress> type() { return PostalAddress.class; }
+  @Override default Class<PostalAddress> type() {
+    return PostalAddress.class;
+  }
+
+  default void set(final PropertyContainer data, final CharSequence rawValue) {
+    write(data, rawValue);
+  }
+
+  default void write(final PropertyContainer data, final CharSequence rawValue) {
+    if (rawValue == null) {
+      write(data, (PostalAddress) null);
+    } else {
+      write(data, new PostalAddress(rawValue.toString()));
+    }
+  }
+
+  default void set(final PropertyContainer data, final String rawValue) {
+    write(data, rawValue);
+  }
+
+  default void write(final PropertyContainer data, final String rawValue) {
+    if (rawValue == null) {
+      write(data, (PostalAddress) null);
+    } else {
+      write(data, new PostalAddress(rawValue));
+    }
+  }
 }

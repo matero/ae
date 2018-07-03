@@ -41,7 +41,7 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
 
   static final JsonArraySerializer<IMHandle> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  private final JsonStringNode address  = string("addr");
+  private final JsonStringNode address = string("addr");
   private final JsonStringNode protocol = string("prot");
 
   @Override public JsonNode toJson(final IMHandle value) {
@@ -62,7 +62,7 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
     }
   }
 
-  @Override public IMHandle fromJson(final  JsonNode json) {
+  @Override public IMHandle fromJson(final JsonNode json) {
     if (json.isNullNode()) {
       return null;
     } else {

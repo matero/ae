@@ -26,5 +26,7 @@ package ae.db;
 import com.google.appengine.api.datastore.Category;
 
 public interface CategoryListField extends ListField<Category> {
-  @Override default Class<Category> elementType() { return Category.class; }
+  @Override default Class<Category> elementType() {
+    return Category.class;
+  }
 }

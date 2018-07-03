@@ -42,11 +42,15 @@ import java.util.List;
  */
 public interface ScalarField<T> extends Field<T> {
 
-  default T asModelValue(final Object value) { return type().cast(value); }
+  default T asModelValue(final Object value) {
+    return type().cast(value);
+  }
 
-  default Object asDatastoreValue(final T value) { return value; }
+  default Object asDatastoreValue(final T value) {
+    return value;
+  }
 
-  default ArrayList<Object> asDatastoreValues(final T ... values) {
+  default ArrayList<Object> asDatastoreValues(final T... values) {
     if (values == null) {
       return null;
     }
@@ -100,7 +104,7 @@ public interface ScalarField<T> extends Field<T> {
     }
   }
 
-  default List<T> asModelValues(final Object ... values) {
+  default List<T> asModelValues(final Object... values) {
     if (values == null) {
       return null;
     }
@@ -153,7 +157,9 @@ public interface ScalarField<T> extends Field<T> {
     return result;
   }
 
-  @Override default T read(final PropertyContainer data) { return asModelValue(data.getProperty(property())); }
+  @Override default T read(final PropertyContainer data) {
+    return asModelValue(data.getProperty(property()));
+  }
 
   /**
    * unindexed scalar properties
@@ -171,7 +177,9 @@ public interface ScalarField<T> extends Field<T> {
       super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
     }
 
-    @Override public final boolean indexed() { return false; }
+    @Override public final boolean indexed() {
+      return false;
+    }
 
     @Override public final void write(final PropertyContainer data, final T value) {
       data.setUnindexedProperty(property(), asDatastoreValue(value));
@@ -206,25 +214,37 @@ public interface ScalarField<T> extends Field<T> {
       this.isNotNull = new FilterPredicate(property, FilterOperator.NOT_EQUAL, null);
     }
 
-    @Override public final boolean indexed() { return true; }
+    @Override public final boolean indexed() {
+      return true;
+    }
 
     @Override public final void write(final PropertyContainer data, final T value) {
       data.setIndexedProperty(property(), asDatastoreValue(value));
     }
 
-    @Override public final FilterPredicate isNull() { return isNull; }
+    @Override public final FilterPredicate isNull() {
+      return isNull;
+    }
 
-    @Override public final FilterPredicate isNotNull() { return isNotNull; }
+    @Override public final FilterPredicate isNotNull() {
+      return isNotNull;
+    }
 
     @Override public final FilterPredicate eq(final T value) {
       return new FilterPredicate(field(), FilterOperator.EQUAL, asDatastoreValue(value));
     }
 
-    @Override public final PropertyProjection projection() { return projection; }
+    @Override public final PropertyProjection projection() {
+      return projection;
+    }
 
-    @Override public final SortPredicate asc() { return asc; }
+    @Override public final SortPredicate asc() {
+      return asc;
+    }
 
-    @Override public final SortPredicate desc() { return desc; }
+    @Override public final SortPredicate desc() {
+      return desc;
+    }
 
     @Override public final FilterPredicate ne(final T value) {
       return new FilterPredicate(field(), FilterOperator.NOT_EQUAL, asDatastoreValue(value));

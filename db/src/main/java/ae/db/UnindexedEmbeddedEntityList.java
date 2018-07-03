@@ -41,5 +41,7 @@ public final class UnindexedEmbeddedEntityList extends ListField.Unindexed<Embed
     super(canonicalName, description, property, field, required, jsonName, jsonPath, EmbeddedEntityJsonSerializer.ARRAY, constraints);
   }
 
-  @Override public Class<EmbeddedEntity> elementType() { return EmbeddedEntity.class; }
+  @Override public Class<EmbeddedEntity> elementType() {
+    return EmbeddedEntity.class;
+  }
 }

@@ -24,7 +24,35 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PropertyContainer;
 
 public interface KeyField extends ScalarField<Key> {
-  @Override default Class<Key> type() { return Key.class; }
+  @Override default Class<Key> type() {
+    return Key.class;
+  }
+
+  default void set(final PropertyContainer data, final CharSequence rawValue) {
+    write(data, rawValue);
+  }
+
+  default void write(final PropertyContainer data, final CharSequence rawValue) {
+    if (rawValue == null) {
+      write(data, (Key) null);
+    } else {
+      write(data, KeyFactory.stringToKey(rawValue.toString()));
+    }
+  }
+
+  default void set(final PropertyContainer data, final String rawValue) {
+    write(data, rawValue);
+  }
+
+  default void write(final PropertyContainer data, final String rawValue) {
+    if (rawValue == null) {
+      write(data, (Key) null);
+    } else {
+      write(data, KeyFactory.stringToKey(rawValue));
+    }
+  }
 }

@@ -45,11 +45,15 @@ public interface Attr extends java.io.Serializable {
 
   boolean isDefinedAt(Entity data);
 
-  default boolean isDefinedAt(final JsonNode json) { return json.getFields().containsKey(jsonName()); }
+  default boolean isDefinedAt(final JsonNode json) {
+    return json.getFields().containsKey(jsonName());
+  }
 
   JsonNode makeJsonValue(Entity data);
 
-  default JsonField makeJsonField(final Entity data) { return JsonNodeFactories.field(jsonName(), makeJsonValue(data)); }
+  default JsonField makeJsonField(final Entity data) {
+    return JsonNodeFactories.field(jsonName(), makeJsonValue(data));
+  }
 
   Object interpretJson(JsonNode json);
 
@@ -82,15 +86,27 @@ abstract class AttrData implements Attr {
     this.constraints = constraints;
   }
 
-  @Override public final String canonicalName() { return canonicalName; }
+  @Override public final String canonicalName() {
+    return canonicalName;
+  }
 
-  @Override public final String description() { return description; }
+  @Override public final String description() {
+    return description;
+  }
 
-  @Override public final String field() { return field; }
+  @Override public final String field() {
+    return field;
+  }
 
-  @Override public final JsonStringNode jsonName() { return jsonName; }
+  @Override public final JsonStringNode jsonName() {
+    return jsonName;
+  }
 
-  @Override public final String jsonPath() { return jsonPath; }
-  
-  @Override public final ImmutableList<Constraint> constraints() { return constraints; }
+  @Override public final String jsonPath() {
+    return jsonPath;
+  }
+
+  @Override public final ImmutableList<Constraint> constraints() {
+    return constraints;
+  }
 }

@@ -26,5 +26,7 @@ package ae.db;
 import com.google.appengine.api.datastore.PostalAddress;
 
 public interface PostalAddressListField extends ListField<PostalAddress> {
-  @Override default Class<PostalAddress> elementType() { return PostalAddress.class; }
+  @Override default Class<PostalAddress> elementType() {
+    return PostalAddress.class;
+  }
 }

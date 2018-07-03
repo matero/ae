@@ -26,5 +26,7 @@ package ae.db;
 import com.google.appengine.api.datastore.Email;
 
 public interface EmailListField extends ListField<Email> {
-  @Override default Class<Email> elementType() { return Email.class; }
+  @Override default Class<Email> elementType() {
+    return Email.class;
+  }
 }

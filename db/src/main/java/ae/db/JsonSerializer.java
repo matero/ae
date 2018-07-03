@@ -41,7 +41,9 @@ final class NotSerializableToJson<T> implements JsonSerializer<T> {
 
   private final Class<T> type;
 
-  NotSerializableToJson(final Class<T> type) { this.type = type; }
+  NotSerializableToJson(final Class<T> type) {
+    this.type = type;
+  }
 
   @Override public JsonNode toJson(final T value) {
     throw new UnsupportedOperationException("JSON serialization of " + type.getCanonicalName() + " instances is not supported.");
@@ -61,7 +63,9 @@ final class JsonArraySerializer<E> implements JsonSerializer<List<E>> {
 
   private final JsonSerializer<E> elementJsonSerializer;
 
-  JsonArraySerializer(final JsonSerializer<E> elementJsonSerializer) { this.elementJsonSerializer = elementJsonSerializer; }
+  JsonArraySerializer(final JsonSerializer<E> elementJsonSerializer) {
+    this.elementJsonSerializer = elementJsonSerializer;
+  }
 
   @Override public JsonNode toJson(final List<E> value) {
     if (value == null) {

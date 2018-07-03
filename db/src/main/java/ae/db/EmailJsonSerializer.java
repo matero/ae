@@ -49,8 +49,7 @@ enum EmailJsonSerializer implements JsonSerializer<Email> {
     if (json.isNullNode()) {
       return null;
     } else {
-      return new Email
-                 (json.getStringValue());
+      return new Email(json.getStringValue());
     }
   }
 }

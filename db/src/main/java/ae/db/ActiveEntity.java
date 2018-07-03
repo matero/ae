@@ -58,7 +58,9 @@ public abstract class ActiveEntity implements Serializable {
    *
    * @param kind Kind of the active entity.
    */
-  protected ActiveEntity(final String kind) { this.kind = kind; }
+  protected ActiveEntity(final String kind) {
+    this.kind = kind;
+  }
 
   /**
    * @return the logger associated to the active entity, <em>never</em> {@code null}.
@@ -73,14 +75,19 @@ public abstract class ActiveEntity implements Serializable {
    *
    * @param data the {@link Entity} to initialize.
    */
-  protected void init(final Entity data) { /*nothing to do*/ }
+  protected void init(final Entity data) {
+    /*nothing to do*/ }
 
   /* **************************************************************************
    * validation methods
    */
-  public boolean isKindOf(final Entity data) { return isKindOf(data.getKey()); }
+  public boolean isKindOf(final Entity data) {
+    return isKindOf(data.getKey());
+  }
 
-  public boolean isKindOf(final Key key) { return kind.equals(key.getKind()); }
+  public boolean isKindOf(final Key key) {
+    return kind.equals(key.getKind());
+  }
 
   public Key keyFrom(final String webSafeKey) {
     if (webSafeKey == null) {
@@ -107,7 +114,7 @@ public abstract class ActiveEntity implements Serializable {
    */
   public abstract JsonNode toJson(final Entity data);
 
-  public JsonNode toJson(final Entity ... elements) {
+  public JsonNode toJson(final Entity... elements) {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
     }
@@ -226,8 +233,8 @@ public abstract class ActiveEntity implements Serializable {
       throw new IllegalArgumentException("Key '" + key + "' does not represent " + getClass().getCanonicalName());
     }
     final Query exists = makeQuery()
-                             .setKeysOnly()
-                             .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, key));
+            .setKeysOnly()
+            .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, key));
     final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
     return data != null;
   }
@@ -265,15 +272,23 @@ public abstract class ActiveEntity implements Serializable {
       return field();
     }
 
-    @Override public final boolean isDefinedAt(final Entity data) {return isDefinedAt(data.getKey());}
+    @Override public final boolean isDefinedAt(final Entity data) {
+      return isDefinedAt(data.getKey());
+    }
 
     public abstract boolean isDefinedAt(Key key);
 
-    public final JsonField makeJsonFieldFrom(final Entity data) {return makeJsonFieldFrom(data.getKey());}
+    public final JsonField makeJsonFieldFrom(final Entity data) {
+      return makeJsonFieldFrom(data.getKey());
+    }
 
-    public final JsonField makeJsonFieldFrom(final Key key) {return JsonNodeFactories.field(jsonName(), makeJsonValue(key));}
+    public final JsonField makeJsonFieldFrom(final Key key) {
+      return JsonNodeFactories.field(jsonName(), makeJsonValue(key));
+    }
 
-    @Override public final JsonNode makeJsonValue(final Entity data) {return makeJsonValue(data.getKey());}
+    @Override public final JsonNode makeJsonValue(final Entity data) {
+      return makeJsonValue(data.getKey());
+    }
 
     public abstract JsonNode makeJsonValue(Key key);
   }

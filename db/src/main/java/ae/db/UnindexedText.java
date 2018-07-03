@@ -24,6 +24,8 @@
 package ae.db;
 
 import argo.jdom.JsonStringNode;
+import com.google.appengine.api.datastore.PropertyContainer;
+import com.google.appengine.api.datastore.Rating;
 import com.google.appengine.api.datastore.Text;
 import com.google.common.collect.ImmutableList;
 
@@ -41,5 +43,31 @@ public final class UnindexedText extends ScalarField.Unindexed<Text> {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, TextJsonSerializer.INSTANCE, constraints);
   }
 
-  @Override public Class<Text> type() { return Text.class; }
+  @Override public Class<Text> type() {
+    return Text.class;
+  }
+
+  public void set(final PropertyContainer data, final CharSequence rawValue) {
+    write(data, rawValue);
+  }
+
+  public void write(final PropertyContainer data, final CharSequence rawValue) {
+    if (rawValue == null) {
+      write(data, (Text) null);
+    } else {
+      write(data, new Text(rawValue.toString()));
+    }
+  }
+
+  public void set(final PropertyContainer data, final String rawValue) {
+    write(data, rawValue);
+  }
+
+  public void write(final PropertyContainer data, final String rawValue) {
+    if (rawValue == null) {
+      write(data, (Text) null);
+    } else {
+      write(data, new Text(rawValue));
+    }
+  }
 }

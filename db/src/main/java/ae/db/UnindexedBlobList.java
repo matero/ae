@@ -41,5 +41,7 @@ public final class UnindexedBlobList extends ListField.Unindexed<Blob> {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, BlobJsonSerializer.ARRAY, constraints);
   }
 
-  @Override public Class<Blob> elementType() { return Blob.class; }
+  @Override public Class<Blob> elementType() {
+    return Blob.class;
+  }
 }

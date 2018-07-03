@@ -42,7 +42,9 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
    *
    * @param kind Kind of the active entity.
    */
-  protected RootWithId(final String kind) { super(kind); }
+  protected RootWithId(final String kind) {
+    super(kind);
+  }
 
   /* **************************************************************************
    * entity construction facilities
@@ -53,7 +55,9 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     return data;
   }
 
-  @Override public final Entity newEntity() { return new Entity(this.kind); }
+  @Override public final Entity newEntity() {
+    return new Entity(this.kind);
+  }
 
   @Override public Entity make(final long id) {
     final Entity data = newEntity(id);
@@ -61,14 +65,20 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     return data;
   }
 
-  @Override public final Entity newEntity(final long id) { return new Entity(this.kind, id); }
+  @Override public final Entity newEntity(final long id) {
+    return new Entity(this.kind, id);
+  }
 
-  @Override public Key makeKey(final long id) { return KeyFactory.createKey(this.kind, id); }
+  @Override public Key makeKey(final long id) {
+    return KeyFactory.createKey(this.kind, id);
+  }
 
   /* **************************************************************************
    * persistence methods
    */
-  public void deleteById(final long id) { DatastoreServiceFactory.getDatastoreService().delete(makeKey(id)); }
+  public void deleteById(final long id) {
+    DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
+  }
 
   public Entity findById(final long id) {
     try {

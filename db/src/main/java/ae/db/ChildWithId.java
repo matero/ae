@@ -33,7 +33,9 @@ import com.google.common.collect.ImmutableList;
 public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEntity<P> implements WithId {
   private static final long serialVersionUID = 240124574244515721L;
 
-  protected ChildWithId(final String kind) { super(kind); }
+  protected ChildWithId(final String kind) {
+    super(kind);
+  }
 
   /* **************************************************************************
    * entity construction facilities
@@ -96,11 +98,17 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     return KeyFactory.createKey(parentKey, kind, id);
   }
 
-  @Override public Entity newEntity() { return new Entity(kind); }
+  @Override public Entity newEntity() {
+    return new Entity(kind);
+  }
 
-  @Override public Entity newEntity(final long id) { return new Entity(kind, id); }
+  @Override public Entity newEntity(final long id) {
+    return new Entity(kind, id);
+  }
 
-  public final Entity newEntity(final Entity parent, final long id) { return newEntity(parent.getKey(), id); }
+  public final Entity newEntity(final Entity parent, final long id) {
+    return newEntity(parent.getKey(), id);
+  }
 
   public final Entity newEntity(final Key parentKey, final long id) {
     if (!modelParent().isKindOf(parentKey)) {
@@ -109,7 +117,9 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     return new Entity(kind, id, parentKey);
   }
 
-  public final Entity newEntity(final Entity parent) { return newEntity(parent.getKey()); }
+  public final Entity newEntity(final Entity parent) {
+    return newEntity(parent.getKey());
+  }
 
   public final Entity newEntity(final Key parentKey) {
     if (!modelParent().isKindOf(parentKey)) {
@@ -121,7 +131,9 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
   /* **************************************************************************
    * persistence methods
    */
-  public void deleteById(final long id) { DatastoreServiceFactory.getDatastoreService().delete(makeKey(id)); }
+  public void deleteById(final long id) {
+    DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
+  }
 
   public Entity findById(final long id) {
     try {
@@ -137,8 +149,8 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
 
   public boolean existsById(final long id) {
     final Query exists = makeQuery()
-                             .setKeysOnly()
-                             .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(id)));
+            .setKeysOnly()
+            .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(id)));
     final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
     return data != null;
   }
@@ -177,16 +189,16 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
 
   public boolean existsByParentAndId(final Entity parent, final long id) {
     final Query exists = makeQuery()
-                             .setKeysOnly()
-                             .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(parent, id)));
+            .setKeysOnly()
+            .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(parent, id)));
     final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
     return data != null;
   }
 
   public boolean existsByParentKeyAndId(final Key parentKey, final long id) {
     final Query exists = makeQuery()
-                             .setKeysOnly()
-                             .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(parentKey, id)));
+            .setKeysOnly()
+            .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(parentKey, id)));
     final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
     return data != null;
   }

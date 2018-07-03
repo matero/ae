@@ -37,15 +37,21 @@ import java.util.Iterator;
 import java.util.List;
 
 public interface ListField<E> extends Field<List<E>> {
-  @Override default Class<List<E>> type() { return (Class<List<E>>) (Class<?>) List.class; }
+  @Override default Class<List<E>> type() {
+    return (Class<List<E>>) (Class<?>) List.class;
+  }
 
   Class<E> elementType();
 
-  default E asModelElementValue(final Object value) { return elementType().cast(value); }
+  default E asModelElementValue(final Object value) {
+    return elementType().cast(value);
+  }
 
-  default Object asDatastoreElementValue(final E value) { return value; }
+  default Object asDatastoreElementValue(final E value) {
+    return value;
+  }
 
-  default ArrayList<Object> asDatastoreValues(final E ... values) {
+  default ArrayList<Object> asDatastoreValues(final E... values) {
     if (values == null) {
       return null;
     }
@@ -102,7 +108,7 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<E> asModelValues(final Object ... values) {
+  default List<E> asModelValues(final Object... values) {
     if (values == null) {
       return null;
     }
@@ -193,10 +199,10 @@ public interface ListField<E> extends Field<List<E>> {
    */
   abstract class Indexed<E> extends FieldData<List<E>> implements ListField<E>, Filterable<E> {
     private final PropertyProjection projection;
-    private final SortPredicate      asc;
-    private final SortPredicate      desc;
-    private final FilterPredicate    isNull;
-    private final FilterPredicate    isNotNull;
+    private final SortPredicate asc;
+    private final SortPredicate desc;
+    private final FilterPredicate isNull;
+    private final FilterPredicate isNotNull;
 
     protected Indexed(final String canonicalName,
                       final String description,
@@ -216,17 +222,29 @@ public interface ListField<E> extends Field<List<E>> {
       this.isNotNull = new FilterPredicate(property, FilterOperator.NOT_EQUAL, null);
     }
 
-    @Override public final FilterPredicate isNull() { return isNull; }
+    @Override public final FilterPredicate isNull() {
+      return isNull;
+    }
 
-    @Override public final FilterPredicate isNotNull() { return isNotNull; }
+    @Override public final FilterPredicate isNotNull() {
+      return isNotNull;
+    }
 
-    @Override public final PropertyProjection projection() { return projection; }
+    @Override public final PropertyProjection projection() {
+      return projection;
+    }
 
-    @Override public final SortPredicate asc() { return asc; }
+    @Override public final SortPredicate asc() {
+      return asc;
+    }
 
-    @Override public final SortPredicate desc() { return desc; }
+    @Override public final SortPredicate desc() {
+      return desc;
+    }
 
-    @Override public final boolean indexed() { return true; }
+    @Override public final boolean indexed() {
+      return true;
+    }
 
     @Override public final void write(final PropertyContainer data, final List<E> value) {
       data.setIndexedProperty(property(), asDatastoreValues(value));

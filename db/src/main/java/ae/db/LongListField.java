@@ -23,8 +23,8 @@
  */
 package ae.db;
 
-
-
 public interface LongListField extends ListField<Long> {
-  @Override default Class<Long> elementType() { return Long.class; }
+  @Override default Class<Long> elementType() {
+    return Long.class;
+  }
 }

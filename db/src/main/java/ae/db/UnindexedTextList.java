@@ -41,5 +41,7 @@ public final class UnindexedTextList extends ListField.Unindexed<Text> {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, TextJsonSerializer.ARRAY, constraints);
   }
 
-  @Override public Class<Text> elementType() { return Text.class; }
+  @Override public Class<Text> elementType() {
+    return Text.class;
+  }
 }

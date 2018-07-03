@@ -8,13 +8,13 @@ public final class UnindexedPhoneNumberList extends ListField.Unindexed<PhoneNum
   private static final long serialVersionUID = -6378104307500847934L;
 
   public UnindexedPhoneNumberList(final String canonicalName,
-                           final String description,
-                           final String property,
-                           final String field,
-                           final boolean required,
-                           final JsonStringNode jsonName,
-                           final String jsonPath,
-                           final ImmutableList<Constraint> constraints) {
+                                  final String description,
+                                  final String property,
+                                  final String field,
+                                  final boolean required,
+                                  final JsonStringNode jsonName,
+                                  final String jsonPath,
+                                  final ImmutableList<Constraint> constraints) {
     super(canonicalName, description, property, field, required, jsonName, jsonPath, PhoneNumberJsonSerializer.ARRAY, constraints);
   }
 }

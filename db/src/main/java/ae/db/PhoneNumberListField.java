@@ -26,5 +26,7 @@ package ae.db;
 import com.google.appengine.api.datastore.PhoneNumber;
 
 public interface PhoneNumberListField extends ListField<PhoneNumber> {
-  @Override default Class<PhoneNumber> elementType() { return PhoneNumber.class; }
+  @Override default Class<PhoneNumber> elementType() {
+    return PhoneNumber.class;
+  }
 }

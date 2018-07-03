@@ -41,5 +41,7 @@ public final class UnindexedEmbeddedEntity extends ScalarField.Unindexed<Embedde
     super(canonicalName, description, property, field, required, jsonName, jsonPath, EmbeddedEntityJsonSerializer.INSTANCE, constraints);
   }
 
-  @Override public Class<EmbeddedEntity> type() { return EmbeddedEntity.class; }
+  @Override public Class<EmbeddedEntity> type() {
+    return EmbeddedEntity.class;
+  }
 }
