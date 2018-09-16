@@ -31,8 +31,7 @@ import static argo.jdom.JsonNodeFactories.number;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import argo.jdom.JsonNode;
-
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class LongJsonSerializerTest {
   private final LongJsonSerializer serializer = LongJsonSerializer.INSTANCE;

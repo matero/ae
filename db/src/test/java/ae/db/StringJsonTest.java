@@ -30,8 +30,7 @@ import static argo.jdom.JsonNodeFactories.string;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import argo.jdom.JsonNode;
-
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class StringJsonTest {
   private final StringJsonSerializer serializer = StringJsonSerializer.INSTANCE;

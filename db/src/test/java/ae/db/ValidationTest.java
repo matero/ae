@@ -40,9 +40,9 @@ import static argo.jdom.JsonNodeFactories.object;
 import static argo.jdom.JsonNodeFactories.string;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
-
 import static argo.jdom.JsonNodeFactories.field;
+
+import org.testng.annotations.Test;
 
 public class ValidationTest {
   @Test public void can_be_created_with_nonnull_success_message() {

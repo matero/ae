@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import argo.jdom.JsonNode;
 import java.util.List;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class StringArrayJsonSerializerTest {
   private final JsonArraySerializer<String> serializer = StringJsonSerializer.ARRAY;

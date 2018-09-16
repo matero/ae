@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import argo.jdom.JsonNode;
 import com.google.appengine.api.datastore.Text;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class TextJsonTest {
   private final TextJsonSerializer serializer = TextJsonSerializer.INSTANCE;
