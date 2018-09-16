@@ -39,15 +39,18 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 class RoutersCodeBuilder {
+
   private static final ClassName HTTP_SERVLET = ClassName.get(RouterServlet.class);
 
   private final TypeName stringArray;
 
-  RoutersCodeBuilder() {
+  RoutersCodeBuilder()
+  {
     stringArray = ArrayTypeName.of(ClassName.get(String.class));
   }
 
-  JavaFile buildJavaCode(final RoutesDeclarations declarations) {
+  JavaFile buildJavaCode(final RoutesDeclarations declarations)
+  {
     final ClassName classname = ClassName.get(declarations.packageName, declarations.superClass);
     final TypeSpec.Builder router = TypeSpec.classBuilder(classname)
             .superclass(HTTP_SERVLET)
@@ -68,7 +71,8 @@ class RoutersCodeBuilder {
     return JavaFile.builder(classname.packageName(), router.build()).skipJavaLangImports(true).build();
   }
 
-  void addRouteFields(final TypeSpec.Builder router, final RoutesDeclarations declarations) {
+  void addRouteFields(final TypeSpec.Builder router, final RoutesDeclarations declarations)
+  {
     for (final HttpVerb httpVerb : HttpVerb.values()) {
       final ImmutableList<RouteDescriptor> routes = declarations.routesByVerb.get(httpVerb);
 
@@ -86,7 +90,8 @@ class RoutersCodeBuilder {
     }
   }
 
-  FieldSpec makeFieldFor(final RouteDescriptor route) {
+  FieldSpec makeFieldFor(final RouteDescriptor route)
+  {
     final FieldSpec.Builder property = FieldSpec.builder(TypeName.get(route.type),
                                                          route.routeField(),
                                                          Modifier.PRIVATE, Modifier.FINAL);
@@ -98,7 +103,8 @@ class RoutersCodeBuilder {
     return property.build();
   }
 
-  void addRouteHandlers(final TypeSpec.Builder router, final RoutesDeclarations declarations) {
+  void addRouteHandlers(final TypeSpec.Builder router, final RoutesDeclarations declarations)
+  {
     for (final HttpVerb httpVerb : HttpVerb.values()) {
       final ImmutableList<RouteDescriptor> routes = declarations.routesByVerb.get(httpVerb);
 
@@ -110,7 +116,8 @@ class RoutersCodeBuilder {
     }
   }
 
-  MethodSpec overrideVerbHandler(final HttpVerb httpVerb, final ImmutableList<RouteDescriptor> routes) {
+  MethodSpec overrideVerbHandler(final HttpVerb httpVerb, final ImmutableList<RouteDescriptor> routes)
+  {
     final MethodSpec.Builder httpVerbHandler = MethodSpec
             .methodBuilder(httpVerb.handler)
             .addAnnotation(Override.class)
@@ -120,23 +127,25 @@ class RoutersCodeBuilder {
             .addException(ServletException.class)
             .addException(IOException.class);
     if (hasDynamicRoutes(routes)) {
-      httpVerbHandler.addStatement("final $T routeParameters = new $T{$L}", stringArray, stringArray, paramsInit(routes));
+      httpVerbHandler.
+              addStatement("final $T routeParameters = new $T{$L}", stringArray, stringArray, paramsInit(routes));
     }
 
     final UnmodifiableIterator<RouteDescriptor> iRoutes = routes.iterator();
     RouteDescriptor route = iRoutes.next();
-    while (iRoutes.hasNext()) {
+    do {
       final MethodSpec.Builder ifMatchesRoute;
       if (route.isDynamic()) {
         final ClassName interpreterClass = ClassName.get(Interpret.class);
-        ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request, routeParameters))", route.routeField());
+        ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request, routeParameters))", route.
+                                                          routeField());
         for (int i = 0; i < route.parametersCount(); i++) {
           ifMatchesRoute.addStatement("final $T $L = $T.$L(routeParameters[$L])",
-                               route.parameterType(i),
-                               route.parameterName(i),
-                               interpreterClass,
-                               route.parameterInterpreterMethod(i),
-                               i);
+                                      route.parameterType(i),
+                                      route.parameterName(i),
+                                      interpreterClass,
+                                      route.parameterInterpreterMethod(i),
+                                      i);
         }
       } else {
         ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request))", route.routeField());
@@ -145,22 +154,27 @@ class RoutersCodeBuilder {
       final String last = route.pattern;
       while (last.equals(route.pattern)) {
         if (route.hasHeaderSelection()) {
-          final MethodSpec.Builder selector = ifMatchesRoute.beginControlFlow(route.headersFilterExpr(), route.headersFilterArgs());
+          final MethodSpec.Builder selector = ifMatchesRoute.beginControlFlow(route.headersFilterExpr(), route.
+                                                                              headersFilterArgs());
           addHandle(selector, route);
           ifMatchesRoute.endControlFlow();
         } else {
           addHandle(ifMatchesRoute, route);
         }
+        if (!iRoutes.hasNext()) {
+          break;
+        }
         route = iRoutes.next();
       }
-      
+
       httpVerbHandler.endControlFlow();
-    }
+    } while (iRoutes.hasNext());
     httpVerbHandler.addStatement("$L(request, response)", httpVerb.unhandled);
     return httpVerbHandler.build();
   }
 
-  boolean hasDynamicRoutes(final Iterable<RouteDescriptor> routes) {
+  boolean hasDynamicRoutes(final Iterable<RouteDescriptor> routes)
+  {
     for (final RouteDescriptor r : routes) {
       if (r.isDynamic()) {
         return true;
@@ -169,7 +183,8 @@ class RoutersCodeBuilder {
     return false;
   }
 
-  private String paramsInit(final Iterable<RouteDescriptor> routes) {
+  private String paramsInit(final Iterable<RouteDescriptor> routes)
+  {
     final int maxParametersCount = maxParametersCountAt(routes);
     final StringBuffer params = new StringBuffer(4 * maxParametersCount + 2 * (maxParametersCount - 1)).append("null");
     for (int i = 0; i < maxParametersCount; i++) {
@@ -178,7 +193,8 @@ class RoutersCodeBuilder {
     return params.toString();
   }
 
-  private int maxParametersCountAt(final Iterable<RouteDescriptor> routes) {
+  private int maxParametersCountAt(final Iterable<RouteDescriptor> routes)
+  {
     int maxParametersCount = 0;
     for (final RouteDescriptor r : routes) {
       if (r.isDynamic()) {
@@ -189,7 +205,9 @@ class RoutersCodeBuilder {
     }
     return maxParametersCount;
   }
-  void addHandle(final MethodSpec.Builder control, final RouteDescriptor route) {
+
+  void addHandle(final MethodSpec.Builder control, final RouteDescriptor route)
+  {
     if (route.useCredentials) {
       control.addStatement("handle(new $T($L), (controller) -> $T.Director.of(controller).authorize((c) -> c.$L($L)))",
                            route.controllerClass(),
