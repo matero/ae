@@ -27,6 +27,7 @@ import com.google.appengine.api.datastore.Entity;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 import ognl.OgnlRuntime;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -50,6 +51,7 @@ public final class ThymeleafConfigurer implements javax.servlet.ServletContextLi
     {
         final TemplateEngine engine = new TemplateEngine();
         engine.setTemplateResolver(templateResolver(servletContext));
+        engine.addDialect(new LayoutDialect());
         return engine;
     }
 
