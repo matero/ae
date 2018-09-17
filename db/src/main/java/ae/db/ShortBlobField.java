@@ -26,7 +26,10 @@ package ae.db;
 import com.google.appengine.api.datastore.ShortBlob;
 
 public interface ShortBlobField extends ScalarField<ShortBlob> {
-  @Override default Class<ShortBlob> type() {
-    return ShortBlob.class;
-  }
+
+    @Override
+    default Class<ShortBlob> type()
+    {
+        return ShortBlob.class;
+    }
 }

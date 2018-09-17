@@ -28,21 +28,25 @@ import com.google.appengine.api.datastore.Blob;
 import com.google.common.collect.ImmutableList;
 
 public final class UnindexedBlob extends ScalarField.Unindexed<Blob> {
-  private static final long serialVersionUID = 7038886177579514412L;
 
-  public UnindexedBlob(final String canonicalName,
-                       final String description,
-                       final String property,
-                       final String field,
-                       final boolean required,
-                       final JsonStringNode jsonName,
-                       final String jsonPath,
-                       final JsonSerializer<Blob> jsonSerializer,
-                       final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
-  }
+    private static final long serialVersionUID = 7038886177579514412L;
 
-  @Override public Class<Blob> type() {
-    return Blob.class;
-  }
+    public UnindexedBlob(final String canonicalName,
+                         final String description,
+                         final String property,
+                         final String field,
+                         final boolean required,
+                         final JsonStringNode jsonName,
+                         final String jsonPath,
+                         final JsonSerializer<Blob> jsonSerializer,
+                         final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
+    }
+
+    @Override
+    public Class<Blob> type()
+    {
+        return Blob.class;
+    }
 }

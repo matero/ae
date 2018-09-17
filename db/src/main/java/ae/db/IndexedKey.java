@@ -29,17 +29,19 @@ import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 
 public final class IndexedKey extends ScalarField.Indexed<Key> implements KeyField {
-  private static final long serialVersionUID = -7809081019366457919L;
 
-  public IndexedKey(final String canonicalName,
-                    final String description,
-                    final String property,
-                    final String field,
-                    final boolean required,
-                    final JsonStringNode jsonName,
-                    final String jsonPath,
-                    final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, KeyJsonSerializer.INSTANCE,
-          new PropertyProjection(property, Key.class), constraints);
-  }
+    private static final long serialVersionUID = -7809081019366457919L;
+
+    public IndexedKey(final String canonicalName,
+                      final String description,
+                      final String property,
+                      final String field,
+                      final boolean required,
+                      final JsonStringNode jsonName,
+                      final String jsonPath,
+                      final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath, KeyJsonSerializer.INSTANCE,
+              new PropertyProjection(property, Key.class), constraints);
+    }
 }

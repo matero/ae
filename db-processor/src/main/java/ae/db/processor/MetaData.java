@@ -27,29 +27,33 @@ import com.google.common.collect.ImmutableSet;
 import javax.lang.model.element.Modifier;
 
 abstract class MetaData {
-  final String name;
-  final ImmutableSet<Modifier> modifiers;
-  final Modifier visibility;
 
-  MetaData(final String name, final Iterable<Modifier> modifiers) {
-    this(name, modifiers, findVisibilityAt(modifiers));
-  }
+    final String name;
+    final ImmutableSet<Modifier> modifiers;
+    final Modifier visibility;
 
-  MetaData(final String name, final Iterable<Modifier> modifiers, final Modifier visibility) {
-    this.name = name;
-    this.modifiers = ImmutableSet.copyOf(modifiers);
-    this.visibility = visibility;
-  }
-
-  private static Modifier findVisibilityAt(final Iterable<Modifier> elementModifiers) {
-    for (final Modifier modifier : elementModifiers) {
-      switch (modifier) {
-        case PRIVATE:
-        case PROTECTED:
-        case PUBLIC:
-          return modifier;
-      }
+    MetaData(final String name, final Iterable<Modifier> modifiers)
+    {
+        this(name, modifiers, findVisibilityAt(modifiers));
     }
-    return null;
-  }
+
+    MetaData(final String name, final Iterable<Modifier> modifiers, final Modifier visibility)
+    {
+        this.name = name;
+        this.modifiers = ImmutableSet.copyOf(modifiers);
+        this.visibility = visibility;
+    }
+
+    private static Modifier findVisibilityAt(final Iterable<Modifier> elementModifiers)
+    {
+        for (final Modifier modifier : elementModifiers) {
+            switch (modifier) {
+                case PRIVATE:
+                case PROTECTED:
+                case PUBLIC:
+                    return modifier;
+            }
+        }
+        return null;
+    }
 }

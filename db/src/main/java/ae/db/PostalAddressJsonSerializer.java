@@ -28,30 +28,36 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.PostalAddress;
 
 enum PostalAddressJsonSerializer implements JsonSerializer<PostalAddress> {
-  INSTANCE;
+    INSTANCE;
 
-  static final JsonArraySerializer<PostalAddress> ARRAY = new JsonArraySerializer<>(INSTANCE);
+    static final JsonArraySerializer<PostalAddress> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final PostalAddress value) {
-    if (value == null) {
-      return JsonNodeFactories.nullNode();
+    @Override
+    public JsonNode toJson(final PostalAddress value)
+    {
+        if (value == null) {
+            return JsonNodeFactories.nullNode();
+        }
+        return JsonNodeFactories.string(value.getAddress());
     }
-    return JsonNodeFactories.string(value.getAddress());
-  }
 
-  @Override public PostalAddress fromJson(final JsonNode json, final String jsonPath) {
-    if (json.isNullNode(jsonPath)) {
-      return null;
-    } else {
-      return new PostalAddress(json.getStringValue(jsonPath));
+    @Override
+    public PostalAddress fromJson(final JsonNode json, final String jsonPath)
+    {
+        if (json.isNullNode(jsonPath)) {
+            return null;
+        } else {
+            return new PostalAddress(json.getStringValue(jsonPath));
+        }
     }
-  }
 
-  @Override public PostalAddress fromJson(final JsonNode json) {
-    if (json.isNullNode()) {
-      return null;
-    } else {
-      return new PostalAddress(json.getStringValue());
+    @Override
+    public PostalAddress fromJson(final JsonNode json)
+    {
+        if (json.isNullNode()) {
+            return null;
+        } else {
+            return new PostalAddress(json.getStringValue());
+        }
     }
-  }
 }

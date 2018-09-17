@@ -28,25 +28,31 @@ import javax.servlet.ServletContextEvent;
 import org.thymeleaf.TemplateEngine;
 
 public final class ThymeleafTemplateEngine {
-  public static final String TEMPLATE_ENGINE = "$thyme";
 
-  private ThymeleafTemplateEngine() {
-    throw new UnsupportedOperationException();
-  }
+    public static final String TEMPLATE_ENGINE = "$thyme";
 
-  public static TemplateEngine get(final ServletContextEvent event) {
-    return get(event.getServletContext());
-  }
+    private ThymeleafTemplateEngine()
+    {
+        throw new UnsupportedOperationException();
+    }
 
-  public static TemplateEngine get(final ServletContext ctx) {
-    return (TemplateEngine) ctx.getAttribute(TEMPLATE_ENGINE);
-  }
+    public static TemplateEngine get(final ServletContextEvent event)
+    {
+        return get(event.getServletContext());
+    }
 
-  public static void set(final ServletContextEvent event, final TemplateEngine engine) {
-    set(event.getServletContext(), engine);
-  }
+    public static TemplateEngine get(final ServletContext ctx)
+    {
+        return (TemplateEngine) ctx.getAttribute(TEMPLATE_ENGINE);
+    }
 
-  public static void set(final ServletContext ctx, final TemplateEngine engine) {
-    ctx.setAttribute(TEMPLATE_ENGINE, engine);
-  }
+    public static void set(final ServletContextEvent event, final TemplateEngine engine)
+    {
+        set(event.getServletContext(), engine);
+    }
+
+    public static void set(final ServletContext ctx, final TemplateEngine engine)
+    {
+        ctx.setAttribute(TEMPLATE_ENGINE, engine);
+    }
 }

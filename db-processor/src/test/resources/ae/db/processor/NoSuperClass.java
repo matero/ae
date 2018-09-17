@@ -28,7 +28,10 @@ import ae.Record;
 
 @Model
 class NoSuperClass {
-  static final class R extends Record {
-    @id String id;
-  }
+
+    static final class R extends Record {
+
+        @id
+        String id;
+    }
 }

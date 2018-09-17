@@ -28,16 +28,19 @@ import com.google.appengine.api.datastore.Category;
 import com.google.common.collect.ImmutableList;
 
 public final class UnindexedCategoryList extends ListField.Unindexed<Category> implements CategoryListField {
-  private static final long serialVersionUID = 4646412775768995778L;
 
-  public UnindexedCategoryList(final String canonicalName,
-                               final String description,
-                               final String property,
-                               final String field,
-                               final boolean required,
-                               final JsonStringNode jsonName,
-                               final String jsonPath,
-                               final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY, constraints);
-  }
+    private static final long serialVersionUID = 4646412775768995778L;
+
+    public UnindexedCategoryList(final String canonicalName,
+                                 final String description,
+                                 final String property,
+                                 final String field,
+                                 final boolean required,
+                                 final JsonStringNode jsonName,
+                                 final String jsonPath,
+                                 final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY,
+              constraints);
+    }
 }

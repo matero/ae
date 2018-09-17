@@ -28,30 +28,36 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Category;
 
 enum CategoryJsonSerializer implements JsonSerializer<Category> {
-  INSTANCE;
+    INSTANCE;
 
-  static final JsonArraySerializer<Category> ARRAY = new JsonArraySerializer<>(INSTANCE);
+    static final JsonArraySerializer<Category> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final Category value) {
-    if (value == null) {
-      return JsonNodeFactories.nullNode();
+    @Override
+    public JsonNode toJson(final Category value)
+    {
+        if (value == null) {
+            return JsonNodeFactories.nullNode();
+        }
+        return JsonNodeFactories.string(value.getCategory());
     }
-    return JsonNodeFactories.string(value.getCategory());
-  }
 
-  @Override public Category fromJson(final JsonNode json, final String jsonPath) {
-    if (json.isNullNode(jsonPath)) {
-      return null;
-    } else {
-      return new Category(json.getStringValue(jsonPath));
+    @Override
+    public Category fromJson(final JsonNode json, final String jsonPath)
+    {
+        if (json.isNullNode(jsonPath)) {
+            return null;
+        } else {
+            return new Category(json.getStringValue(jsonPath));
+        }
     }
-  }
 
-  @Override public Category fromJson(final JsonNode json) {
-    if (json.isNullNode()) {
-      return null;
-    } else {
-      return new Category(json.getStringValue());
+    @Override
+    public Category fromJson(final JsonNode json)
+    {
+        if (json.isNullNode()) {
+            return null;
+        } else {
+            return new Category(json.getStringValue());
+        }
     }
-  }
 }

@@ -26,7 +26,9 @@ package ae.db.processor;
 import javax.lang.model.element.Element;
 
 final class ModelParentAlreadyDefinedException extends ModelException {
-  ModelParentAlreadyDefinedException(final Element illegalParent) {
-    super(illegalParent, "@Parent already defined");
-  }
+
+    ModelParentAlreadyDefinedException(final Element illegalParent)
+    {
+        super(illegalParent, "@Parent already defined");
+    }
 }

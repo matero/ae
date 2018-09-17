@@ -32,81 +32,97 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.common.collect.ImmutableList;
 
 public abstract class RootWithName extends RootActiveEntity implements WithName {
-  private static final long serialVersionUID = -5374806570138213003L;
-  /**
-   * Constructs an ROOT active entity with ID defining its kind.
-   *
-   * @param kind Kind of the active entity.
-   */
-  protected RootWithName(final String kind) {
-    super(kind);
-  }
 
-  /* **************************************************************************
+    private static final long serialVersionUID = -5374806570138213003L;
+
+    /**
+     * Constructs an ROOT active entity with ID defining its kind.
+     *
+     * @param kind Kind of the active entity.
+     */
+    protected RootWithName(final String kind)
+    {
+        super(kind);
+    }
+
+    /* **************************************************************************
    * entity construction facilities
-   */
-  public final Entity make(final String name) {
-    final Entity data = newEntity(name);
-    init(data);
-    return data;
-  }
+     */
+    public final Entity make(final String name)
+    {
+        final Entity data = newEntity(name);
+        init(data);
+        return data;
+    }
 
-  public final Entity newEntity(final String name) {
-    return new Entity(kind, name);
-  }
+    public final Entity newEntity(final String name)
+    {
+        return new Entity(kind, name);
+    }
 
-  public final Key makeKey(final String name) {
-    return KeyFactory.createKey(kind, name);
-  }
+    public final Key makeKey(final String name)
+    {
+        return KeyFactory.createKey(kind, name);
+    }
 
-  /* **************************************************************************
+    /* **************************************************************************
    * persistence methods
-   */
-  public Entity findByName(final String name) {
-    return find(makeKey(name));
-  }
+     */
+    public Entity findByName(final String name)
+    {
+        return find(makeKey(name));
+    }
 
-  public Entity getByName(final String name) throws EntityNotFoundException {
-    return get(makeKey(name));
-  }
+    public Entity getByName(final String name) throws EntityNotFoundException
+    {
+        return get(makeKey(name));
+    }
 
-  public void deleteByName(final String name) {
-    delete(makeKey(name));
-  }
+    public void deleteByName(final String name)
+    {
+        delete(makeKey(name));
+    }
 
-  public boolean existsByName(final String name) {
-    return exists(makeKey(name));
-  }
+    public boolean existsByName(final String name)
+    {
+        return exists(makeKey(name));
+    }
 
-  /* **************************************************************************
+    /* **************************************************************************
    * JSON Serialization
-   */
-  @Override protected final Iterable<JsonField> jsonKeyFields(final Key key) {
-    return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
-  }
+     */
+    @Override
+    protected final Iterable<JsonField> jsonKeyFields(final Key key)
+    {
+        return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
+    }
 
-  @Override public final Key keyFromJson(final JsonNode json) {
-    if (json == null || json.isNullNode()) {
-      return null;
+    @Override
+    public final Key keyFromJson(final JsonNode json)
+    {
+        if (json == null || json.isNullNode()) {
+            return null;
+        }
+        final String name = modelIdentifier().interpretJson(json);
+        if (name == null) {
+            return null;
+        } else {
+            return makeKey(name);
+        }
     }
-    final String name = modelIdentifier().interpretJson(json);
-    if (name == null) {
-      return null;
-    } else {
-      return makeKey(name);
-    }
-  }
 
-  @Override public Entity fromJson(final JsonNode json) {
-    if (json.isNullNode()) {
-      return null;
+    @Override
+    public Entity fromJson(final JsonNode json)
+    {
+        if (json.isNullNode()) {
+            return null;
+        }
+        final String name = modelIdentifier().interpretJson(json);
+        if (name == null) {
+            throw new IllegalArgumentException("no " + modelIdentifier().field() + " defined.");
+        }
+        final Entity data = make(name);
+        updatePropertiesWithJsonContents(data, json);
+        return data;
     }
-    final String name = modelIdentifier().interpretJson(json);
-    if (name == null) {
-      throw new IllegalArgumentException("no " + modelIdentifier().field() + " defined.");
-    }
-    final Entity data = make(name);
-    updatePropertiesWithJsonContents(data, json);
-    return data;
-  }
 }

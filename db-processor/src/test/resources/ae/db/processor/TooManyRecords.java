@@ -28,11 +28,15 @@ import ae.Record;
 
 @Model
 class TooManyRecords extends __TooManyRecords {
-  static class R1 extends Record {
-    @Model.Id String id;
-  }
 
-  static class R2 extends Record {
-    String property;
-  }
+    static class R1 extends Record {
+
+        @Model.Id
+        String id;
+    }
+
+    static class R2 extends Record {
+
+        String property;
+    }
 }

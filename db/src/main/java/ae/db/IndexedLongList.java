@@ -28,17 +28,19 @@ import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 
 public final class IndexedLongList extends ListField.Indexed<Long> implements LongListField {
-  private static final long serialVersionUID = 4062753071543649563L;
 
-  public IndexedLongList(final String canonicalName,
-                         final String description,
-                         final String property,
-                         final String field,
-                         final boolean required,
-                         final JsonStringNode jsonName,
-                         final String jsonPath,
-                         final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, LongJsonSerializer.ARRAY,
-          new PropertyProjection(property, Long.class), constraints);
-  }
+    private static final long serialVersionUID = 4062753071543649563L;
+
+    public IndexedLongList(final String canonicalName,
+                           final String description,
+                           final String property,
+                           final String field,
+                           final boolean required,
+                           final JsonStringNode jsonName,
+                           final String jsonPath,
+                           final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath, LongJsonSerializer.ARRAY,
+              new PropertyProjection(property, Long.class), constraints);
+    }
 }

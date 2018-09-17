@@ -30,30 +30,36 @@ import argo.jdom.JsonNode;
 import com.google.appengine.api.datastore.Text;
 
 enum TextJsonSerializer implements JsonSerializer<Text> {
-  INSTANCE;
+    INSTANCE;
 
-  static final JsonArraySerializer<Text> ARRAY = new JsonArraySerializer<>(INSTANCE);
+    static final JsonArraySerializer<Text> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final Text value) {
-    if (value == null) {
-      return nullNode();
+    @Override
+    public JsonNode toJson(final Text value)
+    {
+        if (value == null) {
+            return nullNode();
+        }
+        return string(value.getValue());
     }
-    return string(value.getValue());
-  }
 
-  @Override public Text fromJson(final JsonNode json, final String jsonPath) {
-    if (json.isNullNode(jsonPath)) {
-      return null;
-    } else {
-      return new Text(json.getStringValue(jsonPath));
+    @Override
+    public Text fromJson(final JsonNode json, final String jsonPath)
+    {
+        if (json.isNullNode(jsonPath)) {
+            return null;
+        } else {
+            return new Text(json.getStringValue(jsonPath));
+        }
     }
-  }
 
-  @Override public Text fromJson(final JsonNode json) {
-    if (json.isNullNode()) {
-      return null;
-    } else {
-      return new Text(json.getStringValue());
+    @Override
+    public Text fromJson(final JsonNode json)
+    {
+        if (json.isNullNode()) {
+            return null;
+        } else {
+            return new Text(json.getStringValue());
+        }
     }
-  }
 }

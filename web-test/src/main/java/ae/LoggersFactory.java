@@ -29,31 +29,34 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public enum LoggersFactory {
-  INSTANCE;
+    INSTANCE;
 
-  private LoggersFactory() {
-    // Programmatic configuration
-    System.setProperty("java.util.logging.SimpleFormatter.format",
-                       "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS.%1$tL %4$-7s [%3$s] (%2$s) %5$s %6$s%n");
+    private LoggersFactory()
+    {
+        // Programmatic configuration
+        System.setProperty("java.util.logging.SimpleFormatter.format",
+                           "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS.%1$tL %4$-7s [%3$s] (%2$s) %5$s %6$s%n");
 
-    final ConsoleHandler consoleHandler = new ConsoleHandler();
-    consoleHandler.setLevel(Level.FINEST);
-    consoleHandler.setFormatter(new SimpleFormatter());
+        final ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.FINEST);
+        consoleHandler.setFormatter(new SimpleFormatter());
 
-    final Logger ae = Logger.getLogger("ae");
-    ae.setLevel(Level.FINEST);
-    ae.addHandler(consoleHandler);
-  }
-
-  public Logger of(final Class<?> aClass) {
-    return of(aClass, Level.FINEST);
-  }
-
-  public Logger of(final Class<?> aClass, final Level loggingLevel) {
-    if (aClass == null) {
-      throw new NullPointerException("aClass");
+        final Logger ae = Logger.getLogger("ae");
+        ae.setLevel(Level.FINEST);
+        ae.addHandler(consoleHandler);
     }
-    final Logger logger = Logger.getLogger(aClass.getName());
-    return logger;
-  }
+
+    public Logger of(final Class<?> aClass)
+    {
+        return of(aClass, Level.FINEST);
+    }
+
+    public Logger of(final Class<?> aClass, final Level loggingLevel)
+    {
+        if (aClass == null) {
+            throw new NullPointerException("aClass");
+        }
+        final Logger logger = Logger.getLogger(aClass.getName());
+        return logger;
+    }
 }

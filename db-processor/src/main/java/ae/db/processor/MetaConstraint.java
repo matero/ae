@@ -24,21 +24,26 @@
 package ae.db.processor;
 
 final class MetaConstraint {
-  private static final Object[] NO_ARGS = {};
 
-  final String constructionExpr;
-  final Object[] args;
+    private static final Object[] NO_ARGS = {};
 
-  MetaConstraint(final String construtionExpr) {
-    this(construtionExpr, NO_ARGS);
-  }
+    final String constructionExpr;
+    final Object[] args;
 
-  MetaConstraint(final String construtionExpr, final Object[] args) {
-    this.constructionExpr = construtionExpr;
-    this.args = args;
-  }
-  
-  @Override public String toString() {
-    return constructionExpr;
-  }
+    MetaConstraint(final String construtionExpr)
+    {
+        this(construtionExpr, NO_ARGS);
+    }
+
+    MetaConstraint(final String construtionExpr, final Object[] args)
+    {
+        this.constructionExpr = construtionExpr;
+        this.args = args;
+    }
+
+    @Override
+    public String toString()
+    {
+        return constructionExpr;
+    }
 }

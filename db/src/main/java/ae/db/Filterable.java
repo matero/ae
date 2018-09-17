@@ -31,33 +31,34 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public interface Filterable<T> extends java.io.Serializable {
-  PropertyProjection projection();
 
-  SortPredicate asc();
+    PropertyProjection projection();
 
-  SortPredicate desc();
+    SortPredicate asc();
 
-  FilterPredicate isNull();
+    SortPredicate desc();
 
-  FilterPredicate isNotNull();
+    FilterPredicate isNull();
 
-  FilterPredicate eq(T value);
+    FilterPredicate isNotNull();
 
-  FilterPredicate ne(T value);
+    FilterPredicate eq(T value);
 
-  FilterPredicate lt(T value);
+    FilterPredicate ne(T value);
 
-  FilterPredicate le(T value);
+    FilterPredicate lt(T value);
 
-  FilterPredicate gt(T value);
+    FilterPredicate le(T value);
 
-  FilterPredicate ge(T value);
+    FilterPredicate gt(T value);
 
-  FilterPredicate in(T... values);
+    FilterPredicate ge(T value);
 
-  FilterPredicate in(Iterable<T> values);
+    FilterPredicate in(T... values);
 
-  FilterPredicate in(Iterator<T> values);
+    FilterPredicate in(Iterable<T> values);
 
-  FilterPredicate in(Collection<T> values);
+    FilterPredicate in(Iterator<T> values);
+
+    FilterPredicate in(Collection<T> values);
 }

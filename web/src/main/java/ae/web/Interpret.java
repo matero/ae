@@ -29,167 +29,189 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public final class Interpret {
-  private Interpret() {
-    throw new UnsupportedOperationException();
-  }
 
-  public static boolean asPrimitiveBoolean(final String raw) {
-    if (raw == null) {
-      throw new NullPointerException("raw");
-    } else {
-      return Boolean.parseBoolean(raw);
+    private Interpret()
+    {
+        throw new UnsupportedOperationException();
     }
-  }
 
-  public static byte asPrimitiveByte(final String raw) {
-    if (raw == null) {
-      throw new NullPointerException("raw");
-    } else {
-      return Byte.parseByte(raw);
+    public static boolean asPrimitiveBoolean(final String raw)
+    {
+        if (raw == null) {
+            throw new NullPointerException("raw");
+        } else {
+            return Boolean.parseBoolean(raw);
+        }
     }
-  }
 
-  public static short asPrimitiveShort(final String raw) {
-    if (raw == null) {
-      throw new NullPointerException("raw");
-    } else {
-      return Short.parseShort(raw);
+    public static byte asPrimitiveByte(final String raw)
+    {
+        if (raw == null) {
+            throw new NullPointerException("raw");
+        } else {
+            return Byte.parseByte(raw);
+        }
     }
-  }
 
-  public static int asPrimitiveInt(final String raw) {
-    if (raw == null) {
-      throw new NullPointerException("raw");
-    } else {
-      return Integer.parseInt(raw);
+    public static short asPrimitiveShort(final String raw)
+    {
+        if (raw == null) {
+            throw new NullPointerException("raw");
+        } else {
+            return Short.parseShort(raw);
+        }
     }
-  }
 
-  public static long asPrimitiveLong(final String raw) {
-    if (raw == null) {
-      throw new NullPointerException("raw");
-    } else {
-      return Long.parseLong(raw);
+    public static int asPrimitiveInt(final String raw)
+    {
+        if (raw == null) {
+            throw new NullPointerException("raw");
+        } else {
+            return Integer.parseInt(raw);
+        }
     }
-  }
 
-  public static char asPrimitiveChar(final String raw) {
-    if (raw == null) {
-      throw new NullPointerException("raw");
-    } else {
-      return raw.charAt(0);
+    public static long asPrimitiveLong(final String raw)
+    {
+        if (raw == null) {
+            throw new NullPointerException("raw");
+        } else {
+            return Long.parseLong(raw);
+        }
     }
-  }
 
-  public static float asPrimitiveFloat(final String raw) {
-    if (raw == null) {
-      throw new NullPointerException("raw");
-    } else {
-      return Float.parseFloat(raw);
+    public static char asPrimitiveChar(final String raw)
+    {
+        if (raw == null) {
+            throw new NullPointerException("raw");
+        } else {
+            return raw.charAt(0);
+        }
     }
-  }
 
-  public static double asPrimitiveDouble(final String raw) {
-    if (raw == null) {
-      throw new NullPointerException("raw");
-    } else {
-      return Double.parseDouble(raw);
+    public static float asPrimitiveFloat(final String raw)
+    {
+        if (raw == null) {
+            throw new NullPointerException("raw");
+        } else {
+            return Float.parseFloat(raw);
+        }
     }
-  }
 
-  public static Boolean asBoolean(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return Boolean.valueOf(raw);
+    public static double asPrimitiveDouble(final String raw)
+    {
+        if (raw == null) {
+            throw new NullPointerException("raw");
+        } else {
+            return Double.parseDouble(raw);
+        }
     }
-  }
 
-  public static Byte asByte(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return Byte.valueOf(raw);
+    public static Boolean asBoolean(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return Boolean.valueOf(raw);
+        }
     }
-  }
 
-  public static Short asShort(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return Short.valueOf(raw);
+    public static Byte asByte(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return Byte.valueOf(raw);
+        }
     }
-  }
 
-  public static Integer asInteger(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return Integer.valueOf(raw);
+    public static Short asShort(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return Short.valueOf(raw);
+        }
     }
-  }
 
-  public static Long asLong(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return Long.valueOf(raw);
+    public static Integer asInteger(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return Integer.valueOf(raw);
+        }
     }
-  }
 
-  public static Character asCharacter(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return raw.charAt(0);
+    public static Long asLong(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return Long.valueOf(raw);
+        }
     }
-  }
 
-  public static Float asFloat(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return Float.valueOf(raw);
+    public static Character asCharacter(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return raw.charAt(0);
+        }
     }
-  }
 
-  public static Double asDouble(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return Double.valueOf(raw);
+    public static Float asFloat(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return Float.valueOf(raw);
+        }
     }
-  }
 
-  public static String asString(final String raw) {
-    return raw;
-  }
-
-  public static String asTrimmedString(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return raw.trim();
+    public static Double asDouble(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return Double.valueOf(raw);
+        }
     }
-  }
 
-  public static URL asUrl(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      try {
-        return new URL(raw);
-      } catch (final MalformedURLException e) {
-        throw new IllegalArgumentException("malformed URL", e);
-      }
+    public static String asString(final String raw)
+    {
+        return raw;
     }
-  }
 
-  public static Cursor asCursor(final String raw) {
-    if (raw == null) {
-      return null;
-    } else {
-      return Cursor.fromWebSafeString(raw);
+    public static String asTrimmedString(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return raw.trim();
+        }
     }
-  }
+
+    public static URL asUrl(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            try {
+                return new URL(raw);
+            } catch (final MalformedURLException e) {
+                throw new IllegalArgumentException("malformed URL", e);
+            }
+        }
+    }
+
+    public static Cursor asCursor(final String raw)
+    {
+        if (raw == null) {
+            return null;
+        } else {
+            return Cursor.fromWebSafeString(raw);
+        }
+    }
 }

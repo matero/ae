@@ -28,48 +28,64 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 public final class ParameterizedRoute implements java.io.Serializable {
-  private static final long serialVersionUID = -5348318310957123564L;
 
-  private final String uriPattern;
-  private final Pattern regex;
+    private static final long serialVersionUID = -5348318310957123564L;
 
-  public ParameterizedRoute(final String uriPattern, final Pattern regex) {
-    this.uriPattern = uriPattern;
-    this.regex = regex;
-  }
+    private final String uriPattern;
+    private final Pattern regex;
 
-  @Override public String toString() { return "ParameterizedRoute{" + uriPattern + '}'; }
-
-  @Override public int hashCode() { return regex.hashCode(); }
-
-  @Override public boolean equals(final Object that) {
-    if (this == that) {
-      return true;
+    public ParameterizedRoute(final String uriPattern, final Pattern regex)
+    {
+        this.uriPattern = uriPattern;
+        this.regex = regex;
     }
-    if (that instanceof ParameterizedRoute) {
-      final ParameterizedRoute other = (ParameterizedRoute) that;
-      return regex.equals(other.regex);
-    }
-    return false;
-  }
 
-  public boolean matches(final HttpServletRequest request, final String[] routeParameters) {
-    if (request.getPathInfo() == null) {
-      return false;
+    @Override
+    public String toString()
+    {
+        return "ParameterizedRoute{" + uriPattern + '}';
     }
-    if (request.getPathInfo().isEmpty()) {
-      return false;
-    }
-    final Matcher matcher = regex.matcher(request.getPathInfo());
-    if (matcher.matches()) {
-      for (int i = 0; i < matcher.groupCount(); i++) {
-        routeParameters[i] = matcher.group(getPathParameterRegexGroupName(i));
-      }
-      return true;
-    } else {
-      return false;
-    }
-  }
 
-  private String getPathParameterRegexGroupName(final int pathParameterIndex) { return "p" + pathParameterIndex; }
+    @Override
+    public int hashCode()
+    {
+        return regex.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object that)
+    {
+        if (this == that) {
+            return true;
+        }
+        if (that instanceof ParameterizedRoute) {
+            final ParameterizedRoute other = (ParameterizedRoute) that;
+            return regex.equals(other.regex);
+        }
+        return false;
+    }
+
+    public boolean matches(final HttpServletRequest request, final String[] routeParameters)
+    {
+        if (request.getPathInfo() == null) {
+            return false;
+        }
+        if (request.getPathInfo().isEmpty()) {
+            return false;
+        }
+        final Matcher matcher = regex.matcher(request.getPathInfo());
+        if (matcher.matches()) {
+            for (int i = 0; i < matcher.groupCount(); i++) {
+                routeParameters[i] = matcher.group(getPathParameterRegexGroupName(i));
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private String getPathParameterRegexGroupName(final int pathParameterIndex)
+    {
+        return "p" + pathParameterIndex;
+    }
 }

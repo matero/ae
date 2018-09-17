@@ -29,17 +29,19 @@ import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 
 public final class IndexedGeoPtList extends ListField.Indexed<GeoPt> implements GeoPtListField {
-  private static final long serialVersionUID = -5797541926133572783L;
 
-  public IndexedGeoPtList(final String canonicalName,
-                          final String description,
-                          final String property,
-                          final String field,
-                          final boolean required,
-                          final JsonStringNode jsonName,
-                          final String jsonPath,
-                          final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, GeoPtJsonSerializer.ARRAY,
-          new PropertyProjection(property, GeoPt.class), constraints);
-  }
+    private static final long serialVersionUID = -5797541926133572783L;
+
+    public IndexedGeoPtList(final String canonicalName,
+                            final String description,
+                            final String property,
+                            final String field,
+                            final boolean required,
+                            final JsonStringNode jsonName,
+                            final String jsonPath,
+                            final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath, GeoPtJsonSerializer.ARRAY,
+              new PropertyProjection(property, GeoPt.class), constraints);
+    }
 }

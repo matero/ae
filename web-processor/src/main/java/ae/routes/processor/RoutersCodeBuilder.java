@@ -40,188 +40,191 @@ import java.util.regex.Pattern;
 
 class RoutersCodeBuilder {
 
-  private static final ClassName HTTP_SERVLET = ClassName.get(RouterServlet.class);
+    private static final ClassName HTTP_SERVLET = ClassName.get(RouterServlet.class);
 
-  private final TypeName stringArray;
+    private final TypeName stringArray;
 
-  RoutersCodeBuilder()
-  {
-    stringArray = ArrayTypeName.of(ClassName.get(String.class));
-  }
+    RoutersCodeBuilder()
+    {
+        stringArray = ArrayTypeName.of(ClassName.get(String.class));
+    }
 
-  JavaFile buildJavaCode(final RoutesDeclarations declarations)
-  {
-    final ClassName classname = ClassName.get(declarations.packageName, declarations.superClass);
-    final TypeSpec.Builder router = TypeSpec.classBuilder(classname)
-            .superclass(HTTP_SERVLET)
-            .addModifiers(Modifier.ABSTRACT)
-            .addAnnotation(AnnotationSpec.builder(Generated.class)
-                    .addMember("value", "$S", "AE/web-processor")
-                    .addMember("comments", "$S", declarations.paths)
-                    .addMember("date", "$S", declarations.date)
-                    .build())
-            .addField(FieldSpec.builder(long.class,
-                                        "serialVersionUID",
-                                        Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-                    .initializer("$LL", declarations.serialVersionUID).build());
+    JavaFile buildJavaCode(final RoutesDeclarations declarations)
+    {
+        final ClassName classname = ClassName.get(declarations.packageName, declarations.superClass);
+        final TypeSpec.Builder router = TypeSpec.classBuilder(classname)
+                .superclass(HTTP_SERVLET)
+                .addModifiers(Modifier.ABSTRACT)
+                .addAnnotation(AnnotationSpec.builder(Generated.class)
+                        .addMember("value", "$S", "AE/web-processor")
+                        .addMember("comments", "$S", declarations.paths)
+                        .addMember("date", "$S", declarations.date)
+                        .build())
+                .addField(FieldSpec.builder(long.class,
+                                            "serialVersionUID",
+                                            Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                        .initializer("$LL", declarations.serialVersionUID).build());
 
-    addRouteFields(router, declarations);
-    addRouteHandlers(router, declarations);
+        addRouteFields(router, declarations);
+        addRouteHandlers(router, declarations);
 
-    return JavaFile.builder(classname.packageName(), router.build()).skipJavaLangImports(true).build();
-  }
+        return JavaFile.builder(classname.packageName(), router.build()).skipJavaLangImports(true).build();
+    }
 
-  void addRouteFields(final TypeSpec.Builder router, final RoutesDeclarations declarations)
-  {
-    for (final HttpVerb httpVerb : HttpVerb.values()) {
-      final ImmutableList<RouteDescriptor> routes = declarations.routesByVerb.get(httpVerb);
+    void addRouteFields(final TypeSpec.Builder router, final RoutesDeclarations declarations)
+    {
+        for (final HttpVerb httpVerb : HttpVerb.values()) {
+            final ImmutableList<RouteDescriptor> routes = declarations.routesByVerb.get(httpVerb);
 
-      if (routes.isEmpty()) {
-        continue;
-      }
+            if (routes.isEmpty()) {
+                continue;
+            }
 
-      String last = "";
-      for (final RouteDescriptor route : routes) {
-        if (!last.equals(route.pattern)) {
-          router.addField(makeFieldFor(route));
-          last = route.pattern;
+            String last = "";
+            for (final RouteDescriptor route : routes) {
+                if (!last.equals(route.pattern)) {
+                    router.addField(makeFieldFor(route));
+                    last = route.pattern;
+                }
+            }
         }
-      }
-    }
-  }
-
-  FieldSpec makeFieldFor(final RouteDescriptor route)
-  {
-    final FieldSpec.Builder property = FieldSpec.builder(TypeName.get(route.type),
-                                                         route.routeField(),
-                                                         Modifier.PRIVATE, Modifier.FINAL);
-    if (route.isDynamic()) {
-      property.initializer("new $T($S, $T.compile($S))", route.type, route.pattern, Pattern.class, route.regex);
-    } else {
-      property.initializer("new $T($S)", route.type, route.pattern);
-    }
-    return property.build();
-  }
-
-  void addRouteHandlers(final TypeSpec.Builder router, final RoutesDeclarations declarations)
-  {
-    for (final HttpVerb httpVerb : HttpVerb.values()) {
-      final ImmutableList<RouteDescriptor> routes = declarations.routesByVerb.get(httpVerb);
-
-      if (routes.isEmpty()) {
-        continue;
-      }
-
-      router.addMethod(overrideVerbHandler(httpVerb, routes));
-    }
-  }
-
-  MethodSpec overrideVerbHandler(final HttpVerb httpVerb, final ImmutableList<RouteDescriptor> routes)
-  {
-    final MethodSpec.Builder httpVerbHandler = MethodSpec
-            .methodBuilder(httpVerb.handler)
-            .addAnnotation(Override.class)
-            .addModifiers(Modifier.PUBLIC)
-            .addParameter(HttpServletRequest.class, "request", Modifier.FINAL)
-            .addParameter(HttpServletResponse.class, "response", Modifier.FINAL)
-            .addException(ServletException.class)
-            .addException(IOException.class);
-    if (hasDynamicRoutes(routes)) {
-      httpVerbHandler.
-              addStatement("final $T routeParameters = new $T{$L}", stringArray, stringArray, paramsInit(routes));
     }
 
-    final UnmodifiableIterator<RouteDescriptor> iRoutes = routes.iterator();
-    RouteDescriptor route = iRoutes.next();
-    do {
-      final MethodSpec.Builder ifMatchesRoute;
-      if (route.isDynamic()) {
-        final ClassName interpreterClass = ClassName.get(Interpret.class);
-        ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request, routeParameters))", route.
-                                                          routeField());
-        for (int i = 0; i < route.parametersCount(); i++) {
-          ifMatchesRoute.addStatement("final $T $L = $T.$L(routeParameters[$L])",
-                                      route.parameterType(i),
-                                      route.parameterName(i),
-                                      interpreterClass,
-                                      route.parameterInterpreterMethod(i),
-                                      i);
-        }
-      } else {
-        ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request))", route.routeField());
-      }
-
-      final String last = route.pattern;
-      while (last.equals(route.pattern)) {
-        if (route.hasHeaderSelection()) {
-          final MethodSpec.Builder selector = ifMatchesRoute.beginControlFlow(route.headersFilterExpr(), route.
-                                                                              headersFilterArgs());
-          addHandle(selector, route);
-          ifMatchesRoute.endControlFlow();
+    FieldSpec makeFieldFor(final RouteDescriptor route)
+    {
+        final FieldSpec.Builder property = FieldSpec.builder(TypeName.get(route.type),
+                                                             route.routeField(),
+                                                             Modifier.PRIVATE, Modifier.FINAL);
+        if (route.isDynamic()) {
+            property.initializer("new $T($S, $T.compile($S))", route.type, route.pattern, Pattern.class, route.regex);
         } else {
-          addHandle(ifMatchesRoute, route);
+            property.initializer("new $T($S)", route.type, route.pattern);
         }
-        if (!iRoutes.hasNext()) {
-          break;
+        return property.build();
+    }
+
+    void addRouteHandlers(final TypeSpec.Builder router, final RoutesDeclarations declarations)
+    {
+        for (final HttpVerb httpVerb : HttpVerb.values()) {
+            final ImmutableList<RouteDescriptor> routes = declarations.routesByVerb.get(httpVerb);
+
+            if (routes.isEmpty()) {
+                continue;
+            }
+
+            router.addMethod(overrideVerbHandler(httpVerb, routes));
         }
-        route = iRoutes.next();
-      }
-
-      httpVerbHandler.endControlFlow();
-    } while (iRoutes.hasNext());
-    httpVerbHandler.addStatement("$L(request, response)", httpVerb.unhandled);
-    return httpVerbHandler.build();
-  }
-
-  boolean hasDynamicRoutes(final Iterable<RouteDescriptor> routes)
-  {
-    for (final RouteDescriptor r : routes) {
-      if (r.isDynamic()) {
-        return true;
-      }
     }
-    return false;
-  }
 
-  private String paramsInit(final Iterable<RouteDescriptor> routes)
-  {
-    final int maxParametersCount = maxParametersCountAt(routes);
-    final StringBuffer params = new StringBuffer(4 * maxParametersCount + 2 * (maxParametersCount - 1)).append("null");
-    for (int i = 0; i < maxParametersCount; i++) {
-      params.append(", null");
-    }
-    return params.toString();
-  }
-
-  private int maxParametersCountAt(final Iterable<RouteDescriptor> routes)
-  {
-    int maxParametersCount = 0;
-    for (final RouteDescriptor r : routes) {
-      if (r.isDynamic()) {
-        if (r.parametersCount() > maxParametersCount) {
-          maxParametersCount = r.parametersCount();
+    MethodSpec overrideVerbHandler(final HttpVerb httpVerb, final ImmutableList<RouteDescriptor> routes)
+    {
+        final MethodSpec.Builder httpVerbHandler = MethodSpec
+                .methodBuilder(httpVerb.handler)
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(HttpServletRequest.class, "request", Modifier.FINAL)
+                .addParameter(HttpServletResponse.class, "response", Modifier.FINAL)
+                .addException(ServletException.class)
+                .addException(IOException.class);
+        if (hasDynamicRoutes(routes)) {
+            httpVerbHandler.
+                    addStatement("final $T routeParameters = new $T{$L}", stringArray, stringArray, paramsInit(routes));
         }
-      }
-    }
-    return maxParametersCount;
-  }
 
-  void addHandle(final MethodSpec.Builder control, final RouteDescriptor route)
-  {
-    if (route.useCredentials) {
-      control.addStatement("handle(new $T($L), (controller) -> $T.Director.of(controller).authorize((c) -> c.$L($L)))",
-                           route.controllerClass(),
-                           route.ctorArgs,
-                           ClassName.get(OAuth2Flow.class),
-                           route.action,
-                           route.arguments());
-    } else {
-      control.addStatement("handle(new $T($L), (controller) -> controller.$L($L))",
-                           route.controllerClass(),
-                           route.ctorArgs,
-                           route.action,
-                           route.arguments());
+        final UnmodifiableIterator<RouteDescriptor> iRoutes = routes.iterator();
+        RouteDescriptor route = iRoutes.next();
+        do {
+            final MethodSpec.Builder ifMatchesRoute;
+            if (route.isDynamic()) {
+                final ClassName interpreterClass = ClassName.get(Interpret.class);
+                ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request, routeParameters))", route.
+                                                                  routeField());
+                for (int i = 0; i < route.parametersCount(); i++) {
+                    ifMatchesRoute.addStatement("final $T $L = $T.$L(routeParameters[$L])",
+                                                route.parameterType(i),
+                                                route.parameterName(i),
+                                                interpreterClass,
+                                                route.parameterInterpreterMethod(i),
+                                                i);
+                }
+            } else {
+                ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request))", route.routeField());
+            }
+
+            final String last = route.pattern;
+            while (last.equals(route.pattern)) {
+                if (route.hasHeaderSelection()) {
+                    final MethodSpec.Builder selector = ifMatchesRoute.beginControlFlow(route.headersFilterExpr(),
+                                                                                        route.
+                                                                                                headersFilterArgs());
+                    addHandle(selector, route);
+                    ifMatchesRoute.endControlFlow();
+                } else {
+                    addHandle(ifMatchesRoute, route);
+                }
+                if (!iRoutes.hasNext()) {
+                    break;
+                }
+                route = iRoutes.next();
+            }
+
+            httpVerbHandler.endControlFlow();
+        } while (iRoutes.hasNext());
+        httpVerbHandler.addStatement("$L(request, response)", httpVerb.unhandled);
+        return httpVerbHandler.build();
     }
-    control.addStatement("return");
-  }
+
+    boolean hasDynamicRoutes(final Iterable<RouteDescriptor> routes)
+    {
+        for (final RouteDescriptor r : routes) {
+            if (r.isDynamic()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String paramsInit(final Iterable<RouteDescriptor> routes)
+    {
+        final int maxParametersCount = maxParametersCountAt(routes);
+        final StringBuffer params = new StringBuffer(4 * maxParametersCount + 2 * (maxParametersCount - 1)).append(
+                "null");
+        for (int i = 0; i < maxParametersCount; i++) {
+            params.append(", null");
+        }
+        return params.toString();
+    }
+
+    private int maxParametersCountAt(final Iterable<RouteDescriptor> routes)
+    {
+        int maxParametersCount = 0;
+        for (final RouteDescriptor r : routes) {
+            if (r.isDynamic()) {
+                if (r.parametersCount() > maxParametersCount) {
+                    maxParametersCount = r.parametersCount();
+                }
+            }
+        }
+        return maxParametersCount;
+    }
+
+    void addHandle(final MethodSpec.Builder control, final RouteDescriptor route)
+    {
+        if (route.useCredentials) {
+            control.addStatement(
+                    "handle(new $T($L), (controller) -> $T.Director.of(controller).authorize((c) -> c.$L($L)))",
+                    route.controllerClass(),
+                    route.ctorArgs,
+                    ClassName.get(OAuth2Flow.class),
+                    route.action,
+                    route.arguments());
+        } else {
+            control.addStatement("handle(new $T($L), (controller) -> controller.$L($L))",
+                                 route.controllerClass(),
+                                 route.ctorArgs,
+                                 route.action,
+                                 route.arguments());
+        }
+        control.addStatement("return");
+    }
 }

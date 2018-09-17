@@ -35,41 +35,54 @@ import com.google.appengine.api.datastore.Text;
 import org.testng.annotations.Test;
 
 public class TextJsonTest {
-  private final TextJsonSerializer serializer = TextJsonSerializer.INSTANCE;
 
-  @Test public void shoud_be_able_to_serialize_null() {
-    final JsonNode json = serializer.toJson(null);
-    assertThat(json.isNullNode()).isTrue();
-  }
+    private final TextJsonSerializer serializer = TextJsonSerializer.INSTANCE;
 
-  @Test public void shoud_be_able_to_serialize_non_null_strings() {
-    final JsonNode json = serializer.toJson(new Text("no null"));
-    assertThat(json.isNullNode()).isFalse();
-    assertThat(json.isStringValue()).isTrue();
-    assertThat(json.getText()).isEqualTo("no null");
-  }
+    @Test
+    public void shoud_be_able_to_serialize_null()
+    {
+        final JsonNode json = serializer.toJson(null);
+        assertThat(json.isNullNode()).isTrue();
+    }
 
-  @Test public void shoud_be_able_to_deserialize_null_nodes() {
-    final Text txt = serializer.fromJson(nullNode());
-    assertThat(txt).isNull();
-  }
+    @Test
+    public void shoud_be_able_to_serialize_non_null_strings()
+    {
+        final JsonNode json = serializer.toJson(new Text("no null"));
+        assertThat(json.isNullNode()).isFalse();
+        assertThat(json.isStringValue()).isTrue();
+        assertThat(json.getText()).isEqualTo("no null");
+    }
 
-  @Test public void shoud_be_able_to_deserialize_non_null_node() {
-    final Text txt = serializer.fromJson(string("no null"));
-    assertThat(txt).isEqualTo(new Text("no null"));
-  }
+    @Test
+    public void shoud_be_able_to_deserialize_null_nodes()
+    {
+        final Text txt = serializer.fromJson(nullNode());
+        assertThat(txt).isNull();
+    }
 
-  @Test public void shoud_be_able_to_deserialize_null_node_from_object_node() {
-    final JsonNode object = object(field(string("attr1"), string("no null")),
-                                   field(string("attr2"), nullNode()));
-    final Text txt = serializer.fromJson(object, "attr2");
-    assertThat(txt).isNull();
-  }
+    @Test
+    public void shoud_be_able_to_deserialize_non_null_node()
+    {
+        final Text txt = serializer.fromJson(string("no null"));
+        assertThat(txt).isEqualTo(new Text("no null"));
+    }
 
-  @Test public void shoud_be_able_to_deserialize_non_null_node_from_object_node() {
-    final JsonNode object = object(field(string("attr1"), string("no null")),
-                                   field(string("attr2"), string("another")));
-    final Text txt = serializer.fromJson(object, "attr1");
-    assertThat(txt).isEqualTo(new Text("no null"));
-  }
+    @Test
+    public void shoud_be_able_to_deserialize_null_node_from_object_node()
+    {
+        final JsonNode object = object(field(string("attr1"), string("no null")),
+                                       field(string("attr2"), nullNode()));
+        final Text txt = serializer.fromJson(object, "attr2");
+        assertThat(txt).isNull();
+    }
+
+    @Test
+    public void shoud_be_able_to_deserialize_non_null_node_from_object_node()
+    {
+        final JsonNode object = object(field(string("attr1"), string("no null")),
+                                       field(string("attr2"), string("another")));
+        final Text txt = serializer.fromJson(object, "attr1");
+        assertThat(txt).isEqualTo(new Text("no null"));
+    }
 }

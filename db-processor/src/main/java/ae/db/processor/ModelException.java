@@ -26,36 +26,44 @@ package ae.db.processor;
 import javax.lang.model.element.Element;
 
 class ModelException extends RuntimeException {
-  final Element element;
 
-  ModelException(final String message) {
-    this(null, message);
-  }
+    final Element element;
 
-  ModelException(final Element element, final String message) {
-    super(message);
-    this.element = element;
-  }
+    ModelException(final String message)
+    {
+        this(null, message);
+    }
 
-  ModelException(final String message, final Throwable cause) {
-    this(null, message, cause);
-  }
+    ModelException(final Element element, final String message)
+    {
+        super(message);
+        this.element = element;
+    }
 
-  ModelException(final Element element, final String message, final Throwable cause) {
-    super(message, cause);
-    this.element = element;
-  }
+    ModelException(final String message, final Throwable cause)
+    {
+        this(null, message, cause);
+    }
 
-  ModelException(final Throwable cause) {
-    this((Element) null, cause);
-  }
+    ModelException(final Element element, final String message, final Throwable cause)
+    {
+        super(message, cause);
+        this.element = element;
+    }
 
-  ModelException(final Element element, final Throwable cause) {
-    super(cause);
-    this.element = element;
-  }
+    ModelException(final Throwable cause)
+    {
+        this((Element) null, cause);
+    }
 
-  ModelException(final Element element) {
-    this.element = element;
-  }
+    ModelException(final Element element, final Throwable cause)
+    {
+        super(cause);
+        this.element = element;
+    }
+
+    ModelException(final Element element)
+    {
+        this.element = element;
+    }
 }

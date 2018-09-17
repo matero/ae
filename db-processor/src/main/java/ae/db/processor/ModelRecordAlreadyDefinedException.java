@@ -26,7 +26,9 @@ package ae.db.processor;
 import javax.lang.model.element.Element;
 
 final class ModelRecordAlreadyDefinedException extends ModelException {
-  ModelRecordAlreadyDefinedException(final Element illegalRecord) {
-    super(illegalRecord, "Only one Record can be defined per Model!");
-  }
+
+    ModelRecordAlreadyDefinedException(final Element illegalRecord)
+    {
+        super(illegalRecord, "Only one Record can be defined per Model!");
+    }
 }

@@ -24,5 +24,6 @@
 package ae;
 
 public @interface Model {
-  String kind() default "";
+
+    String kind() default "";
 }

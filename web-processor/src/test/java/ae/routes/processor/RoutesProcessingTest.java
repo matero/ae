@@ -34,30 +34,35 @@ import java.util.*;
 import org.junit.Test;
 
 public class RoutesProcessingTest {
-  static final Date GENERATION_DATE;
-  static {
-    final GregorianCalendar calendar = new GregorianCalendar(2017, Calendar.FEBRUARY, 23, 12, 0);
-    calendar.setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC-3")));
-    GENERATION_DATE = calendar.getTime();
-  }
 
-  final Compiler compiler = javac().withProcessors(new ControllerAndRoutesCompiler(GENERATION_DATE, new RoutersCodeBuilder()));
+    static final Date GENERATION_DATE;
 
-  @Test public void should_compile_multiple_verb_routes() {
-    final Compilation compilation = compiler.compile(
-            JavaFileObjects.forSourceString(
-                    "AppRouter",
-                    "package processor.test;\n"
-                    + "@ae.Router(routes=\"src/test/resources/routes/routes.csv\")\n"
-                    + "public final class AppRouter extends RouterDefs {}"
-            )
-    );
-    assertThat(compilation).succeeded();
-    assertThat(compilation)
-            .generatedSourceFile("processor.test.RouterDefs")
-            .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/routes/RouterDefs.java"));
-    assertThat(compilation)
-            .generatedSourceFile("book.Controller_Impl")
-            .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/book/Controller_Impl.java"));
-  }
+    static {
+        final GregorianCalendar calendar = new GregorianCalendar(2017, Calendar.FEBRUARY, 23, 12, 0);
+        calendar.setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC-3")));
+        GENERATION_DATE = calendar.getTime();
+    }
+
+    final Compiler compiler = javac().withProcessors(new ControllerAndRoutesCompiler(GENERATION_DATE,
+                                                                                     new RoutersCodeBuilder()));
+
+    @Test
+    public void should_compile_multiple_verb_routes()
+    {
+        final Compilation compilation = compiler.compile(
+                JavaFileObjects.forSourceString(
+                        "AppRouter",
+                        "package processor.test;\n"
+                        + "@ae.Router(routes=\"src/test/resources/routes/routes.csv\")\n"
+                        + "public final class AppRouter extends RouterDefs {}"
+                )
+        );
+        assertThat(compilation).succeeded();
+        assertThat(compilation)
+                .generatedSourceFile("processor.test.RouterDefs")
+                .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/routes/RouterDefs.java"));
+        assertThat(compilation)
+                .generatedSourceFile("book.Controller_Impl")
+                .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/book/Controller_Impl.java"));
+    }
 }

@@ -24,17 +24,27 @@
 package ae;
 
 public final class SpecificationException extends RuntimeException {
-  private static final long serialVersionUID = 6712303134679528042L;
-  public SpecificationException(final String message) {
-    super(message);
-  }
-  public SpecificationException(final String message, final Throwable cause) {
-    super(message, cause);
-  }
-  public SpecificationException(final Throwable cause) {
-    super(cause);
-  }
-  public SpecificationException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
+
+    private static final long serialVersionUID = 6712303134679528042L;
+
+    public SpecificationException(final String message)
+    {
+        super(message);
+    }
+
+    public SpecificationException(final String message, final Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    public SpecificationException(final Throwable cause)
+    {
+        super(cause);
+    }
+
+    public SpecificationException(final String message, final Throwable cause, final boolean enableSuppression,
+                                  final boolean writableStackTrace)
+    {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

@@ -28,5 +28,6 @@ import com.squareup.javapoet.JavaFile;
 import java.util.Date;
 
 interface CodeGenerator {
-  abstract ImmutableList<JavaFile> generateCode(MetaModels models, Date date);
+
+    abstract ImmutableList<JavaFile> generateCode(MetaModels models, Date date);
 }

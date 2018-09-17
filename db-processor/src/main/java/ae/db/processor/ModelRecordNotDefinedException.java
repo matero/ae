@@ -26,7 +26,9 @@ package ae.db.processor;
 import javax.lang.model.element.TypeElement;
 
 final class ModelRecordNotDefinedException extends ModelException {
-  ModelRecordNotDefinedException(final TypeElement modelClass) {
-    super(modelClass, "No Record class found!");
-  }
+
+    ModelRecordNotDefinedException(final TypeElement modelClass)
+    {
+        super(modelClass, "No Record class found!");
+    }
 }

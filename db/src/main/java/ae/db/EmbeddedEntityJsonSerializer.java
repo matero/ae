@@ -27,6 +27,7 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.util.List;
 
 interface EmbeddedEntityJsonSerializer {
-  JsonSerializer<EmbeddedEntity> INSTANCE = new NotSerializableToJson<>(EmbeddedEntity.class);
-  JsonSerializer<List<EmbeddedEntity>> ARRAY = new JsonArrayNotSerializable<>(EmbeddedEntity.class);
+
+    JsonSerializer<EmbeddedEntity> INSTANCE = new NotSerializableToJson<>(EmbeddedEntity.class);
+    JsonSerializer<List<EmbeddedEntity>> ARRAY = new JsonArrayNotSerializable<>(EmbeddedEntity.class);
 }

@@ -42,244 +42,298 @@ import java.util.List;
  */
 public interface ScalarField<T> extends Field<T> {
 
-  default T asModelValue(final Object value) {
-    return type().cast(value);
-  }
-
-  default Object asDatastoreValue(final T value) {
-    return value;
-  }
-
-  default ArrayList<Object> asDatastoreValues(final T... values) {
-    if (values == null) {
-      return null;
-    }
-    if (values.length == 0) {
-      return new ArrayList<>();
-    } else {
-      final ArrayList<Object> result = new ArrayList<>(values.length);
-      for (final T value : values) {
-        result.add(asDatastoreValue(value));
-      }
-      return result;
-    }
-  }
-
-  default List<Object> asDatastoreValues(final Iterable<T> values) {
-    if (values == null) {
-      return null;
-    }
-    final ArrayList<Object> result = new ArrayList<>();
-    for (final T value : values) {
-      result.add(asDatastoreValue(value));
-    }
-    result.trimToSize();
-    return result;
-  }
-
-  default ArrayList<Object> asDatastoreValues(final Iterator<T> values) {
-    if (values == null) {
-      return null;
-    }
-    final ArrayList<Object> result = new ArrayList<>();
-    while (values.hasNext()) {
-      result.add(asDatastoreValue(values.next()));
-    }
-    result.trimToSize();
-    return result;
-  }
-
-  default ArrayList<Object> asDatastoreValues(final Collection<T> values) {
-    if (values == null) {
-      return null;
-    }
-    if (values.isEmpty()) {
-      return new ArrayList<>();
-    } else {
-      final ArrayList<Object> result = new ArrayList<>(values.size());
-      for (final T value : values) {
-        result.add(asDatastoreValue(value));
-      }
-      return result;
-    }
-  }
-
-  default List<T> asModelValues(final Object... values) {
-    if (values == null) {
-      return null;
-    }
-    if (values.length == 0) {
-      return new ArrayList<>();
-    } else {
-      final ArrayList<T> result = new ArrayList<>(values.length);
-      for (final Object value : values) {
-        result.add(asModelValue(value));
-      }
-      return result;
-    }
-  }
-
-  default ArrayList<T> asModelValues(final Iterable<Object> values) {
-    if (values == null) {
-      return null;
-    }
-    final ArrayList<T> result = new ArrayList<>();
-    for (final Object value : values) {
-      result.add(asModelValue(value));
-    }
-    result.trimToSize();
-    return result;
-  }
-
-  default ArrayList<T> asModelValues(final Iterator<Object> values) {
-    if (values == null) {
-      return null;
-    }
-    final ArrayList<T> result = new ArrayList<>();
-    while (values.hasNext()) {
-      result.add(asModelValue(values.next()));
-    }
-    result.trimToSize();
-    return result;
-  }
-
-  default ArrayList<T> asModelValues(final Collection<Object> values) {
-    if (values == null) {
-      return null;
-    }
-    final ArrayList<T> result = new ArrayList<>();
-    if (!values.isEmpty()) {
-      for (final Object value : values) {
-        result.add(asModelValue(value));
-      }
-      result.trimToSize();
-    }
-    return result;
-  }
-
-  @Override default T read(final PropertyContainer data) {
-    return asModelValue(data.getProperty(property()));
-  }
-
-  /**
-   * unindexed scalar properties
-   */
-  abstract class Unindexed<T> extends FieldData<T> implements ScalarField<T> {
-    protected Unindexed(final String canonicalName,
-                        final String description,
-                        final String property,
-                        final String field,
-                        final boolean required,
-                        final JsonStringNode jsonName,
-                        final String jsonPath,
-                        final JsonSerializer<T> jsonSerializer,
-                        final ImmutableList<Constraint> constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
+    default T asModelValue(final Object value)
+    {
+        return type().cast(value);
     }
 
-    @Override public final boolean indexed() {
-      return false;
+    default Object asDatastoreValue(final T value)
+    {
+        return value;
     }
 
-    @Override public final void write(final PropertyContainer data, final T value) {
-      data.setUnindexedProperty(property(), asDatastoreValue(value));
-    }
-  }
-
-  /**
-   * IndexedBooleanList scalar properties.
-   */
-  abstract class Indexed<T> extends FieldData<T> implements ScalarField<T>, Filterable<T> {
-    private final PropertyProjection projection;
-    private final SortPredicate asc;
-    private final SortPredicate desc;
-    private final FilterPredicate isNull;
-    private final FilterPredicate isNotNull;
-
-    protected Indexed(final String canonicalName,
-                      final String description,
-                      final String property,
-                      final String field,
-                      final boolean required,
-                      final JsonStringNode jsonName,
-                      final String jsonPath,
-                      final JsonSerializer<T> jsonSerializer,
-                      final PropertyProjection projection,
-                      final ImmutableList<Constraint> constraints) {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
-      this.projection = projection;
-      this.asc = new Query.SortPredicate(property, Query.SortDirection.ASCENDING);
-      this.desc = new Query.SortPredicate(property, Query.SortDirection.DESCENDING);
-      this.isNull = new FilterPredicate(property, FilterOperator.EQUAL, null);
-      this.isNotNull = new FilterPredicate(property, FilterOperator.NOT_EQUAL, null);
+    default ArrayList<Object> asDatastoreValues(final T... values)
+    {
+        if (values == null) {
+            return null;
+        }
+        if (values.length == 0) {
+            return new ArrayList<>();
+        } else {
+            final ArrayList<Object> result = new ArrayList<>(values.length);
+            for (final T value : values) {
+                result.add(asDatastoreValue(value));
+            }
+            return result;
+        }
     }
 
-    @Override public final boolean indexed() {
-      return true;
+    default List<Object> asDatastoreValues(final Iterable<T> values)
+    {
+        if (values == null) {
+            return null;
+        }
+        final ArrayList<Object> result = new ArrayList<>();
+        for (final T value : values) {
+            result.add(asDatastoreValue(value));
+        }
+        result.trimToSize();
+        return result;
     }
 
-    @Override public final void write(final PropertyContainer data, final T value) {
-      data.setIndexedProperty(property(), asDatastoreValue(value));
+    default ArrayList<Object> asDatastoreValues(final Iterator<T> values)
+    {
+        if (values == null) {
+            return null;
+        }
+        final ArrayList<Object> result = new ArrayList<>();
+        while (values.hasNext()) {
+            result.add(asDatastoreValue(values.next()));
+        }
+        result.trimToSize();
+        return result;
     }
 
-    @Override public final FilterPredicate isNull() {
-      return isNull;
+    default ArrayList<Object> asDatastoreValues(final Collection<T> values)
+    {
+        if (values == null) {
+            return null;
+        }
+        if (values.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            final ArrayList<Object> result = new ArrayList<>(values.size());
+            for (final T value : values) {
+                result.add(asDatastoreValue(value));
+            }
+            return result;
+        }
     }
 
-    @Override public final FilterPredicate isNotNull() {
-      return isNotNull;
+    default List<T> asModelValues(final Object... values)
+    {
+        if (values == null) {
+            return null;
+        }
+        if (values.length == 0) {
+            return new ArrayList<>();
+        } else {
+            final ArrayList<T> result = new ArrayList<>(values.length);
+            for (final Object value : values) {
+                result.add(asModelValue(value));
+            }
+            return result;
+        }
     }
 
-    @Override public final FilterPredicate eq(final T value) {
-      return new FilterPredicate(field(), FilterOperator.EQUAL, asDatastoreValue(value));
+    default ArrayList<T> asModelValues(final Iterable<Object> values)
+    {
+        if (values == null) {
+            return null;
+        }
+        final ArrayList<T> result = new ArrayList<>();
+        for (final Object value : values) {
+            result.add(asModelValue(value));
+        }
+        result.trimToSize();
+        return result;
     }
 
-    @Override public final PropertyProjection projection() {
-      return projection;
+    default ArrayList<T> asModelValues(final Iterator<Object> values)
+    {
+        if (values == null) {
+            return null;
+        }
+        final ArrayList<T> result = new ArrayList<>();
+        while (values.hasNext()) {
+            result.add(asModelValue(values.next()));
+        }
+        result.trimToSize();
+        return result;
     }
 
-    @Override public final SortPredicate asc() {
-      return asc;
+    default ArrayList<T> asModelValues(final Collection<Object> values)
+    {
+        if (values == null) {
+            return null;
+        }
+        final ArrayList<T> result = new ArrayList<>();
+        if (!values.isEmpty()) {
+            for (final Object value : values) {
+                result.add(asModelValue(value));
+            }
+            result.trimToSize();
+        }
+        return result;
     }
 
-    @Override public final SortPredicate desc() {
-      return desc;
+    @Override
+    default T read(final PropertyContainer data)
+    {
+        return asModelValue(data.getProperty(property()));
     }
 
-    @Override public final FilterPredicate ne(final T value) {
-      return new FilterPredicate(field(), FilterOperator.NOT_EQUAL, asDatastoreValue(value));
+    /**
+     * unindexed scalar properties
+     */
+    abstract class Unindexed<T> extends FieldData<T> implements ScalarField<T> {
+
+        protected Unindexed(final String canonicalName,
+                            final String description,
+                            final String property,
+                            final String field,
+                            final boolean required,
+                            final JsonStringNode jsonName,
+                            final String jsonPath,
+                            final JsonSerializer<T> jsonSerializer,
+                            final ImmutableList<Constraint> constraints)
+        {
+            super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
+        }
+
+        @Override
+        public final boolean indexed()
+        {
+            return false;
+        }
+
+        @Override
+        public final void write(final PropertyContainer data, final T value)
+        {
+            data.setUnindexedProperty(property(), asDatastoreValue(value));
+        }
     }
 
-    @Override public final FilterPredicate lt(final T value) {
-      return new FilterPredicate(field(), FilterOperator.LESS_THAN, asDatastoreValue(value));
-    }
+    /**
+     * IndexedBooleanList scalar properties.
+     */
+    abstract class Indexed<T> extends FieldData<T> implements ScalarField<T>, Filterable<T> {
 
-    @Override public final FilterPredicate le(final T value) {
-      return new FilterPredicate(field(), FilterOperator.LESS_THAN_OR_EQUAL, asDatastoreValue(value));
-    }
+        private final PropertyProjection projection;
+        private final SortPredicate asc;
+        private final SortPredicate desc;
+        private final FilterPredicate isNull;
+        private final FilterPredicate isNotNull;
 
-    @Override public final FilterPredicate gt(final T value) {
-      return new FilterPredicate(field(), FilterOperator.GREATER_THAN, asDatastoreValue(value));
-    }
+        protected Indexed(final String canonicalName,
+                          final String description,
+                          final String property,
+                          final String field,
+                          final boolean required,
+                          final JsonStringNode jsonName,
+                          final String jsonPath,
+                          final JsonSerializer<T> jsonSerializer,
+                          final PropertyProjection projection,
+                          final ImmutableList<Constraint> constraints)
+        {
+            super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
+            this.projection = projection;
+            this.asc = new Query.SortPredicate(property, Query.SortDirection.ASCENDING);
+            this.desc = new Query.SortPredicate(property, Query.SortDirection.DESCENDING);
+            this.isNull = new FilterPredicate(property, FilterOperator.EQUAL, null);
+            this.isNotNull = new FilterPredicate(property, FilterOperator.NOT_EQUAL, null);
+        }
 
-    @Override public final FilterPredicate ge(final T value) {
-      return new FilterPredicate(field(), FilterOperator.GREATER_THAN_OR_EQUAL, asDatastoreValue(value));
-    }
+        @Override
+        public final boolean indexed()
+        {
+            return true;
+        }
 
-    @Override public final FilterPredicate in(final T... values) {
-      return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
-    }
+        @Override
+        public final void write(final PropertyContainer data, final T value)
+        {
+            data.setIndexedProperty(property(), asDatastoreValue(value));
+        }
 
-    @Override public final FilterPredicate in(final Iterable<T> values) {
-      return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
-    }
+        @Override
+        public final FilterPredicate isNull()
+        {
+            return isNull;
+        }
 
-    @Override public final FilterPredicate in(final Iterator<T> values) {
-      return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
-    }
+        @Override
+        public final FilterPredicate isNotNull()
+        {
+            return isNotNull;
+        }
 
-    @Override public final FilterPredicate in(final Collection<T> values) {
-      return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
+        @Override
+        public final FilterPredicate eq(final T value)
+        {
+            return new FilterPredicate(field(), FilterOperator.EQUAL, asDatastoreValue(value));
+        }
+
+        @Override
+        public final PropertyProjection projection()
+        {
+            return projection;
+        }
+
+        @Override
+        public final SortPredicate asc()
+        {
+            return asc;
+        }
+
+        @Override
+        public final SortPredicate desc()
+        {
+            return desc;
+        }
+
+        @Override
+        public final FilterPredicate ne(final T value)
+        {
+            return new FilterPredicate(field(), FilterOperator.NOT_EQUAL, asDatastoreValue(value));
+        }
+
+        @Override
+        public final FilterPredicate lt(final T value)
+        {
+            return new FilterPredicate(field(), FilterOperator.LESS_THAN, asDatastoreValue(value));
+        }
+
+        @Override
+        public final FilterPredicate le(final T value)
+        {
+            return new FilterPredicate(field(), FilterOperator.LESS_THAN_OR_EQUAL, asDatastoreValue(value));
+        }
+
+        @Override
+        public final FilterPredicate gt(final T value)
+        {
+            return new FilterPredicate(field(), FilterOperator.GREATER_THAN, asDatastoreValue(value));
+        }
+
+        @Override
+        public final FilterPredicate ge(final T value)
+        {
+            return new FilterPredicate(field(), FilterOperator.GREATER_THAN_OR_EQUAL, asDatastoreValue(value));
+        }
+
+        @Override
+        public final FilterPredicate in(final T... values)
+        {
+            return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
+        }
+
+        @Override
+        public final FilterPredicate in(final Iterable<T> values)
+        {
+            return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
+        }
+
+        @Override
+        public final FilterPredicate in(final Iterator<T> values)
+        {
+            return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
+        }
+
+        @Override
+        public final FilterPredicate in(final Collection<T> values)
+        {
+            return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
+        }
     }
-  }
 }

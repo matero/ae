@@ -28,20 +28,25 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.common.collect.ImmutableList;
 
 public final class UnindexedEmbeddedEntity extends ScalarField.Unindexed<EmbeddedEntity> {
-  private static final long serialVersionUID = 2120570223034422483L;
 
-  public UnindexedEmbeddedEntity(final String canonicalName,
-                                 final String description,
-                                 final String property,
-                                 final String field,
-                                 final boolean required,
-                                 final JsonStringNode jsonName,
-                                 final String jsonPath,
-                                 final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, EmbeddedEntityJsonSerializer.INSTANCE, constraints);
-  }
+    private static final long serialVersionUID = 2120570223034422483L;
 
-  @Override public Class<EmbeddedEntity> type() {
-    return EmbeddedEntity.class;
-  }
+    public UnindexedEmbeddedEntity(final String canonicalName,
+                                   final String description,
+                                   final String property,
+                                   final String field,
+                                   final boolean required,
+                                   final JsonStringNode jsonName,
+                                   final String jsonPath,
+                                   final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath,
+              EmbeddedEntityJsonSerializer.INSTANCE, constraints);
+    }
+
+    @Override
+    public Class<EmbeddedEntity> type()
+    {
+        return EmbeddedEntity.class;
+    }
 }

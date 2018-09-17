@@ -34,8 +34,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface Router {
-  /**
-   * @return Where is the routes definition located.
-   */
-  String[] routes() default "src/config/routes.csv";
+
+    /**
+     * @return Where is the routes definition located.
+     */
+    String[] routes() default "src/config/routes.csv";
 }

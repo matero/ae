@@ -29,23 +29,28 @@ import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 
 public final class IndexedCategory extends ScalarField.Indexed<Category> implements CategoryField {
-  private static final long serialVersionUID = 5427175389652645621L;
-  public IndexedCategory(final String canonicalName,
-                         final String description,
-                         final String property,
-                         final String field,
-                         final boolean required,
-                         final JsonStringNode jsonName,
-                         final String jsonPath,
-                         final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.INSTANCE,
-          new PropertyProjection(property, Category.class), constraints);
-  }
 
-  @Override protected void validateNotNullValue(final Category value, final Validation validation) {
-    if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getCategory())) {
-      validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.getCategory()));
+    private static final long serialVersionUID = 5427175389652645621L;
+
+    public IndexedCategory(final String canonicalName,
+                           final String description,
+                           final String property,
+                           final String field,
+                           final boolean required,
+                           final JsonStringNode jsonName,
+                           final String jsonPath,
+                           final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.INSTANCE,
+              new PropertyProjection(property, Category.class), constraints);
     }
-    super.validateNotNullValue(value, validation);
-  }
+
+    @Override
+    protected void validateNotNullValue(final Category value, final Validation validation)
+    {
+        if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getCategory())) {
+            validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.getCategory()));
+        }
+        super.validateNotNullValue(value, validation);
+    }
 }

@@ -27,31 +27,38 @@ import com.google.appengine.api.datastore.Category;
 import com.google.appengine.api.datastore.PropertyContainer;
 
 public interface CategoryField extends ScalarField<Category> {
-  @Override default Class<Category> type() {
-    return Category.class;
-  }
 
-  default void set(final PropertyContainer data, final CharSequence rawValue) {
-    write(data, rawValue);
-  }
-
-  default void write(final PropertyContainer data, final CharSequence rawValue) {
-    if (rawValue == null) {
-      write(data, (Category) null);
-    } else {
-      write(data, new Category(rawValue.toString()));
+    @Override
+    default Class<Category> type()
+    {
+        return Category.class;
     }
-  }
 
-  default void set(final PropertyContainer data, final String rawValue) {
-    write(data, rawValue);
-  }
-
-  default void write(final PropertyContainer data, final String rawValue) {
-    if (rawValue == null) {
-      write(data, (Category) null);
-    } else {
-      write(data, new Category(rawValue));
+    default void set(final PropertyContainer data, final CharSequence rawValue)
+    {
+        write(data, rawValue);
     }
-  }
+
+    default void write(final PropertyContainer data, final CharSequence rawValue)
+    {
+        if (rawValue == null) {
+            write(data, (Category) null);
+        } else {
+            write(data, new Category(rawValue.toString()));
+        }
+    }
+
+    default void set(final PropertyContainer data, final String rawValue)
+    {
+        write(data, rawValue);
+    }
+
+    default void write(final PropertyContainer data, final String rawValue)
+    {
+        if (rawValue == null) {
+            write(data, (Category) null);
+        } else {
+            write(data, new Category(rawValue));
+        }
+    }
 }

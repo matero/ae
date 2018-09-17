@@ -31,82 +31,99 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.common.collect.ImmutableList;
 
 public interface Attr extends java.io.Serializable {
-  String canonicalName();
 
-  String description();
+    String canonicalName();
 
-  String field();
+    String description();
 
-  String property();
+    String field();
 
-  JsonStringNode jsonName();
+    String property();
 
-  String jsonPath();
+    JsonStringNode jsonName();
 
-  boolean isDefinedAt(Entity data);
+    String jsonPath();
 
-  default boolean isDefinedAt(final JsonNode json) {
-    return json.getFields().containsKey(jsonName());
-  }
+    boolean isDefinedAt(Entity data);
 
-  JsonNode makeJsonValue(Entity data);
+    default boolean isDefinedAt(final JsonNode json)
+    {
+        return json.getFields().containsKey(jsonName());
+    }
 
-  default JsonField makeJsonField(final Entity data) {
-    return JsonNodeFactories.field(jsonName(), makeJsonValue(data));
-  }
+    JsonNode makeJsonValue(Entity data);
 
-  Object interpretJson(JsonNode json);
+    default JsonField makeJsonField(final Entity data)
+    {
+        return JsonNodeFactories.field(jsonName(), makeJsonValue(data));
+    }
 
-  ImmutableList<Constraint> constraints();
+    Object interpretJson(JsonNode json);
 
-  void validate(Entity data, Validation validation);
+    ImmutableList<Constraint> constraints();
+
+    void validate(Entity data, Validation validation);
 }
 
 abstract class AttrData implements Attr {
-  private static final long serialVersionUID = -4466778777529645459L;
 
-  private final String canonicalName;
-  private final String description;
-  private final String field;
-  private final JsonStringNode jsonName;
-  private final String jsonPath;
-  private final ImmutableList<Constraint> constraints;
+    private static final long serialVersionUID = -4466778777529645459L;
 
-  protected AttrData(final String canonicalName,
-                     final String description,
-                     final String field,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final ImmutableList<Constraint> constraints) {
-    this.canonicalName = canonicalName;
-    this.description = description;
-    this.field = field;
-    this.jsonName = jsonName;
-    this.jsonPath = jsonPath;
-    this.constraints = constraints;
-  }
+    private final String canonicalName;
+    private final String description;
+    private final String field;
+    private final JsonStringNode jsonName;
+    private final String jsonPath;
+    private final ImmutableList<Constraint> constraints;
 
-  @Override public final String canonicalName() {
-    return canonicalName;
-  }
+    protected AttrData(final String canonicalName,
+                       final String description,
+                       final String field,
+                       final JsonStringNode jsonName,
+                       final String jsonPath,
+                       final ImmutableList<Constraint> constraints)
+    {
+        this.canonicalName = canonicalName;
+        this.description = description;
+        this.field = field;
+        this.jsonName = jsonName;
+        this.jsonPath = jsonPath;
+        this.constraints = constraints;
+    }
 
-  @Override public final String description() {
-    return description;
-  }
+    @Override
+    public final String canonicalName()
+    {
+        return canonicalName;
+    }
 
-  @Override public final String field() {
-    return field;
-  }
+    @Override
+    public final String description()
+    {
+        return description;
+    }
 
-  @Override public final JsonStringNode jsonName() {
-    return jsonName;
-  }
+    @Override
+    public final String field()
+    {
+        return field;
+    }
 
-  @Override public final String jsonPath() {
-    return jsonPath;
-  }
+    @Override
+    public final JsonStringNode jsonName()
+    {
+        return jsonName;
+    }
 
-  @Override public final ImmutableList<Constraint> constraints() {
-    return constraints;
-  }
+    @Override
+    public final String jsonPath()
+    {
+        return jsonPath;
+    }
+
+    @Override
+    public final ImmutableList<Constraint> constraints()
+    {
+        return constraints;
+    }
 }

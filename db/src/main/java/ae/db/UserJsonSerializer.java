@@ -36,80 +36,89 @@ import com.google.common.collect.ImmutableList;
 import java.util.Map;
 
 enum UserJsonSerializer implements JsonSerializer<User> {
-  INSTANCE;
+    INSTANCE;
 
-  static final JsonArraySerializer<User> ARRAY = new JsonArraySerializer<>(INSTANCE);
+    static final JsonArraySerializer<User> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  private final JsonStringNode userId = string("userId");
-  private final JsonStringNode email = string("email");
-  private final JsonStringNode federatedIdentity = string("fedId");
-  private final JsonStringNode authDomain = string("authDomain");
+    private final JsonStringNode userId = string("userId");
+    private final JsonStringNode email = string("email");
+    private final JsonStringNode federatedIdentity = string("fedId");
+    private final JsonStringNode authDomain = string("authDomain");
 
-  @Override public JsonNode toJson(final User value) {
-    if (value == null) {
-      return nullNode();
+    @Override
+    public JsonNode toJson(final User value)
+    {
+        if (value == null) {
+            return nullNode();
+        }
+        return object(ImmutableList.of(field(userId, string(value.getUserId())),
+                                       field(email, string(value.getEmail())),
+                                       field(federatedIdentity, string(value.getFederatedIdentity())),
+                                       field(authDomain, string(value.getAuthDomain()))));
     }
-    return object(ImmutableList.of(field(userId, string(value.getUserId())),
-                                   field(email, string(value.getEmail())),
-                                   field(federatedIdentity, string(value.getFederatedIdentity())),
-                                   field(authDomain, string(value.getAuthDomain()))));
-  }
 
-  @Override public User fromJson(final JsonNode json, final String jsonPath) {
-    if (json.isNullNode(jsonPath)) {
-      return null;
-    } else {
-      final Map<JsonStringNode, JsonNode> user = json.getObjectNode(jsonPath);
-      return jsonToUser(user);
+    @Override
+    public User fromJson(final JsonNode json, final String jsonPath)
+    {
+        if (json.isNullNode(jsonPath)) {
+            return null;
+        } else {
+            final Map<JsonStringNode, JsonNode> user = json.getObjectNode(jsonPath);
+            return jsonToUser(user);
+        }
     }
-  }
 
-  @Override public User fromJson(final JsonNode json) {
-    if (json.isNullNode()) {
-      return null;
-    } else {
-      return jsonToUser(json.getObjectNode());
+    @Override
+    public User fromJson(final JsonNode json)
+    {
+        if (json.isNullNode()) {
+            return null;
+        } else {
+            return jsonToUser(json.getObjectNode());
+        }
     }
-  }
 
-  User jsonToUser(final Map<JsonStringNode, JsonNode> user) {
-    if (user == null) {
-      return null;
+    User jsonToUser(final Map<JsonStringNode, JsonNode> user)
+    {
+        if (user == null) {
+            return null;
+        }
+        final String _email = readNonNull(user, email);
+        final String _authDomain = readNonNull(user, authDomain);
+        final String _userId = readNullable(user, userId);
+        if (_userId == null) {
+            return new User(_email, _authDomain);
+        } else {
+            final String _federatedIdentity = readNullable(user, federatedIdentity);
+            if (_federatedIdentity == null) {
+                return new User(_email, _authDomain, _userId);
+            } else {
+                return new User(_email, _authDomain, _userId, _federatedIdentity);
+            }
+        }
     }
-    final String _email = readNonNull(user, email);
-    final String _authDomain = readNonNull(user, authDomain);
-    final String _userId = readNullable(user, userId);
-    if (_userId == null) {
-      return new User(_email, _authDomain);
-    } else {
-      final String _federatedIdentity = readNullable(user, federatedIdentity);
-      if (_federatedIdentity == null) {
-        return new User(_email, _authDomain, _userId);
-      } else {
-        return new User(_email, _authDomain, _userId, _federatedIdentity);
-      }
-    }
-  }
 
-  String readNonNull(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field) {
-    final JsonNode node = user.get(field);
-    if (node == null) {
-      throw new NullPointerException(field.toString());
-    } else if (node.isNullNode()) {
-      throw new NullPointerException(field.toString());
-    } else {
-      return node.getStringValue();
+    String readNonNull(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field)
+    {
+        final JsonNode node = user.get(field);
+        if (node == null) {
+            throw new NullPointerException(field.toString());
+        } else if (node.isNullNode()) {
+            throw new NullPointerException(field.toString());
+        } else {
+            return node.getStringValue();
+        }
     }
-  }
 
-  String readNullable(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field) {
-    final JsonNode node = user.get(field);
-    if (node == null) {
-      return null;
-    } else if (node.isNullNode()) {
-      return null;
-    } else {
-      return node.getStringValue();
+    String readNullable(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field)
+    {
+        final JsonNode node = user.get(field);
+        if (node == null) {
+            return null;
+        } else if (node.isNullNode()) {
+            return null;
+        } else {
+            return node.getStringValue();
+        }
     }
-  }
 }

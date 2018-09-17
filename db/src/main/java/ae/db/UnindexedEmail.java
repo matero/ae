@@ -28,23 +28,28 @@ import com.google.appengine.api.datastore.Email;
 import com.google.common.collect.ImmutableList;
 
 public final class UnindexedEmail extends ScalarField.Unindexed<Email> implements EmailField {
-  private static final long serialVersionUID = 7137859202573326583L;
 
-  public UnindexedEmail(final String canonicalName,
-                        final String description,
-                        final String property,
-                        final String field,
-                        final boolean required,
-                        final JsonStringNode jsonName,
-                        final String jsonPath,
-                        final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.INSTANCE, constraints);
-  }
+    private static final long serialVersionUID = 7137859202573326583L;
 
-  @Override protected void validateNotNullValue(final Email value, final Validation validation) {
-    if (EmailConstraint.ForEmail.INSTANCE.isInvalid(value)) {
-      validation.reject(this, EmailConstraint.ForEmail.INSTANCE.messageFor(this, value));
+    public UnindexedEmail(final String canonicalName,
+                          final String description,
+                          final String property,
+                          final String field,
+                          final boolean required,
+                          final JsonStringNode jsonName,
+                          final String jsonPath,
+                          final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.INSTANCE,
+              constraints);
     }
-    super.validateNotNullValue(value, validation);
-  }
+
+    @Override
+    protected void validateNotNullValue(final Email value, final Validation validation)
+    {
+        if (EmailConstraint.ForEmail.INSTANCE.isInvalid(value)) {
+            validation.reject(this, EmailConstraint.ForEmail.INSTANCE.messageFor(this, value));
+        }
+        super.validateNotNullValue(value, validation);
+    }
 }

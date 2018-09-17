@@ -39,80 +39,92 @@ import javax.lang.model.element.Modifier;
 
 class ModelsRegistryClassCodeGenerator implements CodeGenerator {
 
-  @Override public ImmutableList<JavaFile> generateCode(final MetaModels models, final Date date) {
-    final ImmutableList.Builder<JavaFile> generatedJavaFiles = ImmutableList.builder();
-    for (final String packageName : models.byPackage.keySet()) {
-      generatedJavaFiles.add(modelsRegistryJavaFile(models, packageName, date));
+    @Override
+    public ImmutableList<JavaFile> generateCode(final MetaModels models, final Date date)
+    {
+        final ImmutableList.Builder<JavaFile> generatedJavaFiles = ImmutableList.builder();
+        for (final String packageName : models.byPackage.keySet()) {
+            generatedJavaFiles.add(modelsRegistryJavaFile(models, packageName, date));
+        }
+        return generatedJavaFiles.build();
     }
-    return generatedJavaFiles.build();
-  }
 
-  JavaFile modelsRegistryJavaFile(final MetaModels models, String packageName, final Date date) {
-    return new ModelsRegistryJavaClassBuilder(models, packageName, date).build();
-  }
+    JavaFile modelsRegistryJavaFile(final MetaModels models, String packageName, final Date date)
+    {
+        return new ModelsRegistryJavaClassBuilder(models, packageName, date).build();
+    }
 }
 
 final class ModelsRegistryJavaClassBuilder {
-  private static final ClassName LOGGER_CLASS = ClassName.get(Logger.class);
 
-  final MetaModels models;
-  final ClassName registryClass;
-  final TypeSpec.Builder classBuilder;
-  final Date date;
+    private static final ClassName LOGGER_CLASS = ClassName.get(Logger.class);
 
-  ModelsRegistryJavaClassBuilder(final MetaModels models, final String packageName, final Date date) {
-    this.models = models;
-    this.date = date;
-    registryClass = ClassName.get(packageName, "m");
-    classBuilder = TypeSpec.classBuilder(registryClass).addModifiers(Modifier.FINAL);
-    final ImmutableList<MetaModel> pkgModels = models.byPackage.get(packageName);
-    for (final MetaModel model : pkgModels) {
-      if (model.modifiers.contains(Modifier.PUBLIC)) {
-        classBuilder.addModifiers(Modifier.PUBLIC);
-        break;
-      }
+    final MetaModels models;
+    final ClassName registryClass;
+    final TypeSpec.Builder classBuilder;
+    final Date date;
+
+    ModelsRegistryJavaClassBuilder(final MetaModels models, final String packageName, final Date date)
+    {
+        this.models = models;
+        this.date = date;
+        registryClass = ClassName.get(packageName, "m");
+        classBuilder = TypeSpec.classBuilder(registryClass).addModifiers(Modifier.FINAL);
+        final ImmutableList<MetaModel> pkgModels = models.byPackage.get(packageName);
+        for (final MetaModel model : pkgModels) {
+            if (model.modifiers.contains(Modifier.PUBLIC)) {
+                classBuilder.addModifiers(Modifier.PUBLIC);
+                break;
+            }
+        }
     }
-  }
 
-  JavaFile build() {
-    return JavaFile.builder(registryClass.packageName(), modelsRegistryClass())
-            .skipJavaLangImports(true)
-            .build();
-  }
-
-  private TypeSpec modelsRegistryClass() {
-    defineGenerated();
-    defineConstructor();
-    defineFields();
-    return classBuilder.build();
-  }
-
-  void defineGenerated() {
-    classBuilder.addAnnotation(AnnotationSpec.builder(Generated.class)
-            .addMember("value", "$S", "ae-db")
-            .addMember("date", "$S", new SimpleDateFormat("yyyy-MM-dd").format(date))
-            .build());
-  }
-
-  void defineConstructor() {
-    MethodSpec.Builder ctor = MethodSpec.constructorBuilder()
-            .addModifiers(Modifier.PRIVATE)
-            .addStatement("new $T(\"$T can't be instantiated.\")", UnsupportedOperationException.class, registryClass);
-    classBuilder.addMethod(ctor.build());
-  }
-
-  void defineFields() {
-    for (final MetaModel model : models.byPackage.get(registryClass.packageName())) {
-      final ClassName modelClass = ClassName.get(model.packageName, model.name);
-      classBuilder.addField(
-              FieldSpec.builder(modelClass, model.name, modifiersOf(model))
-                       .addModifiers(Modifier.STATIC, Modifier.FINAL)
-                      .initializer("new $T()", modelClass)
-                      .build());
+    JavaFile build()
+    {
+        return JavaFile.builder(registryClass.packageName(), modelsRegistryClass())
+                .skipJavaLangImports(true)
+                .build();
     }
-  }
 
-  private static Modifier[] modifiersOf(final MetaModel model) {
-    return model.modifiers.toArray(new Modifier[0]);
-  }
+    private TypeSpec modelsRegistryClass()
+    {
+        defineGenerated();
+        defineConstructor();
+        defineFields();
+        return classBuilder.build();
+    }
+
+    void defineGenerated()
+    {
+        classBuilder.addAnnotation(AnnotationSpec.builder(Generated.class)
+                .addMember("value", "$S", "ae-db")
+                .addMember("date", "$S", new SimpleDateFormat("yyyy-MM-dd").format(date))
+                .build());
+    }
+
+    void defineConstructor()
+    {
+        MethodSpec.Builder ctor = MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PRIVATE)
+                .addStatement("new $T(\"$T can't be instantiated.\")", UnsupportedOperationException.class,
+                              registryClass);
+        classBuilder.addMethod(ctor.build());
+    }
+
+    void defineFields()
+    {
+        for (final MetaModel model : models.byPackage.get(registryClass.packageName())) {
+            final ClassName modelClass = ClassName.get(model.packageName, model.name);
+            classBuilder.addField(
+                    FieldSpec.builder(modelClass, model.name, modifiersOf(model))
+                            .addModifiers(Modifier.STATIC, Modifier.FINAL)
+                            .initializer("new $T()", modelClass)
+                            .build());
+        }
+    }
+
+    private static Modifier[] modifiersOf(final MetaModel model)
+    {
+        return model.modifiers.toArray(new Modifier[0]);
+    }
 }

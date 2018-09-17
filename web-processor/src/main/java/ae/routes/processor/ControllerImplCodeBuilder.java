@@ -52,80 +52,95 @@ import org.thymeleaf.context.WebContext;
  */
 class ControllerImplCodeBuilder {
 
-  private final TypeMirror controllerWithThymeleafSupportClass;
-  private final Types types;
-  
-  ControllerImplCodeBuilder(final Elements elements, final Types types) {
-    this.controllerWithThymeleafSupportClass = elements.getTypeElement(ControllerWithThymeleafSupport.class.getCanonicalName()).asType();
-    this.types = types;
-  }
-  List<JavaFile> buildJavaCode(final RoutesDeclarations routes) {
-    final List<TypeElement> controllers = routes.controllers();
-    return ImmutableList.copyOf(generatedImplsFor(controllers, routes.paths, routes.date));
-  }
+    private final TypeMirror controllerWithThymeleafSupportClass;
+    private final Types types;
 
-  List<JavaFile> generatedImplsFor(final List<TypeElement> controllers, final String paths, final String date) {
-    final ArrayList<JavaFile> generatedImpls = new ArrayList<>(controllers.size());
-    for (final TypeElement controllerClass : controllers) {
-      if (shouldGenerateImplFor(controllerClass)) {
-        generatedImpls.add(generateImplFor(controllerClass, paths, date));
-      }
+    ControllerImplCodeBuilder(final Elements elements, final Types types)
+    {
+        this.controllerWithThymeleafSupportClass = elements.getTypeElement(ControllerWithThymeleafSupport.class.
+                getCanonicalName()).asType();
+        this.types = types;
     }
-    generatedImpls.trimToSize();
-    return generatedImpls;
-  }
 
-  boolean shouldGenerateImplFor(final TypeElement controllerClass) {
-    final Set<Modifier> modifiers = controllerClass.getModifiers();
-    return !modifiers.contains(Modifier.ABSTRACT) && !modifiers.contains(Modifier.FINAL);
-  }
-
-  JavaFile generateImplFor(final TypeElement controllerClass, final String paths, final String date) {
-    final String controllerQualifiedName = controllerClass.getQualifiedName().toString();
-    final ClassName controllerClassName = ClassName.bestGuess(controllerQualifiedName + "_Impl");
-    final TypeSpec.Builder controllerImpl = TypeSpec.classBuilder(controllerClassName)
-            .superclass(ClassName.bestGuess(controllerQualifiedName))
-            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-            .addAnnotation(AnnotationSpec.builder(Generated.class)
-                    .addMember("value", "$S", "AE/web-processor")
-                    .addMember("comments", "$S", paths)
-                    .addMember("date", "$S", date)
-                    .build());
-    controllerImpl.addField(FieldSpec.builder(Logger.class, "LOG", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-                                     .initializer("Logger.getLogger($S)", controllerQualifiedName).build());
-    controllerImpl.addMethod(
-            MethodSpec.constructorBuilder()
-              .addModifiers(Modifier.PUBLIC)
-              .addParameter(ParameterSpec.builder(HttpServletRequest.class, "request", Modifier.FINAL).build())
-              .addParameter(ParameterSpec.builder(HttpServletResponse.class, "response", Modifier.FINAL).build())
-              .addCode("setRequest(request);\n")
-              .addCode("setResponse(response);\n")
-           .build());
-    if (shouldGenerateConstructorWithThymeleafsupportFor(controllerClass)) {
-      controllerImpl.addMethod(
-              MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(ParameterSpec.builder(HttpServletRequest.class, "request", Modifier.FINAL).build())
-                .addParameter(ParameterSpec.builder(HttpServletResponse.class, "response", Modifier.FINAL).build())
-                .addParameter(ParameterSpec.builder(WebContext.class, "templateContext", Modifier.FINAL).build())
-                .addParameter(ParameterSpec.builder(TemplateEngine.class, "templateEngine", Modifier.FINAL).build())
-                .addCode("setRequest(request);\n")
-                .addCode("setResponse(response);\n")
-                .addCode("setTemplateContext(templateContext);\n")
-                .addCode("setTemplateEngine(templateEngine);\n")
-             .build());      
+    List<JavaFile> buildJavaCode(final RoutesDeclarations routes)
+    {
+        final List<TypeElement> controllers = routes.controllers();
+        return ImmutableList.copyOf(generatedImplsFor(controllers, routes.paths, routes.date));
     }
-    controllerImpl.addMethod(
-            MethodSpec.methodBuilder("log")
-              .addAnnotation(Override.class)
-              .addModifiers(Modifier.PROTECTED)
-              .returns(Logger.class)
-              .addCode("return LOG;\n")
-           .build());
-    return JavaFile.builder(controllerClassName.packageName(), controllerImpl.build()).skipJavaLangImports(true).build();
-  }
-  
-  boolean shouldGenerateConstructorWithThymeleafsupportFor(final TypeElement controllerClass) {
-    return types.isSubtype(controllerClass.asType(), controllerWithThymeleafSupportClass);
-  }
+
+    List<JavaFile> generatedImplsFor(final List<TypeElement> controllers, final String paths, final String date)
+    {
+        final ArrayList<JavaFile> generatedImpls = new ArrayList<>(controllers.size());
+        for (final TypeElement controllerClass : controllers) {
+            if (shouldGenerateImplFor(controllerClass)) {
+                generatedImpls.add(generateImplFor(controllerClass, paths, date));
+            }
+        }
+        generatedImpls.trimToSize();
+        return generatedImpls;
+    }
+
+    boolean shouldGenerateImplFor(final TypeElement controllerClass)
+    {
+        final Set<Modifier> modifiers = controllerClass.getModifiers();
+        return !modifiers.contains(Modifier.ABSTRACT) && !modifiers.contains(Modifier.FINAL);
+    }
+
+    JavaFile generateImplFor(final TypeElement controllerClass, final String paths, final String date)
+    {
+        final String controllerQualifiedName = controllerClass.getQualifiedName().toString();
+        final ClassName controllerClassName = ClassName.bestGuess(controllerQualifiedName + "_Impl");
+        final TypeSpec.Builder controllerImpl = TypeSpec.classBuilder(controllerClassName)
+                .superclass(ClassName.bestGuess(controllerQualifiedName))
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addAnnotation(AnnotationSpec.builder(Generated.class)
+                        .addMember("value", "$S", "AE/web-processor")
+                        .addMember("comments", "$S", paths)
+                        .addMember("date", "$S", date)
+                        .build());
+        controllerImpl.addField(FieldSpec.
+                builder(Logger.class, "LOG", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                .initializer("Logger.getLogger($S)", controllerQualifiedName).build());
+        controllerImpl.addMethod(
+                MethodSpec.constructorBuilder()
+                        .addModifiers(Modifier.PUBLIC)
+                        .addParameter(ParameterSpec.builder(HttpServletRequest.class, "request", Modifier.FINAL).build()).
+                        addParameter(ParameterSpec.builder(HttpServletResponse.class, "response", Modifier.FINAL).
+                                build())
+                        .addCode("setRequest(request);\n")
+                        .addCode("setResponse(response);\n")
+                        .build());
+        if (shouldGenerateConstructorWithThymeleafsupportFor(controllerClass)) {
+            controllerImpl.addMethod(
+                    MethodSpec.constructorBuilder()
+                            .addModifiers(Modifier.PUBLIC)
+                            .addParameter(ParameterSpec.builder(HttpServletRequest.class, "request", Modifier.FINAL).
+                                    build())
+                            .addParameter(ParameterSpec.builder(HttpServletResponse.class, "response", Modifier.FINAL).
+                                    build())
+                            .addParameter(ParameterSpec.builder(WebContext.class, "templateContext", Modifier.FINAL).
+                                    build())
+                            .addParameter(ParameterSpec.builder(TemplateEngine.class, "templateEngine", Modifier.FINAL).
+                                    build())
+                            .addCode("setRequest(request);\n")
+                            .addCode("setResponse(response);\n")
+                            .addCode("setTemplateContext(templateContext);\n")
+                            .addCode("setTemplateEngine(templateEngine);\n")
+                            .build());
+        }
+        controllerImpl.addMethod(
+                MethodSpec.methodBuilder("log")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PROTECTED)
+                        .returns(Logger.class)
+                        .addCode("return LOG;\n")
+                        .build());
+        return JavaFile.builder(controllerClassName.packageName(), controllerImpl.build()).skipJavaLangImports(true).
+                build();
+    }
+
+    boolean shouldGenerateConstructorWithThymeleafsupportFor(final TypeElement controllerClass)
+    {
+        return types.isSubtype(controllerClass.asType(), controllerWithThymeleafSupportClass);
+    }
 }

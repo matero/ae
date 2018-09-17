@@ -28,30 +28,36 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.blobstore.BlobKey;
 
 enum BlobKeyJsonSerializer implements JsonSerializer<BlobKey> {
-  INSTANCE;
+    INSTANCE;
 
-  static final JsonArraySerializer<BlobKey> ARRAY = new JsonArraySerializer<>(INSTANCE);
+    static final JsonArraySerializer<BlobKey> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final BlobKey value) {
-    if (value == null) {
-      return JsonNodeFactories.nullNode();
+    @Override
+    public JsonNode toJson(final BlobKey value)
+    {
+        if (value == null) {
+            return JsonNodeFactories.nullNode();
+        }
+        return JsonNodeFactories.string(value.getKeyString());
     }
-    return JsonNodeFactories.string(value.getKeyString());
-  }
 
-  @Override public BlobKey fromJson(final JsonNode json, final String jsonPath) {
-    if (json.isNullNode(jsonPath)) {
-      return null;
-    } else {
-      return new BlobKey(json.getStringValue(jsonPath));
+    @Override
+    public BlobKey fromJson(final JsonNode json, final String jsonPath)
+    {
+        if (json.isNullNode(jsonPath)) {
+            return null;
+        } else {
+            return new BlobKey(json.getStringValue(jsonPath));
+        }
     }
-  }
 
-  @Override public BlobKey fromJson(final JsonNode json) {
-    if (json.isNullNode()) {
-      return null;
-    } else {
-      return new BlobKey(json.getStringValue());
+    @Override
+    public BlobKey fromJson(final JsonNode json)
+    {
+        if (json.isNullNode()) {
+            return null;
+        } else {
+            return new BlobKey(json.getStringValue());
+        }
     }
-  }
 }

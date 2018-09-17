@@ -29,18 +29,21 @@ import com.google.common.collect.ImmutableList;
 import java.util.Date;
 
 public final class IndexedDate extends ScalarField.Indexed<Date> implements DateField {
-  private static final long serialVersionUID = 3862732604109854492L;
 
-  public IndexedDate(final String canonicalName,
-                     final String description,
-                     final String property,
-                     final String field,
-                     final boolean required,
-                     final JsonStringNode jsonName,
-                     final String jsonPath,
-                     final JsonSerializer<Date> jsonSerializer,
-                     final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer, new PropertyProjection(property, Date.class),
-          constraints);
-  }
+    private static final long serialVersionUID = 3862732604109854492L;
+
+    public IndexedDate(final String canonicalName,
+                       final String description,
+                       final String property,
+                       final String field,
+                       final boolean required,
+                       final JsonStringNode jsonName,
+                       final String jsonPath,
+                       final JsonSerializer<Date> jsonSerializer,
+                       final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer,
+              new PropertyProjection(property, Date.class),
+              constraints);
+    }
 }

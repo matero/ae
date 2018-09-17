@@ -38,224 +38,257 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 public abstract class ControllerWithThymeleafSupport extends Controller {
-  private WebContext templateContext;
-  private TemplateEngine templateEngine;
 
-  protected ControllerWithThymeleafSupport() {
-    this.templateContext = null;
-    this.templateEngine = null;
-  }
-  
-  protected ControllerWithThymeleafSupport(final HttpServletRequest request, final HttpServletResponse response) {
-    super(request, response);
-  }
-  
-  protected ControllerWithThymeleafSupport(final HttpServletRequest request,
-                                           final HttpServletResponse response,
-                                           final WebContext templateContext,
-                                           final TemplateEngine templateEngine) {
-    super(request, response);
-    this.templateContext = templateContext;
-    this.templateEngine = templateEngine;
-  }
-  
-  protected final WebContext templateContext() {
-    return templateContext;
-  }
-  protected final void setTemplateContext(final WebContext templateContext) {
-    this.templateContext = templateContext;
-  }
-  protected final TemplateEngine templateEngine() {
-    return templateEngine;
-  }
-  protected final void setTemplateEngine(final TemplateEngine templateEngine) {
-    this.templateEngine = templateEngine;
-  }
-  
-  @Override protected void setup() {
-    if (this.templateContext != null) {
-      ctx("gae", AppengineDialect.INSTANCE);
-      if (isUserLoggedIn()) {
-        ctx("user_type", isUserAdmin() ? "adm" : "usr");
-        ctx("current_user", currentUser());
-        ctx("logout", logoutURL(request()));
-      } else {
-        ctx("user", "none");
-        ctx("login", loginURL(request()));
-      }
+    private WebContext templateContext;
+    private TemplateEngine templateEngine;
+
+    protected ControllerWithThymeleafSupport()
+    {
+        this.templateContext = null;
+        this.templateEngine = null;
     }
-  }
 
-  protected void renderHtml(final String template) throws IOException, ServletException {
-    prepareHtmlHeaders();
-    writeHtml(processTemplate(template));
-  }
+    protected ControllerWithThymeleafSupport(final HttpServletRequest request, final HttpServletResponse response)
+    {
+        super(request, response);
+    }
 
-  protected void prepareHtmlHeaders() {
-    set(Header.PRAGMA, "no-cache");
-    set(Header.CACHE_CONTROL, "no-cache");
-    set(Header.EXPIRES, 0L);
-  }
+    protected ControllerWithThymeleafSupport(final HttpServletRequest request,
+                                             final HttpServletResponse response,
+                                             final WebContext templateContext,
+                                             final TemplateEngine templateEngine)
+    {
+        super(request, response);
+        this.templateContext = templateContext;
+        this.templateEngine = templateEngine;
+    }
 
-  protected String processTemplate(final String template) {
-    return templateEngine.process(template, templateContext);
-  }
+    protected final WebContext templateContext()
+    {
+        return templateContext;
+    }
 
-  protected void ctx(final String name, final Object value) {
-    templateContext.setVariable(name, value);
-  }
+    protected final void setTemplateContext(final WebContext templateContext)
+    {
+        this.templateContext = templateContext;
+    }
 
-  protected void ctx(final String name, final ImmutableCollection.Builder<?> collectionBuilder) {
-    templateContext.setVariable(name, collectionBuilder.build());
-  }
+    protected final TemplateEngine templateEngine()
+    {
+        return templateEngine;
+    }
 
-  protected void ctx(final String name, final ImmutableMap.Builder<?, ?> mapBuilder) {
-    templateContext.setVariable(name, mapBuilder.build());
-  }
+    protected final void setTemplateEngine(final TemplateEngine templateEngine)
+    {
+        this.templateEngine = templateEngine;
+    }
 
-  protected static final String template(final String template) {
-    return template;
-  }
+    @Override
+    protected void setup()
+    {
+        if (this.templateContext != null) {
+            ctx("gae", AppengineDialect.INSTANCE);
+            if (isUserLoggedIn()) {
+                ctx("user_type", isUserAdmin() ? "adm" : "usr");
+                ctx("current_user", currentUser());
+                ctx("logout", logoutURL(request()));
+            } else {
+                ctx("user", "none");
+                ctx("login", loginURL(request()));
+            }
+        }
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr, final Object value) {
-    return ImmutableMap.of(attr.property(), value);
-  }
+    protected void renderHtml(final String template) throws IOException, ServletException
+    {
+        prepareHtmlHeaders();
+        writeHtml(processTemplate(template));
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
-                                                    final Attr attr2, final Object value2) {
-    return ImmutableMap.of(attr1.property(), value1,
-                           attr2.property(), value2);
-  }
+    protected void prepareHtmlHeaders()
+    {
+        set(Header.PRAGMA, "no-cache");
+        set(Header.CACHE_CONTROL, "no-cache");
+        set(Header.EXPIRES, 0L);
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
-                                                    final Attr attr2, final Object value2,
-                                                    final Attr attr3, final Object value3) {
-    return ImmutableMap.of(attr1.property(), value1,
-                           attr2.property(), value2,
-                           attr3.property(), value3);
-  }
+    protected String processTemplate(final String template)
+    {
+        return templateEngine.process(template, templateContext);
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
-                                                    final Attr attr2, final Object value2,
-                                                    final Attr attr3, final Object value3,
-                                                    final Attr attr4, final Object value4) {
-    return ImmutableMap.of(attr1.property(), value1,
-                           attr2.property(), value2,
-                           attr3.property(), value3,
-                           attr4.property(), value4);
-  }
+    protected void ctx(final String name, final Object value)
+    {
+        templateContext.setVariable(name, value);
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
-                                                    final Attr attr2, final Object value2,
-                                                    final Attr attr3, final Object value3,
-                                                    final Attr attr4, final Object value4,
-                                                    final Attr attr5, final Object value5) {
-    return ImmutableMap.of(attr1.property(), value1,
-                           attr2.property(), value2,
-                           attr3.property(), value3,
-                           attr4.property(), value4,
-                           attr5.property(), value5);
-  }
+    protected void ctx(final String name, final ImmutableCollection.Builder<?> collectionBuilder)
+    {
+        templateContext.setVariable(name, collectionBuilder.build());
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
-                                                    final Attr attr2, final Object value2,
-                                                    final Attr attr3, final Object value3,
-                                                    final Attr attr4, final Object value4,
-                                                    final Attr attr5, final Object value5,
-                                                    final Attr attr6, final Object value6) {
-    return ImmutableMap.<String, Object>builder()
-            .put(attr1.property(), value1)
-            .put(attr2.property(), value2)
-            .put(attr3.property(), value3)
-            .put(attr4.property(), value4)
-            .put(attr5.property(), value5)
-            .put(attr6.property(), value6)
-            .build();
-  }
+    protected void ctx(final String name, final ImmutableMap.Builder<?, ?> mapBuilder)
+    {
+        templateContext.setVariable(name, mapBuilder.build());
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
-                                                    final Attr attr2, final Object value2,
-                                                    final Attr attr3, final Object value3,
-                                                    final Attr attr4, final Object value4,
-                                                    final Attr attr5, final Object value5,
-                                                    final Attr attr6, final Object value6,
-                                                    final Attr attr7, final Object value7) {
-    return ImmutableMap.<String, Object>builder()
-            .put(attr1.property(), value1)
-            .put(attr2.property(), value2)
-            .put(attr3.property(), value3)
-            .put(attr4.property(), value4)
-            .put(attr5.property(), value5)
-            .put(attr6.property(), value6)
-            .put(attr7.property(), value7)
-            .build();
-  }
+    protected static final String template(final String template)
+    {
+        return template;
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
-                                                    final Attr attr2, final Object value2,
-                                                    final Attr attr3, final Object value3,
-                                                    final Attr attr4, final Object value4,
-                                                    final Attr attr5, final Object value5,
-                                                    final Attr attr6, final Object value6,
-                                                    final Attr attr7, final Object value7,
-                                                    final Attr attr8, final Object value8) {
-    return ImmutableMap.<String, Object>builder()
-            .put(attr1.property(), value1)
-            .put(attr2.property(), value2)
-            .put(attr3.property(), value3)
-            .put(attr4.property(), value4)
-            .put(attr5.property(), value5)
-            .put(attr6.property(), value6)
-            .put(attr7.property(), value7)
-            .put(attr8.property(), value8)
-            .build();
-  }
+    protected final ImmutableMap<String, Object> data(final Attr attr, final Object value)
+    {
+        return ImmutableMap.of(attr.property(), value);
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
-                                                    final Attr attr2, final Object value2,
-                                                    final Attr attr3, final Object value3,
-                                                    final Attr attr4, final Object value4,
-                                                    final Attr attr5, final Object value5,
-                                                    final Attr attr6, final Object value6,
-                                                    final Attr attr7, final Object value7,
-                                                    final Attr attr8, final Object value8,
-                                                    final Attr attr9, final Object value9) {
-    return ImmutableMap.<String, Object>builder()
-            .put(attr1.property(), value1)
-            .put(attr2.property(), value2)
-            .put(attr3.property(), value3)
-            .put(attr4.property(), value4)
-            .put(attr5.property(), value5)
-            .put(attr6.property(), value6)
-            .put(attr7.property(), value7)
-            .put(attr8.property(), value8)
-            .put(attr9.property(), value9)
-            .build();
-  }
+    protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                      final Attr attr2, final Object value2)
+    {
+        return ImmutableMap.of(attr1.property(), value1,
+                               attr2.property(), value2);
+    }
 
-  protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
-                                                    final Attr attr2, final Object value2,
-                                                    final Attr attr3, final Object value3,
-                                                    final Attr attr4, final Object value4,
-                                                    final Attr attr5, final Object value5,
-                                                    final Attr attr6, final Object value6,
-                                                    final Attr attr7, final Object value7,
-                                                    final Attr attr8, final Object value8,
-                                                    final Attr attr9, final Object value9,
-                                                    final Attr attr10, final Object value10) {
-    return ImmutableMap.<String, Object>builder()
-            .put(attr1.property(), value1)
-            .put(attr2.property(), value2)
-            .put(attr3.property(), value3)
-            .put(attr4.property(), value4)
-            .put(attr5.property(), value5)
-            .put(attr6.property(), value6)
-            .put(attr7.property(), value7)
-            .put(attr8.property(), value8)
-            .put(attr9.property(), value9)
-            .put(attr10.property(), value10)
-            .build();
-  }
-  
-  @Retention(RetentionPolicy.CLASS) @Target(ElementType.METHOD) public @interface Template {}
+    protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                      final Attr attr2, final Object value2,
+                                                      final Attr attr3, final Object value3)
+    {
+        return ImmutableMap.of(attr1.property(), value1,
+                               attr2.property(), value2,
+                               attr3.property(), value3);
+    }
+
+    protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                      final Attr attr2, final Object value2,
+                                                      final Attr attr3, final Object value3,
+                                                      final Attr attr4, final Object value4)
+    {
+        return ImmutableMap.of(attr1.property(), value1,
+                               attr2.property(), value2,
+                               attr3.property(), value3,
+                               attr4.property(), value4);
+    }
+
+    protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                      final Attr attr2, final Object value2,
+                                                      final Attr attr3, final Object value3,
+                                                      final Attr attr4, final Object value4,
+                                                      final Attr attr5, final Object value5)
+    {
+        return ImmutableMap.of(attr1.property(), value1,
+                               attr2.property(), value2,
+                               attr3.property(), value3,
+                               attr4.property(), value4,
+                               attr5.property(), value5);
+    }
+
+    protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                      final Attr attr2, final Object value2,
+                                                      final Attr attr3, final Object value3,
+                                                      final Attr attr4, final Object value4,
+                                                      final Attr attr5, final Object value5,
+                                                      final Attr attr6, final Object value6)
+    {
+        return ImmutableMap.<String, Object>builder()
+                .put(attr1.property(), value1)
+                .put(attr2.property(), value2)
+                .put(attr3.property(), value3)
+                .put(attr4.property(), value4)
+                .put(attr5.property(), value5)
+                .put(attr6.property(), value6)
+                .build();
+    }
+
+    protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                      final Attr attr2, final Object value2,
+                                                      final Attr attr3, final Object value3,
+                                                      final Attr attr4, final Object value4,
+                                                      final Attr attr5, final Object value5,
+                                                      final Attr attr6, final Object value6,
+                                                      final Attr attr7, final Object value7)
+    {
+        return ImmutableMap.<String, Object>builder()
+                .put(attr1.property(), value1)
+                .put(attr2.property(), value2)
+                .put(attr3.property(), value3)
+                .put(attr4.property(), value4)
+                .put(attr5.property(), value5)
+                .put(attr6.property(), value6)
+                .put(attr7.property(), value7)
+                .build();
+    }
+
+    protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                      final Attr attr2, final Object value2,
+                                                      final Attr attr3, final Object value3,
+                                                      final Attr attr4, final Object value4,
+                                                      final Attr attr5, final Object value5,
+                                                      final Attr attr6, final Object value6,
+                                                      final Attr attr7, final Object value7,
+                                                      final Attr attr8, final Object value8)
+    {
+        return ImmutableMap.<String, Object>builder()
+                .put(attr1.property(), value1)
+                .put(attr2.property(), value2)
+                .put(attr3.property(), value3)
+                .put(attr4.property(), value4)
+                .put(attr5.property(), value5)
+                .put(attr6.property(), value6)
+                .put(attr7.property(), value7)
+                .put(attr8.property(), value8)
+                .build();
+    }
+
+    protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                      final Attr attr2, final Object value2,
+                                                      final Attr attr3, final Object value3,
+                                                      final Attr attr4, final Object value4,
+                                                      final Attr attr5, final Object value5,
+                                                      final Attr attr6, final Object value6,
+                                                      final Attr attr7, final Object value7,
+                                                      final Attr attr8, final Object value8,
+                                                      final Attr attr9, final Object value9)
+    {
+        return ImmutableMap.<String, Object>builder()
+                .put(attr1.property(), value1)
+                .put(attr2.property(), value2)
+                .put(attr3.property(), value3)
+                .put(attr4.property(), value4)
+                .put(attr5.property(), value5)
+                .put(attr6.property(), value6)
+                .put(attr7.property(), value7)
+                .put(attr8.property(), value8)
+                .put(attr9.property(), value9)
+                .build();
+    }
+
+    protected final ImmutableMap<String, Object> data(final Attr attr1, final Object value1,
+                                                      final Attr attr2, final Object value2,
+                                                      final Attr attr3, final Object value3,
+                                                      final Attr attr4, final Object value4,
+                                                      final Attr attr5, final Object value5,
+                                                      final Attr attr6, final Object value6,
+                                                      final Attr attr7, final Object value7,
+                                                      final Attr attr8, final Object value8,
+                                                      final Attr attr9, final Object value9,
+                                                      final Attr attr10, final Object value10)
+    {
+        return ImmutableMap.<String, Object>builder()
+                .put(attr1.property(), value1)
+                .put(attr2.property(), value2)
+                .put(attr3.property(), value3)
+                .put(attr4.property(), value4)
+                .put(attr5.property(), value5)
+                .put(attr6.property(), value6)
+                .put(attr7.property(), value7)
+                .put(attr8.property(), value8)
+                .put(attr9.property(), value9)
+                .put(attr10.property(), value10)
+                .build();
+    }
+
+    @Retention(RetentionPolicy.CLASS)
+    @Target(ElementType.METHOD)
+    public @interface Template {
+    }
 }

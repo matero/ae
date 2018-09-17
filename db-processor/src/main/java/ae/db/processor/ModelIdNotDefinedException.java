@@ -26,7 +26,9 @@ package ae.db.processor;
 import javax.lang.model.element.TypeElement;
 
 final class ModelIdNotDefinedException extends ModelException {
-  ModelIdNotDefinedException(final TypeElement recordType) {
-    super(recordType, "@Id not defined");
-  }
+
+    ModelIdNotDefinedException(final TypeElement recordType)
+    {
+        super(recordType, "@Id not defined");
+    }
 }

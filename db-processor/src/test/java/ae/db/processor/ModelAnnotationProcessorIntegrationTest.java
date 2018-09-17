@@ -32,63 +32,69 @@ import java.util.GregorianCalendar;
 import org.junit.Test;
 
 public class ModelAnnotationProcessorIntegrationTest {
-  @Test
-  public void should_compile_class_without_Model_annotation() {
-    final Compilation compilation = javac()
-            .withProcessors(new ModelProcessor())
-            .compile(JavaFileObjects.forResource("ae/db/processor/NoModel.java"));
-    assertThat(compilation)
-            .succeeded();
-  }
 
-  @Test
-  public void should_fail_when_class_doesnt_define_superclass() {
-    final Compilation compilation = javac()
-            .withProcessors(new ModelProcessor())
-            .compile(JavaFileObjects.forResource("ae/db/processor/NoSuperClass.java"));
-    assertThat(compilation)
-            .failed();
-    assertThat(compilation)
-            .hadErrorContaining("No base class defined!");
-  }
+    @Test
+    public void should_compile_class_without_Model_annotation()
+    {
+        final Compilation compilation = javac()
+                .withProcessors(new ModelProcessor())
+                .compile(JavaFileObjects.forResource("ae/db/processor/NoModel.java"));
+        assertThat(compilation)
+                .succeeded();
+    }
 
-  @Test
-  public void should_fail_when_class_doesnt_define_record() {
-    final Compilation compilation = javac()
-            .withProcessors(new ModelProcessor())
-            .compile(JavaFileObjects.forResource("ae/db/processor/NoRecord.java"));
-    assertThat(compilation)
-            .failed();
-    assertThat(compilation)
-            .hadErrorContaining("No Record class found!");
-  }
+    @Test
+    public void should_fail_when_class_doesnt_define_superclass()
+    {
+        final Compilation compilation = javac()
+                .withProcessors(new ModelProcessor())
+                .compile(JavaFileObjects.forResource("ae/db/processor/NoSuperClass.java"));
+        assertThat(compilation)
+                .failed();
+        assertThat(compilation)
+                .hadErrorContaining("No base class defined!");
+    }
 
-  @Test
-  public void should_fail_when_class_defines_more_than_one_record() {
-    final Compilation compilation = javac()
-            .withProcessors(new ModelProcessor())
-            .compile(JavaFileObjects.forResource("ae/db/processor/TooManyRecords.java"));
-    assertThat(compilation)
-            .failed();
-    assertThat(compilation)
-            .hadErrorContaining("Only one Record can be defined per Model!");
-  }
+    @Test
+    public void should_fail_when_class_doesnt_define_record()
+    {
+        final Compilation compilation = javac()
+                .withProcessors(new ModelProcessor())
+                .compile(JavaFileObjects.forResource("ae/db/processor/NoRecord.java"));
+        assertThat(compilation)
+                .failed();
+        assertThat(compilation)
+                .hadErrorContaining("No Record class found!");
+    }
 
-  @Test
-  public void should_be_able_to_process_complex_classes() {
-    final Compilation compilation = javac()
-            .withProcessors(new ModelProcessor(new GregorianCalendar(2017, Calendar.FEBRUARY, 23).getTime()))
-            .compile(JavaFileObjects.forResource("ae/db/processor/Competidor.java"));
-    assertThat(compilation)
-            .succeeded();
-    assertThat(compilation)
-            .generatedSourceFile("processor.test.__Competencia")
-            .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/__Competencia.java"));
-    assertThat(compilation)
-            .generatedSourceFile("processor.test.__Competidor")
-            .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/__Competidor.java"));
-    assertThat(compilation)
-            .generatedSourceFile("processor.test.m")
-            .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/m.java"));
-  }
+    @Test
+    public void should_fail_when_class_defines_more_than_one_record()
+    {
+        final Compilation compilation = javac()
+                .withProcessors(new ModelProcessor())
+                .compile(JavaFileObjects.forResource("ae/db/processor/TooManyRecords.java"));
+        assertThat(compilation)
+                .failed();
+        assertThat(compilation)
+                .hadErrorContaining("Only one Record can be defined per Model!");
+    }
+
+    @Test
+    public void should_be_able_to_process_complex_classes()
+    {
+        final Compilation compilation = javac()
+                .withProcessors(new ModelProcessor(new GregorianCalendar(2017, Calendar.FEBRUARY, 23).getTime()))
+                .compile(JavaFileObjects.forResource("ae/db/processor/Competidor.java"));
+        assertThat(compilation)
+                .succeeded();
+        assertThat(compilation)
+                .generatedSourceFile("processor.test.__Competencia")
+                .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/__Competencia.java"));
+        assertThat(compilation)
+                .generatedSourceFile("processor.test.__Competidor")
+                .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/__Competidor.java"));
+        assertThat(compilation)
+                .generatedSourceFile("processor.test.m")
+                .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/m.java"));
+    }
 }

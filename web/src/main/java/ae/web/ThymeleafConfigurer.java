@@ -33,46 +33,55 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-@WebListener public final class ThymeleafConfigurer implements javax.servlet.ServletContextListener {
-  @Override public void contextInitialized(final ServletContextEvent event) {
-    OgnlRuntime.setSecurityManager(null);
-    OgnlRuntime.setPropertyAccessor(Entity.class, AppEngineEntityPropertyAccessor.INSTANCE);
+@WebListener
+public final class ThymeleafConfigurer implements javax.servlet.ServletContextListener {
 
-    final ServletContext servletContext = event.getServletContext();
-    ThymeleafTemplateEngine.set(servletContext, templateEngine(servletContext));
-  }
+    @Override
+    public void contextInitialized(final ServletContextEvent event)
+    {
+        OgnlRuntime.setSecurityManager(null);
+        OgnlRuntime.setPropertyAccessor(Entity.class, AppEngineEntityPropertyAccessor.INSTANCE);
 
-  private TemplateEngine templateEngine(final ServletContext servletContext) {
-    final TemplateEngine engine = new TemplateEngine();
-    engine.setTemplateResolver(templateResolver(servletContext));
-    return engine;
-  }
+        final ServletContext servletContext = event.getServletContext();
+        ThymeleafTemplateEngine.set(servletContext, templateEngine(servletContext));
+    }
 
-  private ITemplateResolver templateResolver(final ServletContext servletContext) {
-    final ServletContextTemplateResolver resolver = new ServletContextTemplateResolver(servletContext);
+    private TemplateEngine templateEngine(final ServletContext servletContext)
+    {
+        final TemplateEngine engine = new TemplateEngine();
+        engine.setTemplateResolver(templateResolver(servletContext));
+        return engine;
+    }
 
-    // HTML is the default mode
-    resolver.setTemplateMode(TemplateMode.HTML);
+    private ITemplateResolver templateResolver(final ServletContext servletContext)
+    {
+        final ServletContextTemplateResolver resolver = new ServletContextTemplateResolver(servletContext);
 
-    // interpret "home" to "/WEB-INF/templates/home.html"
-    resolver.setPrefix("/WEB-INF/templates/");
-    resolver.setSuffix(".html");
+        // HTML is the default mode
+        resolver.setTemplateMode(TemplateMode.HTML);
 
-    // Set template cache TTL to 1 hour.
-    resolver.setCacheTTLMs(3600000L);
+        // interpret "home" to "/WEB-INF/templates/home.html"
+        resolver.setPrefix("/WEB-INF/templates/");
+        resolver.setSuffix(".html");
 
-    // Cache is set to true by default. Set to false if you want templates to
-    // be automatically updated when modified.
-    resolver.setCacheable(shouldCacheTemplates());
-    return resolver;
-  }
+        // Set template cache TTL to 1 hour.
+        resolver.setCacheTTLMs(3600000L);
 
-  private boolean shouldCacheTemplates() {
-    final String cache = System.getenv("cache-templates");
-    return Boolean.parseBoolean(cache);
-  }
+        // Cache is set to true by default. Set to false if you want templates to
+        // be automatically updated when modified.
+        resolver.setCacheable(shouldCacheTemplates());
+        return resolver;
+    }
 
-  @Override public void contextDestroyed(final ServletContextEvent event) {
-    ThymeleafTemplateEngine.set(event.getServletContext(), null);
-  }
+    private boolean shouldCacheTemplates()
+    {
+        final String cache = System.getenv("cache-templates");
+        return Boolean.parseBoolean(cache);
+    }
+
+    @Override
+    public void contextDestroyed(final ServletContextEvent event)
+    {
+        ThymeleafTemplateEngine.set(event.getServletContext(), null);
+    }
 }

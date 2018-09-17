@@ -28,17 +28,19 @@ import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 
 public final class IndexedDouble extends ScalarField.Indexed<Double> implements DoubleField {
-  private static final long serialVersionUID = 744044388803968626L;
 
-  public IndexedDouble(final String canonicalName,
-                       final String description,
-                       final String property,
-                       final String field,
-                       final boolean required,
-                       final JsonStringNode jsonName,
-                       final String jsonPath,
-                       final ImmutableList<Constraint> constraints) {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.INSTANCE,
-          new PropertyProjection(property, Double.class), constraints);
-  }
+    private static final long serialVersionUID = 744044388803968626L;
+
+    public IndexedDouble(final String canonicalName,
+                         final String description,
+                         final String property,
+                         final String field,
+                         final boolean required,
+                         final JsonStringNode jsonName,
+                         final String jsonPath,
+                         final ImmutableList<Constraint> constraints)
+    {
+        super(canonicalName, description, property, field, required, jsonName, jsonPath, DoubleJsonSerializer.INSTANCE,
+              new PropertyProjection(property, Double.class), constraints);
+    }
 }

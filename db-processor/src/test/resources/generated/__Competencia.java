@@ -15,64 +15,76 @@ import java.util.logging.Logger;
 import javax.annotation.Generated;
 
 @Generated(
-    value = "ae-db",
-    date = "2017-02-23"
+        value = "ae-db",
+        date = "2017-02-23"
 )
 abstract class __Competencia extends RootWithName {
-  protected static final Logger LOG = Logger.getLogger("processor.test.Competencia");
 
-  final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), fieldName("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints);
+    protected static final Logger LOG = Logger.getLogger("processor.test.Competencia");
 
-  private final ImmutableList<Attr> _attrs = ImmutableList.of(nombre);
+    final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), fieldName(
+                                 "nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints);
 
-  private final ImmutableList<Field<?>> _fields = ImmutableList.of();
+    private final ImmutableList<Attr> _attrs = ImmutableList.of(nombre);
 
-  __Competencia() {
-    super("Competencia");
-  }
+    private final ImmutableList<Field<?>> _fields = ImmutableList.of();
 
-  @Override
-  protected final Logger log() {
-    return LOG;
-  }
-
-  @Override
-  public final Name modelIdentifier() {
-    return nombre;
-  }
-
-  @Override
-  public final ImmutableList<Field<?>> modelFields() {
-    return _fields;
-  }
-
-  @Override
-  public final ImmutableList<Attr> modelAttributes() {
-    return _attrs;
-  }
-
-  @Override
-  public JsonNode toJson(final Entity data) {
-    if (null == data) {
-      return JsonNodeFactories.nullNode();
+    __Competencia()
+    {
+        super("Competencia");
     }
-    return JsonNodeFactories.object(ImmutableList.of(nombre.makeJsonFieldFrom(data)));
-  }
 
-  @Override
-  public final void updatePropertiesWithJsonContents(final Entity data, final JsonNode json) {
-  }
+    @Override
+    protected final Logger log()
+    {
+        return LOG;
+    }
 
-  @Override
-  protected final void doValidate(final Entity data, final Validation validation) {
-    nombre.validate(data, validation);
-  }
+    @Override
+    public final Name modelIdentifier()
+    {
+        return nombre;
+    }
 
-  final String nombre(final Entity data) {
-    return nombre.read(data);
-  }
+    @Override
+    public final ImmutableList<Field<?>> modelFields()
+    {
+        return _fields;
+    }
 
-  final String nombre(final Key key) {
-    return nombre.read(key);
-  }
+    @Override
+    public final ImmutableList<Attr> modelAttributes()
+    {
+        return _attrs;
+    }
+
+    @Override
+    public JsonNode toJson(final Entity data)
+    {
+        if (null == data) {
+            return JsonNodeFactories.nullNode();
+        }
+        return JsonNodeFactories.object(ImmutableList.of(nombre.makeJsonFieldFrom(data)));
+    }
+
+    @Override
+    public final void updatePropertiesWithJsonContents(final Entity data, final JsonNode json)
+    {
+    }
+
+    @Override
+    protected final void doValidate(final Entity data, final Validation validation)
+    {
+        nombre.validate(data, validation);
+    }
+
+    final String nombre(final Entity data)
+    {
+        return nombre.read(data);
+    }
+
+    final String nombre(final Key key)
+    {
+        return nombre.read(key);
+    }
 }

@@ -24,24 +24,39 @@
 package ae;
 
 public abstract class Record {
-  public @interface id { }
 
-  public @interface parent { }
+    public @interface id {
+    }
 
-  public @interface indexed { }
+    public @interface parent {
+    }
 
-  public @interface property { String value(); }
+    public @interface indexed {
+    }
 
-  public @interface description { String value(); }
+    public @interface property {
 
-  public @interface required { }
+        String value();
+    }
 
-  public @interface notBlank { }
+    public @interface description {
 
-  public @interface email { }
+        String value();
+    }
 
-  public @interface json {
-    boolean ignore() default false;
-    String format() default "";
-  }
+    public @interface required {
+    }
+
+    public @interface notBlank {
+    }
+
+    public @interface email {
+    }
+
+    public @interface json {
+
+        boolean ignore() default false;
+
+        String format() default "";
+    }
 }

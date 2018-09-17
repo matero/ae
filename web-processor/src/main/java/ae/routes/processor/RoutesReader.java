@@ -72,456 +72,503 @@ import java.util.regex.Pattern;
  * </code>
  */
 class RoutesReader {
-  private static final int SKIP_HEADER = 1;
-  private static final char QUOTE_CHAR = '\"';
-  private static final char SEPARATOR_CHAR = '|';
 
-  private static final int ACTION = 3;
-  private static final int CONTROLLER = 2;
-  private static final int PATH = 1;
-  private static final int HTTP_VERB = 0;
+    private static final int SKIP_HEADER = 1;
+    private static final char QUOTE_CHAR = '\"';
+    private static final char SEPARATOR_CHAR = '|';
 
-  private final Elements elements;
-  private final Types types;
-  private final Messager messager;
+    private static final int ACTION = 3;
+    private static final int CONTROLLER = 2;
+    private static final int PATH = 1;
+    private static final int HTTP_VERB = 0;
 
-  private final TypeMirror controllerWithThymeleafSupportClass;
+    private final Elements elements;
+    private final Types types;
+    private final Messager messager;
 
-  private String lastControllerQualifiedName;
+    private final TypeMirror controllerWithThymeleafSupportClass;
 
-  RoutesReader(final Elements elements, final Types types, final Messager messager) {
-    this.elements = elements;
-    this.types = types;
-    this.messager = messager;
+    private String lastControllerQualifiedName;
 
-    this.controllerWithThymeleafSupportClass = elements.getTypeElement(ControllerWithThymeleafSupport.class.getCanonicalName()).asType();
-    this.lastControllerQualifiedName = "";
-  }
+    RoutesReader(final Elements elements, final Types types, final Messager messager)
+    {
+        this.elements = elements;
+        this.types = types;
+        this.messager = messager;
 
-  /**
-   * @param routesDeclarationsBuilder
-   * @return null if no processing done (reports errors on such case), the route add
-   */
-  boolean readRoutes(final String[] paths, final RoutesDeclarations.Builder routesDeclarationsBuilder) {
-    ImmutableList<String[]> csvLines = ImmutableList.of();
-    boolean success = true;
-    for (final String path : paths) {
-      final File file = new File(path);
-      try {
-        csvLines = readCsvLinesFrom(file);
-        printNote("using routes from'" + file.getAbsolutePath() + "'.");
-        routesDeclarationsBuilder.addPath(path);
-      } catch (final IOException e) {
-        printWarning("routes file '" + file.getAbsolutePath() + "' can't be processed, cause: " + e.getMessage());
-        success = false;
-      }
+        this.controllerWithThymeleafSupportClass = elements.getTypeElement(ControllerWithThymeleafSupport.class.
+                getCanonicalName()).asType();
+        this.lastControllerQualifiedName = "";
     }
-    if (success) {
-      for (final String[] line : csvLines) {
-        final Iterable<RouteDescriptor> routes = makeRoutesFrom(line);
-        if (routes != null) {
-          routesDeclarationsBuilder.addRoutes(routes);
+
+    /**
+     * @param routesDeclarationsBuilder
+     * @return null if no processing done (reports errors on such case), the route add
+     */
+    boolean readRoutes(final String[] paths, final RoutesDeclarations.Builder routesDeclarationsBuilder)
+    {
+        ImmutableList<String[]> csvLines = ImmutableList.of();
+        boolean success = true;
+        for (final String path : paths) {
+            final File file = new File(path);
+            try {
+                csvLines = readCsvLinesFrom(file);
+                printNote("using routes from'" + file.getAbsolutePath() + "'.");
+                routesDeclarationsBuilder.addPath(path);
+            } catch (final IOException e) {
+                printWarning("routes file '" + file.getAbsolutePath() + "' can't be processed, cause: " + e.getMessage());
+                success = false;
+            }
+        }
+        if (success) {
+            for (final String[] line : csvLines) {
+                final Iterable<RouteDescriptor> routes = makeRoutesFrom(line);
+                if (routes != null) {
+                    routesDeclarationsBuilder.addRoutes(routes);
+                } else {
+                    success = false;
+                }
+            }
         } else {
-          success = false;
+            printError("no routes file could be processed.");
         }
-      }
-    } else {
-      printError("no routes file could be processed.");
+        return success;
     }
-    return success;
-  }
 
-  ImmutableList<String[]> readCsvLinesFrom(final File path) throws IOException {
-    final ImmutableList.Builder<String[]> lines = ImmutableList.builder();
-    String[] line;
-    try (final FileReader reader = new FileReader(path);
-         final CSVReader csv = new CSVReader(reader, SEPARATOR_CHAR, QUOTE_CHAR, SKIP_HEADER)) {
-      while ((line = csv.readNext()) != null) {
-        if (line[0].startsWith("-")) {
-          continue;
+    ImmutableList<String[]> readCsvLinesFrom(final File path) throws IOException
+    {
+        final ImmutableList.Builder<String[]> lines = ImmutableList.builder();
+        String[] line;
+        try (final FileReader reader = new FileReader(path);
+             final CSVReader csv = new CSVReader(reader, SEPARATOR_CHAR, QUOTE_CHAR, SKIP_HEADER)) {
+            while ((line = csv.readNext()) != null) {
+                if (line[0].startsWith("-")) {
+                    continue;
+                }
+                for (int i = 0; i < line.length; ++i) {
+                    if (line[i] == null) {
+                        line[i] = "";
+                    } else {
+                        line[i] = line[i].trim();
+                    }
+                }
+                lines.add(line);
+            }
         }
-        for (int i = 0; i < line.length; ++i) {
-          if (line[i] == null) {
-            line[i] = "";
-          } else {
-            line[i] = line[i].trim();
-          }
+        return lines.build();
+    }
+
+    ImmutableList<RouteDescriptor> makeRoutesFrom(final String[] declaration)
+    {
+        final HttpVerb verb = getVerb(declaration[HTTP_VERB]);
+        if (verb == null) {
+            printError("HTTP Verb not defined.");
+            return null;
         }
-        lines.add(line);
-      }
-    }
-    return lines.build();
-  }
-
-  ImmutableList<RouteDescriptor> makeRoutesFrom(final String[] declaration) {
-    final HttpVerb verb = getVerb(declaration[HTTP_VERB]);
-    if (verb == null) {
-      printError("HTTP Verb not defined.");
-      return null;
-    }
-    String controllerQualifiedName;
-    if (declaration[CONTROLLER].isEmpty()) {
-      if (lastControllerQualifiedName.isEmpty()) {
-        printError("Controller not defined.");
-        return null;
-      } else {
-        controllerQualifiedName = lastControllerQualifiedName;
-      }
-    } else {
-      lastControllerQualifiedName = controllerQualifiedName = declaration[CONTROLLER];
-    }
-    final TypeElement controller = readControllerAt(controllerQualifiedName);
-    if (controller == null) {
-      printError("Controller '" + controller + "' does not exist.");
-      return null;
-    }
-
-    final String path = declaration[PATH];
-    if (path == null) {
-      return null;
-    }
-    if (verb == HttpVerb.RESOURCE) {
-      return restResource(path, controller);
-    } else {
-      return ImmutableList.of(makeRouteFrom(verb, path, controller, declaration[ACTION]));
-    }
-  }
-
-  private ImmutableList<RouteDescriptor> restResource(final String path, final TypeElement controller) {
-    final ImmutableList.Builder<RouteDescriptor> routes = ImmutableList.builder();
-    buildRouteInto(routes, HttpVerb.GET, path, controller, "index");
-    buildRouteInto(routes, HttpVerb.GET, path + "/create", controller, "create");
-    buildRouteInto(routes, HttpVerb.POST, path, controller, "save");
-    buildRouteInto(routes, HttpVerb.GET, path + "/${id}", controller, "show");
-    buildRouteInto(routes, HttpVerb.GET, path + "/${id}/edit", controller, "edit");
-    buildRouteInto(routes, HttpVerb.PUT, path + "/${id}", controller, "update");
-    buildRouteInto(routes, HttpVerb.DELETE, path + "/${id}", controller, "delete");
-
-    return routes.build();
-  }
-
-  private void buildRouteInto(final ImmutableList.Builder<RouteDescriptor> routes,
-                              final HttpVerb verb,
-                              final String uri,
-                              final TypeElement controller,
-                              final String action) {
-    final RouteDescriptor route = tryMakeRouteFrom(verb, uri, controller, action);
-    if (route != null) {
-      routes.add(route);
-    }
-  }
-
-  private RouteDescriptor tryMakeRouteFrom(final HttpVerb verb, final String uri, final TypeElement controller, final String action) {
-    if (action == null) {
-      printError("Action not defined.");
-      return null;
-    }
-    final ExecutableElement actionMethod = findMethod(controller, action);
-    if (actionMethod == null) {
-      printWarning("Action '" + controller.getQualifiedName() + '#' + action + "' not found, not defining a route for it.");
-      return null;
-    }
-    return makeRouteFrom(verb, uri, controller, action);
-  }
-
-  private RouteDescriptor makeRouteFrom(final HttpVerb verb, final String uri, final TypeElement controller, final String action) {
-    if (action == null) {
-      printError("Action not defined.");
-      return null;
-    }
-
-    final ExecutableElement actionMethod = findMethod(controller, action);
-    if (actionMethod == null) {
-      printError("Controller '" + controller.getQualifiedName().toString() + "' doesn't have a method named '" + action + "'.");
-      return null;
-    }
-    final PathSpec path = PathSpec.from(uri);
-    final String ctorArguments = ctorArgumentsFor(actionMethod);
-    if (ctorArguments == null) {
-      return null;
-    }
-    final boolean credentials = useCredentials(actionMethod);
-
-    final ImmutableList<Parameter> parameters = parametersAt(actionMethod);
-
-    if (path.isStatic()) {
-      if (parameters.size() > 0) {
-        printError("Route doesn't have parameters, but action method requires " + parameters.size() + " parameters.");
-        return null;
-      }
-      return new RouteDescriptor(verb, path.pattern, credentials, controller, action, ctorArguments, path.headers);
-    } else {
-      if (path.parameterNames.size() != parameters.size()) {
-        printError("Route parameters count (" + path.parameterNames.size() + ") differs from action parameters count (" + parameters.size() + '.');
-        return null;
-      }
-      return new RouteDescriptor(verb, path.pattern, path.regex, credentials, controller, action, parameters, ctorArguments, path.headers);
-    }
-  }
-
-  ImmutableList<Parameter> parametersAt(final ExecutableElement actionMethod) {
-    final ImmutableList.Builder<Parameter> parameters = ImmutableList.builder();
-    for (final VariableElement parameter : actionMethod.getParameters()) {
-      final TypeMirror type = parameter.asType();
-      final String name = parameter.getSimpleName().toString();
-      parameters.add(new Parameter(name, type, interpreterOf(type)));
-    }
-    return parameters.build();
-  }
-
-  String interpreterOf(final TypeMirror type) {
-    switch (type.getKind()) {
-      case BOOLEAN:
-        return "asPrimitiveBoolean";
-      case BYTE:
-        return "asPrimitiveByte";
-      case SHORT:
-        return "asPrimitiveShort";
-      case INT:
-        return "asPrimitiveInt";
-      case LONG:
-        return "asPrimitiveLong";
-      case CHAR:
-        return "asPrimitiveChar";
-      case FLOAT:
-        return "asPrimitiveFloat";
-      case DOUBLE:
-        return "asPrimitiveDouble";
-      case DECLARED: {
-        final String name = types.asElement(type).getSimpleName().toString();
-        return "as" + name;
-      }
-      default:
-        throw new IllegalArgumentException("type not supported as parameter");
-    }
-  }
-
-  private ExecutableElement findMethod(final TypeElement controller, final String action) {
-    for (final Element e : controller.getEnclosedElements()) {
-      if (e instanceof ExecutableElement) {
-        final ExecutableElement method = (ExecutableElement) e;
-        if (method.getSimpleName().toString().equals(action)) {
-          return method;
+        String controllerQualifiedName;
+        if (declaration[CONTROLLER].isEmpty()) {
+            if (lastControllerQualifiedName.isEmpty()) {
+                printError("Controller not defined.");
+                return null;
+            } else {
+                controllerQualifiedName = lastControllerQualifiedName;
+            }
+        } else {
+            lastControllerQualifiedName = controllerQualifiedName = declaration[CONTROLLER];
         }
-      }
+        final TypeElement controller = readControllerAt(controllerQualifiedName);
+        if (controller == null) {
+            printError("Controller '" + controller + "' does not exist.");
+            return null;
+        }
+
+        final String path = declaration[PATH];
+        if (path == null) {
+            return null;
+        }
+        if (verb == HttpVerb.RESOURCE) {
+            return restResource(path, controller);
+        } else {
+            return ImmutableList.of(makeRouteFrom(verb, path, controller, declaration[ACTION]));
+        }
     }
-    return null;
-  }
 
-  boolean useCredentials(final ExecutableElement actionMethod) {
-    final OAuth2Flow.OAuth2 oauth2 = actionMethod.getAnnotation(OAuth2Flow.OAuth2.class);
-    return oauth2 != null;
-  }
+    private ImmutableList<RouteDescriptor> restResource(final String path, final TypeElement controller)
+    {
+        final ImmutableList.Builder<RouteDescriptor> routes = ImmutableList.builder();
+        buildRouteInto(routes, HttpVerb.GET, path, controller, "index");
+        buildRouteInto(routes, HttpVerb.GET, path + "/create", controller, "create");
+        buildRouteInto(routes, HttpVerb.POST, path, controller, "save");
+        buildRouteInto(routes, HttpVerb.GET, path + "/${id}", controller, "show");
+        buildRouteInto(routes, HttpVerb.GET, path + "/${id}/edit", controller, "edit");
+        buildRouteInto(routes, HttpVerb.PUT, path + "/${id}", controller, "update");
+        buildRouteInto(routes, HttpVerb.DELETE, path + "/${id}", controller, "delete");
 
-  private HttpVerb getVerb(final String value) {
-    switch (value) {
-      case "GET":
-        return HttpVerb.GET;
-      case "POST":
-        return HttpVerb.POST;
-      case "PUT":
-        return HttpVerb.PUT;
-      case "DELETE":
-        return HttpVerb.DELETE;
-      case "RESOURCE":
-        return HttpVerb.RESOURCE;
-      default:
-        printError("HTTP Verb '" + value + "' isn't supported, supported verbs are: GET, POST, PUT, DELETE, RESOURCE.");
+        return routes.build();
+    }
+
+    private void buildRouteInto(final ImmutableList.Builder<RouteDescriptor> routes,
+                                final HttpVerb verb,
+                                final String uri,
+                                final TypeElement controller,
+                                final String action)
+    {
+        final RouteDescriptor route = tryMakeRouteFrom(verb, uri, controller, action);
+        if (route != null) {
+            routes.add(route);
+        }
+    }
+
+    private RouteDescriptor tryMakeRouteFrom(final HttpVerb verb, final String uri, final TypeElement controller,
+                                             final String action)
+    {
+        if (action == null) {
+            printError("Action not defined.");
+            return null;
+        }
+        final ExecutableElement actionMethod = findMethod(controller, action);
+        if (actionMethod == null) {
+            printWarning(
+                    "Action '" + controller.getQualifiedName() + '#' + action + "' not found, not defining a route for it.");
+            return null;
+        }
+        return makeRouteFrom(verb, uri, controller, action);
+    }
+
+    private RouteDescriptor makeRouteFrom(final HttpVerb verb, final String uri, final TypeElement controller,
+                                          final String action)
+    {
+        if (action == null) {
+            printError("Action not defined.");
+            return null;
+        }
+
+        final ExecutableElement actionMethod = findMethod(controller, action);
+        if (actionMethod == null) {
+            printError(
+                    "Controller '" + controller.getQualifiedName().toString() + "' doesn't have a method named '" + action + "'.");
+            return null;
+        }
+        final PathSpec path = PathSpec.from(uri);
+        final String ctorArguments = ctorArgumentsFor(actionMethod);
+        if (ctorArguments == null) {
+            return null;
+        }
+        final boolean credentials = useCredentials(actionMethod);
+
+        final ImmutableList<Parameter> parameters = parametersAt(actionMethod);
+
+        if (path.isStatic()) {
+            if (parameters.size() > 0) {
+                printError(
+                        "Route doesn't have parameters, but action method requires " + parameters.size() + " parameters.");
+                return null;
+            }
+            return new RouteDescriptor(verb, path.pattern, credentials, controller, action, ctorArguments, path.headers);
+        } else {
+            if (path.parameterNames.size() != parameters.size()) {
+                printError(
+                        "Route parameters count (" + path.parameterNames.size() + ") differs from action parameters count (" + parameters.
+                        size() + '.');
+                return null;
+            }
+            return new RouteDescriptor(verb, path.pattern, path.regex, credentials, controller, action, parameters,
+                                       ctorArguments, path.headers);
+        }
+    }
+
+    ImmutableList<Parameter> parametersAt(final ExecutableElement actionMethod)
+    {
+        final ImmutableList.Builder<Parameter> parameters = ImmutableList.builder();
+        for (final VariableElement parameter : actionMethod.getParameters()) {
+            final TypeMirror type = parameter.asType();
+            final String name = parameter.getSimpleName().toString();
+            parameters.add(new Parameter(name, type, interpreterOf(type)));
+        }
+        return parameters.build();
+    }
+
+    String interpreterOf(final TypeMirror type)
+    {
+        switch (type.getKind()) {
+            case BOOLEAN:
+                return "asPrimitiveBoolean";
+            case BYTE:
+                return "asPrimitiveByte";
+            case SHORT:
+                return "asPrimitiveShort";
+            case INT:
+                return "asPrimitiveInt";
+            case LONG:
+                return "asPrimitiveLong";
+            case CHAR:
+                return "asPrimitiveChar";
+            case FLOAT:
+                return "asPrimitiveFloat";
+            case DOUBLE:
+                return "asPrimitiveDouble";
+            case DECLARED: {
+                final String name = types.asElement(type).getSimpleName().toString();
+                return "as" + name;
+            }
+            default:
+                throw new IllegalArgumentException("type not supported as parameter");
+        }
+    }
+
+    private ExecutableElement findMethod(final TypeElement controller, final String action)
+    {
+        for (final Element e : controller.getEnclosedElements()) {
+            if (e instanceof ExecutableElement) {
+                final ExecutableElement method = (ExecutableElement) e;
+                if (method.getSimpleName().toString().equals(action)) {
+                    return method;
+                }
+            }
+        }
         return null;
     }
-  }
 
-  TypeElement readControllerAt(final String controllerQualifiedName) {
-    final TypeElement controller = elements.getTypeElement(controllerQualifiedName);
-    if (controller == null) {
-      printError("Handler '" + controllerQualifiedName + "' does not exist.");
-      return null;
+    boolean useCredentials(final ExecutableElement actionMethod)
+    {
+        final OAuth2Flow.OAuth2 oauth2 = actionMethod.getAnnotation(OAuth2Flow.OAuth2.class);
+        return oauth2 != null;
     }
-    return controller;
-  }
 
-  String ctorArgumentsFor(final ExecutableElement actionMethod) {
-    final ControllerWithThymeleafSupport.Template template = actionMethod.getAnnotation(ControllerWithThymeleafSupport.Template.class);
-    if (template != null) {
-      if (!supportsThymeleaf((TypeElement) actionMethod.getEnclosingElement())) {
-        printError("Controller must extend " + ControllerWithThymeleafSupport.class.getCanonicalName() + " class to be able to use @Template.");
-        return null;
-      }
-      return "request, response, webContext(request, response), templateEngine()";
-    } else {
-      return "request, response";
+    private HttpVerb getVerb(final String value)
+    {
+        switch (value) {
+            case "GET":
+                return HttpVerb.GET;
+            case "POST":
+                return HttpVerb.POST;
+            case "PUT":
+                return HttpVerb.PUT;
+            case "DELETE":
+                return HttpVerb.DELETE;
+            case "RESOURCE":
+                return HttpVerb.RESOURCE;
+            default:
+                printError(
+                        "HTTP Verb '" + value + "' isn't supported, supported verbs are: GET, POST, PUT, DELETE, RESOURCE.");
+                return null;
+        }
     }
-  }
 
-  private boolean supportsThymeleaf(final TypeElement controller) {
-    return types.isSubtype(controller.asType(), controllerWithThymeleafSupportClass);
-  }
+    TypeElement readControllerAt(final String controllerQualifiedName)
+    {
+        final TypeElement controller = elements.getTypeElement(controllerQualifiedName);
+        if (controller == null) {
+            printError("Handler '" + controllerQualifiedName + "' does not exist.");
+            return null;
+        }
+        return controller;
+    }
 
-  void printError(final String message) {
-    messager.printMessage(Diagnostic.Kind.ERROR, message);
-  }
+    String ctorArgumentsFor(final ExecutableElement actionMethod)
+    {
+        final ControllerWithThymeleafSupport.Template template = actionMethod.getAnnotation(
+                ControllerWithThymeleafSupport.Template.class);
+        if (template != null) {
+            if (!supportsThymeleaf((TypeElement) actionMethod.getEnclosingElement())) {
+                printError(
+                        "Controller must extend " + ControllerWithThymeleafSupport.class.getCanonicalName() + " class to be able to use @Template.");
+                return null;
+            }
+            return "request, response, webContext(request, response), templateEngine()";
+        } else {
+            return "request, response";
+        }
+    }
 
-  void printWarning(final String message) {
-    messager.printMessage(Diagnostic.Kind.WARNING, message);
-  }
+    private boolean supportsThymeleaf(final TypeElement controller)
+    {
+        return types.isSubtype(controller.asType(), controllerWithThymeleafSupportClass);
+    }
 
-  void printNote(final String message) {
-    messager.printMessage(Diagnostic.Kind.NOTE, message);
-  }
+    void printError(final String message)
+    {
+        messager.printMessage(Diagnostic.Kind.ERROR, message);
+    }
+
+    void printWarning(final String message)
+    {
+        messager.printMessage(Diagnostic.Kind.WARNING, message);
+    }
+
+    void printNote(final String message)
+    {
+        messager.printMessage(Diagnostic.Kind.NOTE, message);
+    }
 }
 
 final class PathSpec {
-  private static final String SEPARATOR = " ";
-  private static final String HEADER_SEPARATOR = ":";
-  private static final int PATTERN = 0;
-  private static final int NAME = 0;
-  private static final int VALUE = 1;
-  // Matches: {id} AND {id: .*?}
-  // group(1) extracts the name of the group (in that case "id").
-  // group(3) extracts the regex if defined
-  private static final Pattern PATTERN_FOR_VARIABLE_PARTS_OF_ROUTE = Pattern.compile("\\{(.*?)(:\\s(.*?))?\\}");
 
-  // This regex matches everything in between path slashes.
-  private static final String VARIABLE_ROUTES_DEFAULT_REGEX = "(?<%s>[^/]+)";
+    private static final String SEPARATOR = " ";
+    private static final String HEADER_SEPARATOR = ":";
+    private static final int PATTERN = 0;
+    private static final int NAME = 0;
+    private static final int VALUE = 1;
+    // Matches: {id} AND {id: .*?}
+    // group(1) extracts the name of the group (in that case "id").
+    // group(3) extracts the regex if defined
+    private static final Pattern PATTERN_FOR_VARIABLE_PARTS_OF_ROUTE = Pattern.compile("\\{(.*?)(:\\s(.*?))?\\}");
 
-  final String pattern;
-  final String regex;
-  final ImmutableList<String> parameterNames;
-  final ImmutableMap<String, String> headers;
+    // This regex matches everything in between path slashes.
+    private static final String VARIABLE_ROUTES_DEFAULT_REGEX = "(?<%s>[^/]+)";
 
-  PathSpec(final String path, final String regex, final ImmutableList<String> parameterNames, final ImmutableMap<String, String> headers) {
-    this.pattern = path;
-    this.regex = regex;
-    this.parameterNames = parameterNames;
-    this.headers = headers;
-  }
+    final String pattern;
+    final String regex;
+    final ImmutableList<String> parameterNames;
+    final ImmutableMap<String, String> headers;
 
-  @Override public int hashCode() {
-    int hash = 3;
-    hash = 53 * hash + this.pattern.hashCode();
-    hash = 53 * hash + this.headers.hashCode();
-    return hash;
-  }
-
-  @Override public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj instanceof PathSpec) {
-      final PathSpec other = (PathSpec) obj;
-      return this.pattern.equals(other.pattern) && this.headers.equals(other.headers);
-    }
-    return false;
-  }
-
-  boolean isStatic() {
-    return regex == null;
-  }
-
-  static PathSpec from(final String value) {
-    final String[] parts = value.split(PathSpec.SEPARATOR);
-
-    final String pattern = parts[PATTERN];
-    final String regex = findRegex(pattern);
-    final ImmutableList<String> parameterNames = findParameterNames(pattern);
-    if (parts.length == 1) {
-      return new PathSpec(pattern, regex, parameterNames, ImmutableMap.of());
-    }
-    final ImmutableMap.Builder<String, String> headers = ImmutableMap.builder();
-    for (int i = 1; i < parts.length; i++) {
-      if (parts[i] != null && !parts[i].trim().isEmpty()) {
-        final String[] header = parts[i].split(PathSpec.HEADER_SEPARATOR);
-        headers.put(header[NAME], header[VALUE]);
-      }
-    }
-    return new PathSpec(pattern, regex, parameterNames, headers.build());
-  }
-
-  /**
-   * Transforms an url pattern like "/{name}/id/*" into a regex like "/([^/]*)/id/*."
-   * <p/>
-   * Also handles regular expressions if defined inside routes: For instance "/users/{username: [a-zA-Z][a-zA-Z_0-9]}" becomes "/users/
-   * ([a-zA-Z][a-zA-Z_0-9])"
-   *
-   * @return The converted regex with default matching regex - or the regex specified by the user.
-   */
-  static String findRegex(final String urlPattern) {
-    final StringBuffer buffer = new StringBuffer();
-    final Matcher matcher = PATTERN_FOR_VARIABLE_PARTS_OF_ROUTE.matcher(urlPattern);
-    int pathParameterIndex = 0;
-    while (matcher.find()) {
-      // By convention group 3 is the regex if provided by the user.
-      // If it is not provided by the user the group 3 is null.
-      final String namedVariablePartOfRoute = matcher.group(3);
-      final String namedVariablePartOfORouteReplacedWithRegex;
-
-      if (namedVariablePartOfRoute != null) {
-        // we convert that into a regex matcher group itself
-        String variableRegex = replacePosixClasses(namedVariablePartOfRoute);
-        namedVariablePartOfORouteReplacedWithRegex = String.format("(?<%s>%s)",
-                                                                   getPathParameterRegexGroupName(pathParameterIndex),
-                                                                   Matcher.quoteReplacement(variableRegex));
-      } else {
-        // we convert that into the default namedVariablePartOfRoute regex group
-        namedVariablePartOfORouteReplacedWithRegex = String.format(VARIABLE_ROUTES_DEFAULT_REGEX,
-                                                                   getPathParameterRegexGroupName(pathParameterIndex));
-      }
-      // we replace the current namedVariablePartOfRoute group
-      matcher.appendReplacement(buffer, namedVariablePartOfORouteReplacedWithRegex);
-      pathParameterIndex++;
+    PathSpec(final String path, final String regex, final ImmutableList<String> parameterNames,
+             final ImmutableMap<String, String> headers)
+    {
+        this.pattern = path;
+        this.regex = regex;
+        this.parameterNames = parameterNames;
+        this.headers = headers;
     }
 
-    if (pathParameterIndex == 0) {
-      // when no "dynamic" part found, no regex is found ;)
-      return null;
-    } else {
-      // .. and we append the tail to complete the stringBuffer
-      matcher.appendTail(buffer);
-
-      return buffer.toString();
-    }
-  }
-
-  /**
-   * Replace any specified POSIX character classes with the Java equivalent.
-   *
-   * @param input
-   * @return a Java regex
-   */
-  final static String replacePosixClasses(final String input) {
-    return input
-            .replace(":alnum:", "\\p{Alnum}")
-            .replace(":alpha:", "\\p{L}")
-            .replace(":ascii:", "\\p{ASCII}")
-            .replace(":digit:", "\\p{Digit}")
-            .replace(":xdigit:", "\\p{XDigit}");
-  }
-
-  final static String getPathParameterRegexGroupName(final int pathParameterIndex) {
-    return "p" + pathParameterIndex;
-  }
-
-  /**
-   * Extracts the name of the parameters from a route
-   * <p/>
-   * /{my_id}/{my_name}
-   * <p/>
-   * would return a List with "my_id" and "my_name"
-   *
-   * @param uriPattern
-   * @return a list with the names of all parameters in the url pattern
-   */
-  final static ImmutableList<String> findParameterNames(final String uriPattern) {
-    final ImmutableList.Builder<String> parameters = ImmutableList.builder();
-
-    final Matcher matcher = PATTERN_FOR_VARIABLE_PARTS_OF_ROUTE.matcher(uriPattern);
-    while (matcher.find()) {
-      // group(1) is the name of the group. Must be always there...
-      // "/assets/{file}" and "/assets/{file:[a-zA-Z][a-zA-Z_0-9]}"
-      // will return file.
-      parameters.add(matcher.group(1));
+    @Override
+    public int hashCode()
+    {
+        int hash = 3;
+        hash = 53 * hash + this.pattern.hashCode();
+        hash = 53 * hash + this.headers.hashCode();
+        return hash;
     }
 
-    return parameters.build();
-  }
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof PathSpec) {
+            final PathSpec other = (PathSpec) obj;
+            return this.pattern.equals(other.pattern) && this.headers.equals(other.headers);
+        }
+        return false;
+    }
+
+    boolean isStatic()
+    {
+        return regex == null;
+    }
+
+    static PathSpec from(final String value)
+    {
+        final String[] parts = value.split(PathSpec.SEPARATOR);
+
+        final String pattern = parts[PATTERN];
+        final String regex = findRegex(pattern);
+        final ImmutableList<String> parameterNames = findParameterNames(pattern);
+        if (parts.length == 1) {
+            return new PathSpec(pattern, regex, parameterNames, ImmutableMap.of());
+        }
+        final ImmutableMap.Builder<String, String> headers = ImmutableMap.builder();
+        for (int i = 1; i < parts.length; i++) {
+            if (parts[i] != null && !parts[i].trim().isEmpty()) {
+                final String[] header = parts[i].split(PathSpec.HEADER_SEPARATOR);
+                headers.put(header[NAME], header[VALUE]);
+            }
+        }
+        return new PathSpec(pattern, regex, parameterNames, headers.build());
+    }
+
+    /**
+     * Transforms an url pattern like "/{name}/id/*" into a regex like "/([^/]*)/id/*."
+     * <p/>
+     * Also handles regular expressions if defined inside routes: For instance "/users/{username: [a-zA-Z][a-zA-Z_0-9]}"
+     * becomes "/users/ ([a-zA-Z][a-zA-Z_0-9])"
+     *
+     * @return The converted regex with default matching regex - or the regex specified by the user.
+     */
+    static String findRegex(final String urlPattern)
+    {
+        final StringBuffer buffer = new StringBuffer();
+        final Matcher matcher = PATTERN_FOR_VARIABLE_PARTS_OF_ROUTE.matcher(urlPattern);
+        int pathParameterIndex = 0;
+        while (matcher.find()) {
+            // By convention group 3 is the regex if provided by the user.
+            // If it is not provided by the user the group 3 is null.
+            final String namedVariablePartOfRoute = matcher.group(3);
+            final String namedVariablePartOfORouteReplacedWithRegex;
+
+            if (namedVariablePartOfRoute != null) {
+                // we convert that into a regex matcher group itself
+                String variableRegex = replacePosixClasses(namedVariablePartOfRoute);
+                namedVariablePartOfORouteReplacedWithRegex = String.format("(?<%s>%s)",
+                                                                           getPathParameterRegexGroupName(
+                                                                                   pathParameterIndex),
+                                                                           Matcher.quoteReplacement(variableRegex));
+            } else {
+                // we convert that into the default namedVariablePartOfRoute regex group
+                namedVariablePartOfORouteReplacedWithRegex = String.format(VARIABLE_ROUTES_DEFAULT_REGEX,
+                                                                           getPathParameterRegexGroupName(
+                                                                                   pathParameterIndex));
+            }
+            // we replace the current namedVariablePartOfRoute group
+            matcher.appendReplacement(buffer, namedVariablePartOfORouteReplacedWithRegex);
+            pathParameterIndex++;
+        }
+
+        if (pathParameterIndex == 0) {
+            // when no "dynamic" part found, no regex is found ;)
+            return null;
+        } else {
+            // .. and we append the tail to complete the stringBuffer
+            matcher.appendTail(buffer);
+
+            return buffer.toString();
+        }
+    }
+
+    /**
+     * Replace any specified POSIX character classes with the Java equivalent.
+     *
+     * @param input
+     * @return a Java regex
+     */
+    final static String replacePosixClasses(final String input)
+    {
+        return input
+                .replace(":alnum:", "\\p{Alnum}")
+                .replace(":alpha:", "\\p{L}")
+                .replace(":ascii:", "\\p{ASCII}")
+                .replace(":digit:", "\\p{Digit}")
+                .replace(":xdigit:", "\\p{XDigit}");
+    }
+
+    final static String getPathParameterRegexGroupName(final int pathParameterIndex)
+    {
+        return "p" + pathParameterIndex;
+    }
+
+    /**
+     * Extracts the name of the parameters from a route
+     * <p/>
+     * /{my_id}/{my_name}
+     * <p/>
+     * would return a List with "my_id" and "my_name"
+     *
+     * @param uriPattern
+     * @return a list with the names of all parameters in the url pattern
+     */
+    final static ImmutableList<String> findParameterNames(final String uriPattern)
+    {
+        final ImmutableList.Builder<String> parameters = ImmutableList.builder();
+
+        final Matcher matcher = PATTERN_FOR_VARIABLE_PARTS_OF_ROUTE.matcher(uriPattern);
+        while (matcher.find()) {
+            // group(1) is the name of the group. Must be always there...
+            // "/assets/{file}" and "/assets/{file:[a-zA-Z][a-zA-Z_0-9]}"
+            // will return file.
+            parameters.add(matcher.group(1));
+        }
+
+        return parameters.build();
+    }
 }

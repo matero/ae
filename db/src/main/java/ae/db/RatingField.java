@@ -27,51 +27,62 @@ import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Rating;
 
 public interface RatingField extends ScalarField<Rating> {
-  @Override default Class<Rating> type() {
-    return Rating.class;
-  }
 
-  default void set(final PropertyContainer data, final int rawValue) {
-    write(data, rawValue);
-  }
-
-  default void write(final PropertyContainer data, final int rawValue) {
-    write(data, new Rating(rawValue));
-  }
-
-  default void set(final PropertyContainer data, final Integer rawValue) {
-    write(data, rawValue);
-  }
-
-  default void write(final PropertyContainer data, final Integer rawValue) {
-    if (rawValue == null) {
-      write(data, (Rating) null);
-    } else {
-      write(data, new Rating(rawValue));
+    @Override
+    default Class<Rating> type()
+    {
+        return Rating.class;
     }
-  }
 
-  default void set(final PropertyContainer data, final CharSequence rawValue) {
-    write(data, rawValue);
-  }
-
-  default void write(final PropertyContainer data, final CharSequence rawValue) {
-    if (rawValue == null) {
-      write(data, (Rating) null);
-    } else {
-      write(data, new Rating(Integer.parseInt(rawValue.toString())));
+    default void set(final PropertyContainer data, final int rawValue)
+    {
+        write(data, rawValue);
     }
-  }
 
-  default void set(final PropertyContainer data, final String rawValue) {
-    write(data, rawValue);
-  }
-
-  default void write(final PropertyContainer data, final String rawValue) {
-    if (rawValue == null) {
-      write(data, (Rating) null);
-    } else {
-      write(data, new Rating(Integer.parseInt(rawValue)));
+    default void write(final PropertyContainer data, final int rawValue)
+    {
+        write(data, new Rating(rawValue));
     }
-  }
+
+    default void set(final PropertyContainer data, final Integer rawValue)
+    {
+        write(data, rawValue);
+    }
+
+    default void write(final PropertyContainer data, final Integer rawValue)
+    {
+        if (rawValue == null) {
+            write(data, (Rating) null);
+        } else {
+            write(data, new Rating(rawValue));
+        }
+    }
+
+    default void set(final PropertyContainer data, final CharSequence rawValue)
+    {
+        write(data, rawValue);
+    }
+
+    default void write(final PropertyContainer data, final CharSequence rawValue)
+    {
+        if (rawValue == null) {
+            write(data, (Rating) null);
+        } else {
+            write(data, new Rating(Integer.parseInt(rawValue.toString())));
+        }
+    }
+
+    default void set(final PropertyContainer data, final String rawValue)
+    {
+        write(data, rawValue);
+    }
+
+    default void write(final PropertyContainer data, final String rawValue)
+    {
+        if (rawValue == null) {
+            write(data, (Rating) null);
+        } else {
+            write(data, new Rating(Integer.parseInt(rawValue)));
+        }
+    }
 }

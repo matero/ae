@@ -38,111 +38,136 @@ import java.util.Iterator;
 import java.util.List;
 
 public abstract class Select implements java.io.Serializable {
-  private static final long serialVersionUID = 3845407868349511540L;
 
-  final Query query;
-  private final FetchOptions fetchOptions;
+    private static final long serialVersionUID = 3845407868349511540L;
 
-  protected Select(final Query query, final FetchOptions fetchOptions) {
-    this.query = query;
-    this.fetchOptions = fetchOptions;
-  }
+    final Query query;
+    private final FetchOptions fetchOptions;
 
-  public List<Entity> asList() {
-    return asList(DatastoreServiceFactory.getDatastoreService());
-  }
+    protected Select(final Query query, final FetchOptions fetchOptions)
+    {
+        this.query = query;
+        this.fetchOptions = fetchOptions;
+    }
 
-  protected List<Entity> asList(final BaseDatastoreService datastore) {
-    return prepare(datastore).asList(fetchOptions);
-  }
+    public List<Entity> asList()
+    {
+        return asList(DatastoreServiceFactory.getDatastoreService());
+    }
 
-  public QueryResultList<Entity> asQueryResultList() {
-    return asQueryResultList(DatastoreServiceFactory.getDatastoreService());
-  }
+    protected List<Entity> asList(final BaseDatastoreService datastore)
+    {
+        return prepare(datastore).asList(fetchOptions);
+    }
 
-  protected QueryResultList<Entity> asQueryResultList(final BaseDatastoreService datastore) {
-    return prepare(datastore).asQueryResultList(fetchOptions);
-  }
+    public QueryResultList<Entity> asQueryResultList()
+    {
+        return asQueryResultList(DatastoreServiceFactory.getDatastoreService());
+    }
 
-  public Iterable<Entity> asIterable() {
-    return asIterable(DatastoreServiceFactory.getDatastoreService());
-  }
+    protected QueryResultList<Entity> asQueryResultList(final BaseDatastoreService datastore)
+    {
+        return prepare(datastore).asQueryResultList(fetchOptions);
+    }
 
-  protected Iterable<Entity> asIterable(final BaseDatastoreService datastore) {
-    return prepare(datastore).asIterable(fetchOptions);
-  }
+    public Iterable<Entity> asIterable()
+    {
+        return asIterable(DatastoreServiceFactory.getDatastoreService());
+    }
 
-  public QueryResultIterable<Entity> asQueryResultIterable() {
-    return asQueryResultIterable(DatastoreServiceFactory.getDatastoreService());
-  }
+    protected Iterable<Entity> asIterable(final BaseDatastoreService datastore)
+    {
+        return prepare(datastore).asIterable(fetchOptions);
+    }
 
-  protected QueryResultIterable<Entity> asQueryResultIterable(final BaseDatastoreService datastore) {
-    return prepare(datastore).asQueryResultIterable(fetchOptions);
-  }
+    public QueryResultIterable<Entity> asQueryResultIterable()
+    {
+        return asQueryResultIterable(DatastoreServiceFactory.getDatastoreService());
+    }
 
-  public Iterator<Entity> asIterator() {
-    return asIterator(DatastoreServiceFactory.getDatastoreService());
-  }
+    protected QueryResultIterable<Entity> asQueryResultIterable(final BaseDatastoreService datastore)
+    {
+        return prepare(datastore).asQueryResultIterable(fetchOptions);
+    }
 
-  protected Iterator<Entity> asIterator(final BaseDatastoreService datastore) {
-    return prepare(datastore).asIterator(fetchOptions);
-  }
+    public Iterator<Entity> asIterator()
+    {
+        return asIterator(DatastoreServiceFactory.getDatastoreService());
+    }
 
-  public QueryResultIterator<Entity> asQueryResultIterator() {
-    return asQueryResultIterator(DatastoreServiceFactory.getDatastoreService());
-  }
+    protected Iterator<Entity> asIterator(final BaseDatastoreService datastore)
+    {
+        return prepare(datastore).asIterator(fetchOptions);
+    }
 
-  protected QueryResultIterator<Entity> asQueryResultIterator(final BaseDatastoreService datastore) {
-    return prepare(datastore).asQueryResultIterator(fetchOptions);
-  }
+    public QueryResultIterator<Entity> asQueryResultIterator()
+    {
+        return asQueryResultIterator(DatastoreServiceFactory.getDatastoreService());
+    }
 
-  public Entity asSingle() throws PreparedQuery.TooManyResultsException {
-    return asSingle(DatastoreServiceFactory.getDatastoreService());
-  }
+    protected QueryResultIterator<Entity> asQueryResultIterator(final BaseDatastoreService datastore)
+    {
+        return prepare(datastore).asQueryResultIterator(fetchOptions);
+    }
 
-  protected Entity asSingle(final BaseDatastoreService datastore) throws PreparedQuery.TooManyResultsException {
-    return prepare(datastore).asSingleEntity();
-  }
+    public Entity asSingle() throws PreparedQuery.TooManyResultsException
+    {
+        return asSingle(DatastoreServiceFactory.getDatastoreService());
+    }
 
-  public int count() {
-    return count(DatastoreServiceFactory.getDatastoreService());
-  }
+    protected Entity asSingle(final BaseDatastoreService datastore) throws PreparedQuery.TooManyResultsException
+    {
+        return prepare(datastore).asSingleEntity();
+    }
 
-  protected int count(final BaseDatastoreService datastore) {
-    return prepare(datastore).countEntities(fetchOptions);
-  }
+    public int count()
+    {
+        return count(DatastoreServiceFactory.getDatastoreService());
+    }
 
-  public Select limit(final int limit) {
-    fetchOptions.limit(limit);
-    return this;
-  }
+    protected int count(final BaseDatastoreService datastore)
+    {
+        return prepare(datastore).countEntities(fetchOptions);
+    }
 
-  public Select offset(final int offset) {
-    fetchOptions.offset(offset);
-    return this;
-  }
+    public Select limit(final int limit)
+    {
+        fetchOptions.limit(limit);
+        return this;
+    }
 
-  public Select chunkSize(final int chunkSize) {
-    fetchOptions.chunkSize(chunkSize);
-    return this;
-  }
+    public Select offset(final int offset)
+    {
+        fetchOptions.offset(offset);
+        return this;
+    }
 
-  public Select prefetchSize(final int prefetchSize) {
-    fetchOptions.prefetchSize(prefetchSize);
-    return this;
-  }
+    public Select chunkSize(final int chunkSize)
+    {
+        fetchOptions.chunkSize(chunkSize);
+        return this;
+    }
 
-  public Select startCursor(final Cursor startCursor) {
-    fetchOptions.startCursor(startCursor);
-    return this;
-  }
+    public Select prefetchSize(final int prefetchSize)
+    {
+        fetchOptions.prefetchSize(prefetchSize);
+        return this;
+    }
 
-  public Select endCursor(final Cursor endCursor) {
-    fetchOptions.endCursor(endCursor);
-    return this;
-  }
+    public Select startCursor(final Cursor startCursor)
+    {
+        fetchOptions.startCursor(startCursor);
+        return this;
+    }
 
-  protected PreparedQuery prepare(final BaseDatastoreService datastore) {
-    return datastore.prepare(query);
-  }
+    public Select endCursor(final Cursor endCursor)
+    {
+        fetchOptions.endCursor(endCursor);
+        return this;
+    }
+
+    protected PreparedQuery prepare(final BaseDatastoreService datastore)
+    {
+        return datastore.prepare(query);
+    }
 }

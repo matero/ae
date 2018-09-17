@@ -24,7 +24,10 @@
 package ae.db;
 
 public interface BooleanListField extends ListField<Boolean> {
-  @Override default Class<Boolean> elementType() {
-    return Boolean.class;
-  }
+
+    @Override
+    default Class<Boolean> elementType()
+    {
+        return Boolean.class;
+    }
 }

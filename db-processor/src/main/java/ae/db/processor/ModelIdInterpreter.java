@@ -30,45 +30,54 @@ import javax.lang.model.element.VariableElement;
 import ae.Record;
 
 class ModelIdInterpreter extends ModelAttributeInterpreter {
-  ModelIdInterpreter(final ProcessingEnvironment environment) {
-    super(environment);
-  }
 
-  boolean isModelIdDefinedAt(final VariableElement variable) {
-    return variable.getAnnotation(Record.id.class) != null;
-  }
+    ModelIdInterpreter(final ProcessingEnvironment environment)
+    {
+        super(environment);
+    }
 
-  MetaModelId read(final VariableElement variable) {
-    final TypeName typeCanonicalName = typeNameOf(variable);
-    checkModifiersOf(variable, Record.id.class);
-    checkAnnotationsOf(variable);
-    if (ClassName.LONG.equals(typeCanonicalName)) {
-      return new MetaId(nameOf(variable), descriptionOf(variable), isRequired(variable), modifiersOf(variable), constraintsOf(variable));
-    } else {
-      return new MetaName(nameOf(variable), descriptionOf(variable), modifiersOf(variable), constraintsOf(variable));
+    boolean isModelIdDefinedAt(final VariableElement variable)
+    {
+        return variable.getAnnotation(Record.id.class) != null;
     }
-  }
 
-  void checkAnnotationsOf(final VariableElement variable) throws ModelException {
-    if (variable.getAnnotation(Record.property.class) != null) {
-      throw new ModelException(variable, "fields can be annotated with @Id or with @Property, but not both.");
+    MetaModelId read(final VariableElement variable)
+    {
+        final TypeName typeCanonicalName = typeNameOf(variable);
+        checkModifiersOf(variable, Record.id.class);
+        checkAnnotationsOf(variable);
+        if (ClassName.LONG.equals(typeCanonicalName)) {
+            return new MetaId(nameOf(variable), descriptionOf(variable), isRequired(variable), modifiersOf(variable),
+                              constraintsOf(variable));
+        } else {
+            return new MetaName(nameOf(variable), descriptionOf(variable), modifiersOf(variable),
+                                constraintsOf(variable));
+        }
     }
-    if (variable.getAnnotation(Record.indexed.class) != null) {
-      throw new ModelException(variable, "fields can be annotated with @Id or with @IndexedBooleanList, but not both.");
-    }
-    if (variable.getAnnotation(Record.parent.class) != null) {
-      throw new ModelException(variable, "fields can be annotated with @Id or with @Parent, but not both.");
-    }
-  }
 
-  private static final ClassName STRING = ClassName.get(String.class);
-
-  @Override
-  TypeName typeNameOf(final VariableElement variable) throws ModelException {
-    final TypeName type = super.typeNameOf(variable);
-    if (!ClassName.LONG.equals(type) && !STRING.equals(type)) {
-      throw new ModelException(variable, "only 'long' and 'String' can be used as @Id types");
+    void checkAnnotationsOf(final VariableElement variable) throws ModelException
+    {
+        if (variable.getAnnotation(Record.property.class) != null) {
+            throw new ModelException(variable, "fields can be annotated with @Id or with @Property, but not both.");
+        }
+        if (variable.getAnnotation(Record.indexed.class) != null) {
+            throw new ModelException(variable,
+                                     "fields can be annotated with @Id or with @IndexedBooleanList, but not both.");
+        }
+        if (variable.getAnnotation(Record.parent.class) != null) {
+            throw new ModelException(variable, "fields can be annotated with @Id or with @Parent, but not both.");
+        }
     }
-    return type;
-  }
+
+    private static final ClassName STRING = ClassName.get(String.class);
+
+    @Override
+    TypeName typeNameOf(final VariableElement variable) throws ModelException
+    {
+        final TypeName type = super.typeNameOf(variable);
+        if (!ClassName.LONG.equals(type) && !STRING.equals(type)) {
+            throw new ModelException(variable, "only 'long' and 'String' can be used as @Id types");
+        }
+        return type;
+    }
 }

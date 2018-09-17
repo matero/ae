@@ -28,32 +28,38 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Rating;
 
 enum RatingJsonSerializer implements JsonSerializer<Rating> {
-  INSTANCE;
+    INSTANCE;
 
-  static final JsonArraySerializer<Rating> ARRAY = new JsonArraySerializer<>(INSTANCE);
+    static final JsonArraySerializer<Rating> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final Rating value) {
-    if (value == null) {
-      return JsonNodeFactories.nullNode();
+    @Override
+    public JsonNode toJson(final Rating value)
+    {
+        if (value == null) {
+            return JsonNodeFactories.nullNode();
+        }
+        return JsonNodeFactories.number(value.getRating());
     }
-    return JsonNodeFactories.number(value.getRating());
-  }
 
-  @Override public Rating fromJson(final JsonNode json, final String jsonPath) {
-    if (json.isNullNode(jsonPath)) {
-      return null;
-    } else {
-      final String rating = json.getNumberValue(jsonPath);
-      return new Rating(Integer.parseInt(rating));
+    @Override
+    public Rating fromJson(final JsonNode json, final String jsonPath)
+    {
+        if (json.isNullNode(jsonPath)) {
+            return null;
+        } else {
+            final String rating = json.getNumberValue(jsonPath);
+            return new Rating(Integer.parseInt(rating));
+        }
     }
-  }
 
-  @Override public Rating fromJson(final JsonNode json) {
-    if (json.isNullNode()) {
-      return null;
-    } else {
-      final String rating = json.getNumberValue();
-      return new Rating(Integer.parseInt(rating));
+    @Override
+    public Rating fromJson(final JsonNode json)
+    {
+        if (json.isNullNode()) {
+            return null;
+        } else {
+            final String rating = json.getNumberValue();
+            return new Rating(Integer.parseInt(rating));
+        }
     }
-  }
 }

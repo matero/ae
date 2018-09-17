@@ -26,34 +26,49 @@ package ae.web;
 import javax.servlet.http.HttpServletRequest;
 
 public final class Route implements java.io.Serializable {
-  private static final long serialVersionUID = -5338049506118103698L;
 
-  private final String uri;
+    private static final long serialVersionUID = -5338049506118103698L;
 
-  public Route(final String routeUri) { uri = routeUri; }
+    private final String uri;
 
-  @Override public String toString() { return "Route{" + uri + '}'; }
-
-  @Override public int hashCode() { return uri.hashCode(); }
-
-  @Override public boolean equals(final Object that) {
-    if (this == that) {
-      return true;
+    public Route(final String routeUri)
+    {
+        uri = routeUri;
     }
-    if (that instanceof Route) {
-      final Route other = (Route) that;
-      return uri.equals(other.uri);
-    }
-    return false;
-  }
 
-  public final boolean matches(final HttpServletRequest request) {
-    if (request.getPathInfo() == null) {
-      return false;
+    @Override
+    public String toString()
+    {
+        return "Route{" + uri + '}';
     }
-    if (request.getPathInfo().isEmpty()) {
-      return false;
+
+    @Override
+    public int hashCode()
+    {
+        return uri.hashCode();
     }
-    return uri.equals(request.getPathInfo());
-  }
+
+    @Override
+    public boolean equals(final Object that)
+    {
+        if (this == that) {
+            return true;
+        }
+        if (that instanceof Route) {
+            final Route other = (Route) that;
+            return uri.equals(other.uri);
+        }
+        return false;
+    }
+
+    public final boolean matches(final HttpServletRequest request)
+    {
+        if (request.getPathInfo() == null) {
+            return false;
+        }
+        if (request.getPathInfo().isEmpty()) {
+            return false;
+        }
+        return uri.equals(request.getPathInfo());
+    }
 }

@@ -26,7 +26,9 @@ package ae.db.processor;
 import javax.lang.model.element.Element;
 
 final class ModelIdAlreadyDefinedException extends ModelException {
-  ModelIdAlreadyDefinedException(final Element illegalId) {
-    super(illegalId, "@Id already defined");
-  }
+
+    ModelIdAlreadyDefinedException(final Element illegalId)
+    {
+        super(illegalId, "@Id already defined");
+    }
 }

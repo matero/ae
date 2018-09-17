@@ -46,69 +46,75 @@ import ae.annotation.processor.AnnotationProcessor;
 @SupportedAnnotationTypes("ae.Router")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ControllerAndRoutesCompiler extends AnnotationProcessor {
-  private RoutesReader routesReader;
-  private ControllerImplCodeBuilder controllerImplCodeBuilder;
-  private final RoutersCodeBuilder routerBuilder;
 
-  public ControllerAndRoutesCompiler() {
-    this(new Date(), new RoutersCodeBuilder());
-  }
+    private RoutesReader routesReader;
+    private ControllerImplCodeBuilder controllerImplCodeBuilder;
+    private final RoutersCodeBuilder routerBuilder;
 
-  ControllerAndRoutesCompiler(final Date today, final RoutersCodeBuilder routerBuilder) {
-    super(today);
-    this.routerBuilder = routerBuilder;
-  }
-
-  @Override
-  public synchronized void init(final ProcessingEnvironment processingEnv) {
-    super.init(processingEnv);
-    this.routesReader = new RoutesReader(elements, types, messager);
-    this.controllerImplCodeBuilder = new ControllerImplCodeBuilder(elements, types);
-  }
-
-  @Override
-  public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment) {
-    for (final Element element : roundEnvironment.getElementsAnnotatedWith(Router.class)) {
-      compileRoute(element);
-    }
-    return true;
-  }
-
-  private void compileRoute(final Element element) {
-    final TypeElement routerClass = (TypeElement) element;
-    if (routerClass.getKind() != ElementKind.CLASS) {
-      error(element, "Only classes can be annotated as @" + Router.class.getCanonicalName());
-      return;
+    public ControllerAndRoutesCompiler()
+    {
+        this(new Date(), new RoutersCodeBuilder());
     }
 
-    final Router router = element.getAnnotation(Router.class);
-    final List<? extends TypeMirror> supertypes = types.directSupertypes(element.asType());
-
-    if (supertypes.isEmpty()) {
-      error(element, "you must define a superclass");
-      return;
-    }
-    if (supertypes.size() != 1) {
-      error(element, "you can only define ONE superclass, no interfaces");
-      return;
+    ControllerAndRoutesCompiler(final Date today, final RoutersCodeBuilder routerBuilder)
+    {
+        super(today);
+        this.routerBuilder = routerBuilder;
     }
 
-    final String superClass = readSuperClassCannonicalName(supertypes.get(0));
-    final RoutesDeclarations.Builder builder = new RoutesDeclarations.Builder(superClass, today);
+    @Override
+    public synchronized void init(final ProcessingEnvironment processingEnv)
+    {
+        super.init(processingEnv);
+        this.routesReader = new RoutesReader(elements, types, messager);
+        this.controllerImplCodeBuilder = new ControllerImplCodeBuilder(elements, types);
+    }
 
-    builder.packageName(this.elements.getPackageOf(routerClass).toString());
-    if (this.routesReader.readRoutes(router.routes(), builder)) {
-      final RoutesDeclarations routes = builder.build();
-      final JavaFile routerCode = this.routerBuilder.buildJavaCode(routes);
-      final List<JavaFile> controllersImpl = this.controllerImplCodeBuilder.buildJavaCode(routes);
-      try {
-        routerCode.writeTo(filer);
-        for (final JavaFile impl : controllersImpl) {
-          impl.writeTo(filer);
+    @Override
+    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment)
+    {
+        for (final Element element : roundEnvironment.getElementsAnnotatedWith(Router.class)) {
+            compileRoute(element);
         }
-      } catch (final IOException e) {
-        error(element, "could not write router code, reason: " + e.getMessage());
-      }
+        return true;
     }
-  }
+
+    private void compileRoute(final Element element)
+    {
+        final TypeElement routerClass = (TypeElement) element;
+        if (routerClass.getKind() != ElementKind.CLASS) {
+            error(element, "Only classes can be annotated as @" + Router.class.getCanonicalName());
+            return;
+        }
+
+        final Router router = element.getAnnotation(Router.class);
+        final List<? extends TypeMirror> supertypes = types.directSupertypes(element.asType());
+
+        if (supertypes.isEmpty()) {
+            error(element, "you must define a superclass");
+            return;
+        }
+        if (supertypes.size() != 1) {
+            error(element, "you can only define ONE superclass, no interfaces");
+            return;
+        }
+
+        final String superClass = readSuperClassCannonicalName(supertypes.get(0));
+        final RoutesDeclarations.Builder builder = new RoutesDeclarations.Builder(superClass, today);
+
+        builder.packageName(this.elements.getPackageOf(routerClass).toString());
+        if (this.routesReader.readRoutes(router.routes(), builder)) {
+            final RoutesDeclarations routes = builder.build();
+            final JavaFile routerCode = this.routerBuilder.buildJavaCode(routes);
+            final List<JavaFile> controllersImpl = this.controllerImplCodeBuilder.buildJavaCode(routes);
+            try {
+                routerCode.writeTo(filer);
+                for (final JavaFile impl : controllersImpl) {
+                    impl.writeTo(filer);
+                }
+            } catch (final IOException e) {
+                error(element, "could not write router code, reason: " + e.getMessage());
+            }
+        }
+    }
 }

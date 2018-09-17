@@ -28,30 +28,36 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.PhoneNumber;
 
 enum PhoneNumberJsonSerializer implements JsonSerializer<PhoneNumber> {
-  INSTANCE;
+    INSTANCE;
 
-  static final JsonArraySerializer<PhoneNumber> ARRAY = new JsonArraySerializer<>(INSTANCE);
+    static final JsonArraySerializer<PhoneNumber> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override public JsonNode toJson(final PhoneNumber value) {
-    if (value == null) {
-      return JsonNodeFactories.nullNode();
+    @Override
+    public JsonNode toJson(final PhoneNumber value)
+    {
+        if (value == null) {
+            return JsonNodeFactories.nullNode();
+        }
+        return JsonNodeFactories.string(value.getNumber());
     }
-    return JsonNodeFactories.string(value.getNumber());
-  }
 
-  @Override public PhoneNumber fromJson(final JsonNode json, final String jsonPath) {
-    if (json.isNullNode(jsonPath)) {
-      return null;
-    } else {
-      return new PhoneNumber(json.getStringValue(jsonPath));
+    @Override
+    public PhoneNumber fromJson(final JsonNode json, final String jsonPath)
+    {
+        if (json.isNullNode(jsonPath)) {
+            return null;
+        } else {
+            return new PhoneNumber(json.getStringValue(jsonPath));
+        }
     }
-  }
 
-  @Override public PhoneNumber fromJson(final JsonNode json) {
-    if (json.isNullNode()) {
-      return null;
-    } else {
-      return new PhoneNumber(json.getStringValue());
+    @Override
+    public PhoneNumber fromJson(final JsonNode json)
+    {
+        if (json.isNullNode()) {
+            return null;
+        } else {
+            return new PhoneNumber(json.getStringValue());
+        }
     }
-  }
 }

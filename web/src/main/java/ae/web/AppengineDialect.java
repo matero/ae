@@ -28,9 +28,15 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
 public enum AppengineDialect {
-  INSTANCE;
-  
-  public String str(final Key key) { return KeyFactory.keyToString(key); }
+    INSTANCE;
 
-  public String key(final Entity data) { return str(data.getKey()); }
+    public String str(final Key key)
+    {
+        return KeyFactory.keyToString(key);
+    }
+
+    public String key(final Entity data)
+    {
+        return str(data.getKey());
+    }
 }
