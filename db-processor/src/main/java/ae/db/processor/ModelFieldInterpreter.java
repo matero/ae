@@ -121,12 +121,12 @@ class ModelFieldInterpreter extends ModelAttributeInterpreter {
         final TypeMirror varType = variable.asType();
 
         if (varType.getKind().isPrimitive()) {
-            throw new IllegalFieldTypeException(variable, "Primitive types aren't supported.");
+            throw new IllegalFieldType(variable, "Primitive types aren't supported.");
         }
 
         final TypeName type = typeNameOf(variable);
         if (!supportedTypes.contains(type)) {
-            throw new IllegalFieldTypeException(variable,
+            throw new IllegalFieldType(variable,
                                                 type.toString(),
                                                 supportedTypes.stream().map(t -> t.toString()).collect(toSet()));
         }

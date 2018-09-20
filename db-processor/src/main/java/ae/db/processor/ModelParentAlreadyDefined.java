@@ -23,32 +23,12 @@
  */
 package ae.db.processor;
 
-import com.google.common.collect.Iterables;
 import javax.lang.model.element.Element;
 
-final class IllegalFieldTypeException extends ModelException {
+final class ModelParentAlreadyDefined extends ModelException {
 
-    private static final long serialVersionUID = 2016_04_02L;
-
-    IllegalFieldTypeException(final Element element, final String type, final java.util.Set<String> supportedTypes)
+    ModelParentAlreadyDefined(final Element illegalParent)
     {
-        this(element, make_message(type, supportedTypes));
-    }
-
-    private static String make_message(final String type, final Iterable<String> supportedTypes)
-    {
-        final Iterable<String> types = Iterables.transform(supportedTypes, (input) -> {
-                                                       if (input == null || input.trim().isEmpty()) {
-                                                           return "";
-                                                       }
-                                                       return "\n\t" + input;
-                                                   });
-        return "Type [" + type + "] isn't mappeable. Currently supported types are enums, references, and:" + Iterables.
-                toString(types);
-    }
-
-    IllegalFieldTypeException(final Element element, final String message)
-    {
-        super(element, message);
+        super(illegalParent, "@Parent already defined");
     }
 }

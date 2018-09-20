@@ -23,12 +23,12 @@
  */
 package ae.db.processor;
 
-import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 
-final class ModelRecordAlreadyDefinedException extends ModelException {
+final class ModelIdNotDefined extends ModelException {
 
-    ModelRecordAlreadyDefinedException(final Element illegalRecord)
+    ModelIdNotDefined(final TypeElement recordType)
     {
-        super(illegalRecord, "Only one Record can be defined per Model!");
+        super(recordType, "@Id not defined");
     }
 }
