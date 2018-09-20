@@ -61,37 +61,12 @@ import javax.servlet.http.HttpServletResponse;
 
 public abstract class Controller {
 
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-
-    protected Controller()
-    {
-        // nothing to do
-    }
+    protected final HttpServletRequest request;
+    protected final HttpServletResponse response;
 
     protected Controller(final HttpServletRequest request, final HttpServletResponse response)
     {
         this.request = request;
-        this.response = response;
-    }
-
-    protected final HttpServletRequest request()
-    {
-        return request;
-    }
-
-    protected final void setRequest(final HttpServletRequest request)
-    {
-        this.request = request;
-    }
-
-    protected final HttpServletResponse response()
-    {
-        return response;
-    }
-
-    protected final void setResponse(final HttpServletResponse response)
-    {
         this.response = response;
     }
 
@@ -1345,5 +1320,11 @@ public abstract class Controller {
             default:
                 return new Query.SortPredicate(value, Query.SortDirection.ASCENDING);
         }
+    }
+    
+    public @interface GET {
+            String path();
+            String accept() default "";
+            boolean template() default false;
     }
 }

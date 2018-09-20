@@ -39,18 +39,12 @@ import org.thymeleaf.context.WebContext;
 
 public abstract class ControllerWithThymeleafSupport extends Controller {
 
-    private WebContext templateContext;
-    private TemplateEngine templateEngine;
-
-    protected ControllerWithThymeleafSupport()
-    {
-        this.templateContext = null;
-        this.templateEngine = null;
-    }
+    protected final WebContext templateContext;
+    protected final TemplateEngine templateEngine;
 
     protected ControllerWithThymeleafSupport(final HttpServletRequest request, final HttpServletResponse response)
     {
-        super(request, response);
+        this(request, response, null, null);
     }
 
     protected ControllerWithThymeleafSupport(final HttpServletRequest request,
@@ -62,27 +56,7 @@ public abstract class ControllerWithThymeleafSupport extends Controller {
         this.templateContext = templateContext;
         this.templateEngine = templateEngine;
     }
-
-    protected final WebContext templateContext()
-    {
-        return templateContext;
-    }
-
-    protected final void setTemplateContext(final WebContext templateContext)
-    {
-        this.templateContext = templateContext;
-    }
-
-    protected final TemplateEngine templateEngine()
-    {
-        return templateEngine;
-    }
-
-    protected final void setTemplateEngine(final TemplateEngine templateEngine)
-    {
-        this.templateEngine = templateEngine;
-    }
-
+    
     @Override
     protected void setup()
     {
@@ -91,10 +65,10 @@ public abstract class ControllerWithThymeleafSupport extends Controller {
             if (isUserLoggedIn()) {
                 ctx("user_type", isUserAdmin() ? "adm" : "usr");
                 ctx("current_user", currentUser());
-                ctx("logout", logoutURL(request()));
+                ctx("logout", logoutURL(request));
             } else {
                 ctx("user", "none");
-                ctx("login", loginURL(request()));
+                ctx("login", loginURL(request));
             }
         }
     }
@@ -285,10 +259,5 @@ public abstract class ControllerWithThymeleafSupport extends Controller {
                 .put(attr9.property(), value9)
                 .put(attr10.property(), value10)
                 .build();
-    }
-
-    @Retention(RetentionPolicy.CLASS)
-    @Target(ElementType.METHOD)
-    public @interface Template {
     }
 }
