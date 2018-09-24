@@ -32,7 +32,8 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 public @interface DELETE {
         String path() default "";
-        String accept() default "";
+
         boolean template() default false;
+
         boolean oauth2() default false;
 }

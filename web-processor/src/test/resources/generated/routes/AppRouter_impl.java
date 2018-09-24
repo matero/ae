@@ -135,6 +135,11 @@ final class AppRouter_impl extends RouterServlet {
       handle(new GymController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
       return;
     }
+    if (GET_processor_test_GymController_edit.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new GymController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
+      return;
+    }
     unhandledGet(request, response);
   }
 
@@ -149,6 +154,10 @@ final class AppRouter_impl extends RouterServlet {
       handle(new ClientController(request, response), (controller) -> controller.save());
       return;
     }
+    if (POST_processor_test_GymController_save.matches(request)) {
+      handle(new GymController(request, response), (controller) -> controller.save());
+      return;
+    }
     unhandledPost(request, response);
   }
 
@@ -161,6 +170,11 @@ final class AppRouter_impl extends RouterServlet {
       handle(new BookController(request, response), (controller) -> controller.update(id));
       return;
     }
+    if (PUT_processor_test_GymController_update.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new GymController(request, response), (controller) -> controller.update(id));
+      return;
+    }
     unhandledPut(request, response);
   }
 
@@ -171,6 +185,11 @@ final class AppRouter_impl extends RouterServlet {
     if (DELETE_processor_test_BookController_delete.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       handle(new BookController(request, response), (controller) -> controller.delete(id));
+      return;
+    }
+    if (DELETE_processor_test_GymController_delete.matches(request, routeParameters)) {
+      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      handle(new GymController(request, response), (controller) -> controller.delete(id));
       return;
     }
     unhandledDelete(request, response);

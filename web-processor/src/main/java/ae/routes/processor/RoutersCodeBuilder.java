@@ -150,20 +150,18 @@ class RoutersCodeBuilder {
                         .addException(ServletException.class)
                         .addException(IOException.class);
                 if (hasDynamicRoutes(routes)) {
-                        httpVerbHandler.
-                                addStatement("final $T routeParameters = new $T{$L}", stringArray, stringArray,
-                                             paramsInit(routes));
+                        httpVerbHandler.addStatement("final $T routeParameters = new $T{$L}",
+                                                     stringArray,
+                                                     stringArray,
+                                                     paramsInit(routes));
                 }
 
-                final UnmodifiableIterator<RouteDescriptor> iRoutes = routes.iterator();
-                RouteDescriptor route = iRoutes.next();
-                do {
+                for (final RouteDescriptor route : routes) {
                         final MethodSpec.Builder ifMatchesRoute;
                         if (route.isDynamic()) {
                                 final ClassName interpreterClass = ClassName.get(Interpret.class);
                                 ifMatchesRoute = httpVerbHandler.beginControlFlow(
-                                        "if ($L.matches(request, routeParameters))", route.
-                                                routeField());
+                                        "if ($L.matches(request, routeParameters))", route.routeField());
                                 for (int i = 0; i < route.parametersCount(); i++) {
                                         ifMatchesRoute.addStatement("final $T $L = $T.$L(routeParameters[$L])",
                                                                     route.parameterType(i),
@@ -176,27 +174,9 @@ class RoutersCodeBuilder {
                                 ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request))", route.
                                                                                   routeField());
                         }
-
-                        final String last = route.pattern;
-                        while (last.equals(route.pattern)) {
-                                if (route.hasHeaderSelection()) {
-                                        final MethodSpec.Builder selector = ifMatchesRoute.beginControlFlow(route.
-                                                headersFilterExpr(),
-                                                                                                            route.
-                                                                                                                    headersFilterArgs());
-                                        addHandle(selector, route);
-                                        ifMatchesRoute.endControlFlow();
-                                } else {
-                                        addHandle(ifMatchesRoute, route);
-                                }
-                                if (!iRoutes.hasNext()) {
-                                        break;
-                                }
-                                route = iRoutes.next();
-                        }
-
+                        addHandle(ifMatchesRoute, route);
                         httpVerbHandler.endControlFlow();
-                } while (iRoutes.hasNext());
+                }
                 httpVerbHandler.addStatement("$L(request, response)", httpVerb.unhandled);
                 return httpVerbHandler.build();
         }

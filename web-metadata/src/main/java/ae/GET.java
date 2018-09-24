@@ -33,8 +33,6 @@ import java.lang.annotation.Target;
 public @interface GET {
         String path() default "";
 
-        String accept() default "";
-
         boolean template() default false;
 
         boolean oauth2() default false;
