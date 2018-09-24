@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 abstract class __Competencia extends RootWithName {
   protected static final Logger LOGGER = LoggerFactory.getLogger("processor.test.Competencia");
 
+  static final Competencia m = new Competencia();
+
   final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), fieldName("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints);
 
   private final ImmutableList<Attr> _attrs = ImmutableList.of(nombre);

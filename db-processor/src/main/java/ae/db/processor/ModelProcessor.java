@@ -100,7 +100,6 @@ public class ModelProcessor extends AnnotationProcessor {
         void generateCode(final MetaModels models)
         {
                 generateCode("'base models'", models, new ModelBaseClassCodeGenerator());
-                generateCode("'models registry'", models, new ModelsRegistryClassCodeGenerator());
         }
 
         void generateCode(final String name, final MetaModels models, final CodeGenerator codeGenerator)

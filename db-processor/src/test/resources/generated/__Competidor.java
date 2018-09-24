@@ -34,9 +34,11 @@ import org.slf4j.LoggerFactory;
 abstract class __Competidor extends ChildWithId {
   protected static final Logger LOGGER = LoggerFactory.getLogger("processor.test.Competidor");
 
+  public static final Competidor m = new Competidor();
+
   final Id personId = new Id(canonicalName("processor.test.Competidor.personId"), description("Person Id"), fieldName("personId"), jsonName("personId"), jsonPath("personId"), noConstraints);
 
-  final Parent<Competencia> competencia = new Parent(m.Competencia, canonicalName("processor.test.Competidor.competencia"), description("Competencia"), fieldName("competencia"), nullable, jsonName("competencia"), jsonPath("competencia"), noConstraints);
+  final Parent<Competencia> competencia = new Parent(Competencia.m, canonicalName("processor.test.Competidor.competencia"), description("Competencia"), fieldName("competencia"), nullable, jsonName("competencia"), jsonPath("competencia"), noConstraints);
 
   final IndexedString nombreVisible = new IndexedString(canonicalName("processor.test.Competidor.nombreVisible"), description("Nombre Visible"), propertyName("nombreVisible"), fieldName("nombreVisible"), nullable, jsonName("nombreVisible"), jsonPath("nombreVisible"), constraints(ae.db.NotBlankConstraint.ForString.INSTANCE));
 

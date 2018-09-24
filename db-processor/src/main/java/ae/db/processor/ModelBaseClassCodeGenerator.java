@@ -112,6 +112,7 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
                 defineSuperClass();
 
                 defineLogger();
+                defineM();
 
                 defineIdField();
                 defineParentField();
@@ -164,6 +165,15 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
                                 .initializer("$T.getLogger($S)", LOGGER_FACTORY_CLASS, model.canonicalName)
                                 .build()
                 );
+        }
+
+        void defineM()
+        {
+                final FieldSpec.Builder m = FieldSpec.builder(this.modelClass, "m", Modifiers.STATIC_FINAL);
+                if (model.modifiers.contains(Modifier.PUBLIC)) {
+                        m.addModifiers(Modifier.PUBLIC);
+                }
+                baseModelClass.addField(m.initializer("new $T()", this.modelClass).build());
         }
 
         void defineIdField()

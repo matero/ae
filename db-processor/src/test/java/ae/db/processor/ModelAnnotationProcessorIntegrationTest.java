@@ -93,8 +93,5 @@ public class ModelAnnotationProcessorIntegrationTest {
         assertThat(compilation)
                 .generatedSourceFile("processor.test.__Competidor")
                 .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/__Competidor.java"));
-        assertThat(compilation)
-                .generatedSourceFile("processor.test.m")
-                .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/m.java"));
     }
 }
