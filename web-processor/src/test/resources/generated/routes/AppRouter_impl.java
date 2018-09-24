@@ -23,19 +23,19 @@ import javax.servlet.http.HttpServletResponse;
 public final class AppRouter_impl extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 
-  private final Route GET_processor_test_BookController_index = new Route("/api/v1/book/");
-
   private final ParameterizedRoute GET_processor_test_BookController_bar = new ParameterizedRoute("/api/v1/book/bar/{id}/{cursor}/{arg}", Pattern.compile("/api/v1/book/bar/(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
 
   private final Route GET_processor_test_BookController_create = new Route("/api/v1/book/create");
 
   private final ParameterizedRoute GET_processor_test_BookController_foo = new ParameterizedRoute("/api/v1/book/foo/{id}/{arg}", Pattern.compile("/api/v1/book/foo/(?<p0>[^/]+)/(?<p1>[^/]+)"));
 
-  private final Route GET_processor_test_ClientController_index = new Route("/api/v1/client/");
+  private final Route GET_processor_test_BookController_index = new Route("/api/v1/book/index");
 
-  private final Route GET_processor_test_GymController_index = new Route("/api/v1/gym/");
+  private final Route GET_processor_test_ClientController_index = new Route("/api/v1/client/index");
 
   private final Route GET_processor_test_GymController_create = new Route("/api/v1/gym/create");
+
+  private final Route GET_processor_test_GymController_index = new Route("/api/v1/gym/index");
 
   private final ParameterizedRoute GET_processor_test_GymController_show = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
 
@@ -71,10 +71,6 @@ public final class AppRouter_impl extends RouterServlet {
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
     final String[] routeParameters = new String[]{null, null, null, null};
-    if (GET_processor_test_BookController_index.matches(request)) {
-      handle(new BookController(request, response), (controller) -> controller.index());
-      return;
-    }
     if (GET_processor_test_BookController_bar.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       final Cursor c = Interpret.asCursor(routeParameters[1]);
@@ -92,16 +88,20 @@ public final class AppRouter_impl extends RouterServlet {
       handle(new BookController(request, response), (controller) -> OAuth2Flow.Director.of(controller).authorize((c) -> c.foo(id,arg)));
       return;
     }
+    if (GET_processor_test_BookController_index.matches(request)) {
+      handle(new BookController(request, response), (controller) -> controller.index());
+      return;
+    }
     if (GET_processor_test_ClientController_index.matches(request)) {
       handle(new ClientController(request, response), (controller) -> controller.index());
       return;
     }
-    if (GET_processor_test_GymController_index.matches(request)) {
-      handle(new GymController(request, response), (controller) -> controller.index());
-      return;
-    }
     if (GET_processor_test_GymController_create.matches(request)) {
       handle(new GymController(request, response), (controller) -> controller.create());
+      return;
+    }
+    if (GET_processor_test_GymController_index.matches(request)) {
+      handle(new GymController(request, response), (controller) -> controller.index());
       return;
     }
     if (GET_processor_test_GymController_show.matches(request, routeParameters)) {

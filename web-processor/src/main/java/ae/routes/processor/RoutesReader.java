@@ -115,12 +115,12 @@ class RoutesReader {
                            final String path,
                            final boolean template,
                            final boolean useCredentials,
-                           final ExecutableElement method,
+                           final ExecutableElement action,
                            final TypeElement controllerClass
         )
         {
                 if (path == null) {
-                        printError("@" + httpVerb.name() + ".path can't be null", method);
+                        printError("@" + httpVerb.name() + ".path can't be null", action);
                         return false;
                 }
 
@@ -129,18 +129,18 @@ class RoutesReader {
 
                 if (template) {
                         if (supportsThymeleaf(controllerClass)) {
-                                actionPath = makePath(controllerBasePath, path);
+                                actionPath = makePath(controllerBasePath, with(action, path));
                                 ctorArgs = THYMELEAF_CONSTRUCTOR_ARGS;
                         } else {
-                                printError(CONTROLLER_MUST_SUPPORT_THYMELEAF, method);
+                                printError(CONTROLLER_MUST_SUPPORT_THYMELEAF, action);
                                 return false;
                         }
                 } else {
-                        actionPath = makePath(controllerApiPath, path);
+                        actionPath = makePath(controllerApiPath, with(action, path));
                         ctorArgs = API_CONSTRUCTOR_ARGS;
                 }
 
-                routes.addRoute(makeRoute(httpVerb, actionPath, controllerClass, ctorArgs, useCredentials, method));
+                routes.addRoute(makeRoute(httpVerb, actionPath, controllerClass, ctorArgs, useCredentials, action));
                 return true;
         }
 
@@ -251,6 +251,25 @@ class RoutesReader {
                         return parentPath + childPath;
                 } else {
                         return parentPath + '/' + childPath;
+                }
+        }
+
+        private String with(final ExecutableElement action, final String path)
+        {
+                if ("".equals(path)) {
+                        final String actionName = action.getSimpleName().toString();
+                        switch (actionName) {
+                                case "html":
+                                case "htmlIndex":
+                                case "save":
+                                case "update":
+                                case "delete":
+                                        return "";
+                                default:
+                                        return actionName;
+                        }
+                } else {
+                        return path;
                 }
         }
 }
