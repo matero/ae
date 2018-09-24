@@ -58,7 +58,7 @@
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
         <archiveClasses>true</archiveClasses>
-        <appengine.target.version>1.9.64</appengine.target.version>
+        <appengine.target.version>1.9.65</appengine.target.version>
         <slf4j.target.version>1.7.25</slf4j.target.version>
         <checkVersions>false</checkVersions>
 
