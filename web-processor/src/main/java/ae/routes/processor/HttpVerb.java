@@ -23,19 +23,95 @@
  */
 package ae.routes.processor;
 
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+
 enum HttpVerb {
-    GET("doGet", "unhandledGet"),
-    POST("doPost", "unhandledPost"),
-    PUT("doPut", "unhandledPut"),
-    DELETE("doDelete", "unhandledDelete"),
-    RESOURCE(null, null);
+        GET("doGet", "unhandledGet") {
+                @Override
+                boolean buildRoute(final TypeElement controllerClass,
+                                   final ExecutableElement method,
+                                   final RoutesReader interpreter)
+                {
+                        final ae.GET metadata = method.getAnnotation(ae.GET.class);
+                        if (metadata != null) {
+                                return interpreter.buildRoute(this,
+                                                              metadata.path(),
+                                                              metadata.template(),
+                                                              metadata.oauth2(),
+                                                              method,
+                                                              controllerClass);
+                        }
+                        return true;
+                }
 
-    final String handler;
-    final String unhandled;
+        },
+        POST("doPost", "unhandledPost") {
+                @Override
+                boolean buildRoute(final TypeElement controllerClass,
+                                   final ExecutableElement method,
+                                   final RoutesReader interpreter)
+                {
+                        final ae.POST metadata = method.getAnnotation(ae.POST.class);
+                        if (metadata != null) {
+                                return interpreter.buildRoute(this,
+                                                              metadata.path(),
+                                                              metadata.template(),
+                                                              metadata.oauth2(),
+                                                              method,
+                                                              controllerClass);
+                        }
+                        return true;
+                }
 
-    HttpVerb(final String handler, final String unhandled)
-    {
-        this.handler = handler;
-        this.unhandled = unhandled;
-    }
+        },
+        PUT("doPut", "unhandledPut") {
+                @Override
+                boolean buildRoute(final TypeElement controllerClass,
+                                   final ExecutableElement method,
+                                   final RoutesReader interpreter)
+                {
+                        final ae.PUT metadata = method.getAnnotation(ae.PUT.class);
+                        if (metadata != null) {
+                                return interpreter.buildRoute(this,
+                                                              metadata.path(),
+                                                              metadata.template(),
+                                                              metadata.oauth2(),
+                                                              method,
+                                                              controllerClass);
+                        }
+                        return true;
+                }
+
+        },
+        DELETE("doDelete", "unhandledDelete") {
+                @Override
+                boolean buildRoute(final TypeElement controllerClass,
+                                   final ExecutableElement method,
+                                   final RoutesReader interpreter)
+                {
+                        final ae.DELETE metadata = method.getAnnotation(ae.DELETE.class);
+                        if (metadata != null) {
+                                return interpreter.buildRoute(this,
+                                                              metadata.path(),
+                                                              metadata.template(),
+                                                              metadata.oauth2(),
+                                                              method,
+                                                              controllerClass);
+                        }
+                        return true;
+                }
+
+        };
+
+        final String handler;
+        final String unhandled;
+
+        HttpVerb(final String handler, final String unhandled)
+        {
+                this.handler = handler;
+                this.unhandled = unhandled;
+        }
+
+        abstract boolean buildRoute(TypeElement controllerClass, ExecutableElement method, RoutesReader interpreter);
 }

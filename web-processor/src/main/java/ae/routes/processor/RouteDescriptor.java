@@ -34,197 +34,198 @@ import javax.lang.model.type.TypeMirror;
 
 final class Parameter {
 
-    final String name;
-    final TypeMirror type;
-    final String interpreterMethod;
+        final String name;
+        final TypeMirror type;
+        final String interpreterMethod;
 
-    Parameter(String name, TypeMirror type, String interpreterMethod)
-    {
-        this.name = name;
-        this.type = type;
-        this.interpreterMethod = interpreterMethod;
-    }
+        Parameter(String name, TypeMirror type, String interpreterMethod)
+        {
+                this.name = name;
+                this.type = type;
+                this.interpreterMethod = interpreterMethod;
+        }
 }
 
 final class RouteDescriptor {
 
-    private static final ImmutableMap<String, String> DEFAULT_HEADER = ImmutableMap.of("Content-Type",
-                                                                                       "application/json");
+        private static final ImmutableMap<String, String> DEFAULT_HEADER = ImmutableMap.of("Content-Type",
+                                                                                           "application/json");
 
-    final Class<?> type;
-    final HttpVerb verb;
-    final String pattern;
-    final String regex;
-    final TypeElement controller;
-    final String action;
-    final ImmutableList<Parameter> parameters;
-    final String ctorArgs;
-    final boolean useCredentials;
-    final ImmutableMap<String, String> headers;
+        final Class<?> type;
+        final HttpVerb verb;
+        final String pattern;
+        final String regex;
+        final TypeElement controller;
+        final String action;
+        final ImmutableList<Parameter> parameters;
+        final String ctorArgs;
+        final boolean useCredentials;
+        final ImmutableMap<String, String> headers;
 
-    RouteDescriptor(final HttpVerb verb,
-                    final String pattern,
-                    final boolean useCredentials,
-                    final TypeElement controller,
-                    final String action,
-                    final String ctorArgs)
-    {
-        this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs, DEFAULT_HEADER);
-    }
-
-    RouteDescriptor(final HttpVerb verb,
-                    final String pattern,
-                    final boolean useCredentials,
-                    final TypeElement controller,
-                    final String action,
-                    final String ctorArgs,
-                    final ImmutableMap<String, String> headers)
-    {
-        this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs, headers);
-    }
-
-    RouteDescriptor(final HttpVerb verb,
-                    final String pattern,
-                    final String regex,
-                    final boolean useCredentials,
-                    final TypeElement controller,
-                    final String action,
-                    final ImmutableList<Parameter> parameters,
-                    final String ctorArgs)
-    {
-        this(verb, pattern, pattern, useCredentials, controller, action, parameters, ctorArgs, DEFAULT_HEADER);
-    }
-
-    RouteDescriptor(final HttpVerb verb,
-                    final String pattern,
-                    final String regex,
-                    final boolean useCredentials,
-                    final TypeElement controller,
-                    final String action,
-                    final ImmutableList<Parameter> parameters,
-                    final String ctorArgs,
-                    final ImmutableMap<String, String> headers)
-    {
-        this.type = parameters.isEmpty() ? Route.class : ParameterizedRoute.class;
-        this.verb = verb;
-        this.pattern = pattern;
-        this.regex = regex;
-        this.useCredentials = useCredentials;
-        this.controller = controller;
-        this.parameters = parameters;
-        this.ctorArgs = ctorArgs;
-        this.action = action;
-        this.headers = headers;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int hash = 3;
-        hash = 17 * hash + this.verb.hashCode();
-        hash = 17 * hash + this.pattern.hashCode();
-        return hash;
-    }
-
-    @Override
-    public boolean equals(final Object that)
-    {
-        if (this == that) {
-            return true;
+        RouteDescriptor(final HttpVerb verb,
+                        final String pattern,
+                        final boolean useCredentials,
+                        final TypeElement controller,
+                        final String action,
+                        final String ctorArgs)
+        {
+                this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs,
+                     DEFAULT_HEADER);
         }
-        if (that instanceof RouteDescriptor) {
-            final RouteDescriptor other = (RouteDescriptor) that;
-            return this.pattern.equals(other.pattern) && this.verb == other.verb;
+
+        RouteDescriptor(final HttpVerb verb,
+                        final String pattern,
+                        final boolean useCredentials,
+                        final TypeElement controller,
+                        final String action,
+                        final String ctorArgs,
+                        final ImmutableMap<String, String> headers)
+        {
+                this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs, headers);
         }
-        return false;
-    }
 
-    @Override
-    public String toString()
-    {
-        return "Route{type=" + type + "verb=" + verb + ", pattern=" + pattern + ", controller=" + controller + ", headers=" + headers + '}';
-    }
-
-    String routeField()
-    {
-        return this.verb.name() + '_' + controllerQualifiedName().replace('.', '_') + '_' + action;
-    }
-
-    String controllerQualifiedName()
-    {
-        return controller.getQualifiedName().toString();
-    }
-
-    final ClassName controllerClass()
-    {
-        return ClassName.bestGuess(controllerQualifiedName() + "_Impl");
-    }
-
-    boolean isDynamic()
-    {
-        return type == ParameterizedRoute.class;
-    }
-
-    String arguments()
-    {
-        if (parametersCount() == 0) {
-            return "";
-        } else if (parametersCount() == 1) {
-            return parameterName(0);
-        } else {
-            final StringBuilder args = new StringBuilder();
-            args.append(parameterName(0));
-            for (int i = 1; i < parametersCount(); i++) {
-                args.append(',').append(parameterName(i));
-            }
-            return args.toString();
+        RouteDescriptor(final HttpVerb verb,
+                        final String pattern,
+                        final String regex,
+                        final boolean useCredentials,
+                        final TypeElement controller,
+                        final String action,
+                        final ImmutableList<Parameter> parameters,
+                        final String ctorArgs)
+        {
+                this(verb, pattern, pattern, useCredentials, controller, action, parameters, ctorArgs, DEFAULT_HEADER);
         }
-    }
 
-    int parametersCount()
-    {
-        return parameters.size();
-    }
-
-    String parameterName(final int i)
-    {
-        return parameters.get(i).name;
-    }
-
-    TypeMirror parameterType(final int i)
-    {
-        return parameters.get(i).type;
-    }
-
-    String parameterInterpreterMethod(final int i)
-    {
-        return parameters.get(i).interpreterMethod;
-    }
-
-    String headersFilterExpr()
-    {
-        headers.entrySet();
-        final StringBuilder expr = new StringBuilder().append("if ($S.equals(request.getHeader($S))");
-        for (int i = 1, headersCount = headers.keySet().size(); i < headersCount; i++) {
-            expr.append(" && $S.equals(request.getHeader($S))");
+        RouteDescriptor(final HttpVerb verb,
+                        final String pattern,
+                        final String regex,
+                        final boolean useCredentials,
+                        final TypeElement controller,
+                        final String action,
+                        final ImmutableList<Parameter> parameters,
+                        final String ctorArgs,
+                        final ImmutableMap<String, String> headers)
+        {
+                this.type = parameters.isEmpty() ? Route.class : ParameterizedRoute.class;
+                this.verb = verb;
+                this.pattern = pattern;
+                this.regex = regex;
+                this.useCredentials = useCredentials;
+                this.controller = controller;
+                this.parameters = parameters;
+                this.ctorArgs = ctorArgs;
+                this.action = action;
+                this.headers = headers;
         }
-        expr.append(')');
-        return expr.toString();
-    }
 
-    Object[] headersFilterArgs()
-    {
-        final Object[] args = new Object[headers.size() * 2];
-        int i = 0;
-        for (final String headerName : headers.keySet()) {
-            args[i++] = headers.get(headerName);
-            args[i++] = headerName;
+        @Override
+        public int hashCode()
+        {
+                int hash = 3;
+                hash = 17 * hash + this.verb.hashCode();
+                hash = 17 * hash + this.pattern.hashCode();
+                return hash;
         }
-        return args;
-    }
 
-    boolean hasHeaderSelection()
-    {
-        return !headers.isEmpty();
-    }
+        @Override
+        public boolean equals(final Object that)
+        {
+                if (this == that) {
+                        return true;
+                }
+                if (that instanceof RouteDescriptor) {
+                        final RouteDescriptor other = (RouteDescriptor) that;
+                        return this.pattern.equals(other.pattern) && this.verb == other.verb;
+                }
+                return false;
+        }
+
+        @Override
+        public String toString()
+        {
+                return "Route{type=" + type + "verb=" + verb + ", pattern=" + pattern + ", controller=" + controller + ", headers=" + headers + '}';
+        }
+
+        String routeField()
+        {
+                return this.verb.name() + '_' + controllerQualifiedName().replace('.', '_') + '_' + action;
+        }
+
+        String controllerQualifiedName()
+        {
+                return controller.getQualifiedName().toString();
+        }
+
+        final ClassName controllerClass()
+        {
+                return ClassName.bestGuess(controllerQualifiedName());
+        }
+
+        boolean isDynamic()
+        {
+                return type == ParameterizedRoute.class;
+        }
+
+        String arguments()
+        {
+                if (parametersCount() == 0) {
+                        return "";
+                } else if (parametersCount() == 1) {
+                        return parameterName(0);
+                } else {
+                        final StringBuilder args = new StringBuilder();
+                        args.append(parameterName(0));
+                        for (int i = 1; i < parametersCount(); i++) {
+                                args.append(',').append(parameterName(i));
+                        }
+                        return args.toString();
+                }
+        }
+
+        int parametersCount()
+        {
+                return parameters.size();
+        }
+
+        String parameterName(final int i)
+        {
+                return parameters.get(i).name;
+        }
+
+        TypeMirror parameterType(final int i)
+        {
+                return parameters.get(i).type;
+        }
+
+        String parameterInterpreterMethod(final int i)
+        {
+                return parameters.get(i).interpreterMethod;
+        }
+
+        String headersFilterExpr()
+        {
+                headers.entrySet();
+                final StringBuilder expr = new StringBuilder().append("if ($S.equals(request.getHeader($S))");
+                for (int i = 1, headersCount = headers.keySet().size(); i < headersCount; i++) {
+                        expr.append(" && $S.equals(request.getHeader($S))");
+                }
+                expr.append(')');
+                return expr.toString();
+        }
+
+        Object[] headersFilterArgs()
+        {
+                final Object[] args = new Object[headers.size() * 2];
+                int i = 0;
+                for (final String headerName : headers.keySet()) {
+                        args[i++] = headers.get(headerName);
+                        args[i++] = headerName;
+                }
+                return args;
+        }
+
+        boolean hasHeaderSelection()
+        {
+                return !headers.isEmpty();
+        }
 }

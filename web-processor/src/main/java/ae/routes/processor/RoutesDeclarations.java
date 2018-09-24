@@ -23,10 +23,12 @@
  */
 package ae.routes.processor;
 
+import ae.web.RouterServlet;
 import static java.util.stream.Collectors.toList;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
+import com.squareup.javapoet.ClassName;
 
 import javax.lang.model.element.TypeElement;
 import java.text.DateFormat;
@@ -36,125 +38,146 @@ import java.util.List;
 
 class RoutesDeclarations {
 
-    final ImmutableList<RouteDescriptor> routes;
-    final ImmutableListMultimap<HttpVerb, RouteDescriptor> routesByVerb;
-    final String paths;
-    final String date;
-    final String packageName;
-    final String superClass;
-    final long serialVersionUID;
+        final ImmutableList<RouteDescriptor> routes;
+        final ImmutableListMultimap<HttpVerb, RouteDescriptor> routesByVerb;
+        final String paths;
+        final String date;
+        final String packageName;
+        final Class<? extends RouterServlet> superClass;
+        final long serialVersionUID;
+        final String routerClass;
+        final String basePath;
+        final String apiPath;
 
-    RoutesDeclarations(final ImmutableList<RouteDescriptor> routes,
-                       final ImmutableListMultimap<HttpVerb, RouteDescriptor> routesByVerb,
-                       final String paths,
-                       final String date,
-                       final String packageName,
-                       final String superClass,
-                       final long serialVersionUID)
-    {
-        this.routes = routes;
-        this.routesByVerb = routesByVerb;
-        this.paths = paths;
-        this.date = date;
-        this.packageName = packageName;
-        this.superClass = superClass;
-        this.serialVersionUID = serialVersionUID;
-    }
-
-    List<TypeElement> controllers()
-    {
-        return routes.stream().map(route -> route.controller).distinct().collect(toList());
-    }
-
-    static class Builder {
-
-        private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-
-        final ImmutableList.Builder<RouteDescriptor> routes;
-        final ImmutableListMultimap.Builder<HttpVerb, RouteDescriptor> routesByVerb;
-        final StringBuilder paths;
-        final Date today;
-        final DateFormat dateFormat;
-        final String superClass;
-        private String packageName;
-
-        Builder(final String superClass, final Date today)
+        RoutesDeclarations(final String basePath,
+                           final String apiPath,
+                           final ImmutableList<RouteDescriptor> routes,
+                           final ImmutableListMultimap<HttpVerb, RouteDescriptor> routesByVerb,
+                           final String paths,
+                           final String date,
+                           final String packageName,
+                           final String routerClass,
+                           final Class<? extends RouterServlet> superClass,
+                           final long serialVersionUID)
         {
-            this(ImmutableList.<RouteDescriptor>builder(),
-                 ImmutableListMultimap.<HttpVerb, RouteDescriptor>builder(),
-                 new StringBuilder(),
-                 today,
-                 new java.text.SimpleDateFormat(DEFAULT_DATE_FORMAT),
-                 superClass);
+                this.basePath = basePath;
+                this.apiPath = apiPath;
+                this.routes = routes;
+                this.routesByVerb = routesByVerb;
+                this.paths = paths;
+                this.date = date;
+                this.packageName = packageName;
+                this.superClass = superClass;
+                this.serialVersionUID = serialVersionUID;
+                this.routerClass = routerClass;
         }
 
-        Builder(final ImmutableList.Builder<RouteDescriptor> routes,
-                final ImmutableListMultimap.Builder<HttpVerb, RouteDescriptor> routesByVerb,
-                final StringBuilder paths,
-                final Date today,
-                final DateFormat dateFormat,
-                final String superClass)
+        List<TypeElement> controllers()
         {
-            this.routes = routes;
-            this.routesByVerb = routesByVerb.orderValuesBy(ComparingRouteDescriptor.BY_PATTERN_AND_HEADERS_COUNT);
-            this.paths = paths;
-            this.today = today;
-            this.dateFormat = dateFormat;
-            this.superClass = superClass;
+                return routes.stream().map(route -> route.controller).distinct().collect(toList());
         }
 
-        void addPath(final String path)
+        ClassName routerClassName()
         {
-            if (paths.length() > 0) {
-                paths.append(", ");
-            } else {
-                paths.append("Build from specs at: ");
-            }
-            paths.append(path);
+                return ClassName.get(this.packageName, this.routerClass);
         }
 
-        void addRoutes(final Iterable<RouteDescriptor> routes)
+        static Builder builder(final Date today)
         {
-            for (RouteDescriptor r : routes) {
-                addRoute(r);
-            }
+                return new Builder(ImmutableList.<RouteDescriptor>builder(),
+                                   ImmutableListMultimap.<HttpVerb, RouteDescriptor>builder(),
+                                   new StringBuilder(),
+                                   today,
+                                   new java.text.SimpleDateFormat(Builder.DEFAULT_DATE_FORMAT),
+                                   RouterServlet.class);
         }
 
-        void addRoute(final RouteDescriptor route)
-        {
-            routes.add(route);
-            routesByVerb.put(route.verb, route);
-        }
+        static class Builder {
 
-        void packageName(final String value)
-        {
-            this.packageName = value;
-        }
+                private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
 
-        RoutesDeclarations build()
-        {
-            return new RoutesDeclarations(routes.build(),
-                                          routesByVerb.build(),
-                                          paths.toString(),
-                                          dateFormat.format(today),
-                                          packageName,
-                                          superClass,
-                                          today.getTime());
-        }
+                final ImmutableList.Builder<RouteDescriptor> routes;
+                final ImmutableListMultimap.Builder<HttpVerb, RouteDescriptor> routesByVerb;
+                final StringBuilder paths;
+                final Date today;
+                final DateFormat dateFormat;
+                final Class<? extends RouterServlet> superClass;
+                private String packageName;
+                private String routerClass;
+                private String basePath;
+                private String apiPath;
 
-        enum ComparingRouteDescriptor implements Comparator<RouteDescriptor> {
-            BY_PATTERN_AND_HEADERS_COUNT;
-
-            @Override
-            public int compare(final RouteDescriptor a, final RouteDescriptor b)
-            {
-                final int patternCmp = a.pattern.compareTo(b.pattern);
-                if (patternCmp == 0) {
-                    return b.headers.size() - a.headers.size();
-                } else {
-                    return patternCmp;
+                Builder(final ImmutableList.Builder<RouteDescriptor> routes,
+                        final ImmutableListMultimap.Builder<HttpVerb, RouteDescriptor> routesByVerb,
+                        final StringBuilder paths,
+                        final Date today,
+                        final DateFormat dateFormat,
+                        final Class<? extends RouterServlet> superClass)
+                {
+                        this.routes = routes;
+                        this.routesByVerb = routesByVerb.orderValuesBy(
+                                ComparingRouteDescriptor.BY_PATTERN_AND_HEADERS_COUNT);
+                        this.paths = paths;
+                        this.today = today;
+                        this.dateFormat = dateFormat;
+                        this.superClass = superClass;
                 }
-            }
+
+                void addRoute(final RouteDescriptor route)
+                {
+                        if (route != null) {
+                                routes.add(route);
+                                routesByVerb.put(route.verb, route);
+                        }
+                }
+
+                void packageName(final String value)
+                {
+                        this.packageName = value;
+                }
+
+                void routerClass(final String value)
+                {
+                        this.routerClass = value;
+                }
+
+                public void basePath(final String basePath)
+                {
+                        this.basePath = basePath;
+                }
+
+                public void apiPath(final String apiPath)
+                {
+                        this.apiPath = apiPath;
+                }
+
+                RoutesDeclarations build()
+                {
+                        return new RoutesDeclarations(this.basePath,
+                                                      this.apiPath,
+                                                      this.routes.build(),
+                                                      this.routesByVerb.build(),
+                                                      this.paths.toString(),
+                                                      this.dateFormat.format(this.today),
+                                                      this.packageName,
+                                                      this.routerClass,
+                                                      this.superClass,
+                                                      this.today.getTime());
+                }
+
+                enum ComparingRouteDescriptor implements Comparator<RouteDescriptor> {
+                        BY_PATTERN_AND_HEADERS_COUNT;
+
+                        @Override
+                        public int compare(final RouteDescriptor a, final RouteDescriptor b)
+                        {
+                                final int patternCmp = a.pattern.compareTo(b.pattern);
+                                if (patternCmp == 0) {
+                                        return b.headers.size() - a.headers.size();
+                                } else {
+                                        return patternCmp;
+                                }
+                        }
+                }
         }
-    }
 }

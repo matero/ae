@@ -23,98 +23,169 @@
  */
 package ae.routes.processor;
 
+import ae.annotation.processor.AnnotationProcessor;
+
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.processing.ProcessingEnvironment;
+
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
+
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
-import ae.Router;
-import ae.annotation.processor.AnnotationProcessor;
+import ae.controller;
+import ae.router;
+import java.util.ArrayList;
+import javax.lang.model.element.PackageElement;
 
 @AutoService(Processor.class)
-@SupportedAnnotationTypes("ae.Router")
+@SupportedAnnotationTypes({"ae.router", "ae.controller"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ControllerAndRoutesCompiler extends AnnotationProcessor {
 
-    private RoutesReader routesReader;
-    private ControllerImplCodeBuilder controllerImplCodeBuilder;
-    private final RoutersCodeBuilder routerBuilder;
+        private final RoutersCodeBuilder routerBuilder;
+        private boolean shouldGenerateCode;
 
-    public ControllerAndRoutesCompiler()
-    {
-        this(new Date(), new RoutersCodeBuilder());
-    }
-
-    ControllerAndRoutesCompiler(final Date today, final RoutersCodeBuilder routerBuilder)
-    {
-        super(today);
-        this.routerBuilder = routerBuilder;
-    }
-
-    @Override
-    public synchronized void init(final ProcessingEnvironment processingEnv)
-    {
-        super.init(processingEnv);
-        this.routesReader = new RoutesReader(elements, types, messager);
-        this.controllerImplCodeBuilder = new ControllerImplCodeBuilder(elements, types);
-    }
-
-    @Override
-    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment)
-    {
-        for (final Element element : roundEnvironment.getElementsAnnotatedWith(Router.class)) {
-            compileRoute(element);
-        }
-        return true;
-    }
-
-    private void compileRoute(final Element element)
-    {
-        final TypeElement routerClass = (TypeElement) element;
-        if (routerClass.getKind() != ElementKind.CLASS) {
-            error(element, "Only classes can be annotated as @" + Router.class.getCanonicalName());
-            return;
+        public ControllerAndRoutesCompiler()
+        {
+                this(new Date(), new RoutersCodeBuilder());
         }
 
-        final Router router = element.getAnnotation(Router.class);
-        final List<? extends TypeMirror> supertypes = types.directSupertypes(element.asType());
-
-        if (supertypes.isEmpty()) {
-            error(element, "you must define a superclass");
-            return;
-        }
-        if (supertypes.size() != 1) {
-            error(element, "you can only define ONE superclass, no interfaces");
-            return;
+        ControllerAndRoutesCompiler(final Date today, final RoutersCodeBuilder routerBuilder)
+        {
+                super(today);
+                this.routerBuilder = routerBuilder;
         }
 
-        final String superClass = readSuperClassCannonicalName(supertypes.get(0));
-        final RoutesDeclarations.Builder builder = new RoutesDeclarations.Builder(superClass, today);
+        @Override
+        public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment)
+        {
+                this.shouldGenerateCode = true;
+                final TypeElement routerClass = routerAt(roundEnvironment);
+                if (routerClass != null) {
+                        final ae.router router = routerClass.getAnnotation(ae.router.class);
+                        final String basePath;
+                        final String apiPath;
+                        if (router.basePath() == null) {
+                                basePath = "/"; // to allow reading the controllers and try to find more errors
+                                error(routerClass, "@router.basePath can't be null");
+                        } else {
+                                basePath = router.basePath();
+                        }
+                        if (router.apiPath() == null) {
+                                apiPath = ""; // to allow reading the controllers and try to find more errors
+                                error(routerClass, "@router.apiPath can't be null");
+                        } else {
+                                apiPath = router.apiPath();
+                        }
+                        final RoutesDeclarations.Builder declarationsBuilder = RoutesDeclarations.builder(this.today);
 
-        builder.packageName(this.elements.getPackageOf(routerClass).toString());
-        if (this.routesReader.readRoutes(router.routes(), builder)) {
-            final RoutesDeclarations routes = builder.build();
-            final JavaFile routerCode = this.routerBuilder.buildJavaCode(routes);
-            final List<JavaFile> controllersImpl = this.controllerImplCodeBuilder.buildJavaCode(routes);
-            try {
-                routerCode.writeTo(filer);
-                for (final JavaFile impl : controllersImpl) {
-                    impl.writeTo(filer);
+                        final RoutesReader interpreter = new RoutesReader(basePath,
+                                                                          apiPath,
+                                                                          this.elements,
+                                                                          this.types,
+                                                                          this.messager,
+                                                                          declarationsBuilder);
+                        for (final TypeElement controllerClass : controllersAt(roundEnvironment)) {
+                                this.shouldGenerateCode &= interpreter.readRoutes(controllerClass);
+                        }
+                        if (this.shouldGenerateCode) {
+                                declarationsBuilder.basePath(interpreter.routerBasePath);
+                                declarationsBuilder.apiPath(interpreter.routerApiPath);
+                                final PackageElement routerPackage = elements.getPackageOf(routerClass);
+                                declarationsBuilder.packageName(routerPackage.getQualifiedName().toString());
+                                final String routerClassImpl = routerClass.getSimpleName().toString() + "_impl";
+                                declarationsBuilder.routerClass(routerClassImpl);
+                                final RoutesDeclarations routes = declarationsBuilder.build();
+                                generateJavaCode(routes);
+                        }
                 }
-            } catch (final IOException e) {
-                error(element, "could not write router code, reason: " + e.getMessage());
-            }
+                return true;
         }
-    }
+
+        private TypeElement routerAt(final RoundEnvironment roundEnvironment)
+        {
+                final Set<? extends Element> routers = roundEnvironment.getElementsAnnotatedWith(router.class);
+                switch (routers.size()) {
+                        case 0:
+                                return null;
+                        case 1: {
+                                final TypeElement router = (TypeElement) routers.iterator().next();
+                                if (router.getKind() != ElementKind.INTERFACE) {
+                                        error(router, "only interfaces can be marked as @ae.router");
+                                        return null;
+                                }
+                                return router;
+                        }
+                        default:
+                                for (final Element r : routers) {
+                                        error(r, "only one @router can be defined");
+                                }
+                                return null;
+                }
+        }
+
+        private List<TypeElement> controllersAt(final RoundEnvironment roundEnvironment)
+        {
+                final Set<? extends Element> controllers = roundEnvironment.getElementsAnnotatedWith(controller.class);
+                final ArrayList<TypeElement> result = new ArrayList<>(controllers.size());
+
+                for (final Element controller : controllers) {
+                        if (controller.getKind() == ElementKind.CLASS) {
+                                result.add((TypeElement) controller);
+                        } else {
+                                error(controller, "only classes can be defined as @ae.controller");
+                        }
+                }
+                result.trimToSize();
+
+                return result;
+        }
+
+        private void generateJavaCode(final RoutesDeclarations routes)
+        {
+                final JavaFile routerCode = this.routerBuilder.buildJavaCode(routes);
+                try {
+                        routerCode.writeTo(this.filer);
+                } catch (final IOException e) {
+                        error("could not write router code, reason: " + e.getMessage());
+                }
+        }
+
+        @Override
+        protected void error(final String message)
+        {
+                this.shouldGenerateCode = false;
+                super.error(message);
+        }
+
+        @Override
+        protected void error(final Throwable failure)
+        {
+                this.shouldGenerateCode = false;
+                super.error(failure);
+        }
+
+        @Override
+        protected void error(final Element element, final String errorMessage)
+        {
+                this.shouldGenerateCode = false;
+                super.error(element, errorMessage);
+        }
+
+        @Override
+        protected void error(final Element element, final Throwable failure)
+        {
+                this.shouldGenerateCode = false;
+                super.error(element, failure);
+        }
 }
