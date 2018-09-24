@@ -60,12 +60,12 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
         types = processingEnv.getTypeUtils();
     }
 
-    protected final void error(final Element element, final Throwable failure)
+    protected void error(final Element element, final Throwable failure)
     {
         message(Diagnostic.Kind.ERROR, message(failure), element);
     }
 
-    protected final void error(final Element element, final String errorMessage)
+    protected void error(final Element element, final String errorMessage)
     {
         message(Diagnostic.Kind.ERROR, errorMessage, element);
     }
@@ -85,12 +85,12 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
         message(Diagnostic.Kind.NOTE, String.format("[%s] %s", getClass().getSimpleName(), infoMessage), element);
     }
 
-    protected final void error(final Throwable failure)
+    protected void error(final Throwable failure)
     {
         error(message(failure));
     }
 
-    protected final void error(final String message)
+    protected void error(final String message)
     {
         message(Diagnostic.Kind.ERROR, message);
     }

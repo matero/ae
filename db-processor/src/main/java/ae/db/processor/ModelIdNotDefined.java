@@ -27,8 +27,8 @@ import javax.lang.model.element.TypeElement;
 
 final class ModelIdNotDefined extends ModelException {
 
-    ModelIdNotDefined(final TypeElement recordType)
-    {
-        super(recordType, "@Id not defined");
-    }
+        ModelIdNotDefined(final TypeElement recordType)
+        {
+                super(recordType, "@Id not defined");
+        }
 }

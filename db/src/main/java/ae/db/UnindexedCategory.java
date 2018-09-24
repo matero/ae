@@ -29,27 +29,29 @@ import com.google.common.collect.ImmutableList;
 
 public final class UnindexedCategory extends ScalarField.Unindexed<Category> implements CategoryField {
 
-    private static final long serialVersionUID = -5108959599933483975L;
+        private static final long serialVersionUID = -5108959599933483975L;
 
-    public UnindexedCategory(final String canonicalName,
-                             final String description,
-                             final String property,
-                             final String field,
-                             final boolean required,
-                             final JsonStringNode jsonName,
-                             final String jsonPath,
-                             final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.INSTANCE,
-              constraints);
-    }
-
-    @Override
-    protected void validateNotNullValue(final Category value, final Validation validation)
-    {
-        if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getCategory())) {
-            validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.getCategory()));
+        public UnindexedCategory(final String canonicalName,
+                                 final String description,
+                                 final String property,
+                                 final String field,
+                                 final boolean required,
+                                 final JsonStringNode jsonName,
+                                 final String jsonPath,
+                                 final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      CategoryJsonSerializer.INSTANCE,
+                      constraints);
         }
-        super.validateNotNullValue(value, validation);
-    }
+
+        @Override
+        protected void validateNotNullValue(final Category value, final Validation validation)
+        {
+                if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getCategory())) {
+                        validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.
+                                                                                                 getCategory()));
+                }
+                super.validateNotNullValue(value, validation);
+        }
 }

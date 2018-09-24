@@ -29,11 +29,11 @@ import com.google.appengine.api.datastore.PhoneNumber;
 import com.google.appengine.api.datastore.Text;
 import java.util.List;
 import java.util.stream.Collectors;
-import ae.Model;
 import ae.Record;
 import com.google.appengine.api.datastore.Key;
+import ae.model;
 
-@Model
+@model
 class Competencia extends __Competencia {
 
     static class R extends Record {
@@ -47,7 +47,7 @@ class Competencia extends __Competencia {
     }
 }
 
-@Model(kind = "competidores")
+@model(kind = "competidores")
 public class Competidor extends __Competidor {
 
     static class R extends Record {

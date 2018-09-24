@@ -27,9 +27,9 @@ import com.google.appengine.api.datastore.Rating;
 
 public interface RatingListField extends ListField<Rating> {
 
-    @Override
-    default Class<Rating> elementType()
-    {
-        return Rating.class;
-    }
+        @Override
+        default Class<Rating> elementType()
+        {
+                return Rating.class;
+        }
 }

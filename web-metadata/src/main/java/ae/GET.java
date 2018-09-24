@@ -1,7 +1,7 @@
-/* 
+/*
  * The MIT License
  *
- * Copyright (c) 2018 ActiveEngine.
+ * Copyright 2018 juanjo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,19 @@
  */
 package ae;
 
-public @interface Model {
+import static java.lang.annotation.ElementType.METHOD;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
+import java.lang.annotation.Target;
 
-    String kind() default "";
+@Retention(SOURCE)
+@Target(METHOD)
+public @interface GET {
+        String path() default "";
+
+        String accept() default "";
+
+        boolean template() default false;
+
+        boolean oauth2() default false;
 }

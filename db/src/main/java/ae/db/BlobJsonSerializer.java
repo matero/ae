@@ -29,36 +29,36 @@ import com.google.appengine.api.datastore.Blob;
 import java.util.Base64;
 
 enum BlobJsonSerializer implements JsonSerializer<Blob> {
-    INSTANCE;
+        INSTANCE;
 
-    static final JsonArraySerializer<Blob> ARRAY = new JsonArraySerializer<>(INSTANCE);
+        static final JsonArraySerializer<Blob> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-    @Override
-    public JsonNode toJson(final Blob value)
-    {
-        if (value == null) {
-            return JsonNodeFactories.nullNode();
+        @Override
+        public JsonNode toJson(final Blob value)
+        {
+                if (value == null) {
+                        return JsonNodeFactories.nullNode();
+                }
+                return JsonNodeFactories.string(Base64.getEncoder().encodeToString(value.getBytes()));
         }
-        return JsonNodeFactories.string(Base64.getEncoder().encodeToString(value.getBytes()));
-    }
 
-    @Override
-    public Blob fromJson(final JsonNode json, final String jsonPath)
-    {
-        if (json.isNullNode(jsonPath)) {
-            return null;
-        } else {
-            return new Blob(Base64.getDecoder().decode(json.getStringValue(jsonPath)));
+        @Override
+        public Blob fromJson(final JsonNode json, final String jsonPath)
+        {
+                if (json.isNullNode(jsonPath)) {
+                        return null;
+                } else {
+                        return new Blob(Base64.getDecoder().decode(json.getStringValue(jsonPath)));
+                }
         }
-    }
 
-    @Override
-    public Blob fromJson(final JsonNode json)
-    {
-        if (json.isNullNode()) {
-            return null;
-        } else {
-            return new Blob(Base64.getDecoder().decode(json.getStringValue()));
+        @Override
+        public Blob fromJson(final JsonNode json)
+        {
+                if (json.isNullNode()) {
+                        return null;
+                } else {
+                        return new Blob(Base64.getDecoder().decode(json.getStringValue()));
+                }
         }
-    }
 }

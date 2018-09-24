@@ -27,9 +27,9 @@ import com.google.appengine.api.datastore.GeoPt;
 
 public interface GeoPtListField extends ListField<GeoPt> {
 
-    @Override
-    default Class<GeoPt> elementType()
-    {
-        return GeoPt.class;
-    }
+        @Override
+        default Class<GeoPt> elementType()
+        {
+                return GeoPt.class;
+        }
 }

@@ -37,57 +37,57 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
-    INSTANCE;
+        INSTANCE;
 
-    static final JsonArraySerializer<IMHandle> ARRAY = new JsonArraySerializer<>(INSTANCE);
+        static final JsonArraySerializer<IMHandle> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-    private final JsonStringNode address = string("addr");
-    private final JsonStringNode protocol = string("prot");
+        private final JsonStringNode address = string("addr");
+        private final JsonStringNode protocol = string("prot");
 
-    @Override
-    public JsonNode toJson(final IMHandle value)
-    {
-        if (value == null) {
-            return nullNode();
+        @Override
+        public JsonNode toJson(final IMHandle value)
+        {
+                if (value == null) {
+                        return nullNode();
+                }
+                return object(ImmutableList.of(field(address, string(value.getAddress())),
+                                               field(protocol, string(value.getProtocol()))));
         }
-        return object(ImmutableList.of(field(address, string(value.getAddress())),
-                                       field(protocol, string(value.getProtocol()))));
-    }
 
-    @Override
-    public IMHandle fromJson(final JsonNode json, final String jsonPath)
-    {
-        if (json.isNullNode(jsonPath)) {
-            return null;
-        } else {
-            final String addr = json.getNullableStringValue(jsonPath, "addr");
-            final String prot = json.getStringValue(jsonPath, "prot");
-            return makeImHandle(addr, prot);
+        @Override
+        public IMHandle fromJson(final JsonNode json, final String jsonPath)
+        {
+                if (json.isNullNode(jsonPath)) {
+                        return null;
+                } else {
+                        final String addr = json.getNullableStringValue(jsonPath, "addr");
+                        final String prot = json.getStringValue(jsonPath, "prot");
+                        return makeImHandle(addr, prot);
+                }
         }
-    }
 
-    @Override
-    public IMHandle fromJson(final JsonNode json)
-    {
-        if (json.isNullNode()) {
-            return null;
-        } else {
-            final String addr = json.getNullableStringValue("addr");
-            final String prot = json.getStringValue("prot");
-            return makeImHandle(addr, prot);
+        @Override
+        public IMHandle fromJson(final JsonNode json)
+        {
+                if (json.isNullNode()) {
+                        return null;
+                } else {
+                        final String addr = json.getNullableStringValue("addr");
+                        final String prot = json.getStringValue("prot");
+                        return makeImHandle(addr, prot);
+                }
         }
-    }
 
-    IMHandle makeImHandle(final String addr, final String prot)
-    {
-        try {
-            return new IMHandle(IMHandle.Scheme.valueOf(prot), addr);
-        } catch (final IllegalArgumentException e) {
-            try {
-                return new IMHandle(new URL(prot), addr);
-            } catch (final MalformedURLException ex) {
-                throw new IllegalStateException("IMHandle protocol is invalid", ex);
-            }
+        IMHandle makeImHandle(final String addr, final String prot)
+        {
+                try {
+                        return new IMHandle(IMHandle.Scheme.valueOf(prot), addr);
+                } catch (final IllegalArgumentException e) {
+                        try {
+                                return new IMHandle(new URL(prot), addr);
+                        } catch (final MalformedURLException ex) {
+                                throw new IllegalStateException("IMHandle protocol is invalid", ex);
+                        }
+                }
         }
-    }
 }

@@ -30,18 +30,19 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedEmailList extends ListField.Indexed<Email> implements EmailListField {
 
-    private static final long serialVersionUID = -6177896687058798487L;
+        private static final long serialVersionUID = -6177896687058798487L;
 
-    public IndexedEmailList(final String canonicalName,
-                            final String description,
-                            final String property,
-                            final String field,
-                            final boolean required,
-                            final JsonStringNode jsonName,
-                            final String jsonPath,
-                            final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath, EmailJsonSerializer.ARRAY,
-              new PropertyProjection(property, Email.class), constraints);
-    }
+        public IndexedEmailList(final String canonicalName,
+                                final String description,
+                                final String property,
+                                final String field,
+                                final boolean required,
+                                final JsonStringNode jsonName,
+                                final String jsonPath,
+                                final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      EmailJsonSerializer.ARRAY,
+                      new PropertyProjection(property, Email.class), constraints);
+        }
 }

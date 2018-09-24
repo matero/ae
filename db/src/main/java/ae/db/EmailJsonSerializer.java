@@ -28,36 +28,36 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Email;
 
 enum EmailJsonSerializer implements JsonSerializer<Email> {
-    INSTANCE;
+        INSTANCE;
 
-    static final JsonArraySerializer<Email> ARRAY = new JsonArraySerializer<>(INSTANCE);
+        static final JsonArraySerializer<Email> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-    @Override
-    public JsonNode toJson(final Email value)
-    {
-        if (value == null) {
-            return JsonNodeFactories.nullNode();
+        @Override
+        public JsonNode toJson(final Email value)
+        {
+                if (value == null) {
+                        return JsonNodeFactories.nullNode();
+                }
+                return JsonNodeFactories.string(value.getEmail());
         }
-        return JsonNodeFactories.string(value.getEmail());
-    }
 
-    @Override
-    public Email fromJson(final JsonNode json, final String jsonPath)
-    {
-        if (json.isNullNode(jsonPath)) {
-            return null;
-        } else {
-            return new Email(json.getStringValue(jsonPath));
+        @Override
+        public Email fromJson(final JsonNode json, final String jsonPath)
+        {
+                if (json.isNullNode(jsonPath)) {
+                        return null;
+                } else {
+                        return new Email(json.getStringValue(jsonPath));
+                }
         }
-    }
 
-    @Override
-    public Email fromJson(final JsonNode json)
-    {
-        if (json.isNullNode()) {
-            return null;
-        } else {
-            return new Email(json.getStringValue());
+        @Override
+        public Email fromJson(final JsonNode json)
+        {
+                if (json.isNullNode()) {
+                        return null;
+                } else {
+                        return new Email(json.getStringValue());
+                }
         }
-    }
 }

@@ -37,90 +37,90 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import ae.annotation.processor.AnnotationProcessor;
-import ae.Model;
+import ae.model;
 
 @AutoService(Processor.class)
-@SupportedAnnotationTypes("ae.Model")
+@SupportedAnnotationTypes("ae.model")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ModelProcessor extends AnnotationProcessor {
 
-    public ModelProcessor()
-    {
-        this(new Date());
-    }
+        public ModelProcessor()
+        {
+                this(new Date());
+        }
 
-    ModelProcessor(final Date today)
-    {
-        super(today);
-    }
+        ModelProcessor(final Date today)
+        {
+                super(today);
+        }
 
-    @Override
-    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment)
-    {
-        info("START @ae.db.Model processing");
-        final Set<? extends Element> annotatedElements = roundEnvironment.getElementsAnnotatedWith(Model.class);
-        if (annotatedElements.isEmpty()) {
-            info("DONE, no classes annotated  with @ae.db.Model to process");
-        } else {
-            final MetaModels metamodels;
-            try {
-                metamodels = metaModelFor(annotatedElements);
-            } catch (final ModelException e) {
-                error(e);
-                info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+        @Override
+        public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment)
+        {
+                info("START @ae.db.Model processing");
+                final Set<? extends Element> annotatedElements = roundEnvironment.getElementsAnnotatedWith(model.class);
+                if (annotatedElements.isEmpty()) {
+                        info("DONE, no classes annotated  with @ae.db.Model to process");
+                } else {
+                        final MetaModels metamodels;
+                        try {
+                                metamodels = metaModelFor(annotatedElements);
+                        } catch (final ModelException e) {
+                                error(e);
+                                info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+                                return true;
+                        } catch (final RuntimeException e) {
+                                error(e);
+                                info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+                                return true;
+                        }
+                        generateCode(metamodels);
+                        info("DONE processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+                }
                 return true;
-            } catch (final RuntimeException e) {
-                error(e);
-                info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
-                return true;
-            }
-            generateCode(metamodels);
-            info("DONE processing %d classes annotated with @ae.db.Model", annotatedElements.size());
-        }
-        return true;
-    }
-
-    MetaModels metaModelFor(final Set<? extends Element> annotatedElements)
-    {
-        final MetaModels.Builder modelsBuilder = MetaModels.builder();
-        final ModelInterpreter interpreter = new ModelInterpreter(processingEnv);
-
-        for (final Element modelElement : annotatedElements) {
-            final TypeElement model = (TypeElement) modelElement;
-            final String modelQualifiedName = model.getQualifiedName().toString();
-
-            info("reading meta-data of [%s].", modelQualifiedName);
-            modelsBuilder.add(interpreter.read(modelElement));
-            info("meta-data of [%s] read.", modelQualifiedName);
         }
 
-        return modelsBuilder.build();
-    }
+        MetaModels metaModelFor(final Set<? extends Element> annotatedElements)
+        {
+                final MetaModels.Builder modelsBuilder = MetaModels.builder();
+                final ModelInterpreter interpreter = new ModelInterpreter(processingEnv);
 
-    void generateCode(final MetaModels models)
-    {
-        generateCode("'base models'", models, new ModelBaseClassCodeGenerator());
-        generateCode("'models registry'", models, new ModelsRegistryClassCodeGenerator());
-    }
+                for (final Element modelElement : annotatedElements) {
+                        final TypeElement model = (TypeElement) modelElement;
+                        final String modelQualifiedName = model.getQualifiedName().toString();
 
-    void generateCode(final String name, final MetaModels models, final CodeGenerator codeGenerator)
-    {
-        info("generating [%s]", name);
-        for (final JavaFile generatedCode : codeGenerator.generateCode(models, today)) {
-            try {
-                generatedCode.writeTo(filer);
-            } catch (final IOException e) {
-                throw new IllegalStateException("could not generate " + name, e);
-            }
+                        info("reading meta-data of [%s].", modelQualifiedName);
+                        modelsBuilder.add(interpreter.read(modelElement));
+                        info("meta-data of [%s] read.", modelQualifiedName);
+                }
+
+                return modelsBuilder.build();
         }
-    }
 
-    final void error(final ModelException failure)
-    {
-        if (failure.element == null) {
-            error(message(failure));
-        } else {
-            message(Diagnostic.Kind.ERROR, message(failure), failure.element);
+        void generateCode(final MetaModels models)
+        {
+                generateCode("'base models'", models, new ModelBaseClassCodeGenerator());
+                generateCode("'models registry'", models, new ModelsRegistryClassCodeGenerator());
         }
-    }
+
+        void generateCode(final String name, final MetaModels models, final CodeGenerator codeGenerator)
+        {
+                info("generating [%s]", name);
+                for (final JavaFile generatedCode : codeGenerator.generateCode(models, today)) {
+                        try {
+                                generatedCode.writeTo(filer);
+                        } catch (final IOException e) {
+                                throw new IllegalStateException("could not generate " + name, e);
+                        }
+                }
+        }
+
+        final void error(final ModelException failure)
+        {
+                if (failure.element == null) {
+                        error(message(failure));
+                } else {
+                        message(Diagnostic.Kind.ERROR, message(failure), failure.element);
+                }
+        }
 }

@@ -39,79 +39,80 @@ import java.util.List;
 
 public final class Validation {
 
-    public static Validation withSuccessMessage(final String successMessage)
-    {
-        return new Validation(successMessage);
-    }
-
-    public static Validation failed(final Attr attr, final String message)
-    {
-        final Validation validation = new Validation("");
-        validation.reject(attr, message);
-        return validation;
-    }
-
-    private final LinkedHashMap<Attr, List<String>> errors;
-    public final String successMessage;
-
-    private Validation(final String successMessage)
-    {
-        this.errors = new LinkedHashMap<>();
-        this.successMessage = successMessage;
-    }
-
-    public boolean success()
-    {
-        return errors.isEmpty();
-    }
-
-    public boolean failure()
-    {
-        return !errors.isEmpty();
-    }
-
-    public List<String> get(final Attr attr)
-    {
-        if (errors.containsKey(attr)) {
-            return errors.get(attr);
-        } else {
-            return ImmutableList.of();
+        public static Validation withSuccessMessage(final String successMessage)
+        {
+                return new Validation(successMessage);
         }
-    }
 
-    public JsonNode asJson()
-    {
-        if (success()) {
-            return object(successField());
-        } else {
-            return object(failureField());
+        public static Validation failed(final Attr attr, final String message)
+        {
+                final Validation validation = new Validation("");
+                validation.reject(attr, message);
+                return validation;
         }
-    }
 
-    private JsonField successField()
-    {
-        return field("success", string(successMessage));
-    }
+        private final LinkedHashMap<Attr, List<String>> errors;
+        public final String successMessage;
 
-    private JsonField failureField()
-    {
-        final List<JsonNode> propertiesErrors = new java.util.ArrayList<>(errors.size());
-        for (final Attr attr : errors.keySet()) {
-            final List<String> messages = errors.get(attr);
-            if (!messages.isEmpty()) {
-                final List<JsonStringNode> errorMessages = new java.util.ArrayList<>(messages.size());
-                for (final String msg : messages) {
-                    errorMessages.add(string(msg));
+        private Validation(final String successMessage)
+        {
+                this.errors = new LinkedHashMap<>();
+                this.successMessage = successMessage;
+        }
+
+        public boolean success()
+        {
+                return errors.isEmpty();
+        }
+
+        public boolean failure()
+        {
+                return !errors.isEmpty();
+        }
+
+        public List<String> get(final Attr attr)
+        {
+                if (errors.containsKey(attr)) {
+                        return errors.get(attr);
+                } else {
+                        return ImmutableList.of();
                 }
-                propertiesErrors.add(object(ImmutableList.of(field(attr.jsonName(), array(errorMessages)))));
-            }
         }
-        return field("failure", array(propertiesErrors));
-    }
 
-    public void reject(final Attr attr, final String message)
-    {
-        errors.putIfAbsent(attr, new LinkedList<>());
-        errors.get(attr).add(message);
-    }
+        public JsonNode asJson()
+        {
+                if (success()) {
+                        return object(successField());
+                } else {
+                        return object(failureField());
+                }
+        }
+
+        private JsonField successField()
+        {
+                return field("success", string(successMessage));
+        }
+
+        private JsonField failureField()
+        {
+                final List<JsonNode> propertiesErrors = new java.util.ArrayList<>(errors.size());
+                for (final Attr attr : errors.keySet()) {
+                        final List<String> messages = errors.get(attr);
+                        if (!messages.isEmpty()) {
+                                final List<JsonStringNode> errorMessages = new java.util.ArrayList<>(messages.size());
+                                for (final String msg : messages) {
+                                        errorMessages.add(string(msg));
+                                }
+                                propertiesErrors.add(object(ImmutableList.of(
+                                        field(attr.jsonName(), array(errorMessages)))));
+                        }
+                }
+                return field("failure", array(propertiesErrors));
+        }
+
+        public void reject(final Attr attr, final String message)
+        {
+                errors.putIfAbsent(attr, new LinkedList<>());
+                errors.get(attr).add(message);
+        }
 }

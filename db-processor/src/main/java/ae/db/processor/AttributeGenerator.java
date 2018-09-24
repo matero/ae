@@ -33,60 +33,60 @@ import javax.lang.model.element.Modifier;
 
 abstract class AttributeGenerator {
 
-    static final Joiner JOINER = Joiner.on('.');
+        static final Joiner JOINER = Joiner.on('.');
 
-    final ClassName modelClass;
+        final ClassName modelClass;
 
-    AttributeGenerator(final ClassName modelClassName)
-    {
-        modelClass = modelClassName;
-    }
-
-    Modifier[] attributeModifiers(final MetaModelAttribute attr)
-    {
-        return attr.modifiers.toArray(new Modifier[0]);
-    }
-
-    abstract void buildAt(TypeSpec.Builder modelSpec);
-
-    abstract String canonicalName();
-
-    static String simpleClassName(final ClassName fieldClassName)
-    {
-        return JOINER.join(fieldClassName.simpleNames());
-    }
-
-    String required(final MetaModelAttribute attr)
-    {
-        if (attr.required) {
-            return "required";
-        } else {
-            return "nullable";
+        AttributeGenerator(final ClassName modelClassName)
+        {
+                modelClass = modelClassName;
         }
-    }
 
-    String constraints(final MetaModelAttribute attr)
-    {
-        if (attr.hasConstraints()) {
-            return "constraints($L)";
-        } else {
-            return "noConstraints";
+        Modifier[] attributeModifiers(final MetaModelAttribute attr)
+        {
+                return attr.modifiers.toArray(new Modifier[0]);
         }
-    }
 
-    List<Object> constraintsArgs(final MetaModelAttribute attr)
-    {
-        if (attr.hasConstraints()) {
-            final LinkedList<Object> args = new LinkedList<>();
-            for (final MetaConstraint constraint : attr.constraints) {
-                args.add(constraint);
-                for (final Object arg : constraint.args) {
-                    args.add(arg);
+        abstract void buildAt(TypeSpec.Builder modelSpec);
+
+        abstract String canonicalName();
+
+        static String simpleClassName(final ClassName fieldClassName)
+        {
+                return JOINER.join(fieldClassName.simpleNames());
+        }
+
+        String required(final MetaModelAttribute attr)
+        {
+                if (attr.required) {
+                        return "required";
+                } else {
+                        return "nullable";
                 }
-            }
-            return args;
-        } else {
-            return ImmutableList.of();
         }
-    }
+
+        String getConstraints(final MetaModelAttribute attr)
+        {
+                if (attr.hasConstraints()) {
+                        return "constraints($L)";
+                } else {
+                        return "noConstraints";
+                }
+        }
+
+        List<Object> constraintsArgs(final MetaModelAttribute attr)
+        {
+                if (attr.hasConstraints()) {
+                        final LinkedList<Object> args = new LinkedList<>();
+                        for (final MetaConstraint constraint : attr.constraints) {
+                                args.add(constraint);
+                                for (final Object arg : constraint.args) {
+                                        args.add(arg);
+                                }
+                        }
+                        return args;
+                } else {
+                        return ImmutableList.of();
+                }
+        }
 }

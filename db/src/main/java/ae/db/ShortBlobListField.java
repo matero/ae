@@ -27,9 +27,9 @@ import com.google.appengine.api.datastore.ShortBlob;
 
 public interface ShortBlobListField extends ListField<ShortBlob> {
 
-    @Override
-    default Class<ShortBlob> elementType()
-    {
-        return ShortBlob.class;
-    }
+        @Override
+        default Class<ShortBlob> elementType()
+        {
+                return ShortBlob.class;
+        }
 }

@@ -29,18 +29,19 @@ import com.google.common.collect.ImmutableList;
 
 public final class UnindexedGeoPt extends ScalarField.Unindexed<GeoPt> implements GeoPtField {
 
-    private static final long serialVersionUID = -5348095936911019672L;
+        private static final long serialVersionUID = -5348095936911019672L;
 
-    public UnindexedGeoPt(final String canonicalName,
-                          final String description,
-                          final String property,
-                          final String field,
-                          final boolean required,
-                          final JsonStringNode jsonName,
-                          final String jsonPath,
-                          final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath, GeoPtJsonSerializer.INSTANCE,
-              constraints);
-    }
+        public UnindexedGeoPt(final String canonicalName,
+                              final String description,
+                              final String property,
+                              final String field,
+                              final boolean required,
+                              final JsonStringNode jsonName,
+                              final String jsonPath,
+                              final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      GeoPtJsonSerializer.INSTANCE,
+                      constraints);
+        }
 }

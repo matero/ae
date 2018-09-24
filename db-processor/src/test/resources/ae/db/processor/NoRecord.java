@@ -23,8 +23,8 @@
  */
 package processor.test;
 
-import ae.Model;
+import ae.model;
 
-@Model
+@model
 class NoRecord extends __NoRecord {
 }

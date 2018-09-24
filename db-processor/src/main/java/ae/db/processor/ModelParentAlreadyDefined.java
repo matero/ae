@@ -27,8 +27,8 @@ import javax.lang.model.element.Element;
 
 final class ModelParentAlreadyDefined extends ModelException {
 
-    ModelParentAlreadyDefined(final Element illegalParent)
-    {
-        super(illegalParent, "@Parent already defined");
-    }
+        ModelParentAlreadyDefined(final Element illegalParent)
+        {
+                super(illegalParent, "@Parent already defined");
+        }
 }

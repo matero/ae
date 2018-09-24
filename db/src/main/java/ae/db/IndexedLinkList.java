@@ -30,18 +30,19 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedLinkList extends ListField.Indexed<Link> implements LinkListField {
 
-    private static final long serialVersionUID = 196215191681403944L;
+        private static final long serialVersionUID = 196215191681403944L;
 
-    public IndexedLinkList(final String canonicalName,
-                           final String description,
-                           final String property,
-                           final String field,
-                           final boolean required,
-                           final JsonStringNode jsonName,
-                           final String jsonPath,
-                           final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath, LinkJsonSerializer.ARRAY,
-              new PropertyProjection(property, Link.class), constraints);
-    }
+        public IndexedLinkList(final String canonicalName,
+                               final String description,
+                               final String property,
+                               final String field,
+                               final boolean required,
+                               final JsonStringNode jsonName,
+                               final String jsonPath,
+                               final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      LinkJsonSerializer.ARRAY,
+                      new PropertyProjection(property, Link.class), constraints);
+        }
 }

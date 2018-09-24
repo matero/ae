@@ -1321,10 +1321,4 @@ public abstract class Controller {
                 return new Query.SortPredicate(value, Query.SortDirection.ASCENDING);
         }
     }
-    
-    public @interface GET {
-            String path();
-            String accept() default "";
-            boolean template() default false;
-    }
 }

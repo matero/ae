@@ -32,135 +32,135 @@ import com.google.common.collect.ImmutableList;
 
 public interface WithId extends java.io.Serializable {
 
-    Id modelIdentifier();
+        Id modelIdentifier();
 
-    Entity make();
+        Entity make();
 
-    Entity make(long id);
+        Entity make(long id);
 
-    Key makeKey(long id);
+        Key makeKey(long id);
 
-    Entity newEntity();
+        Entity newEntity();
 
-    Entity newEntity(long id);
+        Entity newEntity(long id);
 
-    final class Id extends BasicId {
+        final class Id extends BasicId {
 
-        private static final long serialVersionUID = -4151154035733158003L;
+                private static final long serialVersionUID = -4151154035733158003L;
 
-        public Id(final String canonicalName,
-                  final String description,
-                  final String field,
-                  final JsonStringNode jsonName,
-                  final String jsonPath,
-                  final ImmutableList<Constraint> constraints)
-        {
-            super(canonicalName, description, field, jsonName, jsonPath, constraints);
-        }
-
-        @Override
-        void doValidate(final Long value, final Validation validation)
-        {
-            for (final Constraint constraint : constraints()) {
-                if (constraint.isInvalid(value)) {
-                    validation.reject(this, constraint.messageFor(this, value));
-                }
-            }
-        }
-    }
-
-    final class RequiredId extends BasicId {
-
-        private static final long serialVersionUID = 1462527284491866413L;
-
-        public RequiredId(final String canonicalName,
+                public Id(final String canonicalName,
                           final String description,
                           final String field,
                           final JsonStringNode jsonName,
                           final String jsonPath,
                           final ImmutableList<Constraint> constraints)
-        {
-            super(canonicalName, description, field, jsonName, jsonPath, constraints);
+                {
+                        super(canonicalName, description, field, jsonName, jsonPath, constraints);
+                }
+
+                @Override
+                void doValidate(final Long value, final Validation validation)
+                {
+                        for (final Constraint constraint : constraints()) {
+                                if (constraint.isInvalid(value)) {
+                                        validation.reject(this, constraint.messageFor(this, value));
+                                }
+                        }
+                }
         }
 
-        @Override
-        void doValidate(final Long value, final Validation validation)
-        {
-            if (value == 0L) {
-                validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
-            } else {
-                for (final Constraint constraint : constraints()) {
-                    if (constraint.isInvalid(value)) {
-                        validation.reject(this, constraint.messageFor(this, value));
-                    }
+        final class RequiredId extends BasicId {
+
+                private static final long serialVersionUID = 1462527284491866413L;
+
+                public RequiredId(final String canonicalName,
+                                  final String description,
+                                  final String field,
+                                  final JsonStringNode jsonName,
+                                  final String jsonPath,
+                                  final ImmutableList<Constraint> constraints)
+                {
+                        super(canonicalName, description, field, jsonName, jsonPath, constraints);
                 }
-            }
+
+                @Override
+                void doValidate(final Long value, final Validation validation)
+                {
+                        if (value == 0L) {
+                                validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
+                        } else {
+                                for (final Constraint constraint : constraints()) {
+                                        if (constraint.isInvalid(value)) {
+                                                validation.reject(this, constraint.messageFor(this, value));
+                                        }
+                                }
+                        }
+                }
         }
-    }
 }
 
 abstract class BasicId extends ActiveEntity.Identifier {
 
-    private static final long serialVersionUID = -4697113054224153330L;
+        private static final long serialVersionUID = -4697113054224153330L;
 
-    BasicId(final String canonicalName,
-            final String description,
-            final String field,
-            final JsonStringNode jsonName,
-            final String jsonPath,
-            final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, field, jsonName, jsonPath, constraints);
-    }
-
-    public long of(final Entity data)
-    {
-        return read(data);
-    }
-
-    public long read(final Entity data)
-    {
-        return read(data.getKey());
-    }
-
-    public long of(final Key key)
-    {
-        return read(key);
-    }
-
-    public long read(final Key key)
-    {
-        return key.getId();
-    }
-
-    @Override
-    public boolean isDefinedAt(final Key key)
-    {
-        return key.getId() != 0;
-    }
-
-    @Override
-    public Long interpretJson(final JsonNode json)
-    {
-        if (json.isNullNode(jsonPath())) {
-            return null;
+        BasicId(final String canonicalName,
+                final String description,
+                final String field,
+                final JsonStringNode jsonName,
+                final String jsonPath,
+                final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, field, jsonName, jsonPath, constraints);
         }
-        final String id = json.getNumberValue(jsonPath());
-        return Long.parseLong(id);
-    }
 
-    @Override
-    public JsonNode makeJsonValue(final Key key)
-    {
-        return JsonNodeFactories.number(key.getId());
-    }
+        public long of(final Entity data)
+        {
+                return read(data);
+        }
 
-    @Override
-    public void validate(final Entity data, final Validation validation)
-    {
-        final long value = read(data);
-        doValidate(value, validation);
-    }
+        public long read(final Entity data)
+        {
+                return read(data.getKey());
+        }
 
-    abstract void doValidate(final Long value, final Validation validation);
+        public long of(final Key key)
+        {
+                return read(key);
+        }
+
+        public long read(final Key key)
+        {
+                return key.getId();
+        }
+
+        @Override
+        public boolean isDefinedAt(final Key key)
+        {
+                return key.getId() != 0;
+        }
+
+        @Override
+        public Long interpretJson(final JsonNode json)
+        {
+                if (json.isNullNode(jsonPath())) {
+                        return null;
+                }
+                final String id = json.getNumberValue(jsonPath());
+                return Long.parseLong(id);
+        }
+
+        @Override
+        public JsonNode makeJsonValue(final Key key)
+        {
+                return JsonNodeFactories.number(key.getId());
+        }
+
+        @Override
+        public void validate(final Entity data, final Validation validation)
+        {
+                final long value = read(data);
+                doValidate(value, validation);
+        }
+
+        abstract void doValidate(final Long value, final Validation validation);
 }

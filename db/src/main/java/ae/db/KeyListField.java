@@ -27,9 +27,9 @@ import com.google.appengine.api.datastore.Key;
 
 public interface KeyListField extends ListField<Key> {
 
-    @Override
-    default Class<Key> elementType()
-    {
-        return Key.class;
-    }
+        @Override
+        default Class<Key> elementType()
+        {
+                return Key.class;
+        }
 }

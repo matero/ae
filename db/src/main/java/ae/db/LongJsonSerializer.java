@@ -27,36 +27,36 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 
 enum LongJsonSerializer implements JsonSerializer<Long> {
-    INSTANCE;
+        INSTANCE;
 
-    static final JsonArraySerializer<Long> ARRAY = new JsonArraySerializer<>(INSTANCE);
+        static final JsonArraySerializer<Long> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-    @Override
-    public JsonNode toJson(final Long value)
-    {
-        if (value == null) {
-            return JsonNodeFactories.nullNode();
+        @Override
+        public JsonNode toJson(final Long value)
+        {
+                if (value == null) {
+                        return JsonNodeFactories.nullNode();
+                }
+                return JsonNodeFactories.number(value.toString());
         }
-        return JsonNodeFactories.number(value.toString());
-    }
 
-    @Override
-    public Long fromJson(final JsonNode json, final String jsonPath)
-    {
-        if (json.isNullNode(jsonPath)) {
-            return null;
-        } else {
-            return Long.parseLong(json.getNumberValue(jsonPath));
+        @Override
+        public Long fromJson(final JsonNode json, final String jsonPath)
+        {
+                if (json.isNullNode(jsonPath)) {
+                        return null;
+                } else {
+                        return Long.parseLong(json.getNumberValue(jsonPath));
+                }
         }
-    }
 
-    @Override
-    public Long fromJson(final JsonNode json)
-    {
-        if (json.isNullNode()) {
-            return null;
-        } else {
-            return Long.parseLong(json.getNumberValue());
+        @Override
+        public Long fromJson(final JsonNode json)
+        {
+                if (json.isNullNode()) {
+                        return null;
+                } else {
+                        return Long.parseLong(json.getNumberValue());
+                }
         }
-    }
 }

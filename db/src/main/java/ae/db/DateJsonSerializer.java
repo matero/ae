@@ -32,53 +32,53 @@ import java.util.Date;
 
 public class DateJsonSerializer implements JsonSerializer<Date> {
 
-    private static final long serialVersionUID = -4321000415258159924L;
+        private static final long serialVersionUID = -4321000415258159924L;
 
-    private final String datePattern;
+        private final String datePattern;
 
-    public DateJsonSerializer(final String datePattern)
-    {
-        this.datePattern = datePattern;
-    }
-
-    @Override
-    public JsonNode toJson(final Date value)
-    {
-        if (value == null) {
-            return JsonNodeFactories.nullNode();
+        public DateJsonSerializer(final String datePattern)
+        {
+                this.datePattern = datePattern;
         }
-        return JsonNodeFactories.string(new SimpleDateFormat(datePattern).format(value));
-    }
 
-    @Override
-    public Date fromJson(final JsonNode json, final String jsonPath)
-    {
-        if (json.isNullNode(jsonPath)) {
-            return null;
-        } else {
-            final String value = json.getStringValue(jsonPath);
-            final SimpleDateFormat parser = new SimpleDateFormat(datePattern);
-            try {
-                return parser.parse(value);
-            } catch (final ParseException e) {
-                throw new IllegalArgumentException("Could not interpret '" + value + "' as date.", e);
-            }
+        @Override
+        public JsonNode toJson(final Date value)
+        {
+                if (value == null) {
+                        return JsonNodeFactories.nullNode();
+                }
+                return JsonNodeFactories.string(new SimpleDateFormat(datePattern).format(value));
         }
-    }
 
-    @Override
-    public Date fromJson(final JsonNode json)
-    {
-        if (json.isNullNode()) {
-            return null;
-        } else {
-            final String value = json.getStringValue();
-            final SimpleDateFormat parser = new SimpleDateFormat(datePattern);
-            try {
-                return parser.parse(value);
-            } catch (final ParseException e) {
-                throw new IllegalArgumentException("Could not interpret '" + value + "' as date.", e);
-            }
+        @Override
+        public Date fromJson(final JsonNode json, final String jsonPath)
+        {
+                if (json.isNullNode(jsonPath)) {
+                        return null;
+                } else {
+                        final String value = json.getStringValue(jsonPath);
+                        final SimpleDateFormat parser = new SimpleDateFormat(datePattern);
+                        try {
+                                return parser.parse(value);
+                        } catch (final ParseException e) {
+                                throw new IllegalArgumentException("Could not interpret '" + value + "' as date.", e);
+                        }
+                }
         }
-    }
+
+        @Override
+        public Date fromJson(final JsonNode json)
+        {
+                if (json.isNullNode()) {
+                        return null;
+                } else {
+                        final String value = json.getStringValue();
+                        final SimpleDateFormat parser = new SimpleDateFormat(datePattern);
+                        try {
+                                return parser.parse(value);
+                        } catch (final ParseException e) {
+                                throw new IllegalArgumentException("Could not interpret '" + value + "' as date.", e);
+                        }
+                }
+        }
 }

@@ -29,24 +29,25 @@ import com.google.common.collect.ImmutableList;
 
 public final class UnindexedBlobList extends ListField.Unindexed<Blob> {
 
-    private static final long serialVersionUID = 5407077588265612937L;
+        private static final long serialVersionUID = 5407077588265612937L;
 
-    public UnindexedBlobList(final String canonicalName,
-                             final String description,
-                             final String property,
-                             final String field,
-                             final boolean required,
-                             final JsonStringNode jsonName,
-                             final String jsonPath,
-                             final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath, BlobJsonSerializer.ARRAY,
-              constraints);
-    }
+        public UnindexedBlobList(final String canonicalName,
+                                 final String description,
+                                 final String property,
+                                 final String field,
+                                 final boolean required,
+                                 final JsonStringNode jsonName,
+                                 final String jsonPath,
+                                 final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      BlobJsonSerializer.ARRAY,
+                      constraints);
+        }
 
-    @Override
-    public Class<Blob> elementType()
-    {
-        return Blob.class;
-    }
+        @Override
+        public Class<Blob> elementType()
+        {
+                return Blob.class;
+        }
 }

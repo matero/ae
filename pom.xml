@@ -67,9 +67,9 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- ================================================================ -->
-            <!-- GAE Compile/runtime dependencies                                 -->
-            <!-- ================================================================ -->
+            <!-- =========================================================== -->
+            <!-- GAE Compile/runtime dependencies                            -->
+            <!-- =========================================================== -->
             <dependency>
                 <groupId>com.google.appengine</groupId>
                 <artifactId>appengine-api-1.0-sdk</artifactId>
@@ -81,6 +81,9 @@
                 <version>3.1.0</version>
             </dependency>
 
+            <!-- =========================================================== -->
+            <!-- Templating                                                  -->
+            <!-- =========================================================== -->
             <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf</artifactId>
@@ -92,7 +95,20 @@
                 <artifactId>thymeleaf-layout-dialect</artifactId>
                 <version>2.3.0</version>
             </dependency>
-            
+
+            <!-- =========================================================== -->
+            <!-- Logging                                                     -->
+            <!-- =========================================================== -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.target.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-ext</artifactId>
+                <version>${slf4j.target.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-jdk14</artifactId>
@@ -108,35 +124,28 @@
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${slf4j.target.version}</version>
             </dependency>
+
+            <!-- =========================================================== -->
+            <!-- json                                                        -->
+            <!-- =========================================================== -->
             <dependency>
                 <groupId>net.sourceforge.argo</groupId>
                 <artifactId>argo</artifactId>
-                <version>5.3</version>
+                <version>5.4</version>
             </dependency>
 
-            <!-- ================================================================ -->
-            <!-- utilities                                                        -->
-            <!-- ================================================================ -->
+            <!-- =========================================================== -->
+            <!-- utilities                                                   -->
+            <!-- =========================================================== -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>24.0-jre</version>
+                <version>26.0-jre</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup</groupId>
                 <artifactId>javapoet</artifactId>
                 <version>1.11.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.opencsv</groupId>
-                <artifactId>opencsv</artifactId>
-                <version>4.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-beanutils</groupId>
-                        <artifactId>commons-beanutils</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.google.auto.service</groupId>
@@ -150,9 +159,9 @@
                 <version>1.23.0</version>
             </dependency>
 
-            <!-- ================================================================ -->
-            <!-- testing                                                          -->
-            <!-- ================================================================ -->
+            <!-- =========================================================== -->
+            <!-- testing                                                     -->
+            <!-- =========================================================== -->
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>

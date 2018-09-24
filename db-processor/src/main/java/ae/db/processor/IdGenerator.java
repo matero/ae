@@ -30,90 +30,92 @@ import java.util.LinkedList;
 
 final class IdGenerator extends AttributeGenerator {
 
-    private static final ClassName ID_CLASSNAME = ClassName.get("", "Id");
-    private static final ClassName REQUIRED_ID_CLASSNAME = ClassName.get("", "RequiredId");
-    private static final ClassName NAME_CLASSNAME = ClassName.get("", "Name");
+        private static final ClassName ID_CLASSNAME = ClassName.get("", "Id");
+        private static final ClassName REQUIRED_ID_CLASSNAME = ClassName.get("", "RequiredId");
+        private static final ClassName NAME_CLASSNAME = ClassName.get("", "Name");
 
-    private final ClassName idClass;
-    private final MetaModelId id;
+        private final ClassName idClass;
+        private final MetaModelId id;
 
-    private IdGenerator(final MetaModelId modelId, final ClassName modelIdClass, final ClassName modelClass)
-    {
-        super(modelClass);
-        id = modelId;
-        idClass = modelIdClass;
-    }
-
-    @Override
-    void buildAt(final TypeSpec.Builder modelSpec)
-    {
-        final FieldSpec.Builder fieldBuilder = FieldSpec.builder(idClass, id.name, attributeModifiers(id));
-        if (id.isId()) {
-            fieldBuilder.initializer(idInitializerFormat(), idInitializerArgs());
-        } else {
-            fieldBuilder.initializer(nameInitializerFormat(), nameInitializerArgs());
+        private IdGenerator(final MetaModelId modelId, final ClassName modelIdClass, final ClassName modelClass)
+        {
+                super(modelClass);
+                id = modelId;
+                idClass = modelIdClass;
         }
 
-        modelSpec.addField(fieldBuilder.build());
-    }
+        @Override
+        void buildAt(final TypeSpec.Builder modelSpec)
+        {
+                final FieldSpec.Builder fieldBuilder = FieldSpec.builder(idClass, id.name, attributeModifiers(id));
+                if (id.isId()) {
+                        fieldBuilder.initializer(idInitializerFormat(), idInitializerArgs());
+                } else {
+                        fieldBuilder.initializer(nameInitializerFormat(), nameInitializerArgs());
+                }
 
-    protected String idInitializerFormat()
-    {
-        return "new $T(canonicalName($S), description($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints(id) + ')';
-    }
-
-    private Object[] idInitializerArgs()
-    {
-        final LinkedList<Object> args = new LinkedList<>();
-        args.add(idClass);
-        args.add(canonicalName());
-        args.add(id.description);
-        args.add(id.name);
-        args.add(id.name);
-        args.add(id.name);
-        args.addAll(constraintsArgs(id));
-        return args.toArray();
-    }
-
-    protected String nameInitializerFormat()
-    {
-        return "new $T(canonicalName($S), description($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints(id) + ')';
-    }
-
-    private Object[] nameInitializerArgs()
-    {
-        final LinkedList<Object> args = new LinkedList<>();
-        args.add(idClass);
-        args.add(canonicalName());
-        args.add(id.description);
-        args.add(id.name);
-        args.add(id.name);
-        args.add(id.name);
-        args.addAll(constraintsArgs(id));
-        return args.toArray();
-    }
-
-    static IdGenerator of(final MetaModel model)
-    {
-        return new IdGenerator(model.id, getIdClassName(model), ClassName.bestGuess(model.canonicalName));
-    }
-
-    static ClassName getIdClassName(final MetaModel model)
-    {
-        if (model.useId()) {
-            if (model.id.required) {
-                return REQUIRED_ID_CLASSNAME;
-            } else {
-                return ID_CLASSNAME;
-            }
-        } else {
-            return NAME_CLASSNAME;
+                modelSpec.addField(fieldBuilder.build());
         }
-    }
 
-    @Override
-    String canonicalName()
-    {
-        return id.canonicalNameAt(modelClass.toString());
-    }
+        protected String idInitializerFormat()
+        {
+                final String constraints = getConstraints(id);
+                return "new $T(canonicalName($S), description($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints + ')';
+        }
+
+        private Object[] idInitializerArgs()
+        {
+                final LinkedList<Object> args = new LinkedList<>();
+                args.add(idClass);
+                args.add(canonicalName());
+                args.add(id.description);
+                args.add(id.name);
+                args.add(id.name);
+                args.add(id.name);
+                args.addAll(constraintsArgs(id));
+                return args.toArray();
+        }
+
+        protected String nameInitializerFormat()
+        {
+                final String constraints = getConstraints(id);
+                return "new $T(canonicalName($S), description($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints + ')';
+        }
+
+        private Object[] nameInitializerArgs()
+        {
+                final LinkedList<Object> args = new LinkedList<>();
+                args.add(idClass);
+                args.add(canonicalName());
+                args.add(id.description);
+                args.add(id.name);
+                args.add(id.name);
+                args.add(id.name);
+                args.addAll(constraintsArgs(id));
+                return args.toArray();
+        }
+
+        static IdGenerator of(final MetaModel model)
+        {
+                return new IdGenerator(model.id, getIdClassName(model), ClassName.bestGuess(model.canonicalName));
+        }
+
+        static ClassName getIdClassName(final MetaModel model)
+        {
+                if (model.useId()) {
+                        if (model.id.required) {
+                                return REQUIRED_ID_CLASSNAME;
+                        } else {
+                                return ID_CLASSNAME;
+                        }
+                } else {
+                        return NAME_CLASSNAME;
+                }
+        }
+
+        @Override
+        String canonicalName()
+        {
+                return id.canonicalNameAt(modelClass.toString());
+        }
 }

@@ -27,9 +27,9 @@ import com.google.appengine.api.datastore.IMHandle;
 
 public interface IMHandleField extends ScalarField<IMHandle> {
 
-    @Override
-    default Class<IMHandle> type()
-    {
-        return IMHandle.class;
-    }
+        @Override
+        default Class<IMHandle> type()
+        {
+                return IMHandle.class;
+        }
 }

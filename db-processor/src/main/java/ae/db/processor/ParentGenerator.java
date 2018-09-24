@@ -31,58 +31,58 @@ import java.util.LinkedList;
 
 final class ParentGenerator extends AttributeGenerator {
 
-    static final ClassName PARENT = ClassName.get("", "Parent");
+        static final ClassName PARENT = ClassName.get("", "Parent");
 
-    private final MetaParent parent;
+        private final MetaParent parent;
 
-    private ParentGenerator(final MetaParent modelParent, final ClassName modelClass)
-    {
-        super(modelClass);
-        parent = modelParent;
-    }
-
-    @Override
-    void buildAt(final TypeSpec.Builder modelSpec)
-    {
-        modelSpec.addField(FieldSpec.builder(ParameterizedTypeName.get(PARENT, parent.type), parent.name,
-                                             attributeModifiers(parent))
-                .initializer(parentInitializerFormat(), parentInitializerArgs())
-                .build()
-        );
-    }
-
-    protected String parentInitializerFormat()
-    {
-        return "new $T(m.$L, canonicalName($S), description($S), fieldName($S), $L, jsonName($S), jsonPath($S), " + constraints(
-                parent) + ')';
-    }
-
-    private Object[] parentInitializerArgs()
-    {
-        final LinkedList<Object> args = new LinkedList<>();
-        args.add(PARENT);
+        private ParentGenerator(final MetaParent modelParent, final ClassName modelClass)
         {
-            final ClassName parentClass = (ClassName) parent.type;
-            args.add(parentClass.simpleName());
+                super(modelClass);
+                parent = modelParent;
         }
-        args.add(canonicalName());
-        args.add(parent.description);
-        args.add(parent.name);
-        args.add(required(parent));
-        args.add(parent.name);
-        args.add(parent.name);
-        args.addAll(constraintsArgs(parent));
-        return args.toArray();
-    }
 
-    static ParentGenerator of(final ChildModel model)
-    {
-        return new ParentGenerator(model.parent, ClassName.bestGuess(model.canonicalName));
-    }
+        @Override
+        void buildAt(final TypeSpec.Builder modelSpec)
+        {
+                modelSpec.addField(FieldSpec.builder(ParameterizedTypeName.get(PARENT, parent.type), parent.name,
+                                                     attributeModifiers(parent))
+                        .initializer(parentInitializerFormat(), parentInitializerArgs())
+                        .build()
+                );
+        }
 
-    @Override
-    String canonicalName()
-    {
-        return parent.canonicalNameAt(modelClass.toString());
-    }
+        protected String parentInitializerFormat()
+        {
+                return "new $T(m.$L, canonicalName($S), description($S), fieldName($S), $L, jsonName($S), jsonPath($S), " + getConstraints(
+                        parent) + ')';
+        }
+
+        private Object[] parentInitializerArgs()
+        {
+                final LinkedList<Object> args = new LinkedList<>();
+                args.add(PARENT);
+                {
+                        final ClassName parentClass = (ClassName) parent.type;
+                        args.add(parentClass.simpleName());
+                }
+                args.add(canonicalName());
+                args.add(parent.description);
+                args.add(parent.name);
+                args.add(required(parent));
+                args.add(parent.name);
+                args.add(parent.name);
+                args.addAll(constraintsArgs(parent));
+                return args.toArray();
+        }
+
+        static ParentGenerator of(final ChildModel model)
+        {
+                return new ParentGenerator(model.parent, ClassName.bestGuess(model.canonicalName));
+        }
+
+        @Override
+        String canonicalName()
+        {
+                return parent.canonicalNameAt(modelClass.toString());
+        }
 }

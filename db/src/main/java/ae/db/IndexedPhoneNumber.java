@@ -30,19 +30,19 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedPhoneNumber extends ScalarField.Indexed<PhoneNumber> implements PhoneNumberField {
 
-    private static final long serialVersionUID = 991833434614358565L;
+        private static final long serialVersionUID = 991833434614358565L;
 
-    public IndexedPhoneNumber(final String canonicalName,
-                              final String description,
-                              final String property,
-                              final String field,
-                              final boolean required,
-                              final JsonStringNode jsonName,
-                              final String jsonPath,
-                              final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath,
-              PhoneNumberJsonSerializer.INSTANCE,
-              new PropertyProjection(property, PhoneNumber.class), constraints);
-    }
+        public IndexedPhoneNumber(final String canonicalName,
+                                  final String description,
+                                  final String property,
+                                  final String field,
+                                  final boolean required,
+                                  final JsonStringNode jsonName,
+                                  final String jsonPath,
+                                  final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      PhoneNumberJsonSerializer.INSTANCE,
+                      new PropertyProjection(property, PhoneNumber.class), constraints);
+        }
 }

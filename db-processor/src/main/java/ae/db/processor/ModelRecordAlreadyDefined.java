@@ -27,8 +27,8 @@ import javax.lang.model.element.Element;
 
 final class ModelRecordAlreadyDefined extends ModelException {
 
-    ModelRecordAlreadyDefined(final Element illegalRecord)
-    {
-        super(illegalRecord, "Only one Record can be defined per Model!");
-    }
+        ModelRecordAlreadyDefined(final Element illegalRecord)
+        {
+                super(illegalRecord, "Only one Record can be defined per Model!");
+        }
 }

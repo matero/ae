@@ -30,19 +30,19 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedPostalAddress extends ScalarField.Indexed<PostalAddress> implements PostalAddressField {
 
-    private static final long serialVersionUID = 9091307887407108860L;
+        private static final long serialVersionUID = 9091307887407108860L;
 
-    public IndexedPostalAddress(final String canonicalName,
-                                final String description,
-                                final String property,
-                                final String field,
-                                final boolean required,
-                                final JsonStringNode jsonName,
-                                final String jsonPath,
-                                final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath,
-              PostalAddressJsonSerializer.INSTANCE,
-              new PropertyProjection(property, PostalAddress.class), constraints);
-    }
+        public IndexedPostalAddress(final String canonicalName,
+                                    final String description,
+                                    final String property,
+                                    final String field,
+                                    final boolean required,
+                                    final JsonStringNode jsonName,
+                                    final String jsonPath,
+                                    final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      PostalAddressJsonSerializer.INSTANCE,
+                      new PropertyProjection(property, PostalAddress.class), constraints);
+        }
 }

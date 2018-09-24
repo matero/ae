@@ -29,17 +29,18 @@ import java.util.Date;
 
 public final class UnindexedDateList extends ListField.Unindexed<Date> implements DateListField {
 
-    public UnindexedDateList(final String canonicalName,
-                             final String description,
-                             final String property,
-                             final String field,
-                             final boolean required,
-                             final JsonStringNode jsonName,
-                             final String jsonPath,
-                             final JsonSerializer<Date> jsonElementSerializer,
-                             final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath, new JsonArraySerializer<>(
-              jsonElementSerializer), constraints);
-    }
+        public UnindexedDateList(final String canonicalName,
+                                 final String description,
+                                 final String property,
+                                 final String field,
+                                 final boolean required,
+                                 final JsonStringNode jsonName,
+                                 final String jsonPath,
+                                 final JsonSerializer<Date> jsonElementSerializer,
+                                 final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      new JsonArraySerializer<>(
+                              jsonElementSerializer), constraints);
+        }
 }

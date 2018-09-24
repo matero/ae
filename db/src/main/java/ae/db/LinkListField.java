@@ -27,9 +27,9 @@ import com.google.appengine.api.datastore.Link;
 
 public interface LinkListField extends ListField<Link> {
 
-    @Override
-    default Class<Link> elementType()
-    {
-        return Link.class;
-    }
+        @Override
+        default Class<Link> elementType()
+        {
+                return Link.class;
+        }
 }

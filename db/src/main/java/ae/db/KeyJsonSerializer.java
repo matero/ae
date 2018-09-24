@@ -29,38 +29,38 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
 enum KeyJsonSerializer implements JsonSerializer<Key> {
-    INSTANCE;
+        INSTANCE;
 
-    static final JsonArraySerializer<Key> ARRAY = new JsonArraySerializer<>(INSTANCE);
+        static final JsonArraySerializer<Key> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-    @Override
-    public JsonNode toJson(final Key value)
-    {
-        if (value == null) {
-            return JsonNodeFactories.nullNode();
+        @Override
+        public JsonNode toJson(final Key value)
+        {
+                if (value == null) {
+                        return JsonNodeFactories.nullNode();
+                }
+                return JsonNodeFactories.string(KeyFactory.keyToString(value));
         }
-        return JsonNodeFactories.string(KeyFactory.keyToString(value));
-    }
 
-    @Override
-    public Key fromJson(final JsonNode json, final String jsonPath)
-    {
-        if (json.isNullNode(jsonPath)) {
-            return null;
-        } else {
-            final String websafe = json.getStringValue(jsonPath);
-            return KeyFactory.stringToKey(websafe);
+        @Override
+        public Key fromJson(final JsonNode json, final String jsonPath)
+        {
+                if (json.isNullNode(jsonPath)) {
+                        return null;
+                } else {
+                        final String websafe = json.getStringValue(jsonPath);
+                        return KeyFactory.stringToKey(websafe);
+                }
         }
-    }
 
-    @Override
-    public Key fromJson(final JsonNode json)
-    {
-        if (json.isNullNode()) {
-            return null;
-        } else {
-            final String websafe = json.getStringValue();
-            return KeyFactory.stringToKey(websafe);
+        @Override
+        public Key fromJson(final JsonNode json)
+        {
+                if (json.isNullNode()) {
+                        return null;
+                } else {
+                        final String websafe = json.getStringValue();
+                        return KeyFactory.stringToKey(websafe);
+                }
         }
-    }
 }

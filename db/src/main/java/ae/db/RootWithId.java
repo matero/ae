@@ -37,123 +37,123 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class RootWithId extends RootActiveEntity implements WithId {
 
-    private static final long serialVersionUID = -4301518873000440300L;
+        private static final long serialVersionUID = -4301518873000440300L;
 
-    /**
-     * Constructs an ROOT active entity with ID defining its kind.
-     *
-     * @param kind Kind of the active entity.
-     */
-    protected RootWithId(final String kind)
-    {
-        super(kind);
-    }
+        /**
+         * Constructs an ROOT active entity with ID defining its kind.
+         *
+         * @param kind Kind of the active entity.
+         */
+        protected RootWithId(final String kind)
+        {
+                super(kind);
+        }
 
-    /* **************************************************************************
+        /* **************************************************************************
    * entity construction facilities
-     */
-    @Override
-    public Entity make()
-    {
-        final Entity data = newEntity();
-        init(data);
-        return data;
-    }
+         */
+        @Override
+        public Entity make()
+        {
+                final Entity data = newEntity();
+                init(data);
+                return data;
+        }
 
-    @Override
-    public final Entity newEntity()
-    {
-        return new Entity(this.kind);
-    }
+        @Override
+        public final Entity newEntity()
+        {
+                return new Entity(this.kind);
+        }
 
-    @Override
-    public Entity make(final long id)
-    {
-        final Entity data = newEntity(id);
-        init(data);
-        return data;
-    }
+        @Override
+        public Entity make(final long id)
+        {
+                final Entity data = newEntity(id);
+                init(data);
+                return data;
+        }
 
-    @Override
-    public final Entity newEntity(final long id)
-    {
-        return new Entity(this.kind, id);
-    }
+        @Override
+        public final Entity newEntity(final long id)
+        {
+                return new Entity(this.kind, id);
+        }
 
-    @Override
-    public Key makeKey(final long id)
-    {
-        return KeyFactory.createKey(this.kind, id);
-    }
+        @Override
+        public Key makeKey(final long id)
+        {
+                return KeyFactory.createKey(this.kind, id);
+        }
 
-    /* **************************************************************************
+        /* **************************************************************************
    * persistence methods
-     */
-    public void deleteById(final long id)
-    {
-        DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
-    }
-
-    public Entity findById(final long id)
-    {
-        try {
-            return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
-        } catch (final EntityNotFoundException e) {
-            return null;
+         */
+        public void deleteById(final long id)
+        {
+                DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
         }
-    }
 
-    public Entity getById(final long id) throws EntityNotFoundException
-    {
-        return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
-    }
+        public Entity findById(final long id)
+        {
+                try {
+                        return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
+                } catch (final EntityNotFoundException e) {
+                        return null;
+                }
+        }
 
-    public boolean existsById(final long id)
-    {
-        final Query exists = makeQuery()
-                .setKeysOnly()
-                .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(id)));
-        final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
-        return data != null;
-    }
+        public Entity getById(final long id) throws EntityNotFoundException
+        {
+                return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
+        }
 
-    /* **************************************************************************
+        public boolean existsById(final long id)
+        {
+                final Query exists = makeQuery()
+                        .setKeysOnly()
+                        .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(id)));
+                final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
+                return data != null;
+        }
+
+        /* **************************************************************************
    * JSON Serialization
-     */
-    @Override
-    protected final Iterable<JsonField> jsonKeyFields(final Key key)
-    {
-        return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
-    }
+         */
+        @Override
+        protected final Iterable<JsonField> jsonKeyFields(final Key key)
+        {
+                return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
+        }
 
-    @Override
-    public final Key keyFromJson(final JsonNode json)
-    {
-        if (json.isNullNode()) {
-            return null;
+        @Override
+        public final Key keyFromJson(final JsonNode json)
+        {
+                if (json.isNullNode()) {
+                        return null;
+                }
+                final Long id = modelIdentifier().interpretJson(json);
+                if (id == null) {
+                        return newEntity().getKey();
+                } else {
+                        return makeKey(id);
+                }
         }
-        final Long id = modelIdentifier().interpretJson(json);
-        if (id == null) {
-            return newEntity().getKey();
-        } else {
-            return makeKey(id);
-        }
-    }
 
-    @Override
-    public Entity fromJson(final JsonNode json)
-    {
-        if (json.isNullNode()) {
-            return null;
+        @Override
+        public Entity fromJson(final JsonNode json)
+        {
+                if (json.isNullNode()) {
+                        return null;
+                }
+                final Long id = modelIdentifier().interpretJson(json);
+                final Entity data;
+                if (id == null) {
+                        data = make();
+                } else {
+                        data = make(id);
+                }
+                updatePropertiesWithJsonContents(data, json);
+                return data;
         }
-        final Long id = modelIdentifier().interpretJson(json);
-        final Entity data;
-        if (id == null) {
-            data = make();
-        } else {
-            data = make(id);
-        }
-        updatePropertiesWithJsonContents(data, json);
-        return data;
-    }
 }

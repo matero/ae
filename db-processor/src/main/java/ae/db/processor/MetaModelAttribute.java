@@ -34,162 +34,163 @@ import javax.lang.model.element.Modifier;
 
 abstract class MetaModelAttribute extends MetaData {
 
-    final TypeName type;
-    final String description;
-    final boolean required;
-    final ImmutableSet<MetaConstraint> constraints;
+        final TypeName type;
+        final String description;
+        final boolean required;
+        final ImmutableSet<MetaConstraint> constraints;
 
-    MetaModelAttribute(final TypeName type,
-                       final String name,
-                       final String description,
-                       final boolean required,
-                       final Iterable<Modifier> modifiers,
-                       final Iterable<MetaConstraint> constraints)
-    {
-        super(name, modifiers);
-        this.type = type;
-        this.description = description;
-        this.required = required;
-        this.constraints = ImmutableSet.copyOf(constraints);
-    }
+        MetaModelAttribute(final TypeName type,
+                           final String name,
+                           final String description,
+                           final boolean required,
+                           final Iterable<Modifier> modifiers,
+                           final Iterable<MetaConstraint> constraints)
+        {
+                super(name, modifiers);
+                this.type = type;
+                this.description = description;
+                this.required = required;
+                this.constraints = ImmutableSet.copyOf(constraints);
+        }
 
-    String canonicalNameAt(final MetaModel model)
-    {
-        return canonicalNameAt(model.canonicalName);
-    }
+        String canonicalNameAt(final MetaModel model)
+        {
+                return canonicalNameAt(model.canonicalName);
+        }
 
-    String canonicalNameAt(final String modelCanonicalName)
-    {
-        return modelCanonicalName + '.' + name;
-    }
+        String canonicalNameAt(final String modelCanonicalName)
+        {
+                return modelCanonicalName + '.' + name;
+        }
 
-    boolean hasConstraints()
-    {
-        return !constraints.isEmpty();
-    }
+        boolean hasConstraints()
+        {
+                return !constraints.isEmpty();
+        }
 
-    boolean shouldValidate()
-    {
-        return required || !constraints.isEmpty();
-    }
+        boolean shouldValidate()
+        {
+                return required || !constraints.isEmpty();
+        }
 }
 
 abstract class MetaModelId extends MetaModelAttribute {
 
-    MetaModelId(final TypeName type,
-                final String name,
-                final String description,
-                final boolean required,
-                final Iterable<Modifier> modifiers,
-                final Iterable<MetaConstraint> constraints)
-    {
-        super(type, name, description, required, modifiers, constraints);
-    }
+        MetaModelId(final TypeName type,
+                    final String name,
+                    final String description,
+                    final boolean required,
+                    final Iterable<Modifier> modifiers,
+                    final Iterable<MetaConstraint> constraints)
+        {
+                super(type, name, description, required, modifiers, constraints);
+        }
 
-    boolean isId()
-    {
-        return false;
-    }
+        boolean isId()
+        {
+                return false;
+        }
 
-    boolean isName()
-    {
-        return false;
-    }
+        boolean isName()
+        {
+                return false;
+        }
 }
 
 final class MetaName extends MetaModelId {
 
-    private static final TypeName TYPE = ClassName.get(String.class);
+        private static final TypeName TYPE = ClassName.get(String.class);
 
-    MetaName(final String name,
-             final String description,
-             final Iterable<Modifier> modifiers,
-             final Iterable<MetaConstraint> constraints)
-    {
-        super(TYPE, name, description, true /*name is always required*/, modifiers, constraints);
-    }
+        MetaName(final String name,
+                 final String description,
+                 final Iterable<Modifier> modifiers,
+                 final Iterable<MetaConstraint> constraints)
+        {
+                super(TYPE, name, description, true /*name is always required*/, modifiers,
+                      constraints);
+        }
 
-    @Override
-    boolean isName()
-    {
-        return true;
-    }
+        @Override
+        boolean isName()
+        {
+                return true;
+        }
 
-    @Override
-    boolean shouldValidate()
-    {
-        return true;
-    }
+        @Override
+        boolean shouldValidate()
+        {
+                return true;
+        }
 }
 
 final class MetaId extends MetaModelId {
 
-    private static final TypeName TYPE = ClassName.LONG;
+        private static final TypeName TYPE = ClassName.LONG;
 
-    MetaId(final String name,
-           final String description,
-           final boolean required,
-           final Iterable<Modifier> modifiers,
-           final Iterable<MetaConstraint> constraints)
-    {
-        super(TYPE, name, description, required, modifiers, constraints);
-    }
-
-    @Override
-    boolean isId()
-    {
-        return true;
-    }
-}
-
-final class MetaParent extends MetaModelAttribute {
-
-    MetaParent(final TypeName type,
-               final String name,
+        MetaId(final String name,
                final String description,
                final boolean required,
                final Iterable<Modifier> modifiers,
                final Iterable<MetaConstraint> constraints)
-    {
-        super(type, name, description, required, modifiers, constraints);
-    }
+        {
+                super(TYPE, name, description, required, modifiers, constraints);
+        }
+
+        @Override
+        boolean isId()
+        {
+                return true;
+        }
+}
+
+final class MetaParent extends MetaModelAttribute {
+
+        MetaParent(final TypeName type,
+                   final String name,
+                   final String description,
+                   final boolean required,
+                   final Iterable<Modifier> modifiers,
+                   final Iterable<MetaConstraint> constraints)
+        {
+                super(type, name, description, required, modifiers, constraints);
+        }
 }
 
 final class MetaField extends MetaModelAttribute {
 
-    final String property;
-    final boolean indexed;
-    final boolean jsonIgnore;
-    final String jsonFormat;
+        final String property;
+        final boolean indexed;
+        final boolean jsonIgnore;
+        final String jsonFormat;
 
-    private static final ImmutableSet<TypeName> FIELDS_WITH_DEFAULT_VALIDATIONS = ImmutableSet.of(
-            TypeName.get(Category.class),
-            TypeName.get(Email.class),
-            TypeName.get(PhoneNumber.class),
-            TypeName.get(PostalAddress.class)
-    );
+        private static final ImmutableSet<TypeName> FIELDS_WITH_DEFAULT_VALIDATIONS = ImmutableSet.of(
+                TypeName.get(Category.class),
+                TypeName.get(Email.class),
+                TypeName.get(PhoneNumber.class),
+                TypeName.get(PostalAddress.class)
+        );
 
-    MetaField(final TypeName type,
-              final String name,
-              final String description,
-              final String property,
-              final boolean indexed,
-              final boolean required,
-              final boolean jsonIgnore,
-              final String jsonFormat,
-              final ImmutableSet<Modifier> modifiers,
-              final Iterable<MetaConstraint> constraints)
-    {
-        super(type, name, description, required, modifiers, constraints);
-        this.property = property;
-        this.indexed = indexed;
-        this.jsonIgnore = jsonIgnore;
-        this.jsonFormat = jsonFormat;
-    }
+        MetaField(final TypeName type,
+                  final String name,
+                  final String description,
+                  final String property,
+                  final boolean indexed,
+                  final boolean required,
+                  final boolean jsonIgnore,
+                  final String jsonFormat,
+                  final ImmutableSet<Modifier> modifiers,
+                  final Iterable<MetaConstraint> constraints)
+        {
+                super(type, name, description, required, modifiers, constraints);
+                this.property = property;
+                this.indexed = indexed;
+                this.jsonIgnore = jsonIgnore;
+                this.jsonFormat = jsonFormat;
+        }
 
-    @Override
-    boolean shouldValidate()
-    {
-        return FIELDS_WITH_DEFAULT_VALIDATIONS.contains(type) || super.shouldValidate();
-    }
+        @Override
+        boolean shouldValidate()
+        {
+                return FIELDS_WITH_DEFAULT_VALIDATIONS.contains(type) || super.shouldValidate();
+        }
 }

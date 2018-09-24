@@ -31,34 +31,35 @@ import com.google.common.collect.ImmutableList;
 
 public class IndexedBoolean extends ScalarField.Indexed<Boolean> implements BooleanField, BooleanField.Filter {
 
-    private static final long serialVersionUID = -8316025212017899471L;
-    private final FilterPredicate isTrue;
-    private final FilterPredicate isFalse;
+        private static final long serialVersionUID = -8316025212017899471L;
+        private final FilterPredicate isTrue;
+        private final FilterPredicate isFalse;
 
-    public IndexedBoolean(final String canonicalName,
-                          final String description,
-                          final String property,
-                          final String field,
-                          final boolean required,
-                          final JsonStringNode jsonName,
-                          final String jsonPath,
-                          final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.INSTANCE,
-              new PropertyProjection(property, Boolean.class), constraints);
-        this.isTrue = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.TRUE);
-        this.isFalse = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.FALSE);
-    }
+        public IndexedBoolean(final String canonicalName,
+                              final String description,
+                              final String property,
+                              final String field,
+                              final boolean required,
+                              final JsonStringNode jsonName,
+                              final String jsonPath,
+                              final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      BooleanJsonSerializer.INSTANCE,
+                      new PropertyProjection(property, Boolean.class), constraints);
+                this.isTrue = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.TRUE);
+                this.isFalse = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.FALSE);
+        }
 
-    @Override
-    public FilterPredicate isTrue()
-    {
-        return isTrue;
-    }
+        @Override
+        public FilterPredicate isTrue()
+        {
+                return isTrue;
+        }
 
-    @Override
-    public FilterPredicate isFalse()
-    {
-        return isFalse;
-    }
+        @Override
+        public FilterPredicate isFalse()
+        {
+                return isFalse;
+        }
 }

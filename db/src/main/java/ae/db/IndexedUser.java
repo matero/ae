@@ -7,18 +7,19 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedUser extends ScalarField.Indexed<User> implements UserField {
 
-    private static final long serialVersionUID = 2419449018659318423L;
+        private static final long serialVersionUID = 2419449018659318423L;
 
-    public IndexedUser(final String canonicalName,
-                       final String description,
-                       final String property,
-                       final String field,
-                       final boolean required,
-                       final JsonStringNode jsonName,
-                       final String jsonPath,
-                       final ImmutableList<Constraint> constraints)
-    {
-        super(canonicalName, description, property, field, required, jsonName, jsonPath, UserJsonSerializer.INSTANCE,
-              new PropertyProjection(property, User.class), constraints);
-    }
+        public IndexedUser(final String canonicalName,
+                           final String description,
+                           final String property,
+                           final String field,
+                           final boolean required,
+                           final JsonStringNode jsonName,
+                           final String jsonPath,
+                           final ImmutableList<Constraint> constraints)
+        {
+                super(canonicalName, description, property, field, required, jsonName, jsonPath,
+                      UserJsonSerializer.INSTANCE,
+                      new PropertyProjection(property, User.class), constraints);
+        }
 }

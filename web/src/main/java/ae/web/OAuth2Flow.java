@@ -29,10 +29,6 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.HttpResponseException;
 import com.google.appengine.api.users.UserServiceFactory;
 import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import javax.servlet.ServletException;
 
 public interface OAuth2Flow {
@@ -47,11 +43,6 @@ public interface OAuth2Flow {
     String redirectUri() throws ServletException, IOException;
 
     void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) throws ServletException, IOException;
-
-    @Retention(RetentionPolicy.CLASS)
-    @Target(ElementType.METHOD)
-    public @interface OAuth2 {
-    }
 
     final class Director<H extends Controller & OAuth2Flow> {
 

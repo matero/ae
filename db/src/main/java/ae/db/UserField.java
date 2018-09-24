@@ -27,9 +27,9 @@ import com.google.appengine.api.users.User;
 
 public interface UserField extends ScalarField<User> {
 
-    @Override
-    default Class<User> type()
-    {
-        return User.class;
-    }
+        @Override
+        default Class<User> type()
+        {
+                return User.class;
+        }
 }

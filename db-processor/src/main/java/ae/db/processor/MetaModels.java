@@ -32,98 +32,99 @@ import com.google.common.collect.UnmodifiableIterator;
 
 final class MetaModels implements Iterable<MetaModel> {
 
-    final ImmutableMap<String, MetaModel> byKind;
-    final ImmutableListMultimap<String, MetaModel> byPackage;
-    final ImmutableMap<String, MetaModel> byCannonicalName;
+        final ImmutableMap<String, MetaModel> byKind;
+        final ImmutableListMultimap<String, MetaModel> byPackage;
+        final ImmutableMap<String, MetaModel> byCannonicalName;
 
-    MetaModels(final ImmutableMap<String, MetaModel> byKind,
-               final ImmutableListMultimap<String, MetaModel> byPackage,
-               final ImmutableMap<String, MetaModel> byCannonicalClassName)
-    {
-        this.byKind = byKind;
-        this.byPackage = byPackage;
-        this.byCannonicalName = byCannonicalClassName;
-    }
-
-    static Builder builder()
-    {
-        return new Builder(new java.util.LinkedHashMap<>());
-    }
-
-    @Override
-    public UnmodifiableIterator<MetaModel> iterator()
-    {
-        return byKind.values().iterator();
-    }
-
-    ImmutableSet<String> getPackages()
-    {
-        return byPackage.keySet();
-    }
-
-    ImmutableList<MetaModel> atPackage(final String packageName)
-    {
-        return byPackage.get(packageName);
-    }
-
-    ImmutableCollection<MetaModel> all()
-    {
-        return byKind.values();
-    }
-
-    int count()
-    {
-        return byKind.size();
-    }
-
-    static class Builder {
-
-        private final java.util.Map<String, MetaModel> modelsByKind;
-
-        Builder(final java.util.Map<String, MetaModel> modelsByKind)
+        MetaModels(final ImmutableMap<String, MetaModel> byKind,
+                   final ImmutableListMultimap<String, MetaModel> byPackage,
+                   final ImmutableMap<String, MetaModel> byCannonicalClassName)
         {
-            this.modelsByKind = modelsByKind;
+                this.byKind = byKind;
+                this.byPackage = byPackage;
+                this.byCannonicalName = byCannonicalClassName;
         }
 
-        Builder add(final MetaModel model)
+        static Builder builder()
         {
-            modelsByKind.put(model.kind, model);
-            return this;
+                return new Builder(new java.util.LinkedHashMap<>());
         }
 
-        boolean containsModelWithKind(final String modelKind)
+        @Override
+        public UnmodifiableIterator<MetaModel> iterator()
         {
-            return modelsByKind.containsKey(modelKind);
+                return byKind.values().iterator();
         }
 
-        MetaModels build()
+        ImmutableSet<String> getPackages()
         {
-            final ImmutableMap<String, MetaModel> byKind = ImmutableMap.copyOf(modelsByKind);
-            final ImmutableListMultimap.Builder<String, MetaModel> byPackage = ImmutableListMultimap.builder();
-            final ImmutableMap.Builder<String, MetaModel> byCanonicalName = ImmutableMap.builder();
-
-            for (final MetaModel model : byKind.values()) {
-                byPackage.put(model.packageName, model);
-                byCanonicalName.put(model.canonicalName, model);
-            }
-
-            return new MetaModels(byKind, byPackage.build(), byCanonicalName.build());
+                return byPackage.keySet();
         }
 
-        Builder addAll(final MetaModel... models)
+        ImmutableList<MetaModel> atPackage(final String packageName)
         {
-            for (final MetaModel m : models) {
-                this.modelsByKind.put(m.kind, m);
-            }
-            return this;
+                return byPackage.get(packageName);
         }
 
-        Builder addAll(final Iterable<MetaModel> models)
+        ImmutableCollection<MetaModel> all()
         {
-            for (final MetaModel m : models) {
-                this.modelsByKind.put(m.kind, m);
-            }
-            return this;
+                return byKind.values();
         }
-    }
+
+        int count()
+        {
+                return byKind.size();
+        }
+
+        static class Builder {
+
+                private final java.util.Map<String, MetaModel> modelsByKind;
+
+                Builder(final java.util.Map<String, MetaModel> modelsByKind)
+                {
+                        this.modelsByKind = modelsByKind;
+                }
+
+                Builder add(final MetaModel model)
+                {
+                        modelsByKind.put(model.kind, model);
+                        return this;
+                }
+
+                boolean containsModelWithKind(final String modelKind)
+                {
+                        return modelsByKind.containsKey(modelKind);
+                }
+
+                MetaModels build()
+                {
+                        final ImmutableMap<String, MetaModel> byKind = ImmutableMap.copyOf(modelsByKind);
+                        final ImmutableListMultimap.Builder<String, MetaModel> byPackage = ImmutableListMultimap.
+                                builder();
+                        final ImmutableMap.Builder<String, MetaModel> byCanonicalName = ImmutableMap.builder();
+
+                        for (final MetaModel model : byKind.values()) {
+                                byPackage.put(model.packageName, model);
+                                byCanonicalName.put(model.canonicalName, model);
+                        }
+
+                        return new MetaModels(byKind, byPackage.build(), byCanonicalName.build());
+                }
+
+                Builder addAll(final MetaModel... models)
+                {
+                        for (final MetaModel m : models) {
+                                this.modelsByKind.put(m.kind, m);
+                        }
+                        return this;
+                }
+
+                Builder addAll(final Iterable<MetaModel> models)
+                {
+                        for (final MetaModel m : models) {
+                                this.modelsByKind.put(m.kind, m);
+                        }
+                        return this;
+                }
+        }
 }

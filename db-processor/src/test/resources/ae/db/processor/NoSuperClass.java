@@ -23,10 +23,10 @@
  */
 package processor.test;
 
-import ae.Model;
 import ae.Record;
+import ae.model;
 
-@Model
+@model
 class NoSuperClass {
 
     static final class R extends Record {

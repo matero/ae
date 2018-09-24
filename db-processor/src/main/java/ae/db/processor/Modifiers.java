@@ -27,13 +27,13 @@ import javax.lang.model.element.Modifier;
 
 interface Modifiers {
 
-    Modifier[] FINAL = {Modifier.FINAL};
-    Modifier[] PUBLIC_FINAL = {Modifier.PUBLIC, Modifier.FINAL};
+        Modifier[] FINAL = {Modifier.FINAL};
+        Modifier[] PUBLIC_FINAL = {Modifier.PUBLIC, Modifier.FINAL};
 
-    Modifier[] STATIC_FINAL = {Modifier.STATIC, Modifier.FINAL};
-    Modifier[] PUBLIC_STATIC_FINAL = {Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL};
-    Modifier[] PROTECTED_STATIC_FINAL = {Modifier.PROTECTED, Modifier.STATIC, Modifier.FINAL};
-    Modifier[] PROTECTED_FINAL = {Modifier.PROTECTED, Modifier.FINAL};
-    Modifier[] PRIVATE_STATIC_FINAL = {Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL};
-    Modifier[] PRIVATE_FINAL = {Modifier.PRIVATE, Modifier.FINAL};
+        Modifier[] STATIC_FINAL = {Modifier.STATIC, Modifier.FINAL};
+        Modifier[] PUBLIC_STATIC_FINAL = {Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL};
+        Modifier[] PROTECTED_STATIC_FINAL = {Modifier.PROTECTED, Modifier.STATIC, Modifier.FINAL};
+        Modifier[] PROTECTED_FINAL = {Modifier.PROTECTED, Modifier.FINAL};
+        Modifier[] PRIVATE_STATIC_FINAL = {Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL};
+        Modifier[] PRIVATE_FINAL = {Modifier.PRIVATE, Modifier.FINAL};
 }

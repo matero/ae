@@ -23,40 +23,59 @@
  */
 package ae;
 
+import static java.lang.annotation.ElementType.FIELD;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
+import java.lang.annotation.Target;
+
 public abstract class Record {
 
-    public @interface id {
-    }
+        @Retention(SOURCE)
+        @Target(FIELD)
+        public @interface id {
+        }
 
-    public @interface parent {
-    }
+        @Retention(SOURCE)
+        @Target(FIELD)
+        public @interface parent {
+        }
 
-    public @interface indexed {
-    }
+        @Retention(SOURCE)
+        @Target(FIELD)
+        public @interface indexed {
+        }
 
-    public @interface property {
+        @Retention(SOURCE)
+        @Target(FIELD)
+        public @interface property {
+                String value();
+        }
 
-        String value();
-    }
+        @Retention(SOURCE)
+        @Target(FIELD)
+        public @interface description {
+                String value();
+        }
 
-    public @interface description {
+        @Retention(SOURCE)
+        @Target(FIELD)
+        public @interface required {
+        }
 
-        String value();
-    }
+        @Retention(SOURCE)
+        @Target(FIELD)
+        public @interface notBlank {
+        }
 
-    public @interface required {
-    }
+        @Retention(SOURCE)
+        @Target(FIELD)
+        public @interface email {
+        }
 
-    public @interface notBlank {
-    }
-
-    public @interface email {
-    }
-
-    public @interface json {
-
-        boolean ignore() default false;
-
-        String format() default "";
-    }
+        @Retention(SOURCE)
+        @Target(FIELD)
+        public @interface json {
+                boolean ignore() default false;
+                String format() default "";
+        }
 }

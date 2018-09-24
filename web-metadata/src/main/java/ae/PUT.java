@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2018 ActiveEngine.
+ * Copyright 2018 juanjo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,20 +23,16 @@
  */
 package ae;
 
-import java.lang.annotation.ElementType;
+import static java.lang.annotation.ElementType.METHOD;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 import java.lang.annotation.Target;
 
-/**
- * Marks root package to denote that the project has a route definition.
- */
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.TYPE)
-public @interface Router {
-
-    /**
-     * @return Where is the routes definition located.
-     */
-    String[] routes() default "src/config/routes.csv";
+@Retention(SOURCE)
+@Target(METHOD)
+public @interface PUT {
+        String path() default "";
+        String accept() default "";
+        boolean template() default false;
+        boolean oauth2() default false;
 }

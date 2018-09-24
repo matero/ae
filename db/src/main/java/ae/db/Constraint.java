@@ -25,14 +25,14 @@ package ae.db;
 
 public interface Constraint<T> extends java.io.Serializable {
 
-    boolean isInvalid(T value);
+        boolean isInvalid(T value);
 
-    default String completeName(final Attr attr)
-    {
-        return attr.canonicalName() + '.' + getName();
-    }
+        default String completeName(final Attr attr)
+        {
+                return attr.canonicalName() + '.' + getName();
+        }
 
-    String messageFor(Attr attr, T value);
+        String messageFor(Attr attr, T value);
 
-    String getName();
+        String getName();
 }

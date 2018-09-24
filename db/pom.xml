@@ -11,16 +11,14 @@
     <description>ActiveEngine abstractions over datastore low-level API.</description>
 
     <dependencies>
-        <!-- ================================================================ -->
-        <!-- GAE Compile/runtime dependencies                                 -->
-        <!-- ================================================================ -->
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-api-1.0-sdk</artifactId>
         </dependency>
-        <!-- ================================================================ -->
-        <!-- utilities                                                        -->
-        <!-- ================================================================ -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -29,9 +27,6 @@
             <groupId>net.sourceforge.argo</groupId>
             <artifactId>argo</artifactId>
         </dependency>
-        <!-- ================================================================== -->
-        <!-- testing                                                            -->
-        <!-- ================================================================== -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>

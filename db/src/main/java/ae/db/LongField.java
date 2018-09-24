@@ -27,47 +27,47 @@ import com.google.appengine.api.datastore.PropertyContainer;
 
 public interface LongField extends ScalarField<Long> {
 
-    @Override
-    default Class<Long> type()
-    {
-        return Long.class;
-    }
-
-    default void set(final PropertyContainer data, final long rawValue)
-    {
-        write(data, rawValue);
-    }
-
-    default void write(final PropertyContainer data, final long rawValue)
-    {
-        write(data, Long.valueOf(rawValue));
-    }
-
-    default void set(final PropertyContainer data, final CharSequence rawValue)
-    {
-        write(data, rawValue);
-    }
-
-    default void write(final PropertyContainer data, final CharSequence rawValue)
-    {
-        if (rawValue == null) {
-            write(data, (Long) null);
-        } else {
-            write(data, Long.valueOf(rawValue.toString()));
+        @Override
+        default Class<Long> type()
+        {
+                return Long.class;
         }
-    }
 
-    default void set(final PropertyContainer data, final String rawValue)
-    {
-        write(data, rawValue);
-    }
-
-    default void write(final PropertyContainer data, final String rawValue)
-    {
-        if (rawValue == null) {
-            write(data, (Long) null);
-        } else {
-            write(data, Long.valueOf(rawValue));
+        default void set(final PropertyContainer data, final long rawValue)
+        {
+                write(data, rawValue);
         }
-    }
+
+        default void write(final PropertyContainer data, final long rawValue)
+        {
+                write(data, Long.valueOf(rawValue));
+        }
+
+        default void set(final PropertyContainer data, final CharSequence rawValue)
+        {
+                write(data, rawValue);
+        }
+
+        default void write(final PropertyContainer data, final CharSequence rawValue)
+        {
+                if (rawValue == null) {
+                        write(data, (Long) null);
+                } else {
+                        write(data, Long.valueOf(rawValue.toString()));
+                }
+        }
+
+        default void set(final PropertyContainer data, final String rawValue)
+        {
+                write(data, rawValue);
+        }
+
+        default void write(final PropertyContainer data, final String rawValue)
+        {
+                if (rawValue == null) {
+                        write(data, (Long) null);
+                } else {
+                        write(data, Long.valueOf(rawValue));
+                }
+        }
 }

@@ -23,15 +23,15 @@
  */
 package processor.test;
 
-import ae.Model;
 import ae.Record;
+import ae.model;
 
-@Model
+@model
 class TooManyRecords extends __TooManyRecords {
 
     static class R1 extends Record {
 
-        @Model.Id
+        @model.Id
         String id;
     }
 

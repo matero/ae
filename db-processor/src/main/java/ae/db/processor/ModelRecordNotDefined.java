@@ -27,8 +27,8 @@ import javax.lang.model.element.TypeElement;
 
 final class ModelRecordNotDefined extends ModelException {
 
-    ModelRecordNotDefined(final TypeElement modelClass)
-    {
-        super(modelClass, "No Record class found!");
-    }
+        ModelRecordNotDefined(final TypeElement modelClass)
+        {
+                super(modelClass, "No Record class found!");
+        }
 }
