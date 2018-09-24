@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
     comments = "",
     date = "2017-02-23"
 )
-@WebServlet("/")
+@WebServlet("/*")
 public final class AppRouter_impl extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 

@@ -72,6 +72,15 @@ class RoutesDeclarations {
                 this.routerClass = routerClass;
         }
 
+        String webServletValue()
+        {
+                if (this.basePath.endsWith("*")) {
+                        return this.basePath;
+                } else {
+                        return this.basePath + '*';
+                }
+        }
+
         List<TypeElement> controllers()
         {
                 return routes.stream().map(route -> route.controller).distinct().collect(toList());

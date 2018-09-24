@@ -27,7 +27,6 @@ import ae.web.Interpret;
 import ae.web.OAuth2Flow;
 import ae.web.RouterServlet;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.UnmodifiableIterator;
 import com.squareup.javapoet.*;
 
 import javax.annotation.Generated;
@@ -75,22 +74,9 @@ class RoutersCodeBuilder {
 
         private AnnotationSpec webServlet(final RoutesDeclarations declarations)
         {
-                if (declarations.basePath.equals(declarations.apiPath)
-                        || declarations.apiPath.startsWith(declarations.basePath)) {
-                        return AnnotationSpec.builder(WebServlet.class)
-                                .addMember("value", "$S", declarations.basePath)
-                                .build();
-                } else {
-                        if (declarations.basePath.startsWith(declarations.apiPath)) {
-                                return AnnotationSpec.builder(WebServlet.class)
-                                        .addMember("value", "$S", declarations.apiPath)
-                                        .build();
-                        } else {
-                                return AnnotationSpec.builder(WebServlet.class)
-                                        .addMember("value", "{$S, $S}", declarations.basePath, declarations.apiPath)
-                                        .build();
-                        }
-                }
+                return AnnotationSpec.builder(WebServlet.class)
+                        .addMember("value", "$S", declarations.webServletValue())
+                        .build();
         }
 
         void addRouteFields(final TypeSpec.Builder router, final RoutesDeclarations declarations)
