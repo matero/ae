@@ -55,7 +55,7 @@ class RoutersCodeBuilder {
                 final ClassName classname = declarations.routerClassName();
                 final TypeSpec.Builder router = TypeSpec.classBuilder(classname)
                         .superclass(HTTP_SERVLET)
-                        .addModifiers(Modifier.FINAL)
+                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                         .addAnnotation(AnnotationSpec.builder(Generated.class)
                                 .addMember("value", "$S", "AE/web-processor")
                                 .addMember("comments", "$S", declarations.paths)

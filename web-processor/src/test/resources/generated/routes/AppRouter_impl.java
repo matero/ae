@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
     date = "2017-02-23"
 )
 @WebServlet("/")
-final class AppRouter_impl extends RouterServlet {
+public final class AppRouter_impl extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 
   private final Route GET_processor_test_BookController_index = new Route("/api/v1/book/");
