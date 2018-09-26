@@ -165,6 +165,11 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
                 return new SelectChildEntities(makeQuery(), FetchOptions.Builder.withDefaults());
         }
 
+        public final SelectChildEntities selectAll(final FetchOptions fetchOptions)
+        {
+                return new SelectChildEntities(makeQuery(), fetchOptions);
+        }
+
         public final SelectChildEntities selectKeys()
         {
                 return new SelectChildEntities(makeQuery().setKeysOnly(), FetchOptions.Builder.withDefaults());
@@ -175,9 +180,21 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
                 return new SelectChildEntities(projection(projectedProperties), FetchOptions.Builder.withDefaults());
         }
 
+        public final SelectChildEntities select(final FetchOptions fetchOptions,
+                                                final Filterable<?>... projectedProperties)
+        {
+                return new SelectChildEntities(projection(projectedProperties), fetchOptions);
+        }
+
         public final SelectChildEntities select(final Iterable<Filterable<?>> projectedProperties)
         {
                 return new SelectChildEntities(projection(projectedProperties), FetchOptions.Builder.withDefaults());
+        }
+
+        public final SelectChildEntities select(final FetchOptions fetchOptions,
+                                                final Iterable<Filterable<?>> projectedProperties)
+        {
+                return new SelectChildEntities(projection(projectedProperties), fetchOptions);
         }
 
         public static final class SelectChildEntities extends RootActiveEntity.SelectEntities {
