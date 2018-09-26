@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target(METHOD)
 public @interface PUT {
-        String path() default "";
+        String path() default "<UNDEFINED>";
 
         boolean template() default false;
 

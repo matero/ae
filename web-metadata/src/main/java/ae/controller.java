@@ -31,5 +31,5 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target(TYPE)
 public @interface controller {
-        String path() default "";
+        String path() default "<UNDEFINED>";
 }

@@ -60,7 +60,9 @@ class RoutersCodeBuilder {
                                 .addMember("comments", "$S", declarations.paths)
                                 .addMember("date", "$S", declarations.date)
                                 .build())
-                        .addAnnotation(webServlet(declarations))
+                        .addAnnotation(AnnotationSpec.builder(WebServlet.class)
+                                .addMember("value", "$S", declarations.webServletValue())
+                                .build())
                         .addField(FieldSpec.builder(long.class,
                                                     "serialVersionUID",
                                                     Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
@@ -72,13 +74,6 @@ class RoutersCodeBuilder {
                 return JavaFile.builder(classname.packageName(), router.build()).skipJavaLangImports(true).build();
         }
 
-        private AnnotationSpec webServlet(final RoutesDeclarations declarations)
-        {
-                return AnnotationSpec.builder(WebServlet.class)
-                        .addMember("value", "$S", declarations.webServletValue())
-                        .build();
-        }
-
         void addRouteFields(final TypeSpec.Builder router, final RoutesDeclarations declarations)
         {
                 for (final HttpVerb httpVerb : HttpVerb.values()) {
@@ -88,9 +83,9 @@ class RoutersCodeBuilder {
                                 continue;
                         }
 
-                        String last = "";
+                        String last = null;
                         for (final RouteDescriptor route : routes) {
-                                if (!last.equals(route.pattern)) {
+                                if (!route.pattern.equals(last)) {
                                         router.addField(makeFieldFor(route));
                                         last = route.pattern;
                                 }

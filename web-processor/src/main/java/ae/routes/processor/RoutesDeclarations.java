@@ -77,7 +77,11 @@ class RoutesDeclarations {
                 if (this.basePath.endsWith("*")) {
                         return this.basePath;
                 } else {
-                        return this.basePath + '*';
+                        if ("".equals(this.basePath)) {
+                                return "/*";
+                        } else {
+                                return this.basePath + '*';
+                        }
                 }
         }
 

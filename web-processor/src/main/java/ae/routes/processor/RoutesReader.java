@@ -40,8 +40,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static javax.lang.model.util.ElementFilter.methodsIn;
 import ae.controller;
+import javax.lang.model.element.Name;
 
 class RoutesReader {
+        private static final String UNDEFINED_PATH = "<UNDEFINED>";
         private static final String API_CONSTRUCTOR_ARGS = "request, response";
         private static final String THYMELEAF_CONSTRUCTOR_ARGS
                 = "request, response, webContext(request, response), templateEngine()";
@@ -63,6 +65,8 @@ class RoutesReader {
 
         private String controllerBasePath;
         private String controllerApiPath;
+
+        private boolean success;
 
         RoutesReader(final String routerBasePath,
                      final String routerApiPath,
@@ -91,37 +95,28 @@ class RoutesReader {
          */
         boolean readRoutes(final TypeElement controllerClass)
         {
-                boolean success = true;
-                final controller ctrler = controllerClass.getAnnotation(controller.class);
+                this.success = true;
+                this.controllerBasePath = makeControllerPath(this.routerBasePath, controllerClass);
+                this.controllerApiPath = makeControllerPath(this.routerApiPath, controllerClass);
 
-                if (ctrler.path() == null) {
-                        printError("@controller.path can't be null", controllerClass);
-                        success = false;
-                        controllerBasePath = "";
-                        controllerApiPath = "";
-                } else {
-                        controllerBasePath = makePath(routerBasePath, ctrler.path());
-                        controllerApiPath = makePath(routerApiPath, ctrler.path());
-                }
                 for (final ExecutableElement method : methodsIn(controllerClass.getEnclosedElements())) {
                         for (final HttpVerb httpVerb : HttpVerb.values()) {
-                                success &= httpVerb.buildRoute(controllerClass, method, this);
+                                httpVerb.buildRoute(controllerClass, method, this);
                         }
                 }
-                return success;
+                return this.success;
         }
 
-        boolean buildRoute(final HttpVerb httpVerb,
-                           final String path,
-                           final boolean template,
-                           final boolean useCredentials,
-                           final ExecutableElement action,
-                           final TypeElement controllerClass
-        )
+        void buildRoute(final HttpVerb httpVerb,
+                        final String path,
+                        final boolean template,
+                        final boolean useCredentials,
+                        final ExecutableElement action,
+                        final TypeElement controllerClass)
         {
                 if (path == null) {
-                        printError("@" + httpVerb.name() + ".path can't be null", action);
-                        return false;
+                        error("@" + httpVerb.name() + ".path can't be null", action);
+                        return;
                 }
 
                 final String actionPath;
@@ -132,24 +127,23 @@ class RoutesReader {
                                 actionPath = makePath(controllerBasePath, with(action, path));
                                 ctorArgs = THYMELEAF_CONSTRUCTOR_ARGS;
                         } else {
-                                printError(CONTROLLER_MUST_SUPPORT_THYMELEAF, action);
-                                return false;
+                                error(CONTROLLER_MUST_SUPPORT_THYMELEAF, action);
+                                return;
                         }
                 } else {
-                        actionPath = makePath(controllerApiPath, with(action, path));
+                        actionPath = makePath(this.controllerApiPath, with(action, path));
                         ctorArgs = API_CONSTRUCTOR_ARGS;
                 }
 
-                routes.addRoute(makeRoute(httpVerb, actionPath, controllerClass, ctorArgs, useCredentials, action));
-                return true;
+                makeRoute(httpVerb, actionPath, controllerClass, ctorArgs, useCredentials, action);
         }
 
-        private RouteDescriptor makeRoute(final HttpVerb verb,
-                                          final String uri,
-                                          final TypeElement controller,
-                                          final String ctorArguments,
-                                          boolean useCredentials,
-                                          final ExecutableElement action)
+        private void makeRoute(final HttpVerb verb,
+                               final String uri,
+                               final TypeElement controller,
+                               final String ctorArguments,
+                               final boolean useCredentials,
+                               final ExecutableElement action)
         {
                 final PathSpec path = PathSpec.from(uri);
                 final ImmutableList<Parameter> parameters = parametersAt(action);
@@ -157,30 +151,30 @@ class RoutesReader {
 
                 if (path.isStatic()) {
                         if (paramsCount > 0) {
-                                printError(actionRequireParameters(paramsCount), action);
-                                return null;
+                                error(actionRequireParameters(paramsCount), action);
+                        } else {
+                                this.routes.addRoute(new RouteDescriptor(verb,
+                                                                         path.pattern,
+                                                                         useCredentials,
+                                                                         controller,
+                                                                         action.getSimpleName().toString(),
+                                                                         ctorArguments,
+                                                                         path.headers));
                         }
-                        return new RouteDescriptor(verb,
-                                                   path.pattern,
-                                                   useCredentials,
-                                                   controller,
-                                                   action.getSimpleName().toString(),
-                                                   ctorArguments,
-                                                   path.headers);
                 } else {
                         final int pathParams = path.parameterNames.size();
                         if (pathParams != paramsCount) {
-                                printError(actionParametersUmatched(paramsCount, pathParams), action);
-                                return null;
+                                error(actionParametersUmatched(paramsCount, pathParams), action);
+                        } else {
+                                this.routes.addRoute(new RouteDescriptor(verb,
+                                                                         path.pattern,
+                                                                         path.regex,
+                                                                         useCredentials,
+                                                                         controller,
+                                                                         action.getSimpleName().toString(),
+                                                                         parameters,
+                                                                         ctorArguments, path.headers));
                         }
-                        return new RouteDescriptor(verb,
-                                                   path.pattern,
-                                                   path.regex,
-                                                   useCredentials,
-                                                   controller,
-                                                   action.getSimpleName().toString(),
-                                                   parameters,
-                                                   ctorArguments, path.headers);
                 }
         }
 
@@ -225,7 +219,7 @@ class RoutesReader {
                         case DOUBLE:
                                 return "asPrimitiveDouble";
                         case DECLARED: {
-                                final String name = types.asElement(type).getSimpleName().toString();
+                                final String name = this.types.asElement(type).getSimpleName().toString();
                                 return "as" + name;
                         }
                         default:
@@ -235,12 +229,13 @@ class RoutesReader {
 
         private boolean supportsThymeleaf(final TypeElement controller)
         {
-                return types.isSubtype(controller.asType(), controllerWithThymeleafSupportClass);
+                return this.types.isSubtype(controller.asType(), this.controllerWithThymeleafSupportClass);
         }
 
-        private void printError(final String message, final Element e)
+        private void error(final String message, final Element e)
         {
-                messager.printMessage(Diagnostic.Kind.ERROR, message, e);
+                this.messager.printMessage(Diagnostic.Kind.ERROR, message, e);
+                this.success = false;
         }
 
         private String makePath(final String parentPath, final String childPath)
@@ -250,16 +245,20 @@ class RoutesReader {
                 } else if (parentPath.endsWith("/")) {
                         return parentPath + childPath;
                 } else {
-                        return parentPath + '/' + childPath;
+                        if ("".equals(childPath)) {
+                                return parentPath;
+                        } else {
+                                return parentPath + '/' + childPath;
+                        }
                 }
         }
 
         private String with(final ExecutableElement action, final String path)
         {
-                if ("".equals(path)) {
+                if (UNDEFINED_PATH.equals(path)) {
                         final String actionName = action.getSimpleName().toString();
                         switch (actionName) {
-                                case "html":
+                                case "index":
                                 case "htmlIndex":
                                 case "save":
                                 case "update":
@@ -271,6 +270,38 @@ class RoutesReader {
                 } else {
                         return path;
                 }
+        }
+
+        private String makeControllerPath(final String parentPath, final TypeElement controllerClass)
+        {
+                final String path = getPath(controllerClass);
+                if (path == null) {
+                        error("@controller.path can't be null", controllerClass);
+                } else {
+                        if (UNDEFINED_PATH.equals(path)) {
+                                final Name controllerClassName = controllerClass.getSimpleName();
+                                final String classname = controllerClassName.toString();
+                                if (classname.endsWith("Controller")) {
+                                        if ("Controller".equals(classname)) {
+                                                error("Can't deduce path for @controller", controllerClass);
+                                        } else {
+                                                final String ctrlerpath = classname.substring(classname.length() - 10);
+                                                return makePath(parentPath, ctrlerpath.toLowerCase());
+                                        }
+                                } else {
+                                        return makePath(parentPath, classname.toLowerCase());
+                                }
+                        } else {
+                                return makePath(parentPath, path);
+                        }
+                }
+                return "";
+        }
+
+        private String getPath(final TypeElement controllerClass)
+        {
+                final controller metadata = controllerClass.getAnnotation(controller.class);
+                return metadata.path();
         }
 }
 

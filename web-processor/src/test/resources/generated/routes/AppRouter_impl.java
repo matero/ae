@@ -23,54 +23,66 @@ import javax.servlet.http.HttpServletResponse;
 public final class AppRouter_impl extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 
-  private final ParameterizedRoute GET_processor_test_BookController_bar = new ParameterizedRoute("/api/v1/book/bar/{id}/{cursor}/{arg}", Pattern.compile("/api/v1/book/bar/(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
+  private final Route GET_processor_test_ClientController_htmlIndex = new Route("");
 
-  private final Route GET_processor_test_BookController_create = new Route("/api/v1/book/create");
+  private final Route GET_processor_test_ClientController_index = new Route("/api/v1");
 
-  private final ParameterizedRoute GET_processor_test_BookController_foo = new ParameterizedRoute("/api/v1/book/foo/{id}/{arg}", Pattern.compile("/api/v1/book/foo/(?<p0>[^/]+)/(?<p1>[^/]+)"));
+  private final Route GET_processor_test_BookController_index = new Route("/api/v1/controller");
 
-  private final Route GET_processor_test_BookController_index = new Route("/api/v1/book/index");
+  private final ParameterizedRoute GET_processor_test_BookController_bar = new ParameterizedRoute("/api/v1/controller/bar/{id}/{cursor}/{arg}", Pattern.compile("/api/v1/controller/bar/(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
 
-  private final Route GET_processor_test_ClientController_index = new Route("/api/v1/client/index");
+  private final Route GET_processor_test_BookController_create = new Route("/api/v1/controller/create");
 
-  private final Route GET_processor_test_GymController_create = new Route("/api/v1/gym/create");
+  private final ParameterizedRoute GET_processor_test_BookController_foo = new ParameterizedRoute("/api/v1/controller/foo/{id}/{arg}", Pattern.compile("/api/v1/controller/foo/(?<p0>[^/]+)/(?<p1>[^/]+)"));
 
-  private final Route GET_processor_test_GymController_index = new Route("/api/v1/gym/index");
+  private final Route GET_processor_test_Gym_index = new Route("/api/v1/gym");
 
-  private final ParameterizedRoute GET_processor_test_GymController_show = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
+  private final Route GET_processor_test_Gym_create = new Route("/api/v1/gym/create");
 
-  private final Route GET_processor_test_BookController_htmlIndex = new Route("/book/");
+  private final ParameterizedRoute GET_processor_test_Gym_show = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute GET_processor_test_BookController_show = new ParameterizedRoute("/book/{id}", Pattern.compile("/book/(?<p0>[^/]+)"));
+  private final Route GET_processor_test_BookController_htmlIndex = new Route("/controller");
 
-  private final ParameterizedRoute GET_processor_test_BookController_edit = new ParameterizedRoute("/book/{id}/edit", Pattern.compile("/book/(?<p0>[^/]+)/edit"));
+  private final ParameterizedRoute GET_processor_test_BookController_show = new ParameterizedRoute("/controller/{id}", Pattern.compile("/controller/(?<p0>[^/]+)"));
 
-  private final Route GET_processor_test_ClientController_htmlIndex = new Route("/client/");
+  private final ParameterizedRoute GET_processor_test_BookController_edit = new ParameterizedRoute("/controller/{id}/edit", Pattern.compile("/controller/(?<p0>[^/]+)/edit"));
 
-  private final Route GET_processor_test_ClientController_create = new Route("/client/create");
+  private final Route GET_processor_test_ClientController_create = new Route("/create");
 
-  private final Route GET_processor_test_GymController_htmlIndex = new Route("/gym/");
+  private final Route GET_processor_test_Gym_htmlIndex = new Route("/gym");
 
-  private final ParameterizedRoute GET_processor_test_GymController_edit = new ParameterizedRoute("/gym/{id}/edit", Pattern.compile("/gym/(?<p0>[^/]+)/edit"));
+  private final ParameterizedRoute GET_processor_test_Gym_edit = new ParameterizedRoute("/gym/{id}/edit", Pattern.compile("/gym/(?<p0>[^/]+)/edit"));
 
-  private final Route POST_processor_test_BookController_save = new Route("/api/v1/book/");
+  private final Route POST_processor_test_ClientController_save = new Route("/api/v1");
 
-  private final Route POST_processor_test_ClientController_save = new Route("/api/v1/client/");
+  private final Route POST_processor_test_BookController_save = new Route("/api/v1/controller");
 
-  private final Route POST_processor_test_GymController_save = new Route("/api/v1/gym/");
+  private final Route POST_processor_test_Gym_save = new Route("/api/v1/gym");
 
-  private final ParameterizedRoute PUT_processor_test_BookController_update = new ParameterizedRoute("/api/v1/book/{id}", Pattern.compile("/api/v1/book/(?<p0>[^/]+)"));
+  private final ParameterizedRoute PUT_processor_test_BookController_update = new ParameterizedRoute("/api/v1/controller/{id}", Pattern.compile("/api/v1/controller/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute PUT_processor_test_GymController_update = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
+  private final ParameterizedRoute PUT_processor_test_Gym_update = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute DELETE_processor_test_BookController_delete = new ParameterizedRoute("/api/v1/book/{id}", Pattern.compile("/api/v1/book/(?<p0>[^/]+)"));
+  private final ParameterizedRoute DELETE_processor_test_BookController_delete = new ParameterizedRoute("/api/v1/controller/{id}", Pattern.compile("/api/v1/controller/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute DELETE_processor_test_GymController_delete = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
+  private final ParameterizedRoute DELETE_processor_test_Gym_delete = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
     final String[] routeParameters = new String[]{null, null, null, null};
+    if (GET_processor_test_ClientController_htmlIndex.matches(request)) {
+      handle(new ClientController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
+      return;
+    }
+    if (GET_processor_test_ClientController_index.matches(request)) {
+      handle(new ClientController(request, response), (controller) -> controller.index());
+      return;
+    }
+    if (GET_processor_test_BookController_index.matches(request)) {
+      handle(new BookController(request, response), (controller) -> controller.index());
+      return;
+    }
     if (GET_processor_test_BookController_bar.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       final Cursor c = Interpret.asCursor(routeParameters[1]);
@@ -88,25 +100,17 @@ public final class AppRouter_impl extends RouterServlet {
       handle(new BookController(request, response), (controller) -> OAuth2Flow.Director.of(controller).authorize((c) -> c.foo(id,arg)));
       return;
     }
-    if (GET_processor_test_BookController_index.matches(request)) {
-      handle(new BookController(request, response), (controller) -> controller.index());
+    if (GET_processor_test_Gym_index.matches(request)) {
+      handle(new Gym(request, response), (controller) -> controller.index());
       return;
     }
-    if (GET_processor_test_ClientController_index.matches(request)) {
-      handle(new ClientController(request, response), (controller) -> controller.index());
+    if (GET_processor_test_Gym_create.matches(request)) {
+      handle(new Gym(request, response), (controller) -> controller.create());
       return;
     }
-    if (GET_processor_test_GymController_create.matches(request)) {
-      handle(new GymController(request, response), (controller) -> controller.create());
-      return;
-    }
-    if (GET_processor_test_GymController_index.matches(request)) {
-      handle(new GymController(request, response), (controller) -> controller.index());
-      return;
-    }
-    if (GET_processor_test_GymController_show.matches(request, routeParameters)) {
+    if (GET_processor_test_Gym_show.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new GymController(request, response), (controller) -> controller.show(id));
+      handle(new Gym(request, response), (controller) -> controller.show(id));
       return;
     }
     if (GET_processor_test_BookController_htmlIndex.matches(request)) {
@@ -123,21 +127,17 @@ public final class AppRouter_impl extends RouterServlet {
       handle(new BookController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
       return;
     }
-    if (GET_processor_test_ClientController_htmlIndex.matches(request)) {
-      handle(new ClientController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
-      return;
-    }
     if (GET_processor_test_ClientController_create.matches(request)) {
       handle(new ClientController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.create());
       return;
     }
-    if (GET_processor_test_GymController_htmlIndex.matches(request)) {
-      handle(new GymController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
+    if (GET_processor_test_Gym_htmlIndex.matches(request)) {
+      handle(new Gym(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
       return;
     }
-    if (GET_processor_test_GymController_edit.matches(request, routeParameters)) {
+    if (GET_processor_test_Gym_edit.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new GymController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
+      handle(new Gym(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
       return;
     }
     unhandledGet(request, response);
@@ -146,16 +146,16 @@ public final class AppRouter_impl extends RouterServlet {
   @Override
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
-    if (POST_processor_test_BookController_save.matches(request)) {
-      handle(new BookController(request, response), (controller) -> controller.save());
-      return;
-    }
     if (POST_processor_test_ClientController_save.matches(request)) {
       handle(new ClientController(request, response), (controller) -> controller.save());
       return;
     }
-    if (POST_processor_test_GymController_save.matches(request)) {
-      handle(new GymController(request, response), (controller) -> controller.save());
+    if (POST_processor_test_BookController_save.matches(request)) {
+      handle(new BookController(request, response), (controller) -> controller.save());
+      return;
+    }
+    if (POST_processor_test_Gym_save.matches(request)) {
+      handle(new Gym(request, response), (controller) -> controller.save());
       return;
     }
     unhandledPost(request, response);
@@ -170,9 +170,9 @@ public final class AppRouter_impl extends RouterServlet {
       handle(new BookController(request, response), (controller) -> controller.update(id));
       return;
     }
-    if (PUT_processor_test_GymController_update.matches(request, routeParameters)) {
+    if (PUT_processor_test_Gym_update.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new GymController(request, response), (controller) -> controller.update(id));
+      handle(new Gym(request, response), (controller) -> controller.update(id));
       return;
     }
     unhandledPut(request, response);
@@ -187,9 +187,9 @@ public final class AppRouter_impl extends RouterServlet {
       handle(new BookController(request, response), (controller) -> controller.delete(id));
       return;
     }
-    if (DELETE_processor_test_GymController_delete.matches(request, routeParameters)) {
+    if (DELETE_processor_test_Gym_delete.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new GymController(request, response), (controller) -> controller.delete(id));
+      handle(new Gym(request, response), (controller) -> controller.delete(id));
       return;
     }
     unhandledDelete(request, response);

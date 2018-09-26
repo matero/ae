@@ -27,48 +27,53 @@ import javax.servlet.http.HttpServletRequest;
 
 public final class Route implements java.io.Serializable {
 
-    private static final long serialVersionUID = -5338049506118103698L;
+        private static final long serialVersionUID = -5338049506118103698L;
 
-    private final String uri;
+        private final String uri;
 
-    public Route(final String routeUri)
-    {
-        uri = routeUri;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Route{" + uri + '}';
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return uri.hashCode();
-    }
-
-    @Override
-    public boolean equals(final Object that)
-    {
-        if (this == that) {
-            return true;
+        public Route(final String routeUri)
+        {
+                this.uri = routeUri;
         }
-        if (that instanceof Route) {
-            final Route other = (Route) that;
-            return uri.equals(other.uri);
-        }
-        return false;
-    }
 
-    public final boolean matches(final HttpServletRequest request)
-    {
-        if (request.getPathInfo() == null) {
-            return false;
+        @Override
+        public String toString()
+        {
+                return "Route{" + this.uri + '}';
         }
-        if (request.getPathInfo().isEmpty()) {
-            return false;
+
+        @Override
+        public int hashCode()
+        {
+                return this.uri.hashCode();
         }
-        return uri.equals(request.getPathInfo());
-    }
+
+        @Override
+        public boolean equals(final Object that)
+        {
+                if (this == that) {
+                        return true;
+                }
+                if (that instanceof Route) {
+                        final Route other = (Route) that;
+                        return this.uri.equals(other.uri);
+                }
+                return false;
+        }
+
+        public final boolean matches(final HttpServletRequest request)
+        {
+                final String pathInfo = request.getPathInfo();
+                if (pathInfo == null) {
+                        return false;
+                }
+                if (pathInfo.isEmpty()) {
+                        return false;
+                }
+                if ("".equals(this.uri)) {
+                        return this.uri.equals(pathInfo) || "/".equals(pathInfo);
+                } else {
+                        return this.uri.equals(pathInfo);
+                }
+        }
 }
