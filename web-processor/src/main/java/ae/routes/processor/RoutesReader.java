@@ -285,7 +285,7 @@ class RoutesReader {
                                         if ("Controller".equals(classname)) {
                                                 error("Can't deduce path for @controller", controllerClass);
                                         } else {
-                                                final String ctrlerpath = classname.substring(classname.length() - 10);
+                                                final String ctrlerpath = classname.substring(0, classname.length() - 10);
                                                 return makePath(parentPath, ctrlerpath.toLowerCase());
                                         }
                                 } else {

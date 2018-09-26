@@ -27,13 +27,13 @@ public final class AppRouter_impl extends RouterServlet {
 
   private final Route GET_processor_test_ClientController_index = new Route("/api/v1");
 
-  private final Route GET_processor_test_BookController_index = new Route("/api/v1/controller");
+  private final Route GET_processor_test_BookController_index = new Route("/api/v1/book");
 
-  private final ParameterizedRoute GET_processor_test_BookController_bar = new ParameterizedRoute("/api/v1/controller/bar/{id}/{cursor}/{arg}", Pattern.compile("/api/v1/controller/bar/(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
+  private final ParameterizedRoute GET_processor_test_BookController_bar = new ParameterizedRoute("/api/v1/book/bar/{id}/{cursor}/{arg}", Pattern.compile("/api/v1/book/bar/(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
 
-  private final Route GET_processor_test_BookController_create = new Route("/api/v1/controller/create");
+  private final Route GET_processor_test_BookController_create = new Route("/api/v1/book/create");
 
-  private final ParameterizedRoute GET_processor_test_BookController_foo = new ParameterizedRoute("/api/v1/controller/foo/{id}/{arg}", Pattern.compile("/api/v1/controller/foo/(?<p0>[^/]+)/(?<p1>[^/]+)"));
+  private final ParameterizedRoute GET_processor_test_BookController_foo = new ParameterizedRoute("/api/v1/book/foo/{id}/{arg}", Pattern.compile("/api/v1/book/foo/(?<p0>[^/]+)/(?<p1>[^/]+)"));
 
   private final Route GET_processor_test_Gym_index = new Route("/api/v1/gym");
 
@@ -41,11 +41,11 @@ public final class AppRouter_impl extends RouterServlet {
 
   private final ParameterizedRoute GET_processor_test_Gym_show = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
 
-  private final Route GET_processor_test_BookController_htmlIndex = new Route("/controller");
+  private final Route GET_processor_test_BookController_htmlIndex = new Route("/book");
 
-  private final ParameterizedRoute GET_processor_test_BookController_show = new ParameterizedRoute("/controller/{id}", Pattern.compile("/controller/(?<p0>[^/]+)"));
+  private final ParameterizedRoute GET_processor_test_BookController_show = new ParameterizedRoute("/book/{id}", Pattern.compile("/book/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute GET_processor_test_BookController_edit = new ParameterizedRoute("/controller/{id}/edit", Pattern.compile("/controller/(?<p0>[^/]+)/edit"));
+  private final ParameterizedRoute GET_processor_test_BookController_edit = new ParameterizedRoute("/book/{id}/edit", Pattern.compile("/book/(?<p0>[^/]+)/edit"));
 
   private final Route GET_processor_test_ClientController_create = new Route("/create");
 
@@ -55,15 +55,15 @@ public final class AppRouter_impl extends RouterServlet {
 
   private final Route POST_processor_test_ClientController_save = new Route("/api/v1");
 
-  private final Route POST_processor_test_BookController_save = new Route("/api/v1/controller");
+  private final Route POST_processor_test_BookController_save = new Route("/api/v1/book");
 
   private final Route POST_processor_test_Gym_save = new Route("/api/v1/gym");
 
-  private final ParameterizedRoute PUT_processor_test_BookController_update = new ParameterizedRoute("/api/v1/controller/{id}", Pattern.compile("/api/v1/controller/(?<p0>[^/]+)"));
+  private final ParameterizedRoute PUT_processor_test_BookController_update = new ParameterizedRoute("/api/v1/book/{id}", Pattern.compile("/api/v1/book/(?<p0>[^/]+)"));
 
   private final ParameterizedRoute PUT_processor_test_Gym_update = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute DELETE_processor_test_BookController_delete = new ParameterizedRoute("/api/v1/controller/{id}", Pattern.compile("/api/v1/controller/(?<p0>[^/]+)"));
+  private final ParameterizedRoute DELETE_processor_test_BookController_delete = new ParameterizedRoute("/api/v1/book/{id}", Pattern.compile("/api/v1/book/(?<p0>[^/]+)"));
 
   private final ParameterizedRoute DELETE_processor_test_Gym_delete = new ParameterizedRoute("/api/v1/gym/{id}", Pattern.compile("/api/v1/gym/(?<p0>[^/]+)"));
 
