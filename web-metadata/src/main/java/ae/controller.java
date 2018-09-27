@@ -32,4 +32,6 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface controller {
         String path() default "<UNDEFINED>";
+        
+        String[] roles() default {};
 }

@@ -36,4 +36,6 @@ public @interface DELETE {
         boolean template() default false;
 
         boolean oauth2() default false;
+        
+        String[] roles() default {};
 }
