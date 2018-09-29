@@ -23,50 +23,21 @@
  */
 package ae.web;
 
-import java.util.Collection;
-
 public abstract class RouterWithRoleConstraintsServlet extends RouterServlet {
+        private static long serialVersionUID = 1954259488750500149L;
+
         protected RouterWithRoleConstraintsServlet()
         {
                 // nothing to do
         }
 
-        protected boolean loggedUserHas(final String role)
-        {
-                return loggedUserRoles().contains(role);
-        }
+        protected abstract boolean loggedUserHas(String role);
 
-        protected boolean loggedUserHasOneOf(final String r1, final String r2)
-        {
-                final Collection<String> roles = loggedUserRoles();
-                return roles.contains(r1) || roles.contains(r2);
-        }
+        protected abstract boolean loggedUserHasOneOf(String r1, String r2);
 
-        protected boolean loggedUserHasOneOf(final String r1, final String r2, final String r3)
-        {
-                final Collection<String> roles = loggedUserRoles();
-                return roles.contains(r1) || roles.contains(r2) || roles.contains(r3);
-        }
+        protected abstract boolean loggedUserHasOneOf(String r1, String r2, String r3);
 
-        protected boolean loggedUserHasOneOf(final String r1, final String r2, final String r3, final String r4)
-        {
-                final Collection<String> roles = loggedUserRoles();
-                return roles.contains(r1) || roles.contains(r2) || roles.contains(r3) || roles.contains(r4);
-        }
+        protected abstract boolean loggedUserHasOneOf(String r1, String r2, String r3, String r4);
 
-        protected boolean loggedUserHasOneOf(final String r1,
-                                             final String r2,
-                                             final String r3,
-                                             final String r4,
-                                             final String r5)
-        {
-                final Collection<String> roles = loggedUserRoles();
-                return roles.contains(r1)
-                        || roles.contains(r2)
-                        || roles.contains(r3)
-                        || roles.contains(r4)
-                        || roles.contains(r5);
-        }
-
-        protected abstract Collection<String> loggedUserRoles();
+        protected abstract boolean loggedUserHasOneOf(String r1, String r2, String r3, String r4, String r5);
 }

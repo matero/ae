@@ -30,7 +30,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import java.util.Arrays;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;

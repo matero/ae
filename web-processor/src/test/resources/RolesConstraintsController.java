@@ -19,7 +19,41 @@ import org.slf4j.LoggerFactory;
 @router(basePath = "", apiPath = "api/v1")
 @WebServlet("/*")
 class RolesConstraintsController extends RolesRouter {
-        @Override public Collection<String> loggedUserRoles() { return Collections.emptyList(); }
+        
+
+        @Override
+        protected boolean loggedUserHas(final String rol)
+        {
+                return false;
+        }
+
+        @Override
+        protected boolean loggedUserHasOneOf(final String r1, final String r2)
+        {
+                return false;
+        }
+
+        @Override
+        protected boolean loggedUserHasOneOf(final String r1, final String r2, final String r3)
+        {
+                return false;
+        }
+
+        @Override
+        protected boolean loggedUserHasOneOf(final String r1, final String r2, final String r3, final String r4)
+        {
+                return false;
+        }
+
+        @Override
+        protected boolean loggedUserHasOneOf(final String r1,
+                                             final String r2,
+                                             final String r3,
+                                             final String r4,
+                                             final String r5)
+        {
+                return false;
+        }
 }
 
 @controller
