@@ -23,11 +23,14 @@
  */
 package ae.routes.processor;
 
+import ae.web.Interpret;
 import ae.web.ParameterizedRoute;
 import ae.web.Route;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.MethodSpec;
+import java.util.Arrays;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -61,45 +64,52 @@ final class RouteDescriptor {
         final String ctorArgs;
         final boolean useCredentials;
         final ImmutableMap<String, String> headers;
+        final String[] roles;
 
         RouteDescriptor(final HttpVerb verb,
                         final String pattern,
                         final boolean useCredentials,
+                        final String[] roles,
                         final TypeElement controller,
                         final String action,
                         final String ctorArgs)
         {
-                this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs,
+                this(verb, pattern, pattern, useCredentials, roles, controller, action, ImmutableList.of(), ctorArgs,
                      DEFAULT_HEADER);
         }
 
         RouteDescriptor(final HttpVerb verb,
                         final String pattern,
                         final boolean useCredentials,
+                        final String[] roles,
                         final TypeElement controller,
                         final String action,
                         final String ctorArgs,
                         final ImmutableMap<String, String> headers)
         {
-                this(verb, pattern, pattern, useCredentials, controller, action, ImmutableList.of(), ctorArgs, headers);
+                this(verb, pattern, pattern, useCredentials, roles, controller, action, ImmutableList.of(), ctorArgs,
+                     headers);
         }
 
         RouteDescriptor(final HttpVerb verb,
                         final String pattern,
                         final String regex,
                         final boolean useCredentials,
+                        final String[] roles,
                         final TypeElement controller,
                         final String action,
                         final ImmutableList<Parameter> parameters,
                         final String ctorArgs)
         {
-                this(verb, pattern, pattern, useCredentials, controller, action, parameters, ctorArgs, DEFAULT_HEADER);
+                this(verb, pattern, pattern, useCredentials, roles, controller, action, parameters, ctorArgs,
+                     DEFAULT_HEADER);
         }
 
         RouteDescriptor(final HttpVerb verb,
                         final String pattern,
                         final String regex,
                         final boolean useCredentials,
+                        final String[] roles,
                         final TypeElement controller,
                         final String action,
                         final ImmutableList<Parameter> parameters,
@@ -111,6 +121,11 @@ final class RouteDescriptor {
                 this.pattern = pattern;
                 this.regex = regex;
                 this.useCredentials = useCredentials;
+                if (roles == null) {
+                        this.roles = new String[0];
+                } else {
+                        this.roles = roles.clone();
+                }
                 this.controller = controller;
                 this.parameters = parameters;
                 this.ctorArgs = ctorArgs;
@@ -144,6 +159,29 @@ final class RouteDescriptor {
         public String toString()
         {
                 return "Route{type=" + type + "verb=" + verb + ", pattern=" + pattern + ", controller=" + controller + ", headers=" + headers + '}';
+        }
+
+        boolean hasRoleConstrains()
+        {
+                return this.roles.length > 0;
+        }
+
+        String rolesExpr()
+        {
+                switch (this.roles.length) {
+                        case 1:
+                                return "loggedUserHas($S)";
+                        case 2:
+                                return "loggedUserHasOneOf($S, $S)";
+                        case 3:
+                                return "loggedUserHasOneOf($S, $S, $S)";
+                        case 4:
+                                return "loggedUserHasOneOf($S, $S, $S, $S)";
+                        case 5:
+                                return "loggedUserHasOneOf($S, $S, $S, $S, $S)";
+                        default:
+                                throw new IllegalStateException("roles count not supported!");
+                }
         }
 
         String routeField()
@@ -227,5 +265,61 @@ final class RouteDescriptor {
         boolean hasHeaderSelection()
         {
                 return !headers.isEmpty();
+        }
+
+        MethodSpec.Builder makeMatcher(final MethodSpec.Builder httpVerbHandler)
+        {
+                if (isDynamic()) {
+                        return makeDynamicMatcher(httpVerbHandler);
+                } else {
+                        return makeStaticMatcher(httpVerbHandler);
+                }
+        }
+
+        MethodSpec.Builder makeDynamicMatcher(final MethodSpec.Builder httpVerbHandler)
+        {
+                final ClassName interpreterClass = ClassName.get(Interpret.class);
+                final MethodSpec.Builder matcher = httpVerbHandler.beginControlFlow(dynamicMatcher(), matcherParams());
+
+                for (int i = 0; i < parametersCount(); i++) {
+                        matcher.addStatement("final $T $L = $T.$L(routeParameters[$L])",
+                                             parameterType(i),
+                                             parameterName(i),
+                                             interpreterClass,
+                                             parameterInterpreterMethod(i),
+                                             i);
+                }
+                
+                return matcher;
+        }
+
+        String dynamicMatcher()
+        {
+                if (hasRoleConstrains()) {
+                        return "if (" + rolesExpr() + " && $L.matches(request, routeParameters))";
+                } else {
+                        return "if ($L.matches(request, routeParameters))";
+                }
+        }
+
+        MethodSpec.Builder makeStaticMatcher(final MethodSpec.Builder httpVerbHandler)
+        {
+                return httpVerbHandler.beginControlFlow(staticMatcher(), matcherParams());
+        }
+
+        String staticMatcher()
+        {
+                if (hasRoleConstrains()) {
+                        return "if (" + rolesExpr() + " && $L.matches(request))";
+                } else {
+                        return "if ($L.matches(request))";
+                }
+        }
+
+        Object[] matcherParams()
+        {
+                final Object[] params = java.util.Arrays.copyOf(this.roles, this.roles.length + 1);
+                params[this.roles.length] = routeField();
+                return params;
         }
 }

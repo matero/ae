@@ -54,7 +54,20 @@ public class RoutesProcessingTest {
                 );
                 assertThat(compilation).succeeded();
                 assertThat(compilation)
-                        .generatedSourceFile("processor.test.AppRouter_impl")
-                        .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/routes/AppRouter_impl.java"));
+                        .generatedSourceFile("processor.test.SigexRouter")
+                        .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/routes/SigexRouter.java"));
+        }
+        
+        
+        @Test
+        public void should_compile_with_roles_constraints_defined()
+        {
+                final Compilation compilation = compiler.compile(
+                        JavaFileObjects.forResource("RolesConstraintsController.java")
+                );
+                assertThat(compilation).succeeded();
+                assertThat(compilation)
+                        .generatedSourceFile("processor.test.RolesRouter")
+                        .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/routes/RolesRouter.java"));
         }
 }

@@ -23,9 +23,7 @@
  */
 package ae.routes.processor;
 
-import ae.web.Interpret;
 import ae.web.OAuth2Flow;
-import ae.web.RouterServlet;
 import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.*;
 
@@ -36,11 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.regex.Pattern;
-import javax.servlet.annotation.WebServlet;
 
 class RoutersCodeBuilder {
-
-        private static final ClassName HTTP_SERVLET = ClassName.get(RouterServlet.class);
 
         private final TypeName stringArray;
 
@@ -53,15 +48,12 @@ class RoutersCodeBuilder {
         {
                 final ClassName classname = declarations.routerClassName();
                 final TypeSpec.Builder router = TypeSpec.classBuilder(classname)
-                        .superclass(HTTP_SERVLET)
-                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                        .superclass(declarations.routerClass())
+                        .addModifiers(Modifier.ABSTRACT)
                         .addAnnotation(AnnotationSpec.builder(Generated.class)
                                 .addMember("value", "$S", "AE/web-processor")
                                 .addMember("comments", "$S", declarations.paths)
                                 .addMember("date", "$S", declarations.date)
-                                .build())
-                        .addAnnotation(AnnotationSpec.builder(WebServlet.class)
-                                .addMember("value", "$S", declarations.webServletValue())
                                 .build())
                         .addField(FieldSpec.builder(long.class,
                                                     "serialVersionUID",
@@ -138,23 +130,7 @@ class RoutersCodeBuilder {
                 }
 
                 for (final RouteDescriptor route : routes) {
-                        final MethodSpec.Builder ifMatchesRoute;
-                        if (route.isDynamic()) {
-                                final ClassName interpreterClass = ClassName.get(Interpret.class);
-                                ifMatchesRoute = httpVerbHandler.beginControlFlow(
-                                        "if ($L.matches(request, routeParameters))", route.routeField());
-                                for (int i = 0; i < route.parametersCount(); i++) {
-                                        ifMatchesRoute.addStatement("final $T $L = $T.$L(routeParameters[$L])",
-                                                                    route.parameterType(i),
-                                                                    route.parameterName(i),
-                                                                    interpreterClass,
-                                                                    route.parameterInterpreterMethod(i),
-                                                                    i);
-                                }
-                        } else {
-                                ifMatchesRoute = httpVerbHandler.beginControlFlow("if ($L.matches(request))", route.
-                                                                                  routeField());
-                        }
+                        final MethodSpec.Builder ifMatchesRoute = route.makeMatcher(httpVerbHandler);
                         addHandle(ifMatchesRoute, route);
                         httpVerbHandler.endControlFlow();
                 }

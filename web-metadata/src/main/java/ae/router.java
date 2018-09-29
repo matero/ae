@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target(TYPE)
 public @interface router {
-        String basePath() default "/";
+        String basePath() default "";
 
-        String apiPath();
+        String apiPath() default "api/v1";
 }

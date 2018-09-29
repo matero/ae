@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 import javax.annotation.Generated;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,8 +18,7 @@ import javax.servlet.http.HttpServletResponse;
     comments = "",
     date = "2017-02-23"
 )
-@WebServlet("/*")
-public final class AppRouter_impl extends RouterServlet {
+abstract class SigexRouter extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 
   private final Route GET_processor_test_ClientController_htmlIndex = new Route("");

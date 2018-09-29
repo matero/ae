@@ -46,6 +46,7 @@ import ae.controller;
 import ae.router;
 import java.util.ArrayList;
 import javax.lang.model.element.PackageElement;
+import javax.lang.model.type.TypeMirror;
 
 @AutoService(Processor.class)
 @SupportedAnnotationTypes({"ae.router", "ae.controller"})
@@ -72,44 +73,51 @@ public class ControllerAndRoutesCompiler extends AnnotationProcessor {
                 this.shouldGenerateCode = true;
                 final TypeElement routerClass = routerAt(roundEnvironment);
                 if (routerClass != null) {
-                        final ae.router router = routerClass.getAnnotation(ae.router.class);
-                        final String basePath;
-                        final String apiPath;
-                        if (router.basePath() == null) {
-                                basePath = "/"; // to allow reading the controllers and try to find more errors
-                                error(routerClass, "@router.basePath can't be null");
-                        } else {
-                                basePath = router.basePath();
-                        }
-                        if (router.apiPath() == null) {
-                                apiPath = ""; // to allow reading the controllers and try to find more errors
-                                error(routerClass, "@router.apiPath can't be null");
-                        } else {
-                                apiPath = router.apiPath();
-                        }
-                        final RoutesDeclarations.Builder declarationsBuilder = RoutesDeclarations.builder(this.today);
-
-                        final RoutesReader interpreter = new RoutesReader(basePath,
-                                                                          apiPath,
-                                                                          this.elements,
-                                                                          this.types,
-                                                                          this.messager,
-                                                                          declarationsBuilder);
-                        for (final TypeElement controllerClass : controllersAt(roundEnvironment)) {
-                                this.shouldGenerateCode &= interpreter.readRoutes(controllerClass);
-                        }
-                        if (this.shouldGenerateCode) {
-                                declarationsBuilder.basePath(interpreter.routerBasePath);
-                                declarationsBuilder.apiPath(interpreter.routerApiPath);
-                                final PackageElement routerPackage = elements.getPackageOf(routerClass);
-                                declarationsBuilder.packageName(routerPackage.getQualifiedName().toString());
-                                final String routerClassImpl = routerClass.getSimpleName().toString() + "_impl";
-                                declarationsBuilder.routerClass(routerClassImpl);
-                                final RoutesDeclarations routes = declarationsBuilder.build();
-                                generateJavaCode(routes);
-                        }
+                        readRoutes(routerClass, roundEnvironment);
                 }
                 return true;
+        }
+
+        private void readRoutes(final TypeElement routerClass, final RoundEnvironment roundEnvironment)
+        {
+                final ae.router router = routerClass.getAnnotation(ae.router.class);
+                final String basePath;
+                final String apiPath;
+                if (router.basePath() == null) {
+                        basePath = "/"; // to allow reading the controllers and try to find more errors
+                        error(routerClass, "@router.basePath can't be null");
+                } else {
+                        basePath = router.basePath();
+                }
+                if (router.apiPath() == null) {
+                        apiPath = ""; // to allow reading the controllers and try to find more errors
+                        error(routerClass, "@router.apiPath can't be null");
+                } else {
+                        apiPath = router.apiPath();
+                }
+
+                final RoutesDeclarations.Builder declarations = RoutesDeclarations.builder(this.today);
+
+                final RoutesReader interpreter = new RoutesReader(basePath,
+                                                                  apiPath,
+                                                                  this.elements,
+                                                                  this.types,
+                                                                  this.messager,
+                                                                  declarations);
+                for (final TypeElement controllerClass : controllersAt(roundEnvironment)) {
+                        this.shouldGenerateCode &= interpreter.readRoutes(controllerClass);
+                }
+                if (this.shouldGenerateCode) {
+                        declarations.basePath(interpreter.routerBasePath);
+                        declarations.apiPath(interpreter.routerApiPath);
+                        final PackageElement routerPackage = elements.getPackageOf(routerClass);
+                        declarations.packageName(routerPackage.getQualifiedName().toString());
+                        final TypeMirror baseClass = routerClass.getSuperclass();
+                        final String routerClassImpl = baseClass.toString();
+                        declarations.routerClass(routerClassImpl);
+                        final RoutesDeclarations routes = declarations.build();
+                        generateJavaCode(routes);
+                }
         }
 
         private TypeElement routerAt(final RoundEnvironment roundEnvironment)
@@ -120,8 +128,8 @@ public class ControllerAndRoutesCompiler extends AnnotationProcessor {
                                 return null;
                         case 1: {
                                 final TypeElement router = (TypeElement) routers.iterator().next();
-                                if (router.getKind() != ElementKind.INTERFACE) {
-                                        error(router, "only interfaces can be marked as @ae.router");
+                                if (router.getKind() != ElementKind.CLASS) {
+                                        error(router, "only classes can be marked as @ae.router");
                                         return null;
                                 }
                                 return router;

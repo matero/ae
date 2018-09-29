@@ -39,6 +39,7 @@ enum HttpVerb {
                                                        metadata.path(),
                                                        metadata.template(),
                                                        metadata.oauth2(),
+                                                       metadata.roles(),
                                                        method,
                                                        controllerClass);
                         }
@@ -57,6 +58,7 @@ enum HttpVerb {
                                                        metadata.path(),
                                                        metadata.template(),
                                                        metadata.oauth2(),
+                                                       metadata.roles(),
                                                        method,
                                                        controllerClass);
                         }
@@ -75,6 +77,7 @@ enum HttpVerb {
                                                        metadata.path(),
                                                        metadata.template(),
                                                        metadata.oauth2(),
+                                                       metadata.roles(),
                                                        method,
                                                        controllerClass);
                         }
@@ -93,6 +96,7 @@ enum HttpVerb {
                                                        metadata.path(),
                                                        metadata.template(),
                                                        metadata.oauth2(),
+                                                       metadata.roles(),
                                                        method,
                                                        controllerClass);
                         }

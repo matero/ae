@@ -111,6 +111,7 @@ class RoutesReader {
                         final String path,
                         final boolean template,
                         final boolean useCredentials,
+                        final String[] roles,
                         final ExecutableElement action,
                         final TypeElement controllerClass)
         {
@@ -135,7 +136,7 @@ class RoutesReader {
                         ctorArgs = API_CONSTRUCTOR_ARGS;
                 }
 
-                makeRoute(httpVerb, actionPath, controllerClass, ctorArgs, useCredentials, action);
+                makeRoute(httpVerb, actionPath, controllerClass, ctorArgs, useCredentials, roles, action);
         }
 
         private void makeRoute(final HttpVerb verb,
@@ -143,6 +144,7 @@ class RoutesReader {
                                final TypeElement controller,
                                final String ctorArguments,
                                final boolean useCredentials,
+                               final String[] roles,
                                final ExecutableElement action)
         {
                 final PathSpec path = PathSpec.from(uri);
@@ -156,6 +158,7 @@ class RoutesReader {
                                 this.routes.addRoute(new RouteDescriptor(verb,
                                                                          path.pattern,
                                                                          useCredentials,
+                                                                         roles,
                                                                          controller,
                                                                          action.getSimpleName().toString(),
                                                                          ctorArguments,
@@ -170,10 +173,12 @@ class RoutesReader {
                                                                          path.pattern,
                                                                          path.regex,
                                                                          useCredentials,
+                                                                         roles,
                                                                          controller,
                                                                          action.getSimpleName().toString(),
                                                                          parameters,
-                                                                         ctorArguments, path.headers));
+                                                                         ctorArguments,
+                                                                         path.headers));
                         }
                 }
         }
@@ -285,7 +290,8 @@ class RoutesReader {
                                         if ("Controller".equals(classname)) {
                                                 error("Can't deduce path for @controller", controllerClass);
                                         } else {
-                                                final String ctrlerpath = classname.substring(0, classname.length() - 10);
+                                                final String ctrlerpath = classname.
+                                                        substring(0, classname.length() - 10);
                                                 return makePath(parentPath, ctrlerpath.toLowerCase());
                                         }
                                 } else {

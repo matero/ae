@@ -17,11 +17,13 @@ import ae.controller;
 import ae.router;
 import ae.web.ControllerWithThymeleafSupport;
 import com.google.appengine.api.datastore.Cursor;
+import javax.servlet.annotation.WebServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @router(basePath = "", apiPath = "api/v1")
-interface AppRouter {
+@WebServlet("/*")
+class AppRouter extends SigexRouter {
         // nothing to define
 }
 
