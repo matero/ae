@@ -31,11 +31,5 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target(METHOD)
 public @interface POST {
-        String path() default "<UNDEFINED>";
-
-        boolean template() default false;
-
-        boolean oauth2() default false;
-        
-        String[] roles() default {};
+        String value() default "<UNDEFINED>";
 }

@@ -23,17 +23,19 @@
  */
 package ae;
 
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
+
+import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates if a controller or an action requires appengine application admin user.
+ */
 @Retention(SOURCE)
-@Target(TYPE)
-public @interface router {
-        String administration() default "adm";
-        
-        String application() default "app";
-
-        String api() default "api/v1";
+@Target({METHOD, TYPE})
+public @interface admin {
+        /** @return if the elements required admin capabilitities. */
+        boolean value() default true;
 }

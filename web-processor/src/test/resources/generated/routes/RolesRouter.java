@@ -16,13 +16,13 @@ import javax.servlet.http.HttpServletResponse;
 abstract class RolesRouter extends RouterWithRoleConstraintsServlet {
   private static final long serialVersionUID = 1487851200000L;
 
-  private final Route GET_processor_test_FooController_index = new Route("/api/v1/foo");
+  private final Route GET_processor_test_FooController_index = new Route("app/api/v1/foo");
 
-  private final Route GET_processor_test_FooController_htmlIndex = new Route("/foo");
+  private final Route GET_processor_test_FooController_htmlIndex = new Route("app/foo");
 
-  private final Route GET_processor_test_FooController_create = new Route("/foo/create");
+  private final Route GET_processor_test_FooController_create = new Route("app/foo/create");
 
-  private final Route POST_processor_test_FooController_save = new Route("/api/v1/foo");
+  private final Route POST_processor_test_FooController_save = new Route("app/api/v1/foo");
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws

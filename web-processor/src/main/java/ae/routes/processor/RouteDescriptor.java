@@ -64,29 +64,32 @@ final class RouteDescriptor {
         final boolean useCredentials;
         final ImmutableMap<String, String> headers;
         final String[] roles;
+        final boolean admin;
 
         RouteDescriptor(final HttpVerb verb,
                         final String pattern,
                         final boolean useCredentials,
                         final String[] roles,
+                        final boolean admin,
                         final TypeElement controller,
                         final String action,
                         final String ctorArgs)
         {
-                this(verb, pattern, pattern, useCredentials, roles, controller, action, ImmutableList.of(), ctorArgs,
-                     DEFAULT_HEADER);
+                this(verb, pattern, pattern, useCredentials, roles, admin, controller, action, ImmutableList.of(),
+                     ctorArgs, DEFAULT_HEADER);
         }
 
         RouteDescriptor(final HttpVerb verb,
                         final String pattern,
                         final boolean useCredentials,
                         final String[] roles,
+                        final boolean admin,
                         final TypeElement controller,
                         final String action,
                         final String ctorArgs,
                         final ImmutableMap<String, String> headers)
         {
-                this(verb, pattern, pattern, useCredentials, roles, controller, action, ImmutableList.of(), ctorArgs,
+                this(verb, pattern, pattern, useCredentials, roles, admin, controller, action, ImmutableList.of(), ctorArgs,
                      headers);
         }
 
@@ -95,12 +98,13 @@ final class RouteDescriptor {
                         final String regex,
                         final boolean useCredentials,
                         final String[] roles,
+                        final boolean admin,
                         final TypeElement controller,
                         final String action,
                         final ImmutableList<Parameter> parameters,
                         final String ctorArgs)
         {
-                this(verb, pattern, pattern, useCredentials, roles, controller, action, parameters, ctorArgs,
+                this(verb, pattern, pattern, useCredentials, roles, admin, controller, action, parameters, ctorArgs,
                      DEFAULT_HEADER);
         }
 
@@ -109,6 +113,7 @@ final class RouteDescriptor {
                         final String regex,
                         final boolean useCredentials,
                         final String[] roles,
+                        final boolean admin,
                         final TypeElement controller,
                         final String action,
                         final ImmutableList<Parameter> parameters,
@@ -125,6 +130,7 @@ final class RouteDescriptor {
                 } else {
                         this.roles = roles.clone();
                 }
+                this.admin = admin;
                 this.controller = controller;
                 this.parameters = parameters;
                 this.ctorArgs = ctorArgs;
@@ -288,7 +294,7 @@ final class RouteDescriptor {
                                              parameterInterpreterMethod(i),
                                              i);
                 }
-                
+
                 return matcher;
         }
 

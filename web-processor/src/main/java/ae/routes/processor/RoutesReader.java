@@ -51,6 +51,7 @@ class RoutesReader {
                 = "Controller must extend "
                 + ControllerWithThymeleafSupport.class
                 + " to be able to use @GET(template=true).";
+        private static final String[] NO_ROLES = {};
 
         private final Elements elements;
         private final Types types;
@@ -58,25 +59,27 @@ class RoutesReader {
 
         private final TypeMirror controllerWithThymeleafSupportClass;
 
-        final String routerBasePath;
-        final String routerApiPath;
+        final String routerAppPath;
+        final String routerAppApiPath;
+        final String routerAdmPath;
+        final String routerAdmApiPath;
 
         private final RoutesDeclarations.Builder routes;
 
-        private String controllerBasePath;
-        private String controllerApiPath;
-
         private boolean success;
 
-        RoutesReader(final String routerBasePath,
+        RoutesReader(final String routerAppPath,
                      final String routerApiPath,
+                     final String routerAdmPath,
                      final Elements elements,
                      final Types types,
                      final Messager messager,
                      final RoutesDeclarations.Builder routes)
         {
-                this.routerBasePath = routerBasePath;
-                this.routerApiPath = makePath(this.routerBasePath, routerApiPath);
+                this.routerAppPath = routerAppPath;
+                this.routerAppApiPath = makePath(this.routerAppPath, routerApiPath);
+                this.routerAdmPath = routerAdmPath;
+                this.routerAdmApiPath = makePath(this.routerAdmPath, routerApiPath);
                 this.elements = elements;
                 this.types = types;
                 this.messager = messager;
@@ -96,47 +99,107 @@ class RoutesReader {
         boolean readRoutes(final TypeElement controllerClass)
         {
                 this.success = true;
-                this.controllerBasePath = makeControllerPath(this.routerBasePath, controllerClass);
-                this.controllerApiPath = makeControllerPath(this.routerApiPath, controllerClass);
 
                 for (final ExecutableElement method : methodsIn(controllerClass.getEnclosedElements())) {
                         for (final HttpVerb httpVerb : HttpVerb.values()) {
-                                httpVerb.buildRoute(controllerClass, method, this);
+                                buildRoute(httpVerb, method, controllerClass);
                         }
                 }
                 return this.success;
         }
 
-        void buildRoute(final HttpVerb httpVerb,
-                        final String path,
-                        final boolean template,
-                        final boolean useCredentials,
-                        final String[] roles,
-                        final ExecutableElement action,
-                        final TypeElement controllerClass)
+        void buildRoute(final HttpVerb httpVerb, final ExecutableElement action, final TypeElement controller)
         {
+                final String path = httpVerb.getPath(action);
                 if (path == null) {
-                        error("@" + httpVerb.name() + ".path can't be null", action);
                         return;
                 }
 
                 final String actionPath;
                 final String ctorArgs;
 
+                final boolean template = templateOf(action, controller);
                 if (template) {
-                        if (supportsThymeleaf(controllerClass)) {
-                                actionPath = makePath(controllerBasePath, with(action, path));
+                        if (supportsThymeleaf(controller)) {
+                                if (isAdmin(action, controller)) {
+                                        actionPath = makePath(controllerAdminPath(controller), with(action, path));
+                                } else {
+                                        actionPath = makePath(controllerAppPath(controller), with(action, path));
+                                }
                                 ctorArgs = THYMELEAF_CONSTRUCTOR_ARGS;
                         } else {
                                 error(CONTROLLER_MUST_SUPPORT_THYMELEAF, action);
                                 return;
                         }
                 } else {
-                        actionPath = makePath(this.controllerApiPath, with(action, path));
+                        if (isAdmin(action, controller)) {
+                                actionPath = makePath(controllerAdminApiPath(controller), with(action, path));
+                        } else {
+                                actionPath = makePath(controllerAppApiPath(controller), with(action, path));
+                        }
                         ctorArgs = API_CONSTRUCTOR_ARGS;
                 }
 
-                makeRoute(httpVerb, actionPath, controllerClass, ctorArgs, useCredentials, roles, action);
+                makeRoute(httpVerb,
+                          actionPath,
+                          controller,
+                          ctorArgs,
+                          oauth2Of(action, controller),
+                          rolesOf(action, controller),
+                          isAdmin(action, controller),
+                          action);
+        }
+
+        boolean templateOf(final ExecutableElement action, final TypeElement controller)
+        {
+                ae.template template = action.getAnnotation(ae.template.class);
+                if (template == null) {
+                        template = controller.getAnnotation(ae.template.class);
+                }
+                if (template == null) {
+                        return false;
+                } else {
+                        return template.value();
+                }
+        }
+
+        boolean isAdmin(final ExecutableElement action, final TypeElement controller)
+        {
+                ae.admin admin = action.getAnnotation(ae.admin.class);
+                if (admin == null) {
+                        admin = controller.getAnnotation(ae.admin.class);
+                }
+                if (admin == null) {
+                        return false;
+                } else {
+                        return admin.value();
+                }
+        }
+
+        boolean oauth2Of(final ExecutableElement action, final TypeElement controller)
+        {
+                ae.oauth2 oauth2 = action.getAnnotation(ae.oauth2.class);
+                if (oauth2 == null) {
+                        oauth2 = controller.getAnnotation(ae.oauth2.class);
+                }
+                if (oauth2 == null) {
+                        return false;
+                } else {
+                        return oauth2.value();
+                }
+        }
+
+        String[] rolesOf(final ExecutableElement action, final TypeElement controller)
+        {
+                ae.roles roles = action.getAnnotation(ae.roles.class);
+                if (roles == null) {
+                        roles = controller.getAnnotation(ae.roles.class);
+                }
+                if (roles == null) {
+                        return NO_ROLES;
+                } else {
+                        return roles.value();
+                }
         }
 
         private void makeRoute(final HttpVerb verb,
@@ -145,6 +208,7 @@ class RoutesReader {
                                final String ctorArguments,
                                final boolean useCredentials,
                                final String[] roles,
+                               final boolean admin,
                                final ExecutableElement action)
         {
                 final PathSpec path = PathSpec.from(uri);
@@ -159,6 +223,7 @@ class RoutesReader {
                                                                          path.pattern,
                                                                          useCredentials,
                                                                          roles,
+                                                                         admin,
                                                                          controller,
                                                                          action.getSimpleName().toString(),
                                                                          ctorArguments,
@@ -174,6 +239,7 @@ class RoutesReader {
                                                                          path.regex,
                                                                          useCredentials,
                                                                          roles,
+                                                                         admin,
                                                                          controller,
                                                                          action.getSimpleName().toString(),
                                                                          parameters,
@@ -288,11 +354,9 @@ class RoutesReader {
                                 final String classname = controllerClassName.toString();
                                 if (classname.endsWith("Controller")) {
                                         if ("Controller".equals(classname)) {
-                                                error("Can't deduce path for @controller", controllerClass);
+                                                error("Can't deduct path for @controller", controllerClass);
                                         } else {
-                                                final String ctrlerpath = classname.
-                                                        substring(0, classname.length() - 10);
-                                                return makePath(parentPath, ctrlerpath.toLowerCase());
+                                                return makePath(parentPath, ctrlerpath(classname));
                                         }
                                 } else {
                                         return makePath(parentPath, classname.toLowerCase());
@@ -307,7 +371,32 @@ class RoutesReader {
         private String getPath(final TypeElement controllerClass)
         {
                 final controller metadata = controllerClass.getAnnotation(controller.class);
-                return metadata.path();
+                return metadata.value();
+        }
+
+        private String controllerAdminPath(final TypeElement controller)
+        {
+                return makeControllerPath(this.routerAdmPath, controller);
+        }
+
+        private String controllerAppPath(final TypeElement controller)
+        {
+                return makeControllerPath(this.routerAppPath, controller);
+        }
+
+        private String controllerAdminApiPath(TypeElement controller)
+        {
+                return makeControllerPath(this.routerAdmApiPath, controller);
+        }
+
+        private String controllerAppApiPath(TypeElement controller)
+        {
+                return makeControllerPath(this.routerAppApiPath, controller);
+        }
+
+        private String ctrlerpath(final String classname)
+        {
+                return classname.substring(0, classname.length() - 10).toLowerCase();
         }
 }
 

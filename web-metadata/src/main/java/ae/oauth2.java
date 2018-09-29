@@ -23,17 +23,19 @@
  */
 package ae;
 
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
+
+import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates if a controller or an action requires appengine oauth2 authentication.
+ */
 @Retention(SOURCE)
-@Target(TYPE)
-public @interface router {
-        String administration() default "adm";
-        
-        String application() default "app";
-
-        String api() default "api/v1";
+@Target({METHOD, TYPE})
+public @interface oauth2 {
+        /** @return if the elements required authentication using oauth2. */
+        boolean value() default true;
 }

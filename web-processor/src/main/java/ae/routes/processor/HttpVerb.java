@@ -29,79 +29,51 @@ import javax.lang.model.element.TypeElement;
 enum HttpVerb {
         GET("doGet", "unhandledGet") {
                 @Override
-                void buildRoute(final TypeElement controllerClass,
-                                final ExecutableElement method,
-                                final RoutesReader interpreter)
+                String getPath(final ExecutableElement method)
                 {
                         final ae.GET metadata = method.getAnnotation(ae.GET.class);
-                        if (metadata != null) {
-                                interpreter.buildRoute(this,
-                                                       metadata.path(),
-                                                       metadata.template(),
-                                                       metadata.oauth2(),
-                                                       metadata.roles(),
-                                                       method,
-                                                       controllerClass);
+                        if (metadata == null) {
+                                return null;
+                        } else {
+                                return metadata.value();
                         }
                 }
-
         },
         POST("doPost", "unhandledPost") {
                 @Override
-                void buildRoute(final TypeElement controllerClass,
-                                final ExecutableElement method,
-                                final RoutesReader interpreter)
+                String getPath(final ExecutableElement method)
                 {
                         final ae.POST metadata = method.getAnnotation(ae.POST.class);
-                        if (metadata != null) {
-                                interpreter.buildRoute(this,
-                                                       metadata.path(),
-                                                       metadata.template(),
-                                                       metadata.oauth2(),
-                                                       metadata.roles(),
-                                                       method,
-                                                       controllerClass);
+                        if (metadata == null) {
+                                return null;
+                        } else {
+                                return metadata.value();
                         }
                 }
-
         },
         PUT("doPut", "unhandledPut") {
                 @Override
-                void buildRoute(final TypeElement controllerClass,
-                                final ExecutableElement method,
-                                final RoutesReader interpreter)
+                String getPath(final ExecutableElement method)
                 {
                         final ae.PUT metadata = method.getAnnotation(ae.PUT.class);
-                        if (metadata != null) {
-                                interpreter.buildRoute(this,
-                                                       metadata.path(),
-                                                       metadata.template(),
-                                                       metadata.oauth2(),
-                                                       metadata.roles(),
-                                                       method,
-                                                       controllerClass);
+                        if (metadata == null) {
+                                return null;
+                        } else {
+                                return metadata.value();
                         }
                 }
-
         },
         DELETE("doDelete", "unhandledDelete") {
                 @Override
-                void buildRoute(final TypeElement controllerClass,
-                                final ExecutableElement method,
-                                final RoutesReader interpreter)
+                String getPath(final ExecutableElement method)
                 {
                         final ae.DELETE metadata = method.getAnnotation(ae.DELETE.class);
-                        if (metadata != null) {
-                                interpreter.buildRoute(this,
-                                                       metadata.path(),
-                                                       metadata.template(),
-                                                       metadata.oauth2(),
-                                                       metadata.roles(),
-                                                       method,
-                                                       controllerClass);
+                        if (metadata == null) {
+                                return null;
+                        } else {
+                                return metadata.value();
                         }
                 }
-
         };
 
         final String handler;
@@ -113,5 +85,5 @@ enum HttpVerb {
                 this.unhandled = unhandled;
         }
 
-        abstract void buildRoute(TypeElement controllerClass, ExecutableElement method, RoutesReader interpreter);
+        abstract String getPath(ExecutableElement method);
 }

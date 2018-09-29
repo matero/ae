@@ -28,14 +28,31 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 import java.lang.annotation.Target;
 
+/**
+ * Denotes an action method mapping to a GET request.
+ * 
+ * If it starts with {@code '/'} then the path is taken literally, avoiding to precalculate any part of the path.
+ * 
+ * Other way, the path solving goes like this:
+ * <ol>
+ * <li>determine the base path:</li>
+ * <ul>
+ * <li>{@code uses template ==> <router.application_path>/<controller_path>}</li>
+ * <li>{@code it doesn't use template ==> <router.administration_path>/<controller_path>}</li>
+ * </ul>
+ * <li>determine the action name:</li>
+ * <ul>
+ * <li>{@code value is defined ==> value is used (and the web-parameters are solved)}, prepended with '/'</li>
+ * <li>{@code value is not defined ==> if the action method is named "index"/"indexHtml"/"get" then "" is used, otherwise the method name is used.}</li>
+ * </ul>
+ * </ol>
+ * 
+ * <em>note</em>: an action is considered to use template when it is annotated with {@code @ae.template(true)} or it is not
+ * annotated with {@code @ae.template(false)} and the controller is annotated with {@code @ae.template(true)}.
+ */
 @Retention(SOURCE)
 @Target(METHOD)
 public @interface GET {
-        String path() default "<UNDEFINED>";
-
-        boolean template() default false;
-
-        boolean oauth2() default false;
-        
-        String[] roles() default {};
+        /**@return  the path spec of the action. */
+        String value() default "<UNDEFINED>";
 }

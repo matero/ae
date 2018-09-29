@@ -14,20 +14,22 @@ import ae.web.OAuth2Flow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import ae.controller;
+import ae.oauth2;
 import ae.router;
+import ae.template;
 import ae.web.ControllerWithThymeleafSupport;
 import com.google.appengine.api.datastore.Cursor;
 import javax.servlet.annotation.WebServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@router(basePath = "", apiPath = "api/v1")
+@router
 @WebServlet("/*")
 class AppRouter extends SigexRouter {
         // nothing to define
 }
 
-@controller(path = "")
+@controller("")
 class ClientController extends ae.web.ControllerWithThymeleafSupport {
         public ClientController(final HttpServletRequest request, final HttpServletResponse response)
         {
@@ -48,7 +50,8 @@ class ClientController extends ae.web.ControllerWithThymeleafSupport {
                 return LoggerFactory.getLogger(getClass());
         }
 
-        @GET(template = true)
+        @GET
+        @template
         public void htmlIndex() throws IOException, ServletException
         {
         }
@@ -58,7 +61,8 @@ class ClientController extends ae.web.ControllerWithThymeleafSupport {
         {
         }
 
-        @GET(path = "create", template = true)
+        @GET("create")
+        @template
         public void create() throws IOException, ServletException
         {
         }
@@ -69,7 +73,7 @@ class ClientController extends ae.web.ControllerWithThymeleafSupport {
         }
 }
 
-@ae.controller
+@controller
 final class Gym extends ControllerWithThymeleafSupport {
         public Gym(final HttpServletRequest request, final HttpServletResponse response)
         {
@@ -95,7 +99,8 @@ final class Gym extends ControllerWithThymeleafSupport {
         {
         }
 
-        @GET(template = true)
+        @GET
+        @template
         public void htmlIndex()
         {
         }
@@ -110,22 +115,23 @@ final class Gym extends ControllerWithThymeleafSupport {
         {
         }
 
-        @GET(path = "{id}")
+        @GET("{id}")
         public void show(final long id)
         {
         }
 
-        @GET(path = "{id}/edit", template = true)
+        @GET("{id}/edit")
+        @template
         public void edit(final long id)
         {
         }
 
-        @PUT(path = "{id}")
+        @PUT("{id}")
         public void update(final long id)
         {
         }
 
-        @DELETE(path = "{id}")
+        @DELETE("{id}")
         public void delete(final long id)
         {
         }
@@ -180,7 +186,8 @@ class BookController extends ControllerWithThymeleafSupport implements OAuth2Flo
         {
         }
 
-        @GET(template = true)
+        @GET
+        @template
         public void htmlIndex()
         {
         }
@@ -195,32 +202,35 @@ class BookController extends ControllerWithThymeleafSupport implements OAuth2Flo
         {
         }
 
-        @GET(path = "{id}", template = true)
+        @GET("{id}")
+        @template
         public void show(final long id)
         {
         }
 
-        @GET(path = "{id}/edit", template = true)
+        @GET("{id}/edit")
+        @template
         public void edit(final long id)
         {
         }
 
-        @PUT(path = "{id}")
+        @PUT("{id}")
         public void update(final long id)
         {
         }
 
-        @DELETE(path = "{id}")
+        @DELETE("{id}")
         public void delete(final long id)
         {
         }
 
-        @GET(path = "foo/{id}/{arg}", oauth2 = true)
+        @GET("foo/{id}/{arg}")
+        @oauth2
         public void foo(final long id, final String arg)
         {
         }
 
-        @GET(path = "bar/{id}/{cursor}/{arg}")
+        @GET("bar/{id}/{cursor}/{arg}")
         public void bar(final long id, final Cursor c, final String arg)
         {
         }

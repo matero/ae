@@ -81,25 +81,33 @@ public class ControllerAndRoutesCompiler extends AnnotationProcessor {
         private void readRoutes(final TypeElement routerClass, final RoundEnvironment roundEnvironment)
         {
                 final ae.router router = routerClass.getAnnotation(ae.router.class);
-                final String basePath;
+                final String appPath;
                 final String apiPath;
-                if (router.basePath() == null) {
-                        basePath = "/"; // to allow reading the controllers and try to find more errors
-                        error(routerClass, "@router.basePath can't be null");
+                final String admPath;
+                if (router.application()== null) {
+                        appPath = "/"; // to allow reading the controllers and try to find more errors
+                        error(routerClass, "@router.application can't be null");
                 } else {
-                        basePath = router.basePath();
+                        appPath = router.application();
                 }
-                if (router.apiPath() == null) {
+                if (router.api() == null) {
                         apiPath = ""; // to allow reading the controllers and try to find more errors
-                        error(routerClass, "@router.apiPath can't be null");
+                        error(routerClass, "@router.api can't be null");
                 } else {
-                        apiPath = router.apiPath();
+                        apiPath = router.api();
+                }
+                if (router.administration()== null) {
+                        admPath = ""; // to allow reading the controllers and try to find more errors
+                        error(routerClass, "@router.administration can't be null");
+                } else {
+                        admPath = router.administration();
                 }
 
                 final RoutesDeclarations.Builder declarations = RoutesDeclarations.builder(this.today);
 
-                final RoutesReader interpreter = new RoutesReader(basePath,
+                final RoutesReader interpreter = new RoutesReader(appPath,
                                                                   apiPath,
+                                                                  admPath,
                                                                   this.elements,
                                                                   this.types,
                                                                   this.messager,
@@ -108,8 +116,6 @@ public class ControllerAndRoutesCompiler extends AnnotationProcessor {
                         this.shouldGenerateCode &= interpreter.readRoutes(controllerClass);
                 }
                 if (this.shouldGenerateCode) {
-                        declarations.basePath(interpreter.routerBasePath);
-                        declarations.apiPath(interpreter.routerApiPath);
                         final PackageElement routerPackage = elements.getPackageOf(routerClass);
                         declarations.packageName(routerPackage.getQualifiedName().toString());
                         final TypeMirror baseClass = routerClass.getSuperclass();

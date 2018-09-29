@@ -50,12 +50,8 @@ class RoutesDeclarations {
         final Class<? extends RouterServlet> superClass;
         final long serialVersionUID;
         final String routerClass;
-        final String basePath;
-        final String apiPath;
 
-        RoutesDeclarations(final String basePath,
-                           final String apiPath,
-                           final ImmutableList<RouteDescriptor> routes,
+        RoutesDeclarations(final ImmutableList<RouteDescriptor> routes,
                            final ImmutableListMultimap<HttpVerb, RouteDescriptor> routesByVerb,
                            final String paths,
                            final String date,
@@ -64,8 +60,6 @@ class RoutesDeclarations {
                            final Class<? extends RouterServlet> superClass,
                            final long serialVersionUID)
         {
-                this.basePath = basePath;
-                this.apiPath = apiPath;
                 this.routes = routes;
                 this.routesByVerb = routesByVerb;
                 this.paths = paths;
@@ -132,8 +126,6 @@ class RoutesDeclarations {
                 final Class<? extends RouterServlet> superClass;
                 private String packageName;
                 private String routerClass;
-                private String basePath;
-                private String apiPath;
 
                 Builder(final ImmutableList.Builder<RouteDescriptor> routes,
                         final ImmutableListMultimap.Builder<HttpVerb, RouteDescriptor> routesByVerb,
@@ -169,21 +161,9 @@ class RoutesDeclarations {
                         this.routerClass = value;
                 }
 
-                public void basePath(final String basePath)
-                {
-                        this.basePath = basePath;
-                }
-
-                public void apiPath(final String apiPath)
-                {
-                        this.apiPath = apiPath;
-                }
-
                 RoutesDeclarations build()
                 {
-                        return new RoutesDeclarations(this.basePath,
-                                                      this.apiPath,
-                                                      this.routes.build(),
+                        return new RoutesDeclarations(this.routes.build(),
                                                       this.routesByVerb.build(),
                                                       this.paths.toString(),
                                                       this.dateFormat.format(this.today),

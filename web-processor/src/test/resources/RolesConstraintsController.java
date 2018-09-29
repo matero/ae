@@ -9,17 +9,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import ae.controller;
+import ae.roles;
 import ae.router;
-import java.util.Collection;
-import java.util.Collections;
+import ae.template;
 import javax.servlet.annotation.WebServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@router(basePath = "", apiPath = "api/v1")
+@router
 @WebServlet("/*")
 class RolesConstraintsController extends RolesRouter {
-        
 
         @Override
         protected boolean loggedUserHas(final String rol)
@@ -64,9 +63,9 @@ class FooController extends ae.web.ControllerWithThymeleafSupport {
         }
 
         public FooController(final HttpServletRequest request,
-                                final HttpServletResponse response,
-                                final WebContext templateContext,
-                                final TemplateEngine templateEngine)
+                             final HttpServletResponse response,
+                             final WebContext templateContext,
+                             final TemplateEngine templateEngine)
         {
                 super(request, response, templateContext, templateEngine);
         }
@@ -77,7 +76,9 @@ class FooController extends ae.web.ControllerWithThymeleafSupport {
                 return LoggerFactory.getLogger(getClass());
         }
 
-        @GET(template = true, roles = "r1")
+        @GET
+        @template
+        @roles("r1")
         public void htmlIndex() throws IOException, ServletException
         {
         }
@@ -87,7 +88,9 @@ class FooController extends ae.web.ControllerWithThymeleafSupport {
         {
         }
 
-        @GET(roles = {"r1", "r2"}, template = true)
+        @GET
+        @template
+        @roles({"r1", "r2"})
         public void create() throws IOException, ServletException
         {
         }

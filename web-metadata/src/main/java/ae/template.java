@@ -23,17 +23,20 @@
  */
 package ae;
 
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
+
+import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates if controller or an action requires to use templating facilities (if it is false, then the action is
+ * considered an API action)
+ */
 @Retention(SOURCE)
-@Target(TYPE)
-public @interface router {
-        String administration() default "adm";
-        
-        String application() default "app";
-
-        String api() default "api/v1";
+@Target({METHOD, TYPE})
+public @interface template {
+        /** @return if the action requires the templating system to be configured. */
+        boolean value() default true;
 }

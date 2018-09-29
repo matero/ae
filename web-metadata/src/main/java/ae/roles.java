@@ -23,17 +23,21 @@
  */
 package ae;
 
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
+
+import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates if a controller or an action requires an authenticated user accomplishing a rol.
+ * 
+ * An empty array means 'no role'.
+ */
 @Retention(SOURCE)
-@Target(TYPE)
-public @interface router {
-        String administration() default "adm";
-        
-        String application() default "app";
-
-        String api() default "api/v1";
+@Target({METHOD, TYPE})
+public @interface roles {
+        /** @return the required roles names. */
+        String[] value();
 }
