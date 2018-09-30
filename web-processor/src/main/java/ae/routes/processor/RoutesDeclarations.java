@@ -23,7 +23,6 @@
  */
 package ae.routes.processor;
 
-import ae.web.RouterWithRoleConstraintsServlet;
 import ae.web.RouterServlet;
 import com.google.common.base.Predicate;
 import static java.util.stream.Collectors.toList;
@@ -71,12 +70,8 @@ class RoutesDeclarations {
         }
 
         TypeName routerClass()
-        {               
-                if (hasRoleConstraints()) {
-                        return ClassName.get(RouterWithRoleConstraintsServlet.class);
-                } else {
-                        return ClassName.get(RouterServlet.class);
-                }
+        {
+                return ClassName.get(RouterServlet.class);
         }
 
         enum Has implements Predicate<RouteDescriptor> {

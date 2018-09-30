@@ -14,6 +14,7 @@ import ae.web.OAuth2Flow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import ae.controller;
+import ae.namespace;
 import ae.oauth2;
 import ae.router;
 import ae.template;
@@ -29,7 +30,7 @@ class AppRouter extends SigexRouter {
         // nothing to define
 }
 
-@controller("")
+@controller("") @namespace(namespace.GLOBAL)
 class ClientController extends ae.web.ControllerWithThymeleafSupport {
         public ClientController(final HttpServletRequest request, final HttpServletResponse response)
         {
@@ -57,6 +58,7 @@ class ClientController extends ae.web.ControllerWithThymeleafSupport {
         }
 
         @GET
+        @namespace("test")
         public void index() throws IOException, ServletException
         {
         }
@@ -68,12 +70,13 @@ class ClientController extends ae.web.ControllerWithThymeleafSupport {
         }
 
         @POST
+        @namespace(namespace.MULTITENANT)
         public void save() throws IOException, ServletException
         {
         }
 }
 
-@controller
+@controller @namespace(namespace.MULTITENANT)
 final class Gym extends ControllerWithThymeleafSupport {
         public Gym(final HttpServletRequest request, final HttpServletResponse response)
         {
@@ -94,13 +97,14 @@ final class Gym extends ControllerWithThymeleafSupport {
                 return LoggerFactory.getLogger(getClass());
         }
 
-        @GET
+        @GET @namespace(namespace.GLOBAL)
         public void index()
         {
         }
 
         @GET
         @template
+        @namespace("namespace")
         public void htmlIndex()
         {
         }

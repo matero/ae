@@ -23,6 +23,7 @@
  */
 package ae.web;
 
+import com.google.appengine.api.NamespaceManager;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -112,5 +113,58 @@ public abstract class RouterServlet extends HttpServlet {
         protected WebContext webContext(final HttpServletRequest request, final HttpServletResponse response)
         {
                 return new WebContext(request, response, getServletContext());
+        }
+
+        protected void notAuthorized(final HttpServletResponse response)
+        {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
+
+        protected boolean loggedUserRoleIs(final String role)
+        {
+                return getLoggedUserRole().equals(role);
+        }
+
+        protected boolean loggedUserRoleIsIn(final String r1, final String r2)
+        {
+                final String r = getLoggedUserRole();
+                return r.equals(r1) || r.equals(r2);
+        }
+
+        protected boolean loggedUserRoleIsIn(final String r1, final String r2, final String r3)
+        {
+                final String r = getLoggedUserRole();
+                return r.equals(r1) || r.equals(r2) || r.equals(r3);
+        }
+
+        protected boolean loggedUserRoleIsIn(final String r1, final String r2, final String r3, final String r4)
+        {
+                final String r = getLoggedUserRole();
+                return r.equals(r1) || r.equals(r2) || r.equals(r3) || r.equals(r4);
+        }
+
+        protected String getLoggedUserRole()
+        {
+                throw new UnsupportedOperationException();
+        }
+
+        protected void useLoggedUserNamespace()
+        {
+                if (NamespaceManager.get() == null) {
+                        final String currentUserNamespace = getLoggedUserNamespace();
+                        NamespaceManager.set(currentUserNamespace);
+                }
+        }
+
+        protected String getLoggedUserNamespace()
+        {
+                throw new UnsupportedOperationException();
+        }
+
+        protected void useNamespace(final String namespace)
+        {
+                if (NamespaceManager.get() == null) {
+                        NamespaceManager.set(namespace);
+                }
         }
 }

@@ -175,6 +175,15 @@ class RoutersCodeBuilder {
 
         void addHandle(final MethodSpec.Builder control, final RouteDescriptor route)
         {
+                if (route.hasRoleConstrains()) {
+                        control.beginControlFlow("if (!" + route.rolesExpr() + ')', (Object[]) route.roles)
+                                .addStatement("notAuthorized(response)")
+                                .addStatement("return")
+                                .endControlFlow();
+                }
+                if (route.hasNamespace()) {
+                        control.addStatement(route.namespaceStatment());
+                }
                 if (route.useCredentials) {
                         control.addStatement(
                                 "handle(new $T($L), (controller) -> $T.Director.of(controller).authorize((c) -> c.$L($L)))",

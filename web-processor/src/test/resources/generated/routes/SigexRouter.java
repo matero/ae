@@ -74,6 +74,7 @@ abstract class SigexRouter extends RouterServlet {
       return;
     }
     if (GET_processor_test_ClientController_index.matches(request)) {
+      useNamespace("test");
       handle(new ClientController(request, response), (controller) -> controller.index());
       return;
     }
@@ -103,11 +104,13 @@ abstract class SigexRouter extends RouterServlet {
       return;
     }
     if (GET_processor_test_Gym_create.matches(request)) {
+      useLoggedUserNamespace();
       handle(new Gym(request, response), (controller) -> controller.create());
       return;
     }
     if (GET_processor_test_Gym_show.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      useLoggedUserNamespace();
       handle(new Gym(request, response), (controller) -> controller.show(id));
       return;
     }
@@ -130,11 +133,13 @@ abstract class SigexRouter extends RouterServlet {
       return;
     }
     if (GET_processor_test_Gym_htmlIndex.matches(request)) {
+      useNamespace("namespace");
       handle(new Gym(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
       return;
     }
     if (GET_processor_test_Gym_edit.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      useLoggedUserNamespace();
       handle(new Gym(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
       return;
     }
@@ -145,6 +150,7 @@ abstract class SigexRouter extends RouterServlet {
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
     if (POST_processor_test_ClientController_save.matches(request)) {
+      useLoggedUserNamespace();
       handle(new ClientController(request, response), (controller) -> controller.save());
       return;
     }
@@ -153,6 +159,7 @@ abstract class SigexRouter extends RouterServlet {
       return;
     }
     if (POST_processor_test_Gym_save.matches(request)) {
+      useLoggedUserNamespace();
       handle(new Gym(request, response), (controller) -> controller.save());
       return;
     }
@@ -170,6 +177,7 @@ abstract class SigexRouter extends RouterServlet {
     }
     if (PUT_processor_test_Gym_update.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      useLoggedUserNamespace();
       handle(new Gym(request, response), (controller) -> controller.update(id));
       return;
     }
@@ -187,6 +195,7 @@ abstract class SigexRouter extends RouterServlet {
     }
     if (DELETE_processor_test_Gym_delete.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
+      useLoggedUserNamespace();
       handle(new Gym(request, response), (controller) -> controller.delete(id));
       return;
     }

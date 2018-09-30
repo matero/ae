@@ -147,6 +147,7 @@ class RoutesReader {
                           oauth2Of(action, controller),
                           rolesOf(action, controller),
                           isAdmin(action, controller),
+                          namespaceOf(action, controller),
                           action);
         }
 
@@ -202,6 +203,19 @@ class RoutesReader {
                 }
         }
 
+        String namespaceOf(final ExecutableElement action, final TypeElement controller)
+        {
+                ae.namespace namespace = action.getAnnotation(ae.namespace.class);
+                if (namespace == null) {
+                        namespace = controller.getAnnotation(ae.namespace.class);
+                }
+                if (namespace == null) {
+                        return ae.namespace.GLOBAL;
+                } else {
+                        return namespace.value();
+                }
+        }
+
         private void makeRoute(final HttpVerb verb,
                                final String uri,
                                final TypeElement controller,
@@ -209,6 +223,7 @@ class RoutesReader {
                                final boolean useCredentials,
                                final String[] roles,
                                final boolean admin,
+                               final String namespace,
                                final ExecutableElement action)
         {
                 final PathSpec path = PathSpec.from(uri);
@@ -224,6 +239,7 @@ class RoutesReader {
                                                                          useCredentials,
                                                                          roles,
                                                                          admin,
+                                                                         namespace,
                                                                          controller,
                                                                          action.getSimpleName().toString(),
                                                                          ctorArguments,
@@ -240,6 +256,7 @@ class RoutesReader {
                                                                          useCredentials,
                                                                          roles,
                                                                          admin,
+                                                                         namespace,
                                                                          controller,
                                                                          action.getSimpleName().toString(),
                                                                          parameters,

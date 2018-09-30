@@ -21,23 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package ae.web;
+package ae;
 
-public abstract class RouterWithRoleConstraintsServlet extends RouterServlet {
-        private static long serialVersionUID = 1954259488750500149L;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
-        protected RouterWithRoleConstraintsServlet()
-        {
-                // nothing to do
-        }
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-        protected abstract boolean loggedUserHas(String role);
+/**
+ * Indicates if a controller or an action requires appengine oauth2 authentication.
+ */
+@Retention(SOURCE)
+@Target({METHOD, TYPE})
+public @interface namespace {
+        public static final String GLOBAL = "";
+        public static final String MULTITENANT = "#multitenant";
 
-        protected abstract boolean loggedUserHasOneOf(String r1, String r2);
-
-        protected abstract boolean loggedUserHasOneOf(String r1, String r2, String r3);
-
-        protected abstract boolean loggedUserHasOneOf(String r1, String r2, String r3, String r4);
-
-        protected abstract boolean loggedUserHasOneOf(String r1, String r2, String r3, String r4, String r5);
+        /** @return if the elements required authentication using oauth2. */
+        String value();
 }
