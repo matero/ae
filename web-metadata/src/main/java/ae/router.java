@@ -31,9 +31,9 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target(TYPE)
 public @interface router {
-        String administration() default "adm";
+        String administration() default "/adm";
         
-        String application() default "app";
+        String application() default "/app";
 
         String api() default "api/v1";
 }

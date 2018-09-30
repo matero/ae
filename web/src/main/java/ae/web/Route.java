@@ -67,13 +67,12 @@ public final class Route implements java.io.Serializable {
                 if (pathInfo == null) {
                         return false;
                 }
-                if (pathInfo.isEmpty()) {
-                        return false;
+                if ("".equals(this.uri) && "/".equals(pathInfo)) {
+                        return true;
                 }
-                if ("".equals(this.uri)) {
-                        return this.uri.equals(pathInfo) || "/".equals(pathInfo);
-                } else {
-                        return this.uri.equals(pathInfo);
+                if ("/".equals(this.uri) && "".equals(pathInfo)) {
+                        return true;
                 }
+                return this.uri.equals(pathInfo);
         }
 }

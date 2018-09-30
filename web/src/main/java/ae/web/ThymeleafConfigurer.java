@@ -24,6 +24,7 @@
 package ae.web;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.utils.SystemProperty;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
@@ -31,59 +32,68 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 import ognl.OgnlRuntime;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 @WebListener
 public final class ThymeleafConfigurer implements javax.servlet.ServletContextListener {
 
-    @Override
-    public void contextInitialized(final ServletContextEvent event)
-    {
-        OgnlRuntime.setSecurityManager(null);
-        OgnlRuntime.setPropertyAccessor(Entity.class, AppEngineEntityPropertyAccessor.INSTANCE);
+        @Override
+        public void contextInitialized(final ServletContextEvent event)
+        {
+                OgnlRuntime.setSecurityManager(null);
+                OgnlRuntime.setPropertyAccessor(Entity.class, AppEngineEntityPropertyAccessor.INSTANCE);
 
-        final ServletContext servletContext = event.getServletContext();
-        ThymeleafTemplateEngine.set(servletContext, templateEngine(servletContext));
-    }
+                final ServletContext servletContext = event.getServletContext();
+                ThymeleafTemplateEngine.set(servletContext, templateEngine(servletContext));
+        }
 
-    private TemplateEngine templateEngine(final ServletContext servletContext)
-    {
-        final TemplateEngine engine = new TemplateEngine();
-        engine.setTemplateResolver(templateResolver(servletContext));
-        engine.addDialect(new LayoutDialect());
-        return engine;
-    }
+        private TemplateEngine templateEngine(final ServletContext servletContext)
+        {
+                final TemplateEngine engine = new TemplateEngine();
+                engine.setTemplateResolver(templateResolver(servletContext));
+                engine.addDialect(new LayoutDialect());
+                return engine;
+        }
 
-    private ITemplateResolver templateResolver(final ServletContext servletContext)
-    {
-        final ServletContextTemplateResolver resolver = new ServletContextTemplateResolver(servletContext);
+        private ITemplateResolver templateResolver(final ServletContext servletContext)
+        {
+                final AbstractConfigurableTemplateResolver resolver;
+                if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+                        resolver = new ServletContextTemplateResolver(servletContext);
+                } else {
+                        resolver = new FileTemplateResolver();
+                }
 
-        // HTML is the default mode
-        resolver.setTemplateMode(TemplateMode.HTML);
+                // HTML is the default mode
+                resolver.setTemplateMode(TemplateMode.HTML);
 
-        // interpret "home" to "/WEB-INF/templates/home.html"
-        resolver.setPrefix("/WEB-INF/templates/");
-        resolver.setSuffix(".html");
+                // interpret "home" to "${templates-dir}/home.html"
+                final String templatesDir = System.getenv("templates-dir");
+                resolver.setPrefix(templatesDir);
+                resolver.setSuffix(".html");
 
-        // Set template cache TTL to 1 hour.
-        resolver.setCacheTTLMs(3600000L);
+                // Set template cache TTL to 1 hour.
+                resolver.setCacheTTLMs(3600000L);
 
-        // Cache is set to true by default. Set to false if you want templates to
-        // be automatically updated when modified.
-        resolver.setCacheable(shouldCacheTemplates());
-        return resolver;
-    }
+                // Cache is set to true by default. Set to false if you want templates to
+                // be automatically updated when modified.
+                resolver.setCacheable(shouldCacheTemplates());
+                
+                return resolver;
+        }
+        
+        private boolean shouldCacheTemplates()
+        {
+                final String cache = System.getenv("cache-templates");
+                return Boolean.parseBoolean(cache);
+        }
 
-    private boolean shouldCacheTemplates()
-    {
-        final String cache = System.getenv("cache-templates");
-        return Boolean.parseBoolean(cache);
-    }
-
-    @Override
-    public void contextDestroyed(final ServletContextEvent event)
-    {
-        ThymeleafTemplateEngine.set(event.getServletContext(), null);
-    }
+        @Override
+        public void contextDestroyed(final ServletContextEvent event)
+        {
+                ThymeleafTemplateEngine.set(event.getServletContext(), null);
+        }
 }
