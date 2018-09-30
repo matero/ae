@@ -21,49 +21,49 @@ import javax.servlet.http.HttpServletResponse;
 abstract class SigexRouter extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 
-  private final Route GET_processor_test_ClientController_htmlIndex = new Route("app");
+  private final Route GET_processor_test_ClientController_htmlIndex = new Route("/app");
 
-  private final Route GET_processor_test_ClientController_index = new Route("app/api/v1");
+  private final Route GET_processor_test_ClientController_index = new Route("/app/api/v1");
 
-  private final Route GET_processor_test_BookController_index = new Route("app/api/v1/book");
+  private final Route GET_processor_test_BookController_index = new Route("/app/api/v1/book");
 
-  private final ParameterizedRoute GET_processor_test_BookController_bar = new ParameterizedRoute("app/api/v1/book/bar/{id}/{cursor}/{arg}", Pattern.compile("app/api/v1/book/bar/(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
+  private final ParameterizedRoute GET_processor_test_BookController_bar = new ParameterizedRoute("/app/api/v1/book/bar/{id}/{cursor}/{arg}", Pattern.compile("/app/api/v1/book/bar/(?<p0>[^/]+)/(?<p1>[^/]+)/(?<p2>[^/]+)"));
 
-  private final Route GET_processor_test_BookController_create = new Route("app/api/v1/book/create");
+  private final Route GET_processor_test_BookController_create = new Route("/app/api/v1/book/create");
 
-  private final ParameterizedRoute GET_processor_test_BookController_foo = new ParameterizedRoute("app/api/v1/book/foo/{id}/{arg}", Pattern.compile("app/api/v1/book/foo/(?<p0>[^/]+)/(?<p1>[^/]+)"));
+  private final ParameterizedRoute GET_processor_test_BookController_foo = new ParameterizedRoute("/app/api/v1/book/foo/{id}/{arg}", Pattern.compile("/app/api/v1/book/foo/(?<p0>[^/]+)/(?<p1>[^/]+)"));
 
-  private final Route GET_processor_test_Gym_index = new Route("app/api/v1/gym");
+  private final Route GET_processor_test_Gym_index = new Route("/app/api/v1/gym");
 
-  private final Route GET_processor_test_Gym_create = new Route("app/api/v1/gym/create");
+  private final Route GET_processor_test_Gym_create = new Route("/app/api/v1/gym/create");
 
-  private final ParameterizedRoute GET_processor_test_Gym_show = new ParameterizedRoute("app/api/v1/gym/{id}", Pattern.compile("app/api/v1/gym/(?<p0>[^/]+)"));
+  private final ParameterizedRoute GET_processor_test_Gym_show = new ParameterizedRoute("/app/api/v1/gym/{id}", Pattern.compile("/app/api/v1/gym/(?<p0>[^/]+)"));
 
-  private final Route GET_processor_test_BookController_htmlIndex = new Route("app/book");
+  private final Route GET_processor_test_BookController_htmlIndex = new Route("/app/book");
 
-  private final ParameterizedRoute GET_processor_test_BookController_show = new ParameterizedRoute("app/book/{id}", Pattern.compile("app/book/(?<p0>[^/]+)"));
+  private final ParameterizedRoute GET_processor_test_BookController_show = new ParameterizedRoute("/app/book/{id}", Pattern.compile("/app/book/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute GET_processor_test_BookController_edit = new ParameterizedRoute("app/book/{id}/edit", Pattern.compile("app/book/(?<p0>[^/]+)/edit"));
+  private final ParameterizedRoute GET_processor_test_BookController_edit = new ParameterizedRoute("/app/book/{id}/edit", Pattern.compile("/app/book/(?<p0>[^/]+)/edit"));
 
-  private final Route GET_processor_test_ClientController_create = new Route("app/create");
+  private final Route GET_processor_test_ClientController_create = new Route("/app/create");
 
-  private final Route GET_processor_test_Gym_htmlIndex = new Route("app/gym");
+  private final Route GET_processor_test_Gym_htmlIndex = new Route("/app/gym");
 
-  private final ParameterizedRoute GET_processor_test_Gym_edit = new ParameterizedRoute("app/gym/{id}/edit", Pattern.compile("app/gym/(?<p0>[^/]+)/edit"));
+  private final ParameterizedRoute GET_processor_test_Gym_edit = new ParameterizedRoute("/app/gym/{id}/edit", Pattern.compile("/app/gym/(?<p0>[^/]+)/edit"));
 
-  private final Route POST_processor_test_ClientController_save = new Route("app/api/v1");
+  private final Route POST_processor_test_ClientController_save = new Route("/app/api/v1");
 
-  private final Route POST_processor_test_BookController_save = new Route("app/api/v1/book");
+  private final Route POST_processor_test_BookController_save = new Route("/app/api/v1/book");
 
-  private final Route POST_processor_test_Gym_save = new Route("app/api/v1/gym");
+  private final Route POST_processor_test_Gym_save = new Route("/app/api/v1/gym");
 
-  private final ParameterizedRoute PUT_processor_test_BookController_update = new ParameterizedRoute("app/api/v1/book/{id}", Pattern.compile("app/api/v1/book/(?<p0>[^/]+)"));
+  private final ParameterizedRoute PUT_processor_test_BookController_update = new ParameterizedRoute("/app/api/v1/book/{id}", Pattern.compile("/app/api/v1/book/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute PUT_processor_test_Gym_update = new ParameterizedRoute("app/api/v1/gym/{id}", Pattern.compile("app/api/v1/gym/(?<p0>[^/]+)"));
+  private final ParameterizedRoute PUT_processor_test_Gym_update = new ParameterizedRoute("/app/api/v1/gym/{id}", Pattern.compile("/app/api/v1/gym/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute DELETE_processor_test_BookController_delete = new ParameterizedRoute("app/api/v1/book/{id}", Pattern.compile("app/api/v1/book/(?<p0>[^/]+)"));
+  private final ParameterizedRoute DELETE_processor_test_BookController_delete = new ParameterizedRoute("/app/api/v1/book/{id}", Pattern.compile("/app/api/v1/book/(?<p0>[^/]+)"));
 
-  private final ParameterizedRoute DELETE_processor_test_Gym_delete = new ParameterizedRoute("app/api/v1/gym/{id}", Pattern.compile("app/api/v1/gym/(?<p0>[^/]+)"));
+  private final ParameterizedRoute DELETE_processor_test_Gym_delete = new ParameterizedRoute("/app/api/v1/gym/{id}", Pattern.compile("/app/api/v1/gym/(?<p0>[^/]+)"));
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws

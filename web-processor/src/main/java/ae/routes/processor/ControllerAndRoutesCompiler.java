@@ -119,7 +119,7 @@ public class ControllerAndRoutesCompiler extends AnnotationProcessor {
                         final PackageElement routerPackage = elements.getPackageOf(routerClass);
                         declarations.packageName(routerPackage.getQualifiedName().toString());
                         final TypeMirror baseClass = routerClass.getSuperclass();
-                        final String routerClassImpl = baseClass.toString();
+                        final String routerClassImpl = types.asElement(baseClass).getSimpleName().toString();
                         declarations.routerClass(routerClassImpl);
                         final RoutesDeclarations routes = declarations.build();
                         generateJavaCode(routes);
