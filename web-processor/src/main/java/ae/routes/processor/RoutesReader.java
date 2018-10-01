@@ -44,9 +44,9 @@ import javax.lang.model.element.Name;
 
 class RoutesReader {
         private static final String UNDEFINED_PATH = "<UNDEFINED>";
-        private static final String API_CONSTRUCTOR_ARGS = "request, response";
+        private static final String API_CONSTRUCTOR_ARGS = "request, response, userData";
         private static final String THYMELEAF_CONSTRUCTOR_ARGS
-                = "request, response, webContext(request, response), templateEngine()";
+                = "request, response, webContext(request, response), templateEngine(), userData";
         private static final String CONTROLLER_MUST_SUPPORT_THYMELEAF
                 = "Controller must extend "
                 + ControllerWithThymeleafSupport.class

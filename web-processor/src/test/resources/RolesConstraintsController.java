@@ -13,6 +13,7 @@ import ae.namespace;
 import ae.roles;
 import ae.router;
 import ae.template;
+import com.google.appengine.api.datastore.Entity;
 import javax.servlet.annotation.WebServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,17 +27,20 @@ class RolesConstraintsController extends RolesRouter {
 @controller
 @namespace(namespace.MULTITENANT)
 class FooController extends ae.web.ControllerWithThymeleafSupport {
-        public FooController(final HttpServletRequest request, final HttpServletResponse response)
+        public FooController(final HttpServletRequest request,
+                             final HttpServletResponse response,
+                             final Entity userData)
         {
-                super(request, response);
+                super(request, response, userData);
         }
 
         public FooController(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final WebContext templateContext,
-                             final TemplateEngine templateEngine)
+                             final TemplateEngine templateEngine,
+                             final Entity userData)
         {
-                super(request, response, templateContext, templateEngine);
+                super(request, response, templateContext, templateEngine, userData);
         }
 
         @Override

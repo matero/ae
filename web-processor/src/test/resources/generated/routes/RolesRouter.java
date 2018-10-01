@@ -2,6 +2,7 @@ package processor.test;
 
 import ae.web.Route;
 import ae.web.RouterServlet;
+import com.google.appengine.api.datastore.Entity;
 import java.io.IOException;
 import javax.annotation.Generated;
 import javax.servlet.ServletException;
@@ -27,26 +28,27 @@ abstract class RolesRouter extends RouterServlet {
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
+    final Entity userData = getLoggedUser();
     if (GET_processor_test_FooController_index.matches(request)) {
       useNamespace("M");
-      handle(new FooController(request, response), (controller) -> controller.index());
+      handle(new FooController(request, response, userData), (controller) -> controller.index());
       return;
     }
     if (GET_processor_test_FooController_htmlIndex.matches(request)) {
-      if (!loggedUserRoleIs("r1")) {
+      if (!loggedUserRoleIs(userData, "r1")) {
         notAuthorized(response);
         return;
       }
-      handle(new FooController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
+      handle(new FooController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.htmlIndex());
       return;
     }
     if (GET_processor_test_FooController_create.matches(request)) {
-      if (!loggedUserRoleIsIn("r1", "r2")) {
+      if (!loggedUserRoleIsIn(userData, "r1", "r2")) {
         notAuthorized(response);
         return;
       }
       useNamespace("otro");
-      handle(new FooController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.create());
+      handle(new FooController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.create());
       return;
     }
     unhandledGet(request, response);
@@ -55,9 +57,10 @@ abstract class RolesRouter extends RouterServlet {
   @Override
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
+    final Entity userData = getLoggedUser();
     if (POST_processor_test_FooController_save.matches(request)) {
-      useLoggedUserNamespace();
-      handle(new FooController(request, response), (controller) -> controller.save());
+      useLoggedUserNamespace(userData);
+      handle(new FooController(request, response, userData), (controller) -> controller.save());
       return;
     }
     unhandledPost(request, response);

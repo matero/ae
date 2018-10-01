@@ -24,6 +24,7 @@
 package ae.web;
 
 import com.google.appengine.api.NamespaceManager;
+import com.google.appengine.api.datastore.Entity;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -120,43 +121,48 @@ public abstract class RouterServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
 
-        protected boolean loggedUserRoleIs(final String role)
+        protected boolean loggedUserRoleIs(final Entity userData, final String role)
         {
-                return getLoggedUserRole().equals(role);
+                final String r = getLoggedUserRole(userData);
+                return r.equals(role);
         }
 
-        protected boolean loggedUserRoleIsIn(final String r1, final String r2)
+        protected boolean loggedUserRoleIsIn(final Entity userData, final String r1, final String r2)
         {
-                final String r = getLoggedUserRole();
+                final String r = getLoggedUserRole(userData);
                 return r.equals(r1) || r.equals(r2);
         }
 
-        protected boolean loggedUserRoleIsIn(final String r1, final String r2, final String r3)
+        protected boolean loggedUserRoleIsIn(final Entity userData, final String r1, final String r2, final String r3)
         {
-                final String r = getLoggedUserRole();
+                final String r = getLoggedUserRole(userData);
                 return r.equals(r1) || r.equals(r2) || r.equals(r3);
         }
 
-        protected boolean loggedUserRoleIsIn(final String r1, final String r2, final String r3, final String r4)
+        protected boolean loggedUserRoleIsIn(final Entity userData,
+                                             final String r1,
+                                             final String r2,
+                                             final String r3,
+                                             final String r4)
         {
-                final String r = getLoggedUserRole();
+                final String r = getLoggedUserRole(userData);
                 return r.equals(r1) || r.equals(r2) || r.equals(r3) || r.equals(r4);
         }
 
-        protected String getLoggedUserRole()
+        protected String getLoggedUserRole(final Entity userData)
         {
                 throw new UnsupportedOperationException();
         }
 
-        protected void useLoggedUserNamespace()
+        protected void useLoggedUserNamespace(final Entity userData)
         {
                 if (NamespaceManager.get() == null) {
-                        final String currentUserNamespace = getLoggedUserNamespace();
+                        final String currentUserNamespace = getLoggedUserNamespace(userData);
                         NamespaceManager.set(currentUserNamespace);
                 }
         }
 
-        protected String getLoggedUserNamespace()
+        protected String getLoggedUserNamespace(final Entity userData)
         {
                 throw new UnsupportedOperationException();
         }
@@ -166,5 +172,9 @@ public abstract class RouterServlet extends HttpServlet {
                 if (NamespaceManager.get() == null) {
                         NamespaceManager.set(namespace);
                 }
+        }
+        
+        protected Entity getLoggedUser() {
+                throw new UnsupportedOperationException();
         }
 }

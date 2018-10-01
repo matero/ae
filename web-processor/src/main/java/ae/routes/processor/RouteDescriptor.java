@@ -76,41 +76,11 @@ final class RouteDescriptor {
                         final String namespace,
                         final TypeElement controller,
                         final String action,
-                        final String ctorArgs)
-        {
-                this(verb, pattern, pattern, useCredentials, roles, admin, namespace, controller, action,
-                     ImmutableList.of(), ctorArgs, DEFAULT_HEADER);
-        }
-
-        RouteDescriptor(final HttpVerb verb,
-                        final String pattern,
-                        final boolean useCredentials,
-                        final String[] roles,
-                        final boolean admin,
-                        final String namespace,
-                        final TypeElement controller,
-                        final String action,
                         final String ctorArgs,
                         final ImmutableMap<String, String> headers)
         {
                 this(verb, pattern, pattern, useCredentials, roles, admin, namespace, controller, action,
                      ImmutableList.of(), ctorArgs, headers);
-        }
-
-        RouteDescriptor(final HttpVerb verb,
-                        final String pattern,
-                        final String regex,
-                        final boolean useCredentials,
-                        final String[] roles,
-                        final boolean admin,
-                        final String namespace,
-                        final TypeElement controller,
-                        final String action,
-                        final ImmutableList<Parameter> parameters,
-                        final String ctorArgs)
-        {
-                this(verb, pattern, pattern, useCredentials, roles, admin, namespace, controller, action, parameters,
-                     ctorArgs, DEFAULT_HEADER);
         }
 
         RouteDescriptor(final HttpVerb verb,
@@ -182,13 +152,13 @@ final class RouteDescriptor {
         {
                 switch (this.roles.length) {
                         case 1:
-                                return "loggedUserRoleIs($S)";
+                                return "loggedUserRoleIs(userData, $S)";
                         case 2:
-                                return "loggedUserRoleIsIn($S, $S)";
+                                return "loggedUserRoleIsIn(userData, $S, $S)";
                         case 3:
-                                return "loggedUserRoleIsIn($S, $S, $S)";
+                                return "loggedUserRoleIsIn(userData, $S, $S, $S)";
                         case 4:
-                                return "loggedUserRoleIsIn($S, $S, $S, $S)";
+                                return "loggedUserRoleIsIn(userData, $S, $S, $S, $S)";
                         default:
                                 throw new IllegalStateException("roles count not supported!");
                 }
@@ -315,7 +285,7 @@ final class RouteDescriptor {
         CodeBlock namespaceStatment()
         {
                 if (this.namespace.equals(ae.namespace.MULTITENANT)) {
-                        return CodeBlock.of("useLoggedUserNamespace()");
+                        return CodeBlock.of("useLoggedUserNamespace(userData)");
                 } else {
                         return CodeBlock.of("useNamespace($S)", this.namespace);
                 }

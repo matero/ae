@@ -24,6 +24,7 @@
 package ae.web;
 
 import ae.db.Attr;
+import com.google.appengine.api.datastore.Entity;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -38,17 +39,20 @@ public abstract class ControllerWithThymeleafSupport extends Controller {
     protected final WebContext templateContext;
     protected final TemplateEngine templateEngine;
 
-    protected ControllerWithThymeleafSupport(final HttpServletRequest request, final HttpServletResponse response)
+    protected ControllerWithThymeleafSupport(final HttpServletRequest request,
+                                             final HttpServletResponse response,
+                                             final Entity user)
     {
-        this(request, response, null, null);
+        this(request, response, null, null, user);
     }
 
     protected ControllerWithThymeleafSupport(final HttpServletRequest request,
                                              final HttpServletResponse response,
                                              final WebContext templateContext,
-                                             final TemplateEngine templateEngine)
+                                             final TemplateEngine templateEngine,
+                                             final Entity user)
     {
-        super(request, response);
+        super(request, response, user);
         this.templateContext = templateContext;
         this.templateEngine = templateEngine;
     }

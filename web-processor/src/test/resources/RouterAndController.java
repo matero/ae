@@ -20,6 +20,7 @@ import ae.router;
 import ae.template;
 import ae.web.ControllerWithThymeleafSupport;
 import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.Entity;
 import javax.servlet.annotation.WebServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,19 +31,23 @@ class AppRouter extends SigexRouter {
         // nothing to define
 }
 
-@controller("") @namespace(namespace.GLOBAL)
+@controller("")
+@namespace(namespace.GLOBAL)
 class ClientController extends ae.web.ControllerWithThymeleafSupport {
-        public ClientController(final HttpServletRequest request, final HttpServletResponse response)
+        public ClientController(final HttpServletRequest request,
+                                final HttpServletResponse response,
+                                final Entity userData)
         {
-                super(request, response);
+                super(request, response, userData);
         }
 
         public ClientController(final HttpServletRequest request,
                                 final HttpServletResponse response,
                                 final WebContext templateContext,
-                                final TemplateEngine templateEngine)
+                                final TemplateEngine templateEngine,
+                                final Entity userData)
         {
-                super(request, response, templateContext, templateEngine);
+                super(request, response, templateContext, templateEngine, userData);
         }
 
         @Override
@@ -76,19 +81,21 @@ class ClientController extends ae.web.ControllerWithThymeleafSupport {
         }
 }
 
-@controller @namespace(namespace.MULTITENANT)
+@controller
+@namespace(namespace.MULTITENANT)
 final class Gym extends ControllerWithThymeleafSupport {
-        public Gym(final HttpServletRequest request, final HttpServletResponse response)
+        public Gym(final HttpServletRequest request, final HttpServletResponse response, final Entity userData)
         {
-                super(request, response);
+                super(request, response, userData);
         }
 
         public Gym(final HttpServletRequest request,
                    final HttpServletResponse response,
                    final WebContext templateContext,
-                   final TemplateEngine templateEngine)
+                   final TemplateEngine templateEngine,
+                   final Entity userData)
         {
-                super(request, response, templateContext, templateEngine);
+                super(request, response, templateContext, templateEngine, userData);
         }
 
         @Override
@@ -97,7 +104,8 @@ final class Gym extends ControllerWithThymeleafSupport {
                 return LoggerFactory.getLogger(getClass());
         }
 
-        @GET @namespace(namespace.GLOBAL)
+        @GET
+        @namespace(namespace.GLOBAL)
         public void index()
         {
         }
@@ -143,17 +151,20 @@ final class Gym extends ControllerWithThymeleafSupport {
 
 @controller
 class BookController extends ControllerWithThymeleafSupport implements OAuth2Flow {
-        public BookController(final HttpServletRequest request, final HttpServletResponse response)
+        public BookController(final HttpServletRequest request,
+                              final HttpServletResponse response,
+                              final Entity userData)
         {
-                super(request, response);
+                super(request, response, userData);
         }
 
         public BookController(final HttpServletRequest request,
                               final HttpServletResponse response,
                               final WebContext templateContext,
-                              final TemplateEngine templateEngine)
+                              final TemplateEngine templateEngine,
+                              final Entity userData)
         {
-                super(request, response, templateContext, templateEngine);
+                super(request, response, templateContext, templateEngine, userData);
         }
 
         @Override

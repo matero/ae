@@ -24,6 +24,7 @@
 package ae.routes.processor;
 
 import ae.web.OAuth2Flow;
+import com.google.appengine.api.datastore.Entity;
 import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.*;
 
@@ -122,6 +123,7 @@ class RoutersCodeBuilder {
                         .addParameter(HttpServletResponse.class, "response", Modifier.FINAL)
                         .addException(ServletException.class)
                         .addException(IOException.class);
+                httpVerbHandler.addStatement("final $T userData = getLoggedUser()", ClassName.get(Entity.class));
                 if (hasDynamicRoutes(routes)) {
                         httpVerbHandler.addStatement("final $T routeParameters = new $T{$L}",
                                                      stringArray,
@@ -151,14 +153,26 @@ class RoutersCodeBuilder {
         private String paramsInit(final Iterable<RouteDescriptor> routes)
         {
                 final int maxParametersCount = maxParametersCountAt(routes);
-                final StringBuffer params = new StringBuffer(4 * maxParametersCount + 2 * (maxParametersCount - 1)).
-                        append(
-                                "null");
-                for (int i = 0; i < maxParametersCount; i++) {
-                        params.append(", null");
+                switch (maxParametersCount) {
+                        case 1:
+                                return "null";
+                        case 2:
+                                return "null, null";
+                        case 3:
+                                return "null, null, null";
+                        case 4:
+                                return "null, null, null, null";
+                        default: {
+                                final int capacity = 4 * maxParametersCount + 2 * (maxParametersCount - 1);
+                                final StringBuffer params = new StringBuffer(capacity).append("null, null, null, null");
+                                for (int i = 4; i < maxParametersCount; i++) {
+                                        params.append(", null");
+                                }
+                                return params.toString();
+                        }
                 }
-                return params.toString();
         }
+        
 
         private int maxParametersCountAt(final Iterable<RouteDescriptor> routes)
         {

@@ -6,6 +6,7 @@ import ae.web.ParameterizedRoute;
 import ae.web.Route;
 import ae.web.RouterServlet;
 import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.Entity;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import javax.annotation.Generated;
@@ -68,79 +69,80 @@ abstract class SigexRouter extends RouterServlet {
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
-    final String[] routeParameters = new String[]{null, null, null, null};
+    final Entity userData = getLoggedUser();
+    final String[] routeParameters = new String[]{null, null, null};
     if (GET_processor_test_ClientController_htmlIndex.matches(request)) {
-      handle(new ClientController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
+      handle(new ClientController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.htmlIndex());
       return;
     }
     if (GET_processor_test_ClientController_index.matches(request)) {
       useNamespace("test");
-      handle(new ClientController(request, response), (controller) -> controller.index());
+      handle(new ClientController(request, response, userData), (controller) -> controller.index());
       return;
     }
     if (GET_processor_test_BookController_index.matches(request)) {
-      handle(new BookController(request, response), (controller) -> controller.index());
+      handle(new BookController(request, response, userData), (controller) -> controller.index());
       return;
     }
     if (GET_processor_test_BookController_bar.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       final Cursor c = Interpret.asCursor(routeParameters[1]);
       final String arg = Interpret.asString(routeParameters[2]);
-      handle(new BookController(request, response), (controller) -> controller.bar(id,c,arg));
+      handle(new BookController(request, response, userData), (controller) -> controller.bar(id,c,arg));
       return;
     }
     if (GET_processor_test_BookController_create.matches(request)) {
-      handle(new BookController(request, response), (controller) -> controller.create());
+      handle(new BookController(request, response, userData), (controller) -> controller.create());
       return;
     }
     if (GET_processor_test_BookController_foo.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       final String arg = Interpret.asString(routeParameters[1]);
-      handle(new BookController(request, response), (controller) -> OAuth2Flow.Director.of(controller).authorize((c) -> c.foo(id,arg)));
+      handle(new BookController(request, response, userData), (controller) -> OAuth2Flow.Director.of(controller).authorize((c) -> c.foo(id,arg)));
       return;
     }
     if (GET_processor_test_Gym_index.matches(request)) {
-      handle(new Gym(request, response), (controller) -> controller.index());
+      handle(new Gym(request, response, userData), (controller) -> controller.index());
       return;
     }
     if (GET_processor_test_Gym_create.matches(request)) {
-      useLoggedUserNamespace();
-      handle(new Gym(request, response), (controller) -> controller.create());
+      useLoggedUserNamespace(userData);
+      handle(new Gym(request, response, userData), (controller) -> controller.create());
       return;
     }
     if (GET_processor_test_Gym_show.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      useLoggedUserNamespace();
-      handle(new Gym(request, response), (controller) -> controller.show(id));
+      useLoggedUserNamespace(userData);
+      handle(new Gym(request, response, userData), (controller) -> controller.show(id));
       return;
     }
     if (GET_processor_test_BookController_htmlIndex.matches(request)) {
-      handle(new BookController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
+      handle(new BookController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.htmlIndex());
       return;
     }
     if (GET_processor_test_BookController_show.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new BookController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.show(id));
+      handle(new BookController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.show(id));
       return;
     }
     if (GET_processor_test_BookController_edit.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new BookController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
+      handle(new BookController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.edit(id));
       return;
     }
     if (GET_processor_test_ClientController_create.matches(request)) {
-      handle(new ClientController(request, response, webContext(request, response), templateEngine()), (controller) -> controller.create());
+      handle(new ClientController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.create());
       return;
     }
     if (GET_processor_test_Gym_htmlIndex.matches(request)) {
       useNamespace("namespace");
-      handle(new Gym(request, response, webContext(request, response), templateEngine()), (controller) -> controller.htmlIndex());
+      handle(new Gym(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.htmlIndex());
       return;
     }
     if (GET_processor_test_Gym_edit.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      useLoggedUserNamespace();
-      handle(new Gym(request, response, webContext(request, response), templateEngine()), (controller) -> controller.edit(id));
+      useLoggedUserNamespace(userData);
+      handle(new Gym(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.edit(id));
       return;
     }
     unhandledGet(request, response);
@@ -149,18 +151,19 @@ abstract class SigexRouter extends RouterServlet {
   @Override
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
+    final Entity userData = getLoggedUser();
     if (POST_processor_test_ClientController_save.matches(request)) {
-      useLoggedUserNamespace();
-      handle(new ClientController(request, response), (controller) -> controller.save());
+      useLoggedUserNamespace(userData);
+      handle(new ClientController(request, response, userData), (controller) -> controller.save());
       return;
     }
     if (POST_processor_test_BookController_save.matches(request)) {
-      handle(new BookController(request, response), (controller) -> controller.save());
+      handle(new BookController(request, response, userData), (controller) -> controller.save());
       return;
     }
     if (POST_processor_test_Gym_save.matches(request)) {
-      useLoggedUserNamespace();
-      handle(new Gym(request, response), (controller) -> controller.save());
+      useLoggedUserNamespace(userData);
+      handle(new Gym(request, response, userData), (controller) -> controller.save());
       return;
     }
     unhandledPost(request, response);
@@ -169,16 +172,17 @@ abstract class SigexRouter extends RouterServlet {
   @Override
   public void doPut(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
-    final String[] routeParameters = new String[]{null, null};
+    final Entity userData = getLoggedUser();
+    final String[] routeParameters = new String[]{null};
     if (PUT_processor_test_BookController_update.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new BookController(request, response), (controller) -> controller.update(id));
+      handle(new BookController(request, response, userData), (controller) -> controller.update(id));
       return;
     }
     if (PUT_processor_test_Gym_update.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      useLoggedUserNamespace();
-      handle(new Gym(request, response), (controller) -> controller.update(id));
+      useLoggedUserNamespace(userData);
+      handle(new Gym(request, response, userData), (controller) -> controller.update(id));
       return;
     }
     unhandledPut(request, response);
@@ -187,16 +191,17 @@ abstract class SigexRouter extends RouterServlet {
   @Override
   public void doDelete(final HttpServletRequest request, final HttpServletResponse response) throws
       ServletException, IOException {
-    final String[] routeParameters = new String[]{null, null};
+    final Entity userData = getLoggedUser();
+    final String[] routeParameters = new String[]{null};
     if (DELETE_processor_test_BookController_delete.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new BookController(request, response), (controller) -> controller.delete(id));
+      handle(new BookController(request, response, userData), (controller) -> controller.delete(id));
       return;
     }
     if (DELETE_processor_test_Gym_delete.matches(request, routeParameters)) {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      useLoggedUserNamespace();
-      handle(new Gym(request, response), (controller) -> controller.delete(id));
+      useLoggedUserNamespace(userData);
+      handle(new Gym(request, response, userData), (controller) -> controller.delete(id));
       return;
     }
     unhandledDelete(request, response);

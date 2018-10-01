@@ -60,11 +60,13 @@ public abstract class Controller {
 
         protected final HttpServletRequest request;
         protected final HttpServletResponse response;
+        protected final Entity user;
 
-        protected Controller(final HttpServletRequest request, final HttpServletResponse response)
+        protected Controller(final HttpServletRequest request, final HttpServletResponse response, final Entity user)
         {
                 this.request = request;
                 this.response = response;
+                this.user = user;
         }
 
         /**
