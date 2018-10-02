@@ -24,6 +24,7 @@
 package ae.web;
 
 import ae.db.ActiveEntity;
+import ae.db.Attr;
 import argo.format.CompactJsonFormatter;
 import argo.format.JsonFormatter;
 import argo.format.PrettyJsonFormatter;
@@ -48,7 +49,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import javax.servlet.ServletException;
@@ -131,6 +134,23 @@ public abstract class Controller {
                 return JDOM_PARSER.parse(content);
         }
 
+        protected JsonNode makeOptionsWith(final List<Entity> data, final Attr value, final Attr text)
+        {
+                if (data == null) {
+                        return JsonNodeFactories.nullNode();
+                }
+                final ArrayList<JsonNode> elements = new ArrayList<>(data.size());
+                for (final Entity element : data) {
+                        elements.add(
+                                JsonNodeFactories.object(
+                                        JsonNodeFactories.field("value", value.makeJsonValue(element)),
+                                        JsonNodeFactories.field("text", text.makeJsonValue(element))
+                                )
+                        );
+                }
+                return JsonNodeFactories.array(elements);
+        }
+        
         /* response manipulation ************************************************* */
         protected static String to(final String location)
         {
