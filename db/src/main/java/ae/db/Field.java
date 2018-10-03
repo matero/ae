@@ -189,7 +189,7 @@ enum RequiredConstraint implements Constraint<Object> {
         @Override
         public boolean isInvalid(final Object value)
         {
-                throw new UnsupportedOperationException();
+                return value == null;
         }
 
         public String messageFor(final Attr attr)

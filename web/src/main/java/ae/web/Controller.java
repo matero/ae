@@ -25,6 +25,7 @@ package ae.web;
 
 import ae.db.ActiveEntity;
 import ae.db.Attr;
+import ae.db.Validation;
 import argo.format.CompactJsonFormatter;
 import argo.format.JsonFormatter;
 import argo.format.PrettyJsonFormatter;
@@ -303,14 +304,21 @@ public abstract class Controller {
                 set(StatusCode.OK);
         }
 
-        protected void unprocessableEntity()
+        protected void unprocessableEntity() throws IOException
         {
-                response.setStatus(422);
+                response.sendError(422);
         }
 
-        protected void notFound()
+        protected void unprocessableEntity(final Validation error) throws IOException
         {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                final String json = JSON_FORMATTER.format(error.asJson());
+                set(ContentType.APPLICATION_JSON);
+                response.sendError(422, json);
+        }
+
+        protected void notFound() throws IOException
+        {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
 
         protected String loginURL(final HttpServletRequest request)

@@ -235,11 +235,27 @@ public abstract class ActiveEntity implements Serializable {
                 return DatastoreServiceFactory.getDatastoreService().get(key);
         }
 
+        public boolean exists(final Entity data)
+        {
+                if (data == null) {
+                        throw new NullPointerException("data");
+                }
+                if (!isKindOf(data.getKey())) {
+                        throw new IllegalArgumentException("data.key '" + data.getKey() + "' does not represent " + getClass());
+                }
+                return checkExists(data.getKey());
+        }
+        
         public boolean exists(final Key key)
         {
                 if (!isKindOf(key)) {
                         throw new IllegalArgumentException("Key '" + key + "' does not represent " + getClass());
                 }
+                return checkExists(key);
+        }
+
+        private boolean checkExists(final Key key) throws PreparedQuery.TooManyResultsException
+        {
                 final Query exists = makeQuery()
                         .setKeysOnly()
                         .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, key));
