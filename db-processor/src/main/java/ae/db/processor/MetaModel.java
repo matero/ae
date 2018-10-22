@@ -45,8 +45,9 @@ abstract class MetaModel extends MetaData {
 
         final Fields fields;
 
-        final boolean configuresDatastore;
+        final boolean cached;
 
+        
         MetaModel(final String packageName,
                   final String className,
                   final String canonicalName,
@@ -55,7 +56,7 @@ abstract class MetaModel extends MetaData {
                   final MetaModelId id,
                   final Fields modelFields,
                   final ImmutableSet<Modifier> modifiers,
-                  final boolean configuresDatastore)
+                  final boolean cached)
         {
                 super(className, modifiers);
                 this.packageName = packageName;
@@ -64,7 +65,7 @@ abstract class MetaModel extends MetaData {
                 this.baseClass = baseClass;
                 this.id = id;
                 this.fields = modelFields;
-                this.configuresDatastore = configuresDatastore;
+                this.cached = cached;
         }
 
         final boolean isPublic()
@@ -172,7 +173,7 @@ abstract class MetaModel extends MetaData {
                                   final MetaParent parent,
                                   final Fields fields,
                                   final Iterable<Modifier> modifiers,
-                                  final boolean configuresDatastore)
+                                  final boolean cached)
         {
                 if (parent == null) {
                         return new RootModel(packageName,
@@ -183,7 +184,7 @@ abstract class MetaModel extends MetaData {
                                              id,
                                              fields,
                                              ImmutableSet.copyOf(modifiers),
-                                             configuresDatastore);
+                                             cached);
                 } else {
                         return new ChildModel(packageName,
                                               className,
@@ -194,7 +195,7 @@ abstract class MetaModel extends MetaData {
                                               parent,
                                               fields,
                                               ImmutableSet.copyOf(modifiers),
-                                              configuresDatastore);
+                                              cached);
                 }
         }
 }
@@ -209,9 +210,9 @@ final class RootModel extends MetaModel {
                   final MetaModelId id,
                   final Fields fields,
                   final ImmutableSet<Modifier> modifiers,
-                  final boolean configuresDatastore)
+                  final boolean cached)
         {
-                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, configuresDatastore);
+                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, cached);
         }
 
         @Override
@@ -251,9 +252,9 @@ final class ChildModel extends MetaModel {
                    final MetaParent parent,
                    final Fields fields,
                    final ImmutableSet<Modifier> modifiers,
-                   final boolean configuresDatastore)
+                   final boolean cached)
         {
-                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, configuresDatastore);
+                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, cached);
                 this.parent = parent;
         }
 

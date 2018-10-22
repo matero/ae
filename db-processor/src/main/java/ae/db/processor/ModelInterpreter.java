@@ -23,15 +23,12 @@
  */
 package ae.db.processor;
 
-import com.google.appengine.api.datastore.DatastoreService;
 import com.google.common.collect.ImmutableList;
 import java.util.Iterator;
 import java.util.List;
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.inject.Inject;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -49,7 +46,6 @@ class ModelInterpreter {
         private final ModelParentInterpreter parentInterpreter;
         private final ModelFieldInterpreter fieldInterpreter;
         private final TypeMirror recordClass;
-        private final TypeMirror datastoreServiceClass;
 
         ModelInterpreter(final ProcessingEnvironment environment)
         {
@@ -72,7 +68,6 @@ class ModelInterpreter {
                 this.fieldInterpreter = fieldInterpreter;
 
                 this.recordClass = elements.getTypeElement(Record.class.getCanonicalName()).asType();
-                this.datastoreServiceClass = elements.getTypeElement(DatastoreService.class.getCanonicalName()).asType();
         }
 
         MetaModel read(final Element modelElement)
@@ -92,7 +87,7 @@ class ModelInterpreter {
                                           getModelParent(attrs),
                                           getModelFields(attrs),
                                           modelClass.getModifiers(),
-                                          modelConfiguresDatastore(modelClass));
+                                          modelIsCached(modelClass));
         }
 
         TypeElement modelClass(final Element modelElement) throws IllegalArgumentException
@@ -130,6 +125,12 @@ class ModelInterpreter {
                 } else {
                         return declaredKind;
                 }
+        }
+
+        boolean modelIsCached(final TypeElement modelClass)
+        {
+                final model model = modelAnnotation(modelClass);
+                return model.cache();
         }
 
         String baseClass(final TypeElement modelClass)
@@ -222,19 +223,5 @@ class ModelInterpreter {
         Iterable<TypeElement> innerClassesOf(final TypeElement modelClass)
         {
                 return ElementFilter.typesIn(modelClass.getEnclosedElements());
-        }
-
-        boolean modelConfiguresDatastore(TypeElement model)
-        {
-                for (final ExecutableElement constructor : ElementFilter.constructorsIn(model.getEnclosedElements())) {
-                        if (constructor.getAnnotation(Inject.class) != null) {
-                                for (final VariableElement parameter : constructor.getParameters()) {
-                                        if (types.isAssignable(parameter.asType(), datastoreServiceClass)) {
-                                                return true;
-                                        }
-                                }
-                        }
-                }
-                return false;
         }
 }

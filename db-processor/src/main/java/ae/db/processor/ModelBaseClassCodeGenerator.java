@@ -51,11 +51,14 @@ import ae.db.Field;
 import ae.db.RootWithId;
 import ae.db.RootWithName;
 import ae.db.Validation;
+import com.google.appengine.api.memcache.MemcacheService;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.WildcardTypeName;
 
 import java.util.List;
+import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,6 +135,9 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
                 }
                 if (shouldDefineWrapper()) {
                         defineEntityWrapper();
+                }
+                if (shouldAvoidCache()) {
+                        defineEntityCrudWithoutCache();
                 }
                 return baseModelClass.build();
         }
@@ -471,6 +477,73 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
                 final ClassName builderClassName = modelWrapperClassName();
                 baseModelClass.addType(modelWrapperClass(builderClassName));
                 baseModelClass.addMethods(modelWrapperInstantiators(builderClassName));
+        }
+
+        boolean shouldAvoidCache()
+        {
+                return !model.cached;
+        }
+
+        void defineEntityCrudWithoutCache()
+        {
+                baseModelClass.addMethod(saveEntityWithoutCache());
+                baseModelClass.addMethod(deleteEntityWithoutCache());
+                baseModelClass.addMethod(getEntityWithoutCache());
+                baseModelClass.addMethod(checkExistsWithoutCache());
+        }
+
+        MethodSpec saveEntityWithoutCache()
+        {
+                return MethodSpec.methodBuilder("saveEntity").
+                        addAnnotation(Override.class).
+                        addModifiers(Modifiers.PROTECTED_FINAL).
+                        returns(ParameterizedTypeName.get(Future.class, Key.class)).
+                        addParameter(ParameterSpec.builder(Entity.class, "data", Modifier.FINAL).build()).
+                        addStatement("return asyncDatastore().put(data)").
+                        build();
+        }
+
+        MethodSpec deleteEntityWithoutCache()
+        {
+                return MethodSpec.methodBuilder("deleteEntity").
+                        addAnnotation(Override.class).
+                        addModifiers(Modifiers.PROTECTED_FINAL).
+                        returns(ParameterizedTypeName.get(Future.class, Void.class)).
+                        addParameter(ParameterSpec.builder(Key.class, "key", Modifier.FINAL).build()).
+                        addStatement("return asyncDatastore().delete(key)").
+                        build();
+        }
+
+        MethodSpec getEntityWithoutCache()
+        {
+                return MethodSpec.methodBuilder("getEntity").
+                        addAnnotation(Override.class).
+                        addModifiers(Modifiers.PROTECTED_FINAL).
+                        returns(ClassName.get(Entity.class)).
+                        addException(EntityNotFoundException.class).
+                        addParameter(ParameterSpec.builder(Key.class, "key", Modifier.FINAL).build()).
+                        addStatement("return datastore().get(key)").
+                        build();
+        }
+
+        MethodSpec checkExistsWithoutCache()
+        {
+                return MethodSpec.methodBuilder("checkExists").
+                        addAnnotation(Override.class).
+                        addModifiers(Modifiers.PROTECTED_FINAL).
+                        returns(TypeName.BOOLEAN).
+                        addParameter(ParameterSpec.builder(Key.class, "key", Modifier.FINAL).build()).
+                        addStatement("final $T f = new $T($T.KEY_RESERVED_PROPERTY, $T.EQUAL, key)",
+                                     ClassName.get(Query.Filter.class),
+                                     ClassName.get(Query.FilterPredicate.class),
+                                     ClassName.get(Entity.class),
+                                     ClassName.get(Query.FilterOperator.class)).
+                        addStatement("final $T exists = makeQuery().setKeysOnly().setFilter(f)",
+                                     ClassName.get(Query.class)).
+                        addStatement("final $T data = datastore().prepare(exists).asSingleEntity()",
+                                     ClassName.get(Entity.class)).
+                        addStatement("return data != null").
+                        build();
         }
 
         boolean shouldDefineWrapper()

@@ -40,10 +40,7 @@ public abstract class RootWithName extends RootActiveEntity implements WithName 
         {
                 // nothing more to do
         }
-
-        /* **************************************************************************
-   * entity construction facilities
-         */
+        
         public final Entity make(final String name)
         {
                 final Entity data = newEntity(name);

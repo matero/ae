@@ -9,8 +9,11 @@ import ae.db.Validation;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Query;
 import com.google.common.collect.ImmutableList;
+import java.util.concurrent.Future;
 import javax.annotation.Generated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,5 +84,28 @@ abstract class __Competencia extends RootWithName {
 
   final String nombre(final Key key) {
     return nombre.read(key);
+  }
+
+  @Override
+  protected final Future<Key> saveEntity(final Entity data) {
+    return asyncDatastore().put(data);
+  }
+
+  @Override
+  protected final Future<Void> deleteEntity(final Key key) {
+    return asyncDatastore().delete(key);
+  }
+
+  @Override
+  protected final Entity getEntity(final Key key) throws EntityNotFoundException {
+    return datastore().get(key);
+  }
+
+  @Override
+  protected final boolean checkExists(final Key key) {
+    final Query.Filter f = new Query.FilterPredicate(Entity.KEY_RESERVED_PROPERTY, Query.FilterOperator.EQUAL, key);
+    final Query exists = makeQuery().setKeysOnly().setFilter(f);
+    final Entity data = datastore().prepare(exists).asSingleEntity();
+    return data != null;
   }
 }
