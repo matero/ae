@@ -215,13 +215,13 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
 
         void defineConstructor()
         {
-                MethodSpec.Builder ctor = MethodSpec.constructorBuilder().addStatement("super($S)", model.kind);
-                baseModelClass.addMethod(ctor.build());
+                baseModelClass.addMethod(MethodSpec.constructorBuilder().build());
         }
 
         void defineOverridenMethods()
         {
                 baseModelClass.addMethod(logger());
+                baseModelClass.addMethod(kind());
                 baseModelClass.addMethod(modelIdentifier());
                 baseModelClass.addMethod(modelFields());
                 baseModelClass.addMethod(modelAttributes());
@@ -237,6 +237,16 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
                         .addModifiers(Modifiers.PROTECTED_FINAL)
                         .returns(Logger.class)
                         .addStatement("return LOGGER")
+                        .build();
+        }
+
+        MethodSpec kind()
+        {
+                return methodBuilder("kind")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifiers.PUBLIC_FINAL)
+                        .returns(String.class)
+                        .addStatement("return $S", model.kind)
                         .build();
         }
 

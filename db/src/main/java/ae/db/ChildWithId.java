@@ -26,22 +26,18 @@ package ae.db;
 import argo.jdom.JsonField;
 import argo.jdom.JsonNode;
 import com.google.appengine.api.datastore.*;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
+import java.util.concurrent.ExecutionException;
 
 public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEntity<P> implements WithId {
 
         private static final long serialVersionUID = 240124574244515721L;
 
-        protected ChildWithId(final String kind)
+        protected ChildWithId()
         {
-                super(kind);
+                // nothing to do
         }
 
-        /* **************************************************************************
-   * entity construction facilities
-         */
         @Override
         public final Entity make()
         {
@@ -89,16 +85,15 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
         @Override
         public final Key makeKey(long id)
         {
-                return KeyFactory.createKey(kind, id);
+                return KeyFactory.createKey(kind(), id);
         }
 
         public final Key makeKey(final Key parentKey)
         {
                 if (!modelParent().isKindOf(parentKey)) {
-                        throw new IllegalArgumentException(
-                                "[parentKey=" + parentKey + "] is not a possible parent for " + this + '.');
+                        throw new IllegalParentKind(parentKey, getClass());
                 }
-                return new Entity(kind, parentKey).getKey();
+                return new Entity(kind(), parentKey).getKey();
         }
 
         public final Key makeKey(final Entity parent, final long id)
@@ -109,64 +104,71 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
         public final Key makeKey(final Key parentKey, final long id)
         {
                 if (!modelParent().isKindOf(parentKey)) {
-                        throw new IllegalArgumentException(
-                                "[parentKey=" + parentKey + "] is not a possible parent for " + this + '.');
+                        throw new IllegalParentKind(parentKey, getClass());
                 }
-                return KeyFactory.createKey(parentKey, kind, id);
+                return KeyFactory.createKey(parentKey, kind(), id);
         }
 
         @Override
         public Entity newEntity()
         {
-                return new Entity(kind);
+                return new Entity(kind());
         }
 
         @Override
         public Entity newEntity(final long id)
         {
-                return new Entity(kind, id);
+                return new Entity(kind(), id);
         }
 
         public final Entity newEntity(final Entity parent, final long id)
         {
+                if (parent == null) {
+                        throw new NullPointerException("parent");
+                }
                 return newEntity(parent.getKey(), id);
         }
 
         public final Entity newEntity(final Key parentKey, final long id)
         {
                 if (!modelParent().isKindOf(parentKey)) {
-                        throw new IllegalArgumentException(
-                                "[parentKey=" + parentKey + "] is not a possible parent for " + this + '.');
+                        throw new IllegalParentKind(parentKey, getClass());
                 }
-                return new Entity(kind, id, parentKey);
+                return new Entity(kind(), id, parentKey);
         }
 
         public final Entity newEntity(final Entity parent)
         {
+                if (parent == null) {
+                        throw new NullPointerException("parent");
+                }
                 return newEntity(parent.getKey());
         }
 
         public final Entity newEntity(final Key parentKey)
         {
                 if (!modelParent().isKindOf(parentKey)) {
-                        throw new IllegalArgumentException(
-                                "[parentKey=" + parentKey + "] is not a possible parent for " + this + '.');
+                        throw new IllegalParentKind(parentKey, getClass());
                 }
-                return new Entity(kind, parentKey);
+                return new Entity(kind(), parentKey);
         }
 
-        /* **************************************************************************
-   * persistence methods
-         */
         public void deleteById(final long id)
         {
-                DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
+                final Key key = makeKey(id);
+                try {
+                        deleteEntity(key).get();
+                } catch (final InterruptedException | ExecutionException e) {
+                        throw new PersistenceException("could not delete entity", e);
+                }
+
         }
 
         public Entity findById(final long id)
         {
+                final Key key = makeKey(id);
                 try {
-                        return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
+                        return getEntity(key);
                 } catch (final EntityNotFoundException e) {
                         return null;
                 }
@@ -174,32 +176,41 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
 
         public Entity getById(final long id) throws EntityNotFoundException
         {
-                return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
+                final Key key = makeKey(id);
+                return getEntity(key);
         }
 
         public boolean existsById(final long id)
         {
-                final Query exists = makeQuery()
-                        .setKeysOnly()
-                        .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(id)));
-                final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
-                return data != null;
+                final Key key = makeKey(id);
+                return checkExists(key);
         }
 
         public void deleteByParentAndId(final Entity parent, final long id)
         {
-                DatastoreServiceFactory.getDatastoreService().delete(makeKey(parent, id));
+                final Key key = makeKey(parent, id);
+                try {
+                        deleteEntity(key).get();
+                } catch (final InterruptedException | ExecutionException e) {
+                        throw new PersistenceException("could not delete entity", e);
+                }
         }
 
         public void deleteByParentKeyAndId(final Key parentKey, final long id)
         {
-                DatastoreServiceFactory.getDatastoreService().delete(makeKey(parentKey, id));
+                final Key key = makeKey(parentKey, id);
+                try {
+                        deleteEntity(key).get();
+                } catch (final InterruptedException | ExecutionException e) {
+                        throw new PersistenceException("could not delete entity", e);
+                }
         }
 
         public Entity findByParentAndId(final Entity parent, final long id)
         {
+                final Key key = makeKey(parent, id);
                 try {
-                        return DatastoreServiceFactory.getDatastoreService().get(makeKey(parent, id));
+                        return getEntity(key);
                 } catch (final EntityNotFoundException e) {
                         return null;
                 }
@@ -207,8 +218,9 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
 
         public Entity findByParentKeyAndId(final Key parentKey, final long id)
         {
+                final Key key = makeKey(parentKey, id);
                 try {
-                        return DatastoreServiceFactory.getDatastoreService().get(makeKey(parentKey, id));
+                        return getEntity(key);
                 } catch (final EntityNotFoundException e) {
                         return null;
                 }
@@ -216,37 +228,28 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
 
         public Entity getByParentAndId(final Entity parent, final long id) throws EntityNotFoundException
         {
-                return DatastoreServiceFactory.getDatastoreService().get(makeKey(parent, id));
+                final Key key = makeKey(parent, id);
+                return getEntity(key);
         }
 
         public Entity getByParentKeyAndId(final Key parentKey, final long id) throws EntityNotFoundException
         {
-                return DatastoreServiceFactory.getDatastoreService().get(makeKey(parentKey, id));
+                final Key key = makeKey(parentKey, id);
+                return getEntity(key);
         }
 
         public boolean existsByParentAndId(final Entity parent, final long id)
         {
-                final Query exists = makeQuery()
-                        .setKeysOnly()
-                        .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(
-                                                       parent, id)));
-                final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
-                return data != null;
+                final Key key = makeKey(parent, id);
+                return checkExists(key);
         }
 
         public boolean existsByParentKeyAndId(final Key parentKey, final long id)
         {
-                final Query exists = makeQuery()
-                        .setKeysOnly()
-                        .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL,
-                                                       makeKey(parentKey, id)));
-                final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
-                return data != null;
+                final Key key = makeKey(parentKey, id);
+                return checkExists(key);
         }
 
-        /* **************************************************************************
-   * JSON Serialization
-         */
         @Override
         protected final Iterable<JsonField> jsonKeyFields(final Key key)
         {

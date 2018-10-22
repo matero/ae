@@ -36,14 +36,11 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
         private static final long serialVersionUID = -1172162463919296861L;
 
-        protected ChildActiveEntity(final String kind)
+        protected ChildActiveEntity()
         {
-                super(kind);
+                // nothing to do
         }
 
-        /* **************************************************************************
-   * metadata facilities
-         */
         public abstract Parent<P> modelParent();
 
         @Override
@@ -86,6 +83,9 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
                 @Override
                 public boolean isDefinedAt(final Key key)
                 {
+                        if (key == null) {
+                                throw new NullPointerException("key");
+                        }
                         return key.getParent() != null && parent().isKindOf(key.getParent());
                 }
 
@@ -96,6 +96,9 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
                 public Key read(final Entity data)
                 {
+                        if (data == null) {
+                                throw new NullPointerException("data");
+                        }
                         return data.getParent();
                 }
 
@@ -106,27 +109,42 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
                 public Key read(final Key key)
                 {
+                        if (key == null) {
+                                throw new NullPointerException("key");
+                        }
                         return key.getParent();
                 }
 
                 @Override
                 public JsonNode makeJsonValue(final Key key)
                 {
+                        if (key == null) {
+                                throw new NullPointerException("key");
+                        }
                         return JsonNodeFactories.object(parent().jsonKeyFields(key));
                 }
 
                 @Override
                 public Key interpretJson(final JsonNode json)
                 {
+                        if (json == null) {
+                                throw new NullPointerException("json");
+                        }
                         return parent().keyFromJson(json.getNode(jsonPath()));
                 }
 
                 @Override
                 public void validate(final Entity data, final Validation validation)
                 {
+                        if (data == null) {
+                                throw new NullPointerException("data");
+                        }
+                        if (validation == null) {
+                                throw new NullPointerException("validation");
+                        }
                         final Key value = read(data);
                         if (value == null) {
-                                if (required) {
+                                if (this.required) {
                                         validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
                                 }
                         } else {
@@ -139,24 +157,21 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
                 }
         }
 
-        /* **************************************************************************
-   * query building facilities
-         */
         public final Query makeQuery(final Entity parent)
         {
                 if (parent == null) {
-                        return new Query(kind);
+                        return new Query(kind());
                 } else {
-                        return new Query(kind, parent.getKey());
+                        return new Query(kind(), parent.getKey());
                 }
         }
 
         public final Query makeQuery(final Key parentKey)
         {
                 if (parentKey == null) {
-                        return new Query(kind);
+                        return new Query(kind());
                 } else {
-                        return new Query(kind, parentKey);
+                        return new Query(kind(), parentKey);
                 }
         }
 
@@ -167,6 +182,9 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
         public final SelectChildEntities selectAll(final FetchOptions fetchOptions)
         {
+                if (fetchOptions == null) {
+                        throw new NullPointerException("fetchOptions");
+                }
                 return new SelectChildEntities(makeQuery(), fetchOptions);
         }
 
@@ -183,6 +201,9 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
         public final SelectChildEntities select(final FetchOptions fetchOptions,
                                                 final Filterable<?>... projectedProperties)
         {
+                if (fetchOptions == null) {
+                        throw new NullPointerException("fetchOptions");
+                }
                 return new SelectChildEntities(projection(projectedProperties), fetchOptions);
         }
 
@@ -194,6 +215,9 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
         public final SelectChildEntities select(final FetchOptions fetchOptions,
                                                 final Iterable<Filterable<?>> projectedProperties)
         {
+                if (fetchOptions == null) {
+                        throw new NullPointerException("fetchOptions");
+                }
                 return new SelectChildEntities(projection(projectedProperties), fetchOptions);
         }
 
@@ -208,18 +232,44 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
                 public final SelectEntities withoutAncestor()
                 {
+                        this.query.setAncestor(null);
                         return this;
                 }
 
                 public final SelectEntities withAncestor(final Entity ancestor)
                 {
+                        if (ancestor == null) {
+                                throw new NullPointerException("ancestor");
+                        }
                         return withAncestor(ancestor.getKey());
                 }
 
                 public final SelectEntities withAncestor(final Key ancestorKey)
                 {
-                        query.setAncestor(ancestorKey);
+                        if (ancestorKey == null) {
+                                throw new NullPointerException("ancestorKey");
+                        }
+                        this.query.setAncestor(ancestorKey);
                         return this;
+                }
+        }
+
+        static final class IllegalParentKind extends IllegalArgumentException {
+                private static final long serialVersionUID = 6770457534939837365L;
+
+                IllegalParentKind(final String webSafeKey, final Class<? extends EntityModel> model)
+                {
+                        super("Web safe key repr. '" + webSafeKey + "' isn't a possible parent for " + model);
+                }
+
+                IllegalParentKind(final Key key, final Class<? extends EntityModel> model)
+                {
+                        super("Key '" + key + "' isn't a possible parent for " + model);
+                }
+
+                IllegalParentKind(final Entity data, final Class<? extends EntityModel> model)
+                {
+                        super("Entity with key '" + data.getKey() + "' isn't a possible parent for " + model);
                 }
         }
 }

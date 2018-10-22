@@ -25,33 +25,22 @@ package ae.db;
 
 import argo.jdom.JsonField;
 import argo.jdom.JsonNode;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
+import java.util.concurrent.ExecutionException;
 
 public abstract class RootWithId extends RootActiveEntity implements WithId {
 
         private static final long serialVersionUID = -4301518873000440300L;
 
-        /**
-         * Constructs an ROOT active entity with ID defining its kind.
-         *
-         * @param kind Kind of the active entity.
-         */
-        protected RootWithId(final String kind)
+        protected RootWithId()
         {
-                super(kind);
+                // nothing more to do
         }
 
-        /* **************************************************************************
-   * entity construction facilities
-         */
         @Override
         public Entity make()
         {
@@ -63,7 +52,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
         @Override
         public final Entity newEntity()
         {
-                return new Entity(this.kind);
+                return new Entity(kind());
         }
 
         @Override
@@ -77,27 +66,30 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
         @Override
         public final Entity newEntity(final long id)
         {
-                return new Entity(this.kind, id);
+                return new Entity(kind(), id);
         }
 
         @Override
         public Key makeKey(final long id)
         {
-                return KeyFactory.createKey(this.kind, id);
+                return KeyFactory.createKey(kind(), id);
         }
 
-        /* **************************************************************************
-   * persistence methods
-         */
         public void deleteById(final long id)
         {
-                DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
+                final Key key = makeKey(id);
+                try {
+                        deleteEntity(key).get();
+                } catch (final InterruptedException | ExecutionException e) {
+                        throw new PersistenceException("could not delete entity", e);
+                }
         }
 
         public Entity findById(final long id)
         {
+                final Key key = makeKey(id);
                 try {
-                        return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
+                        return getEntity(key);
                 } catch (final EntityNotFoundException e) {
                         return null;
                 }
@@ -105,21 +97,16 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
 
         public Entity getById(final long id) throws EntityNotFoundException
         {
-                return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
+                final Key key = makeKey(id);
+                return getEntity(key);
         }
 
         public boolean existsById(final long id)
         {
-                final Query exists = makeQuery()
-                        .setKeysOnly()
-                        .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(id)));
-                final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
-                return data != null;
+                final Key key = makeKey(id);
+                return checkExists(key);
         }
 
-        /* **************************************************************************
-   * JSON Serialization
-         */
         @Override
         protected final Iterable<JsonField> jsonKeyFields(final Key key)
         {

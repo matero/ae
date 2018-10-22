@@ -29,21 +29,17 @@ import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
+import java.util.concurrent.ExecutionException;
 
 public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveEntity<P> implements WithName {
 
         private static final long serialVersionUID = -7165772094949873742L;
 
-        protected ChildWithName(final String kind)
-        {
-                super(kind);
-        }
-
-        /* **************************************************************************
-   * entity construction facilities
-         */
         public Entity make(final String name)
         {
+                if (name == null) {
+                        throw new NullPointerException("name");
+                }
                 final Entity data = newEntity(name);
                 init(data);
                 return data;
@@ -58,6 +54,12 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
         public Entity make(final Entity parent, final String name)
         {
+                if (parent == null) {
+                        throw new NullPointerException("parent");
+                }
+                if (name == null) {
+                        throw new NullPointerException("name");
+                }
                 final Entity data = newEntity(parent, name);
                 init(data);
                 return data;
@@ -65,6 +67,9 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
         public Entity make(final Key parentKey, final String name)
         {
+                if (name == null) {
+                        throw new NullPointerException("name");
+                }
                 final Entity data = newEntity(parentKey, name);
                 init(data);
                 return data;
@@ -72,67 +77,97 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
         public Key makeKey(final String name)
         {
-                return KeyFactory.createKey(kind, name);
+                if (name == null) {
+                        throw new NullPointerException("name");
+                }
+                return KeyFactory.createKey(kind(), name);
         }
 
         public Key makeKey(final Entity parent, final String name)
         {
-                return makeKey(parent.getKey(), name);
+                if (parent == null) {
+                        throw new NullPointerException("parent");
+                }
+                if (name == null) {
+                        throw new NullPointerException("name");
+                }
+                return KeyFactory.createKey(parent.getKey(), kind(), name);
         }
 
         public Key makeKey(final Key parentKey, final String name)
         {
-                if (!modelParent().isKindOf(parentKey)) {
-                        throw new IllegalArgumentException(
-                                "[parentKey=" + parentKey + "] is not a possible parent for " + this + '.');
+                if (name == null) {
+                        throw new NullPointerException("name");
                 }
-                return KeyFactory.createKey(parentKey, kind, name);
+                if (!modelParent().isKindOf(parentKey)) {
+                        throw new IllegalParentKind(parentKey, getClass());
+                }
+                return KeyFactory.createKey(parentKey, kind(), name);
         }
 
         public Entity newEntity(final String name)
         {
-                return new Entity(kind, name);
+                if (name == null) {
+                        throw new NullPointerException("name");
+                }
+                return new Entity(kind(), name);
         }
 
         public Entity newEntity(final Key key)
         {
-                if (isKindOf(key)) {
-                        throw new IllegalArgumentException("[key=" + key + "] is not a legal key for " + this + '.');
+                if (!isKindOf(key)) {
+                        throw new IllegalEntityKind(key, getClass());
                 }
                 return new Entity(key);
         }
 
         public Entity newEntity(final Entity parent, final String name)
         {
-                return newEntity(parent.getKey(), name);
+                if (parent == null) {
+                        throw new NullPointerException("parent");
+                }
+                if (name == null) {
+                        throw new NullPointerException("name");
+                }
+                return new Entity(kind(), name, parent.getKey());
         }
 
         public Entity newEntity(final Key parentKey, final String name)
         {
-                if (!modelParent().isKindOf(parentKey)) {
-                        throw new IllegalArgumentException(
-                                "[parentKey=" + parentKey + "] is not a possible parent for " + this + '.');
+                if (name == null) {
+                        throw new NullPointerException("name");
                 }
-                return new Entity(kind, name, parentKey);
+                if (!modelParent().isKindOf(parentKey)) {
+                        throw new IllegalParentKind(parentKey, getClass());
+                }
+                return new Entity(kind(), name, parentKey);
         }
 
-        /* **************************************************************************
-   * persistence methods
-         */
         public void deleteByParentAndName(final Entity parent, final String name)
         {
-                DatastoreServiceFactory.getDatastoreService().delete(makeKey(parent, name));
+                final Key key = makeKey(parent, name);
+                try {
+                        deleteEntity(key).get();
+                } catch (final InterruptedException | ExecutionException e) {
+                        throw new PersistenceException("could not delete entity", e);
+                }
         }
 
         public void deleteByParentKeyAndName(final Key parentKey, final String name)
         {
-                DatastoreServiceFactory.getDatastoreService().delete(makeKey(parentKey, name));
+                final Key key = makeKey(parentKey, name);
+                try {
+                        deleteEntity(key).get();
+                } catch (final InterruptedException | ExecutionException e) {
+                        throw new PersistenceException("could not delete entity", e);
+                }
         }
 
         public Entity findByParentAndName(final Entity parent, final String name)
         {
+                final Key key = makeKey(parent, name);
                 try {
-                        return DatastoreServiceFactory.getDatastoreService().get(makeKey(parent, name));
+                        return getEntity(key);
                 } catch (final EntityNotFoundException e) {
                         return null;
                 }
@@ -140,8 +175,9 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
         public Entity findByParentKeyAndName(final Key parentKey, final String name)
         {
+                final Key key = makeKey(parentKey, name);
                 try {
-                        return DatastoreServiceFactory.getDatastoreService().get(makeKey(parentKey, name));
+                        return getEntity(key);
                 } catch (final EntityNotFoundException e) {
                         return null;
                 }
@@ -149,39 +185,28 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
         public Entity getByParentAndName(final Entity parent, final String name) throws EntityNotFoundException
         {
-                return DatastoreServiceFactory.getDatastoreService().get(makeKey(parent, name));
+                final Key key = makeKey(parent, name);
+                return getEntity(key);
         }
 
         public Entity getByParentKeyAndName(final Key parentKey, final String name) throws EntityNotFoundException
         {
-                return DatastoreServiceFactory.getDatastoreService().get(makeKey(parentKey, name));
+                final Key key = makeKey(parentKey, name);
+                return getEntity(key);
         }
 
         public boolean existsByParentAndName(final Entity parent, final String name)
         {
-                final Query exists = makeQuery()
-                        .setKeysOnly()
-                        .setFilter(
-                                new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(parent,
-                                                                                                                name)));
-                final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
-                return data != null;
+                final Key key = makeKey(parent, name);
+                return checkExists(key);
         }
 
         public boolean existsByParentKeyAndName(final Key parentKey, final String name)
         {
-                final Query exists = makeQuery()
-                        .setKeysOnly()
-                        .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(
-                                                       parentKey,
-                                                       name)));
-                final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
-                return data != null;
+                final Key key = makeKey(parentKey, name);
+                return checkExists(key);
         }
 
-        /* **************************************************************************
-   * JSON Serialization
-         */
         @Override
         protected final Iterable<JsonField> jsonKeyFields(final Key key)
         {

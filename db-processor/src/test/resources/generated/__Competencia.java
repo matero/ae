@@ -31,12 +31,16 @@ abstract class __Competencia extends RootWithName {
   private final ImmutableList<Field<?>> _fields = ImmutableList.of();
 
   __Competencia() {
-    super("Competencia");
   }
 
   @Override
   protected final Logger logger() {
     return LOGGER;
+  }
+
+  @Override
+  public final String kind() {
+    return "Competencia";
   }
 
   @Override

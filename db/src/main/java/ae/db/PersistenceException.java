@@ -1,7 +1,7 @@
-/* 
+/*
  * The MIT License
  *
- * Copyright (c) 2018 ActiveEngine.
+ * Copyright 2018 juanjo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,18 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package ae;
+package ae.db;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
+public class PersistenceException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+        public PersistenceException(final String message)
+        {
+                super(message);
+        }
 
-@Retention(SOURCE)
-@Target(TYPE)
-public @interface model {
-        String kind() default "";
-        boolean cache() default true;
-        String namespace() default "";
+        public PersistenceException(final String message, final Throwable cause)
+        {
+                super(message, cause);
+        }
+
+        public PersistenceException(final String message,
+                                    final Throwable cause,
+                                    final boolean enableSuppression,
+                                    final boolean writableStackTrace)
+        {
+                super(message, cause, enableSuppression, writableStackTrace);
+        }
 }

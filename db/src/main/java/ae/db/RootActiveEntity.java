@@ -29,19 +29,11 @@ public abstract class RootActiveEntity extends ActiveEntity {
 
         private static final long serialVersionUID = -7910506513755179689L;
 
-        /**
-         * Constructs a ROOT active entity defining its kind.
-         *
-         * @param kind Kind of the active entity.
-         */
-        protected RootActiveEntity(final String kind)
+        protected RootActiveEntity()
         {
-                super(kind);
+                // nothing to do
         }
 
-        /* **************************************************************************
-   * query building facilities
-         */
         public final SelectEntities selectAll()
         {
                 return selectAll(FetchOptions.Builder.withDefaults());
@@ -49,6 +41,9 @@ public abstract class RootActiveEntity extends ActiveEntity {
 
         public final SelectEntities selectAll(final FetchOptions fetchOptions)
         {
+                if (fetchOptions == null) {
+                        throw new NullPointerException("fetchOptions");
+                }
                 return new SelectEntities(makeQuery(), fetchOptions);
         }
 
@@ -59,6 +54,9 @@ public abstract class RootActiveEntity extends ActiveEntity {
 
         public final SelectEntities selectKeys(final FetchOptions fetchOptions)
         {
+                if (fetchOptions == null) {
+                        throw new NullPointerException("fetchOptions");
+                }
                 return new SelectEntities(makeQuery().setKeysOnly(), fetchOptions);
         }
 
@@ -69,6 +67,9 @@ public abstract class RootActiveEntity extends ActiveEntity {
 
         public final SelectEntities select(final FetchOptions fetchOptions, final Filterable<?>... projectedProperties)
         {
+                if (fetchOptions == null) {
+                        throw new NullPointerException("fetchOptions");
+                }
                 return new SelectEntities(projection(projectedProperties), fetchOptions);
         }
 
@@ -80,6 +81,9 @@ public abstract class RootActiveEntity extends ActiveEntity {
         public final SelectEntities select(final FetchOptions fetchOptions,
                                            final Iterable<Filterable<?>> projectedProperties)
         {
+                if (fetchOptions == null) {
+                        throw new NullPointerException("fetchOptions");
+                }
                 return new SelectEntities(projection(projectedProperties), fetchOptions);
         }
 }

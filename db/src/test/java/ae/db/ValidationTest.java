@@ -54,8 +54,8 @@ public class ValidationTest {
         // when
         Validation v = Validation.withSuccessMessage(successMessage);
         // then
-        assertThat(v.success()).isTrue();
-        assertThat(v.failure()).isFalse();
+        assertThat(v.succeded()).isTrue();
+        assertThat(v.failed()).isFalse();
         assertThat(v.successMessage).isEqualTo("some message");
     }
 
@@ -66,8 +66,8 @@ public class ValidationTest {
         final Validation validation = Validation.withSuccessMessage("Message");
 
         // expect
-        assertThat(validation.success()).isTrue();
-        assertThat(validation.failure()).isFalse();
+        assertThat(validation.succeded()).isTrue();
+        assertThat(validation.failed()).isFalse();
     }
 
     @Test
@@ -87,8 +87,8 @@ public class ValidationTest {
         final Validation validation = Validation.failed(attr, "Message");
 
         // expect, the validation is afailure
-        assertThat(validation.success()).isFalse();
-        assertThat(validation.failure()).isTrue();
+        assertThat(validation.succeded()).isFalse();
+        assertThat(validation.failed()).isTrue();
     }
 
     @Test
@@ -110,8 +110,8 @@ public class ValidationTest {
         validation.reject(attr, "message");
 
         // then, the validation is afailure
-        assertThat(validation.success()).isFalse();
-        assertThat(validation.failure()).isTrue();
+        assertThat(validation.succeded()).isFalse();
+        assertThat(validation.failed()).isTrue();
     }
 
     @Test

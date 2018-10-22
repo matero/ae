@@ -73,12 +73,16 @@ abstract class __Competidor extends ChildWithId {
   private final ImmutableList<Field<?>> _fields = ImmutableList.of(nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info, participaciones);
 
   __Competidor() {
-    super("competidores");
   }
 
   @Override
   protected final Logger logger() {
     return LOGGER;
+  }
+
+  @Override
+  public final String kind() {
+    return "competidores";
   }
 
   @Override
