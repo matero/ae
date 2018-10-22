@@ -33,7 +33,7 @@ import ae.Record;
 import com.google.appengine.api.datastore.Key;
 import ae.model;
 
-@model(cache=false)
+@model(cache=false, namespace="otro_namespace")
 class Competencia extends __Competencia {
     static class R extends Record {
 

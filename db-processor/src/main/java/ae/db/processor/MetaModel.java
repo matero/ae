@@ -34,20 +34,14 @@ import javax.lang.model.element.Modifier;
 abstract class MetaModel extends MetaData {
 
         final String packageName;
-
         final String canonicalName;
-
         final String kind;
-
         final String baseClass;
-
         final MetaModelId id;
-
         final Fields fields;
-
         final boolean cached;
+        final String namespace;
 
-        
         MetaModel(final String packageName,
                   final String className,
                   final String canonicalName,
@@ -56,7 +50,8 @@ abstract class MetaModel extends MetaData {
                   final MetaModelId id,
                   final Fields modelFields,
                   final ImmutableSet<Modifier> modifiers,
-                  final boolean cached)
+                  final boolean cached,
+                  final String namespace)
         {
                 super(className, modifiers);
                 this.packageName = packageName;
@@ -66,6 +61,7 @@ abstract class MetaModel extends MetaData {
                 this.id = id;
                 this.fields = modelFields;
                 this.cached = cached;
+                this.namespace = namespace;
         }
 
         final boolean isPublic()
@@ -173,7 +169,8 @@ abstract class MetaModel extends MetaData {
                                   final MetaParent parent,
                                   final Fields fields,
                                   final Iterable<Modifier> modifiers,
-                                  final boolean cached)
+                                  final boolean cached,
+                                  final String namespace)
         {
                 if (parent == null) {
                         return new RootModel(packageName,
@@ -184,7 +181,8 @@ abstract class MetaModel extends MetaData {
                                              id,
                                              fields,
                                              ImmutableSet.copyOf(modifiers),
-                                             cached);
+                                             cached,
+                                             namespace);
                 } else {
                         return new ChildModel(packageName,
                                               className,
@@ -195,7 +193,8 @@ abstract class MetaModel extends MetaData {
                                               parent,
                                               fields,
                                               ImmutableSet.copyOf(modifiers),
-                                              cached);
+                                              cached,
+                                              namespace);
                 }
         }
 }
@@ -210,9 +209,10 @@ final class RootModel extends MetaModel {
                   final MetaModelId id,
                   final Fields fields,
                   final ImmutableSet<Modifier> modifiers,
-                  final boolean cached)
+                  final boolean cached,
+                  final String namespace)
         {
-                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, cached);
+                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, cached, namespace);
         }
 
         @Override
@@ -252,9 +252,10 @@ final class ChildModel extends MetaModel {
                    final MetaParent parent,
                    final Fields fields,
                    final ImmutableSet<Modifier> modifiers,
-                   final boolean cached)
+                   final boolean cached,
+                   final String namespace)
         {
-                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, cached);
+                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, cached, namespace);
                 this.parent = parent;
         }
 

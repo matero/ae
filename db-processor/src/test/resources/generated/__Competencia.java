@@ -12,6 +12,9 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.memcache.AsyncMemcacheService;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.common.collect.ImmutableList;
 import java.util.concurrent.Future;
 import javax.annotation.Generated;
@@ -107,5 +110,15 @@ abstract class __Competencia extends RootWithName {
     final Query exists = makeQuery().setKeysOnly().setFilter(f);
     final Entity data = datastore().prepare(exists).asSingleEntity();
     return data != null;
+  }
+
+  @Override
+  protected final MemcacheService memcache() {
+    return MemcacheServiceFactory.getMemcacheService("otro_namespace");
+  }
+
+  @Override
+  protected final AsyncMemcacheService asyncMemcache() {
+    return MemcacheServiceFactory.getAsyncMemcacheService("otro_namespace");
   }
 }

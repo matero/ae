@@ -45,7 +45,6 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Future;
 
 public interface EntityModel extends java.io.Serializable {
 

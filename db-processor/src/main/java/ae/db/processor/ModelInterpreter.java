@@ -87,7 +87,8 @@ class ModelInterpreter {
                                           getModelParent(attrs),
                                           getModelFields(attrs),
                                           modelClass.getModifiers(),
-                                          modelIsCached(modelClass));
+                                          modelIsCached(modelClass),
+                                          modelNamespace(modelClass));
         }
 
         TypeElement modelClass(final Element modelElement) throws IllegalArgumentException
@@ -131,6 +132,12 @@ class ModelInterpreter {
         {
                 final model model = modelAnnotation(modelClass);
                 return model.cache();
+        }
+
+        String modelNamespace(final TypeElement modelClass)
+        {
+                final model model = modelAnnotation(modelClass);
+                return model.namespace();
         }
 
         String baseClass(final TypeElement modelClass)

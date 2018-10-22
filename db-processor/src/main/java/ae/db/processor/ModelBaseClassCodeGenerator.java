@@ -51,7 +51,9 @@ import ae.db.Field;
 import ae.db.RootWithId;
 import ae.db.RootWithName;
 import ae.db.Validation;
+import com.google.appengine.api.memcache.AsyncMemcacheService;
 import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -138,6 +140,9 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
                 }
                 if (shouldAvoidCache()) {
                         defineEntityCrudWithoutCache();
+                }
+                if (shouldUseNamespace()) {
+                        defineMemcacheWithNamespace();
                 }
                 return baseModelClass.build();
         }
@@ -543,6 +548,41 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
                         addStatement("final $T data = datastore().prepare(exists).asSingleEntity()",
                                      ClassName.get(Entity.class)).
                         addStatement("return data != null").
+                        build();
+        }
+
+        boolean shouldUseNamespace()
+        {
+                return !model.namespace.isEmpty();
+        }
+
+        void defineMemcacheWithNamespace()
+        {
+                baseModelClass.addMethod(memcache());
+                baseModelClass.addMethod(asyncMemcache());
+        }
+
+        MethodSpec memcache()
+        {
+                return MethodSpec.methodBuilder("memcache").
+                        addAnnotation(Override.class).
+                        addModifiers(Modifiers.PROTECTED_FINAL).
+                        returns(ClassName.get(MemcacheService.class)).
+                        addStatement("return $T.getMemcacheService($S)",
+                                     ClassName.get(MemcacheServiceFactory.class),
+                                     model.namespace).
+                        build();
+        }
+
+        MethodSpec asyncMemcache()
+        {
+                return MethodSpec.methodBuilder("asyncMemcache").
+                        addAnnotation(Override.class).
+                        addModifiers(Modifiers.PROTECTED_FINAL).
+                        returns(ClassName.get(AsyncMemcacheService.class)).
+                        addStatement("return $T.getAsyncMemcacheService($S)",
+                                     ClassName.get(MemcacheServiceFactory.class),
+                                     model.namespace).
                         build();
         }
 
