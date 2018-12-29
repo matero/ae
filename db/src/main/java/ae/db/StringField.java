@@ -28,23 +28,23 @@ import com.google.appengine.api.datastore.Rating;
 
 public interface StringField extends ScalarField<String> {
 
-        @Override
-        default Class<String> type()
-        {
-                return String.class;
-        }
+  @Override
+  default Class<String> type()
+  {
+    return String.class;
+  }
 
-        default void set(final PropertyContainer data, final CharSequence rawValue)
-        {
-                write(data, rawValue);
-        }
+  default void set(final PropertyContainer data, final CharSequence rawValue)
+  {
+    write(data, rawValue);
+  }
 
-        default void write(final PropertyContainer data, final CharSequence rawValue)
-        {
-                if (rawValue == null) {
-                        write(data, (String) null);
-                } else {
-                        write(data, rawValue.toString());
-                }
-        }
+  default void write(final PropertyContainer data, final CharSequence rawValue)
+  {
+    if (rawValue == null) {
+      write(data, (String) null);
+    } else {
+      write(data, rawValue.toString());
+    }
+  }
 }

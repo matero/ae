@@ -34,113 +34,113 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class RootWithId extends RootActiveEntity implements WithId {
 
-        private static final long serialVersionUID = -4301518873000440300L;
+  private static final long serialVersionUID = -4301518873000440300L;
 
-        protected RootWithId()
-        {
-                // nothing more to do
-        }
+  protected RootWithId()
+  {
+    // nothing more to do
+  }
 
-        @Override
-        public Entity make()
-        {
-                final Entity data = newEntity();
-                init(data);
-                return data;
-        }
+  @Override
+  public Entity make()
+  {
+    final Entity data = newEntity();
+    init(data);
+    return data;
+  }
 
-        @Override
-        public final Entity newEntity()
-        {
-                return new Entity(kind());
-        }
+  @Override
+  public final Entity newEntity()
+  {
+    return new Entity(kind());
+  }
 
-        @Override
-        public Entity make(final long id)
-        {
-                final Entity data = newEntity(id);
-                init(data);
-                return data;
-        }
+  @Override
+  public Entity make(final long id)
+  {
+    final Entity data = newEntity(id);
+    init(data);
+    return data;
+  }
 
-        @Override
-        public final Entity newEntity(final long id)
-        {
-                return new Entity(kind(), id);
-        }
+  @Override
+  public final Entity newEntity(final long id)
+  {
+    return new Entity(kind(), id);
+  }
 
-        @Override
-        public Key makeKey(final long id)
-        {
-                return KeyFactory.createKey(kind(), id);
-        }
+  @Override
+  public Key makeKey(final long id)
+  {
+    return KeyFactory.createKey(kind(), id);
+  }
 
-        public void deleteById(final long id)
-        {
-                final Key key = makeKey(id);
-                try {
-                        deleteEntity(key).get();
-                } catch (final InterruptedException | ExecutionException e) {
-                        throw new PersistenceException("could not delete entity", e);
-                }
-        }
+  public void deleteById(final long id)
+  {
+    final Key key = makeKey(id);
+    try {
+      deleteEntity(key).get();
+    } catch (final InterruptedException | ExecutionException e) {
+      throw new PersistenceException("could not delete entity", e);
+    }
+  }
 
-        public Entity findById(final long id)
-        {
-                final Key key = makeKey(id);
-                try {
-                        return getEntity(key);
-                } catch (final EntityNotFoundException e) {
-                        return null;
-                }
-        }
+  public Entity findById(final long id)
+  {
+    final Key key = makeKey(id);
+    try {
+      return getEntity(key);
+    } catch (final EntityNotFoundException e) {
+      return null;
+    }
+  }
 
-        public Entity getById(final long id) throws EntityNotFoundException
-        {
-                final Key key = makeKey(id);
-                return getEntity(key);
-        }
+  public Entity getById(final long id) throws EntityNotFoundException
+  {
+    final Key key = makeKey(id);
+    return getEntity(key);
+  }
 
-        public boolean existsById(final long id)
-        {
-                final Key key = makeKey(id);
-                return checkExists(key);
-        }
+  public boolean existsById(final long id)
+  {
+    final Key key = makeKey(id);
+    return checkExists(key);
+  }
 
-        @Override
-        protected final Iterable<JsonField> jsonKeyFields(final Key key)
-        {
-                return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
-        }
+  @Override
+  protected final Iterable<JsonField> jsonKeyFields(final Key key)
+  {
+    return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
+  }
 
-        @Override
-        public final Key keyFromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                }
-                final Long id = modelIdentifier().interpretJson(json);
-                if (id == null) {
-                        return newEntity().getKey();
-                } else {
-                        return makeKey(id);
-                }
-        }
+  @Override
+  public final Key keyFromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    }
+    final Long id = modelIdentifier().interpretJson(json);
+    if (id == null) {
+      return newEntity().getKey();
+    } else {
+      return makeKey(id);
+    }
+  }
 
-        @Override
-        public Entity fromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                }
-                final Long id = modelIdentifier().interpretJson(json);
-                final Entity data;
-                if (id == null) {
-                        data = make();
-                } else {
-                        data = make(id);
-                }
-                updatePropertiesWithJsonContents(data, json);
-                return data;
-        }
+  @Override
+  public Entity fromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    }
+    final Long id = modelIdentifier().interpretJson(json);
+    final Entity data;
+    if (id == null) {
+      data = make();
+    } else {
+      data = make(id);
+    }
+    updatePropertiesWithJsonContents(data, json);
+    return data;
+  }
 }

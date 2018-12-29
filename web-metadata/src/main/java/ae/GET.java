@@ -30,9 +30,9 @@ import java.lang.annotation.Target;
 
 /**
  * Denotes an action method mapping to a GET request.
- * 
+ *
  * If it starts with {@code '/'} then the path is taken literally, avoiding to precalculate any part of the path.
- * 
+ *
  * Other way, the path solving goes like this:
  * <ol>
  * <li>determine the base path:</li>
@@ -46,13 +46,15 @@ import java.lang.annotation.Target;
  * <li>{@code value is not defined ==> if the action method is named "index"/"indexHtml"/"get" then "" is used, otherwise the method name is used.}</li>
  * </ul>
  * </ol>
- * 
- * <em>note</em>: an action is considered to use template when it is annotated with {@code @ae.template(true)} or it is not
- * annotated with {@code @ae.template(false)} and the controller is annotated with {@code @ae.template(true)}.
+ *
+ * <em>note</em>: an action is considered to use template when it is annotated with {@code @ae.template(true)} or it is not annotated with
+ * {@code @ae.template(false)} and the controller is annotated with {@code @ae.template(true)}.
  */
 @Retention(SOURCE)
 @Target(METHOD)
 public @interface GET {
-        /**@return  the path spec of the action. */
-        String value() default "<UNDEFINED>";
+  /**
+   * @return the path spec of the action.
+   */
+  String value() default "<UNDEFINED>";
 }

@@ -27,63 +27,63 @@ import com.google.appengine.api.datastore.FetchOptions;
 
 public abstract class RootActiveEntity extends ActiveEntity {
 
-        private static final long serialVersionUID = -7910506513755179689L;
+  private static final long serialVersionUID = -7910506513755179689L;
 
-        protected RootActiveEntity()
-        {
-                // nothing to do
-        }
+  protected RootActiveEntity()
+  {
+    // nothing to do
+  }
 
-        public final SelectEntities selectAll()
-        {
-                return selectAll(FetchOptions.Builder.withDefaults());
-        }
+  public final SelectEntities selectAll()
+  {
+    return selectAll(FetchOptions.Builder.withDefaults());
+  }
 
-        public final SelectEntities selectAll(final FetchOptions fetchOptions)
-        {
-                if (fetchOptions == null) {
-                        throw new NullPointerException("fetchOptions");
-                }
-                return new SelectEntities(makeQuery(), fetchOptions);
-        }
+  public final SelectEntities selectAll(final FetchOptions fetchOptions)
+  {
+    if (fetchOptions == null) {
+      throw new NullPointerException("fetchOptions");
+    }
+    return new SelectEntities(makeQuery(), fetchOptions);
+  }
 
-        public final SelectEntities selectKeys()
-        {
-                return selectKeys(FetchOptions.Builder.withDefaults());
-        }
+  public final SelectEntities selectKeys()
+  {
+    return selectKeys(FetchOptions.Builder.withDefaults());
+  }
 
-        public final SelectEntities selectKeys(final FetchOptions fetchOptions)
-        {
-                if (fetchOptions == null) {
-                        throw new NullPointerException("fetchOptions");
-                }
-                return new SelectEntities(makeQuery().setKeysOnly(), fetchOptions);
-        }
+  public final SelectEntities selectKeys(final FetchOptions fetchOptions)
+  {
+    if (fetchOptions == null) {
+      throw new NullPointerException("fetchOptions");
+    }
+    return new SelectEntities(makeQuery().setKeysOnly(), fetchOptions);
+  }
 
-        public final SelectEntities select(final Filterable<?>... projectedProperties)
-        {
-                return select(FetchOptions.Builder.withDefaults(), projectedProperties);
-        }
+  public final SelectEntities select(final Filterable<?>... projectedProperties)
+  {
+    return select(FetchOptions.Builder.withDefaults(), projectedProperties);
+  }
 
-        public final SelectEntities select(final FetchOptions fetchOptions, final Filterable<?>... projectedProperties)
-        {
-                if (fetchOptions == null) {
-                        throw new NullPointerException("fetchOptions");
-                }
-                return new SelectEntities(projection(projectedProperties), fetchOptions);
-        }
+  public final SelectEntities select(final FetchOptions fetchOptions, final Filterable<?>... projectedProperties)
+  {
+    if (fetchOptions == null) {
+      throw new NullPointerException("fetchOptions");
+    }
+    return new SelectEntities(projection(projectedProperties), fetchOptions);
+  }
 
-        public final SelectEntities select(final Iterable<Filterable<?>> projectedProperties)
-        {
-                return select(FetchOptions.Builder.withDefaults(), projectedProperties);
-        }
+  public final SelectEntities select(final Iterable<Filterable<?>> projectedProperties)
+  {
+    return select(FetchOptions.Builder.withDefaults(), projectedProperties);
+  }
 
-        public final SelectEntities select(final FetchOptions fetchOptions,
-                                           final Iterable<Filterable<?>> projectedProperties)
-        {
-                if (fetchOptions == null) {
-                        throw new NullPointerException("fetchOptions");
-                }
-                return new SelectEntities(projection(projectedProperties), fetchOptions);
-        }
+  public final SelectEntities select(final FetchOptions fetchOptions,
+                                     final Iterable<Filterable<?>> projectedProperties)
+  {
+    if (fetchOptions == null) {
+      throw new NullPointerException("fetchOptions");
+    }
+    return new SelectEntities(projection(projectedProperties), fetchOptions);
+  }
 }

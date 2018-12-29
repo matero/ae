@@ -29,36 +29,36 @@ import static argo.jdom.JsonNodeFactories.nullNode;
 import argo.jdom.JsonNode;
 
 enum StringJsonSerializer implements JsonSerializer<String> {
-        INSTANCE;
+  INSTANCE;
 
-        static final JsonArraySerializer<String> ARRAY = new JsonArraySerializer<>(INSTANCE);
+  static final JsonArraySerializer<String> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-        @Override
-        public JsonNode toJson(final String value)
-        {
-                if (value == null) {
-                        return nullNode();
-                }
-                return string(value);
-        }
+  @Override
+  public JsonNode toJson(final String value)
+  {
+    if (value == null) {
+      return nullNode();
+    }
+    return string(value);
+  }
 
-        @Override
-        public String fromJson(final JsonNode json, final String jsonPath)
-        {
-                if (json.isNullNode(jsonPath)) {
-                        return null;
-                } else {
-                        return json.getStringValue(jsonPath);
-                }
-        }
+  @Override
+  public String fromJson(final JsonNode json, final String jsonPath)
+  {
+    if (json.isNullNode(jsonPath)) {
+      return null;
+    } else {
+      return json.getStringValue(jsonPath);
+    }
+  }
 
-        @Override
-        public String fromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                } else {
-                        return json.getStringValue();
-                }
-        }
+  @Override
+  public String fromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    } else {
+      return json.getStringValue();
+    }
+  }
 }

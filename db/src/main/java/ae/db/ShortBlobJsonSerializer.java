@@ -30,36 +30,36 @@ import com.google.appengine.api.datastore.ShortBlob;
 import java.util.Base64;
 
 enum ShortBlobJsonSerializer implements JsonSerializer<ShortBlob> {
-        INSTANCE;
+  INSTANCE;
 
-        static final JsonArraySerializer<ShortBlob> ARRAY = new JsonArraySerializer<>(INSTANCE);
+  static final JsonArraySerializer<ShortBlob> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-        @Override
-        public JsonNode toJson(final ShortBlob value)
-        {
-                if (value == null) {
-                        return JsonNodeFactories.nullNode();
-                }
-                return JsonNodeFactories.string(Base64.getEncoder().encodeToString(value.getBytes()));
-        }
+  @Override
+  public JsonNode toJson(final ShortBlob value)
+  {
+    if (value == null) {
+      return JsonNodeFactories.nullNode();
+    }
+    return JsonNodeFactories.string(Base64.getEncoder().encodeToString(value.getBytes()));
+  }
 
-        @Override
-        public ShortBlob fromJson(final JsonNode json, final String jsonPath)
-        {
-                if (json.isNullNode(jsonPath)) {
-                        return null;
-                } else {
-                        return new ShortBlob(Base64.getDecoder().decode(json.getStringValue(jsonPath)));
-                }
-        }
+  @Override
+  public ShortBlob fromJson(final JsonNode json, final String jsonPath)
+  {
+    if (json.isNullNode(jsonPath)) {
+      return null;
+    } else {
+      return new ShortBlob(Base64.getDecoder().decode(json.getStringValue(jsonPath)));
+    }
+  }
 
-        @Override
-        public ShortBlob fromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                } else {
-                        return new ShortBlob(Base64.getDecoder().decode(json.getStringValue()));
-                }
-        }
+  @Override
+  public ShortBlob fromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    } else {
+      return new ShortBlob(Base64.getDecoder().decode(json.getStringValue()));
+    }
+  }
 }

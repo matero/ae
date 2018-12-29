@@ -23,7 +23,8 @@ abstract class RolesRouter extends RouterServlet {
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws
-      ServletException, IOException {
+      ServletException, IOException
+  {
     final Entity userData = getLoggedUser();
     if (GET_processor_test_FooController_index.matches(request)) {
       useNamespace("M");
@@ -35,7 +36,8 @@ abstract class RolesRouter extends RouterServlet {
 
   @Override
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws
-      ServletException, IOException {
+      ServletException, IOException
+  {
     final Entity userData = getLoggedUser();
     if (POST_processor_test_FooController_save.matches(request)) {
       useLoggedUserNamespace(userData);

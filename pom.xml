@@ -1,329 +1,329 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>ae</groupId>
-    <artifactId>ae</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ae</groupId>
+  <artifactId>ae</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-    <name>ActiveEngine</name>
-    <description>Thin library around google-appengine java low-level APIs.</description>
+  <name>ActiveEngine</name>
+  <description>Thin library around google-appengine java low-level APIs.</description>
 
+  <url>https://github.com/matero/ae</url>
+
+  <issueManagement>
+    <url>https://github.com/matero/ae/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
     <url>https://github.com/matero/ae</url>
+    <connection>scm:git:git://github.com/matero/ae.git</connection>
+    <developerConnection>scm:git:git@github.com:matero/ae.git</developerConnection>
+  </scm>
 
-    <issueManagement>
-        <url>https://github.com/matero/ae/issues</url>
-        <system>GitHub Issues</system>
-    </issueManagement>
+  <prerequisites>
+    <maven>3.5.0</maven>
+  </prerequisites>
 
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>http://www.opensource.org/licenses/mit-license.php</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+  <developers>
+    <developer>
+      <id>el elfo</id>
+      <name>Juanjo Gil</name>
+      <email>matero@gmail.com</email>
+      <url>https://github.com/matero/</url>
+      <roles>
+        <role>developer</role>
+        <role>mate cebator</role>
+        <role>dad of the century ;)</role>
+      </roles>
+      <timezone>-4</timezone>
+    </developer>
+  </developers>
 
-    <scm>
-        <url>https://github.com/matero/ae</url>
-        <connection>scm:git:git://github.com/matero/ae.git</connection>
-        <developerConnection>scm:git:git@github.com:matero/ae.git</developerConnection>
-    </scm>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <prerequisites>
-        <maven>3.5.0</maven>
-    </prerequisites>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
-    <developers>
-        <developer>
-            <id>el elfo</id>
-            <name>Juanjo Gil</name>
-            <email>matero@gmail.com</email>
-            <url>https://github.com/matero/</url>
-            <roles>
-                <role>developer</role>
-                <role>mate cebator</role>
-                <role>dad of the century ;)</role>
-            </roles>
-            <timezone>-4</timezone>
-        </developer>
-    </developers>
+    <archiveClasses>true</archiveClasses>
+    <appengine.target.version>1.9.65</appengine.target.version>
+    <slf4j.target.version>1.7.25</slf4j.target.version>
+    <checkVersions>false</checkVersions>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <netbeans.hint.license>mit</netbeans.hint.license>
+  </properties>
 
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+  <dependencyManagement>
+    <dependencies>
+      <!-- =========================================================== -->
+      <!-- GAE Compile/runtime dependencies                            -->
+      <!-- =========================================================== -->
+      <dependency>
+        <groupId>com.google.appengine</groupId>
+        <artifactId>appengine-api-1.0-sdk</artifactId>
+        <version>${appengine.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.1.0</version>
+      </dependency>
 
-        <archiveClasses>true</archiveClasses>
-        <appengine.target.version>1.9.65</appengine.target.version>
-        <slf4j.target.version>1.7.25</slf4j.target.version>
-        <checkVersions>false</checkVersions>
+      <!-- =========================================================== -->
+      <!-- Logging                                                     -->
+      <!-- =========================================================== -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-ext</artifactId>
+        <version>${slf4j.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-jdk14</artifactId>
+        <version>${slf4j.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>log4j-over-slf4j</artifactId>
+        <version>${slf4j.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${slf4j.target.version}</version>
+      </dependency>
 
-        <netbeans.hint.license>mit</netbeans.hint.license>
-    </properties>
+      <!-- =========================================================== -->
+      <!-- json                                                        -->
+      <!-- =========================================================== -->
+      <dependency>
+        <groupId>net.sourceforge.argo</groupId>
+        <artifactId>argo</artifactId>
+        <version>5.4</version>
+      </dependency>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- =========================================================== -->
-            <!-- GAE Compile/runtime dependencies                            -->
-            <!-- =========================================================== -->
-            <dependency>
-                <groupId>com.google.appengine</groupId>
-                <artifactId>appengine-api-1.0-sdk</artifactId>
-                <version>${appengine.target.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
-            </dependency>
+      <!-- =========================================================== -->
+      <!-- utilities                                                   -->
+      <!-- =========================================================== -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>26.0-jre</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup</groupId>
+        <artifactId>javapoet</artifactId>
+        <version>1.11.1</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.auto.service</groupId>
+        <artifactId>auto-service</artifactId>
+        <version>1.0-rc4</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>com.google.oauth-client</groupId>
+        <artifactId>google-oauth-client-appengine</artifactId>
+        <version>1.23.0</version>
+      </dependency>
 
-            <!-- =========================================================== -->
-            <!-- Logging                                                     -->
-            <!-- =========================================================== -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.target.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-ext</artifactId>
-                <version>${slf4j.target.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-jdk14</artifactId>
-                <version>${slf4j.target.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>log4j-over-slf4j</artifactId>
-                <version>${slf4j.target.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.target.version}</version>
-            </dependency>
+      <!-- =========================================================== -->
+      <!-- testing                                                     -->
+      <!-- =========================================================== -->
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>6.14.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.9.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>2.0.2-beta</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.appengine</groupId>
+        <artifactId>appengine-testing</artifactId>
+        <version>${appengine.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.appengine</groupId>
+        <artifactId>appengine-api-stubs</artifactId>
+        <version>${appengine.target.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.testing.compile</groupId>
+        <artifactId>compile-testing</artifactId>
+        <version>0.15</version>
+      </dependency> 
+    </dependencies>
+  </dependencyManagement>
 
-            <!-- =========================================================== -->
-            <!-- json                                                        -->
-            <!-- =========================================================== -->
-            <dependency>
-                <groupId>net.sourceforge.argo</groupId>
-                <artifactId>argo</artifactId>
-                <version>5.4</version>
-            </dependency>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0-M1</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.5.0</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- =========================================================== -->
-            <!-- utilities                                                   -->
-            <!-- =========================================================== -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>26.0-jre</version>
-            </dependency>
-            <dependency>
-                <groupId>com.squareup</groupId>
-                <artifactId>javapoet</artifactId>
-                <version>1.11.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.auto.service</groupId>
-                <artifactId>auto-service</artifactId>
-                <version>1.0-rc4</version>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>com.google.oauth-client</groupId>
-                <artifactId>google-oauth-client-appengine</artifactId>
-                <version>1.23.0</version>
-            </dependency>
+      <plugin>
+        <!-- This plugin will set properties values using dependency information -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>properties</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.6</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.20.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.20.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+      </plugin>
+      <plugin>
+        <!-- Deploy the web site -->
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <version>0.9</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>site</goal>
+            </goals>
+            <phase>site-deploy</phase>
+            <configuration>
+              <repositoryName>ae</repositoryName>
+              <repositoryOwner>matero</repositoryOwner>
 
-            <!-- =========================================================== -->
-            <!-- testing                                                     -->
-            <!-- =========================================================== -->
-            <dependency>
-                <groupId>org.testng</groupId>
-                <artifactId>testng</artifactId>
-                <version>6.14.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>3.9.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>2.0.2-beta</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.appengine</groupId>
-                <artifactId>appengine-testing</artifactId>
-                <version>${appengine.target.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.appengine</groupId>
-                <artifactId>appengine-api-stubs</artifactId>
-                <version>${appengine.target.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.testing.compile</groupId>
-                <artifactId>compile-testing</artifactId>
-                <version>0.15</version>
-            </dependency> 
-        </dependencies>
-    </dependencyManagement>
+              <server>github</server>
 
-    <build>
+              <message>Building site for ae for version ${project.version}.</message>
+              <path>site</path>
+              <merge>true</merge>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>checkVersions</id>
+      <activation>
+        <property>
+          <name>checkVersions</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M1</version>
-                <executions>
-                    <execution>
-                        <id>enforce-maven</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>3.5.0</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <!-- This plugin will set properties values using dependency information -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>properties</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.6</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.20.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-            </plugin>
-            <plugin>
-                <!-- Deploy the web site -->
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.9</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>site-deploy</phase>
-                        <configuration>
-                            <repositoryName>ae</repositoryName>
-                            <repositoryOwner>matero</repositoryOwner>
-
-                            <server>github</server>
-
-                            <message>Building site for ae for version ${project.version}.</message>
-                            <path>site</path>
-                            <merge>true</merge>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>versions-maven-plugin</artifactId>
+            <version>2.5</version>
+            <executions>
+              <execution>
+                <phase>compile</phase>
+                <goals>
+                  <goal>display-dependency-updates</goal>
+                  <goal>display-plugin-updates</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
+            </configuration>
+          </plugin>
         </plugins>
-    </build>
+      </build>
+    </profile>
+  </profiles>
 
-    <profiles>
-        <profile>
-            <id>checkVersions</id>
-            <activation>
-                <property>
-                    <name>checkVersions</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>versions-maven-plugin</artifactId>
-                        <version>2.5</version>
-                        <executions>
-                            <execution>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>display-dependency-updates</goal>
-                                    <goal>display-plugin-updates</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-    <modules>
-        <module>annotation-processor</module>
-        <module>db</module>
-        <module>db-metadata</module>
-        <module>db-processor</module>
-        <module>web</module>
-        <module>web-metadata</module>
-        <module>web-processor</module>
-        <module>web-test</module>
-    </modules>
+  <modules>
+    <module>annotation-processor</module>
+    <module>db</module>
+    <module>db-metadata</module>
+    <module>db-processor</module>
+    <module>web</module>
+    <module>web-metadata</module>
+    <module>web-processor</module>
+    <module>web-test</module>
+  </modules>
 </project>

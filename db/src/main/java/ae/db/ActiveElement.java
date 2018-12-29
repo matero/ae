@@ -33,49 +33,50 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import org.slf4j.Logger;
 
 public abstract class ActiveElement {
-        protected ActiveElement()
-        {
-                // nothing to do
-        }
+  protected ActiveElement()
+  {
+    // nothing to do
+  }
 
-        protected DatastoreService datastore()
-        {
-                return DatastoreServiceFactory.getDatastoreService();
-        }
+  protected DatastoreService datastore()
+  {
+    return DatastoreServiceFactory.getDatastoreService();
+  }
 
-        protected AsyncDatastoreService asyncDatastore()
-        {
-                return DatastoreServiceFactory.getAsyncDatastoreService();
-        }
+  protected AsyncDatastoreService asyncDatastore()
+  {
+    return DatastoreServiceFactory.getAsyncDatastoreService();
+  }
 
-        protected MemcacheService memcache()
-        {
-                return MemcacheServiceFactory.getMemcacheService();
-        }
+  protected MemcacheService memcache()
+  {
+    return MemcacheServiceFactory.getMemcacheService();
+  }
 
-        protected AsyncMemcacheService asyncMemcache()
-        {
-                return MemcacheServiceFactory.getAsyncMemcacheService();
-        }
+  protected AsyncMemcacheService asyncMemcache()
+  {
+    return MemcacheServiceFactory.getAsyncMemcacheService();
+  }
 
-        protected static String namespace(final String newNamespace) {
-                final String currentNamespace = getNamespace();
-                setNamespace(newNamespace);
-                return currentNamespace;
-        }
+  protected static String namespace(final String newNamespace)
+  {
+    final String currentNamespace = getNamespace();
+    setNamespace(newNamespace);
+    return currentNamespace;
+  }
 
-        protected static final String getNamespace()
-        {
-                return NamespaceManager.get();
-        }
+  protected static final String getNamespace()
+  {
+    return NamespaceManager.get();
+  }
 
-        protected static final void setNamespace(final String newNamespace)
-        {
-                NamespaceManager.set(newNamespace);
-        }
+  protected static final void setNamespace(final String newNamespace)
+  {
+    NamespaceManager.set(newNamespace);
+  }
 
-        /**
-         * @return the logger associated to the active entity, <em>never</em> {@code null}.
-         */
-        protected abstract Logger logger();
+  /**
+   * @return the logger associated to the active entity, <em>never</em> {@code null}.
+   */
+  protected abstract Logger logger();
 }

@@ -27,8 +27,8 @@ import javax.lang.model.element.Element;
 
 final class ModelIdAlreadyDefined extends ModelException {
 
-        ModelIdAlreadyDefined(final Element illegalId)
-        {
-                super(illegalId, "@Id already defined");
-        }
+  ModelIdAlreadyDefined(final Element illegalId)
+  {
+    super(illegalId, "@Id already defined");
+  }
 }

@@ -28,14 +28,14 @@ import java.util.Date;
 
 public interface DateField extends ScalarField<Date> {
 
-        @Override
-        default Class<Date> type()
-        {
-                return Date.class;
-        }
+  @Override
+  default Class<Date> type()
+  {
+    return Date.class;
+  }
 
-        default void writeTimestamp(final PropertyContainer data)
-        {
-                write(data, new Date());
-        }
+  default void writeTimestamp(final PropertyContainer data)
+  {
+    write(data, new Date());
+  }
 }

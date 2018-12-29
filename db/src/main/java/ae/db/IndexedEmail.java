@@ -30,28 +30,28 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedEmail extends ScalarField.Indexed<Email> implements EmailField {
 
-        private static final long serialVersionUID = 6163788779797349171L;
+  private static final long serialVersionUID = 6163788779797349171L;
 
-        public IndexedEmail(final String canonicalName,
-                            final String description,
-                            final String property,
-                            final String field,
-                            final boolean required,
-                            final JsonStringNode jsonName,
-                            final String jsonPath,
-                            final ImmutableList<Constraint> constraints)
-        {
-                super(canonicalName, description, property, field, required, jsonName, jsonPath,
-                      EmailJsonSerializer.INSTANCE,
-                      new PropertyProjection(property, Email.class), constraints);
-        }
+  public IndexedEmail(final String canonicalName,
+                      final String description,
+                      final String property,
+                      final String field,
+                      final boolean required,
+                      final JsonStringNode jsonName,
+                      final String jsonPath,
+                      final ImmutableList<Constraint> constraints)
+  {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+          EmailJsonSerializer.INSTANCE,
+          new PropertyProjection(property, Email.class), constraints);
+  }
 
-        @Override
-        protected void validateNotNullValue(final Email value, final Validation validation)
-        {
-                if (EmailConstraint.ForEmail.INSTANCE.isInvalid(value)) {
-                        validation.reject(this, EmailConstraint.ForEmail.INSTANCE.messageFor(this, value));
-                }
-                super.validateNotNullValue(value, validation);
-        }
+  @Override
+  protected void validateNotNullValue(final Email value, final Validation validation)
+  {
+    if (EmailConstraint.ForEmail.INSTANCE.isInvalid(value)) {
+      validation.reject(this, EmailConstraint.ForEmail.INSTANCE.messageFor(this, value));
+    }
+    super.validateNotNullValue(value, validation);
+  }
 }

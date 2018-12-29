@@ -27,16 +27,16 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 public interface BooleanField extends ScalarField<Boolean> {
 
-        interface Filter {
+  interface Filter {
 
-                FilterPredicate isTrue();
+    FilterPredicate isTrue();
 
-                FilterPredicate isFalse();
-        }
+    FilterPredicate isFalse();
+  }
 
-        @Override
-        default Class<Boolean> type()
-        {
-                return Boolean.class;
-        }
+  @Override
+  default Class<Boolean> type()
+  {
+    return Boolean.class;
+  }
 }

@@ -30,20 +30,20 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedBlobKey extends ScalarField.Indexed<BlobKey> implements BlobKeyField {
 
-        private static final long serialVersionUID = 7711730484772186606L;
+  private static final long serialVersionUID = 7711730484772186606L;
 
-        public IndexedBlobKey(final String canonicalName,
-                              final String description,
-                              final String property,
-                              final String field,
-                              final boolean required,
-                              final JsonStringNode jsonName,
-                              final String jsonPath,
-                              final JsonSerializer<BlobKey> jsonSerializer,
-                              final ImmutableList<Constraint> constraints)
-        {
-                super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer,
-                      new PropertyProjection(property, BlobKey.class),
-                      constraints);
-        }
+  public IndexedBlobKey(final String canonicalName,
+                        final String description,
+                        final String property,
+                        final String field,
+                        final boolean required,
+                        final JsonStringNode jsonName,
+                        final String jsonPath,
+                        final JsonSerializer<BlobKey> jsonSerializer,
+                        final ImmutableList<Constraint> constraints)
+  {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer,
+          new PropertyProjection(property, BlobKey.class),
+          constraints);
+  }
 }

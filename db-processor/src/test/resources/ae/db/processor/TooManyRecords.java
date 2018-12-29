@@ -29,14 +29,14 @@ import ae.model;
 @model
 class TooManyRecords extends __TooManyRecords {
 
-    static class R1 extends Record {
+  static class R1 extends Record {
 
-        @model.Id
-        String id;
-    }
+    @model.Id
+    String id;
+  }
 
-    static class R2 extends Record {
+  static class R2 extends Record {
 
-        String property;
-    }
+    String property;
+  }
 }

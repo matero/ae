@@ -36,6 +36,8 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target({METHOD, TYPE})
 public @interface admin {
-        /** @return if the elements required admin capabilitities. */
-        boolean value() default true;
+  /**
+   * @return if the elements required admin capabilitities.
+   */
+  boolean value() default true;
 }

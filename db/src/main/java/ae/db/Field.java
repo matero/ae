@@ -34,180 +34,180 @@ import com.google.common.collect.ImmutableList;
 
 public interface Field<T> extends Attr {
 
-        @Override
-        default boolean isDefinedAt(final Entity data)
-        {
-                return data.hasProperty(property());
-        }
+  @Override
+  default boolean isDefinedAt(final Entity data)
+  {
+    return data.hasProperty(property());
+  }
 
-        default boolean isDefinedAt(final PropertyContainer data)
-        {
-                return data.hasProperty(property());
-        }
+  default boolean isDefinedAt(final PropertyContainer data)
+  {
+    return data.hasProperty(property());
+  }
 
-        Class<T> type();
+  Class<T> type();
 
-        boolean indexed();
+  boolean indexed();
 
-        boolean required();
+  boolean required();
 
-        default T of(final PropertyContainer data)
-        {
-                return read(data);
-        }
+  default T of(final PropertyContainer data)
+  {
+    return read(data);
+  }
 
-        default T get(final PropertyContainer data)
-        {
-                return read(data);
-        }
+  default T get(final PropertyContainer data)
+  {
+    return read(data);
+  }
 
-        default String str(final PropertyContainer data)
-        {
-                final Object value = read(data);
-                if (value == null) {
-                        return null;
-                } else {
-                        return value.toString();
-                }
-        }
+  default String str(final PropertyContainer data)
+  {
+    final Object value = read(data);
+    if (value == null) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
 
-        T read(final PropertyContainer data);
+  T read(final PropertyContainer data);
 
-        default void set(final PropertyContainer data, final T value)
-        {
-                write(data, value);
-        }
+  default void set(final PropertyContainer data, final T value)
+  {
+    write(data, value);
+  }
 
-        void write(PropertyContainer data, T value);
+  void write(PropertyContainer data, T value);
 
-        default void write(final PropertyContainer data, final JsonNode json)
-        {
-                write(data, interpretJson(json));
-        }
+  default void write(final PropertyContainer data, final JsonNode json)
+  {
+    write(data, interpretJson(json));
+  }
 
-        JsonNode makeJsonValue(T value);
+  JsonNode makeJsonValue(T value);
 
-        default JsonField makeJsonFieldFrom(final PropertyContainer data)
-        {
-                return makeJsonField(read(data));
-        }
+  default JsonField makeJsonFieldFrom(final PropertyContainer data)
+  {
+    return makeJsonField(read(data));
+  }
 
-        default JsonField makeJsonField(final T value)
-        {
-                return JsonNodeFactories.field(jsonName(), makeJsonValue(value));
-        }
+  default JsonField makeJsonField(final T value)
+  {
+    return JsonNodeFactories.field(jsonName(), makeJsonValue(value));
+  }
 
-        @Override
-        default JsonNode makeJsonValue(final Entity data)
-        {
-                return makeJsonValue(read(data));
-        }
+  @Override
+  default JsonNode makeJsonValue(final Entity data)
+  {
+    return makeJsonValue(read(data));
+  }
 
-        default JsonNode makeJsonValue(final PropertyContainer data)
-        {
-                return makeJsonValue(read(data));
-        }
+  default JsonNode makeJsonValue(final PropertyContainer data)
+  {
+    return makeJsonValue(read(data));
+  }
 
-        @Override
-        T interpretJson(JsonNode json);
+  @Override
+  T interpretJson(JsonNode json);
 }
 
 abstract class FieldData<T> extends AttrData implements Field<T> {
 
-        private static final long serialVersionUID = -5509719667123101352L;
+  private static final long serialVersionUID = -5509719667123101352L;
 
-        private final String property;
-        private final boolean required;
-        private final JsonSerializer<T> jsonSerializer;
+  private final String property;
+  private final boolean required;
+  private final JsonSerializer<T> jsonSerializer;
 
-        protected FieldData(final String canonicalName,
-                            final String description,
-                            final String property,
-                            final String field,
-                            final boolean required,
-                            final JsonStringNode jsonName,
-                            final String jsonPath,
-                            final JsonSerializer<T> jsonSerializer,
-                            final ImmutableList<Constraint> constraints)
-        {
-                super(canonicalName, description, field, jsonName, jsonPath, constraints);
-                this.property = property;
-                this.required = required;
-                this.jsonSerializer = jsonSerializer;
-        }
+  protected FieldData(final String canonicalName,
+                      final String description,
+                      final String property,
+                      final String field,
+                      final boolean required,
+                      final JsonStringNode jsonName,
+                      final String jsonPath,
+                      final JsonSerializer<T> jsonSerializer,
+                      final ImmutableList<Constraint> constraints)
+  {
+    super(canonicalName, description, field, jsonName, jsonPath, constraints);
+    this.property = property;
+    this.required = required;
+    this.jsonSerializer = jsonSerializer;
+  }
 
-        @Override
-        public final String property()
-        {
-                return property;
-        }
+  @Override
+  public final String property()
+  {
+    return property;
+  }
 
-        @Override
-        public final boolean required()
-        {
-                return required;
-        }
+  @Override
+  public final boolean required()
+  {
+    return required;
+  }
 
-        @Override
-        public final JsonNode makeJsonValue(final T value)
-        {
-                return jsonSerializer.toJson(value);
-        }
+  @Override
+  public final JsonNode makeJsonValue(final T value)
+  {
+    return jsonSerializer.toJson(value);
+  }
 
-        @Override
-        public final T interpretJson(final JsonNode json)
-        {
-                return jsonSerializer.fromJson(json, jsonPath());
-        }
+  @Override
+  public final T interpretJson(final JsonNode json)
+  {
+    return jsonSerializer.fromJson(json, jsonPath());
+  }
 
-        @Override
-        public final void validate(final Entity data, final Validation validation)
-        {
-                final T value = read(data);
-                if (value == null) {
-                        if (required()) {
-                                validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
-                        }
-                } else {
-                        validateNotNullValue(value, validation);
-                }
-        }
+  @Override
+  public final void validate(final Entity data, final Validation validation)
+  {
+    final T value = read(data);
+    if (value == null) {
+      if (required()) {
+        validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
+      }
+    } else {
+      validateNotNullValue(value, validation);
+    }
+  }
 
-        protected void validateNotNullValue(final T value, final Validation validation)
-        {
-                for (final Constraint constraint : constraints()) {
-                        if (constraint.isInvalid(value)) {
-                                validation.reject(this, constraint.messageFor(this, value));
-                        }
-                }
-        }
+  protected void validateNotNullValue(final T value, final Validation validation)
+  {
+    for (final Constraint constraint : constraints()) {
+      if (constraint.isInvalid(value)) {
+        validation.reject(this, constraint.messageFor(this, value));
+      }
+    }
+  }
 }
 
 enum RequiredConstraint implements Constraint<Object> {
-        INSTANCE;
+  INSTANCE;
 
-        @Override
-        public boolean isInvalid(final Object value)
-        {
-                return value == null;
-        }
+  @Override
+  public boolean isInvalid(final Object value)
+  {
+    return value == null;
+  }
 
-        public String messageFor(final Attr attr)
-        {
-                return messageFor(attr, this);
-        }
+  public String messageFor(final Attr attr)
+  {
+    return messageFor(attr, this);
+  }
 
-        @Override
-        public String messageFor(final Attr attr, final Object value)
-        {
-                final StringBuilder msg = new StringBuilder().append('\'').append(attr.description()).append(
-                        "' es requerido.");
-                return msg.toString();
-        }
+  @Override
+  public String messageFor(final Attr attr, final Object value)
+  {
+    final StringBuilder msg = new StringBuilder().append('\'').append(attr.description()).append(
+        "' es requerido.");
+    return msg.toString();
+  }
 
-        @Override
-        public String getName()
-        {
-                return "required";
-        }
+  @Override
+  public String getName()
+  {
+    return "required";
+  }
 }

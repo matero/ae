@@ -24,155 +24,155 @@ import org.slf4j.LoggerFactory;
 @router
 @WebServlet("/*")
 class AppRouter extends SigexRouter {
-        // nothing to define
+  // nothing to define
 }
 
 @controller("")
 @namespace(namespace.GLOBAL)
 class ClientController extends ae.web.Controller {
-        public ClientController(final HttpServletRequest request,
-                                final HttpServletResponse response,
-                                final Entity userData)
-        {
-                super(request, response, userData);
-        }
+  public ClientController(final HttpServletRequest request,
+                          final HttpServletResponse response,
+                          final Entity userData)
+  {
+    super(request, response, userData);
+  }
 
-        @Override
-        protected Logger logger()
-        {
-                return LoggerFactory.getLogger(getClass());
-        }
+  @Override
+  protected Logger logger()
+  {
+    return LoggerFactory.getLogger(getClass());
+  }
 
-        @GET
-        @namespace("test")
-        public void index() throws IOException, ServletException
-        {
-        }
+  @GET
+  @namespace("test")
+  public void index() throws IOException, ServletException
+  {
+  }
 
-        @POST
-        @namespace(namespace.MULTITENANT)
-        public void save() throws IOException, ServletException
-        {
-        }
+  @POST
+  @namespace(namespace.MULTITENANT)
+  public void save() throws IOException, ServletException
+  {
+  }
 }
 
 @controller
 @namespace(namespace.MULTITENANT)
 final class Gym extends ae.web.Controller {
-        public Gym(final HttpServletRequest request, final HttpServletResponse response, final Entity userData)
-        {
-                super(request, response, userData);
-        }
+  public Gym(final HttpServletRequest request, final HttpServletResponse response, final Entity userData)
+  {
+    super(request, response, userData);
+  }
 
-        @Override
-        protected Logger logger()
-        {
-                return LoggerFactory.getLogger(getClass());
-        }
+  @Override
+  protected Logger logger()
+  {
+    return LoggerFactory.getLogger(getClass());
+  }
 
-        @GET
-        @namespace(namespace.GLOBAL)
-        public void index()
-        {
-        }
+  @GET
+  @namespace(namespace.GLOBAL)
+  public void index()
+  {
+  }
 
-        @GET
-        public void create()
-        {
-        }
+  @GET
+  public void create()
+  {
+  }
 
-        @POST
-        public void save()
-        {
-        }
+  @POST
+  public void save()
+  {
+  }
 
-        @GET("{id}")
-        public void show(final long id)
-        {
-        }
+  @GET("{id}")
+  public void show(final long id)
+  {
+  }
 
-        @PUT("{id}")
-        public void update(final long id)
-        {
-        }
+  @PUT("{id}")
+  public void update(final long id)
+  {
+  }
 
-        @DELETE("{id}")
-        public void delete(final long id)
-        {
-        }
+  @DELETE("{id}")
+  public void delete(final long id)
+  {
+  }
 }
 
 @controller
 class BookController extends ae.web.Controller implements OAuth2Flow {
-        public BookController(final HttpServletRequest request,
-                              final HttpServletResponse response,
-                              final Entity userData)
-        {
-                super(request, response, userData);
-        }
+  public BookController(final HttpServletRequest request,
+                        final HttpServletResponse response,
+                        final Entity userData)
+  {
+    super(request, response, userData);
+  }
 
-        @Override
-        protected Logger logger()
-        {
-                return LoggerFactory.getLogger(getClass());
-        }
+  @Override
+  protected Logger logger()
+  {
+    return LoggerFactory.getLogger(getClass());
+  }
 
-        @Override
-        public AuthorizationCodeFlow flow()
-        {
-                return null;
-        }
+  @Override
+  public AuthorizationCodeFlow flow()
+  {
+    return null;
+  }
 
-        @Override
-        public AuthorizationCodeRequestUrl authorizationUrl()
-        {
-                return null;
-        }
+  @Override
+  public AuthorizationCodeRequestUrl authorizationUrl()
+  {
+    return null;
+  }
 
-        @Override
-        public String redirectUri() throws ServletException, IOException
-        {
-                return null;
-        }
+  @Override
+  public String redirectUri() throws ServletException, IOException
+  {
+    return null;
+  }
 
-        @Override
-        public void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) throws ServletException, IOException
-        {
-        }
+  @Override
+  public void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) throws ServletException, IOException
+  {
+  }
 
-        @GET
-        public void index()
-        {
-        }
+  @GET
+  public void index()
+  {
+  }
 
-        @GET
-        public void create()
-        {
-        }
+  @GET
+  public void create()
+  {
+  }
 
-        @POST
-        public void save()
-        {
-        }
+  @POST
+  public void save()
+  {
+  }
 
-        @PUT("{id}")
-        public void update(final long id)
-        {
-        }
+  @PUT("{id}")
+  public void update(final long id)
+  {
+  }
 
-        @DELETE("{id}")
-        public void delete(final long id)
-        {
-        }
+  @DELETE("{id}")
+  public void delete(final long id)
+  {
+  }
 
-        @GET("foo/{id}/{arg}")
-        @oauth2
-        public void foo(final long id, final String arg)
-        {
-        }
+  @GET("foo/{id}/{arg}")
+  @oauth2
+  public void foo(final long id, final String arg)
+  {
+  }
 
-        @GET("bar/{id}/{cursor}/{arg}")
-        public void bar(final long id, final Cursor c, final String arg)
-        {
-        }
+  @GET("bar/{id}/{cursor}/{arg}")
+  public void bar(final long id, final Cursor c, final String arg)
+  {
+  }
 }

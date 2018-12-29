@@ -39,104 +39,104 @@ import java.util.List;
 
 public final class Validation {
 
-        public static Validation withSuccessMessage(final String successMessage)
-        {
-                if (successMessage == null) {
-                        throw new NullPointerException("successMessage");
-                }
-                return new Validation(successMessage);
-        }
+  public static Validation withSuccessMessage(final String successMessage)
+  {
+    if (successMessage == null) {
+      throw new NullPointerException("successMessage");
+    }
+    return new Validation(successMessage);
+  }
 
-        public static Validation failed(final Attr attr, final String failure)
-        {
-                if (failure == null) {
-                        throw new NullPointerException("failure");
-                }
-                if (failure == null) {
-                        throw new NullPointerException("failure");
-                }
-                final Validation validation = new Validation("");
-                validation.registerFailure(attr, failure);
-                return validation;
-        }
+  public static Validation failed(final Attr attr, final String failure)
+  {
+    if (failure == null) {
+      throw new NullPointerException("failure");
+    }
+    if (failure == null) {
+      throw new NullPointerException("failure");
+    }
+    final Validation validation = new Validation("");
+    validation.registerFailure(attr, failure);
+    return validation;
+  }
 
-        private final LinkedHashMap<Attr, List<String>> errors;
-        public final String successMessage;
+  private final LinkedHashMap<Attr, List<String>> errors;
+  public final String successMessage;
 
-        private Validation(final String successMessage)
-        {
-                this.errors = new LinkedHashMap<>();
-                this.successMessage = successMessage;
-        }
+  private Validation(final String successMessage)
+  {
+    this.errors = new LinkedHashMap<>();
+    this.successMessage = successMessage;
+  }
 
-        public boolean succeded()
-        {
-                return this.errors.isEmpty();
-        }
+  public boolean succeded()
+  {
+    return this.errors.isEmpty();
+  }
 
-        public boolean failed()
-        {
-                return !this.errors.isEmpty();
-        }
+  public boolean failed()
+  {
+    return !this.errors.isEmpty();
+  }
 
-        public List<String> get(final Attr attr)
-        {
-                if (this.errors.containsKey(attr)) {
-                        return this.errors.get(attr);
-                } else {
-                        return ImmutableList.of();
-                }
-        }
+  public List<String> get(final Attr attr)
+  {
+    if (this.errors.containsKey(attr)) {
+      return this.errors.get(attr);
+    } else {
+      return ImmutableList.of();
+    }
+  }
 
-        public JsonNode asJson()
-        {
-                if (succeded()) {
-                        return object(success());
-                } else {
-                        return object(failure());
-                }
-        }
+  public JsonNode asJson()
+  {
+    if (succeded()) {
+      return object(success());
+    } else {
+      return object(failure());
+    }
+  }
 
-        private JsonField success()
-        {
-                return field("success", string(this.successMessage));
-        }
+  private JsonField success()
+  {
+    return field("success", string(this.successMessage));
+  }
 
-        private JsonField failure()
-        {
-                final List<JsonNode> propertiesErrors = new java.util.ArrayList<>(this.errors.size());
-                for (final Attr attr : this.errors.keySet()) {
-                        final List<String> attrErrors = this.errors.get(attr);
-                        if (!attrErrors.isEmpty()) {
-                                final List<JsonStringNode> failureMsgs = new java.util.ArrayList<>(attrErrors.size());
-                                for (final String failureMessage : attrErrors) {
-                                        failureMsgs.add(string(failureMessage));
-                                }
-                                propertiesErrors.add(attributeFailures(attr, failureMsgs));
-                        }
-                }
-                return field("failure", array(propertiesErrors));
+  private JsonField failure()
+  {
+    final List<JsonNode> propertiesErrors = new java.util.ArrayList<>(this.errors.size());
+    for (final Attr attr : this.errors.keySet()) {
+      final List<String> attrErrors = this.errors.get(attr);
+      if (!attrErrors.isEmpty()) {
+        final List<JsonStringNode> failureMsgs = new java.util.ArrayList<>(attrErrors.size());
+        for (final String failureMessage : attrErrors) {
+          failureMsgs.add(string(failureMessage));
         }
+        propertiesErrors.add(attributeFailures(attr, failureMsgs));
+      }
+    }
+    return field("failure", array(propertiesErrors));
+  }
 
-        protected static JsonNode attributeFailures(final Attr attr, final List<JsonStringNode> errorMessages)
-        {
-                return object(ImmutableList.of(field(attr.jsonName(), array(errorMessages))));
-        }
+  protected static JsonNode attributeFailures(final Attr attr, final List<JsonStringNode> errorMessages)
+  {
+    return object(ImmutableList.of(field(attr.jsonName(), array(errorMessages))));
+  }
 
-        public void reject(final Attr attr, final String failure)
-        {
-                if (attr == null) {
-                        throw new NullPointerException("attr");
-                }
-                if (failure == null) {
-                        throw new NullPointerException("failure");
-                }
-                registerFailure(attr, failure);
-        }
+  public void reject(final Attr attr, final String failure)
+  {
+    if (attr == null) {
+      throw new NullPointerException("attr");
+    }
+    if (failure == null) {
+      throw new NullPointerException("failure");
+    }
+    registerFailure(attr, failure);
+  }
 
-        private void registerFailure(final Attr attr, final String failure)
-        {
-                this.errors.putIfAbsent(attr, new LinkedList<>());
-                this.errors.get(attr).add(failure);
-        }
+  private void registerFailure(final Attr attr, final String failure)
+  {
+    this.errors.putIfAbsent(attr, new LinkedList<>());
+    this.errors.get(attr).add(failure);
+  }
 }

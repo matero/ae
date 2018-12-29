@@ -30,37 +30,37 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 
 public final class IndexedBooleanList extends ListField.Indexed<Boolean> implements BooleanListField,
-        BooleanField.Filter {
+    BooleanField.Filter {
 
-        private static final long serialVersionUID = -5357239644286366473L;
-        private final FilterPredicate isTrue;
-        private final FilterPredicate isFalse;
+  private static final long serialVersionUID = -5357239644286366473L;
+  private final FilterPredicate isTrue;
+  private final FilterPredicate isFalse;
 
-        public IndexedBooleanList(final String canonicalName,
-                                  final String description,
-                                  final String property,
-                                  final String field,
-                                  final boolean required,
-                                  final JsonStringNode jsonName,
-                                  final String jsonPath,
-                                  final ImmutableList<Constraint> constraints)
-        {
-                super(canonicalName, description, property, field, required, jsonName, jsonPath,
-                      BooleanJsonSerializer.ARRAY,
-                      new PropertyProjection(property, Boolean.class), constraints);
-                this.isTrue = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.TRUE);
-                this.isFalse = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.FALSE);
-        }
+  public IndexedBooleanList(final String canonicalName,
+                            final String description,
+                            final String property,
+                            final String field,
+                            final boolean required,
+                            final JsonStringNode jsonName,
+                            final String jsonPath,
+                            final ImmutableList<Constraint> constraints)
+  {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+          BooleanJsonSerializer.ARRAY,
+          new PropertyProjection(property, Boolean.class), constraints);
+    this.isTrue = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.TRUE);
+    this.isFalse = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.FALSE);
+  }
 
-        @Override
-        public FilterPredicate isTrue()
-        {
-                return isTrue;
-        }
+  @Override
+  public FilterPredicate isTrue()
+  {
+    return isTrue;
+  }
 
-        @Override
-        public FilterPredicate isFalse()
-        {
-                return isFalse;
-        }
+  @Override
+  public FilterPredicate isFalse()
+  {
+    return isFalse;
+  }
 }

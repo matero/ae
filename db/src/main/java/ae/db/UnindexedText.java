@@ -31,53 +31,53 @@ import com.google.common.collect.ImmutableList;
 
 public final class UnindexedText extends ScalarField.Unindexed<Text> {
 
-        private static final long serialVersionUID = -3578789083233278145L;
+  private static final long serialVersionUID = -3578789083233278145L;
 
-        public UnindexedText(final String canonicalName,
-                             final String description,
-                             final String property,
-                             final String field,
-                             final boolean required,
-                             final JsonStringNode jsonName,
-                             final String jsonPath,
-                             final ImmutableList<Constraint> constraints)
-        {
-                super(canonicalName, description, property, field, required, jsonName, jsonPath,
-                      TextJsonSerializer.INSTANCE,
-                      constraints);
-        }
+  public UnindexedText(final String canonicalName,
+                       final String description,
+                       final String property,
+                       final String field,
+                       final boolean required,
+                       final JsonStringNode jsonName,
+                       final String jsonPath,
+                       final ImmutableList<Constraint> constraints)
+  {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+          TextJsonSerializer.INSTANCE,
+          constraints);
+  }
 
-        @Override
-        public Class<Text> type()
-        {
-                return Text.class;
-        }
+  @Override
+  public Class<Text> type()
+  {
+    return Text.class;
+  }
 
-        public void set(final PropertyContainer data, final CharSequence rawValue)
-        {
-                write(data, rawValue);
-        }
+  public void set(final PropertyContainer data, final CharSequence rawValue)
+  {
+    write(data, rawValue);
+  }
 
-        public void write(final PropertyContainer data, final CharSequence rawValue)
-        {
-                if (rawValue == null) {
-                        write(data, (Text) null);
-                } else {
-                        write(data, new Text(rawValue.toString()));
-                }
-        }
+  public void write(final PropertyContainer data, final CharSequence rawValue)
+  {
+    if (rawValue == null) {
+      write(data, (Text) null);
+    } else {
+      write(data, new Text(rawValue.toString()));
+    }
+  }
 
-        public void set(final PropertyContainer data, final String rawValue)
-        {
-                write(data, rawValue);
-        }
+  public void set(final PropertyContainer data, final String rawValue)
+  {
+    write(data, rawValue);
+  }
 
-        public void write(final PropertyContainer data, final String rawValue)
-        {
-                if (rawValue == null) {
-                        write(data, (Text) null);
-                } else {
-                        write(data, new Text(rawValue));
-                }
-        }
+  public void write(final PropertyContainer data, final String rawValue)
+  {
+    if (rawValue == null) {
+      write(data, (Text) null);
+    } else {
+      write(data, new Text(rawValue));
+    }
+  }
 }

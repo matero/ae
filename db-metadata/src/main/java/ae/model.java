@@ -32,7 +32,9 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target(TYPE)
 public @interface model {
-        String kind() default "";
-        boolean cache() default true;
-        String namespace() default "";
+  String kind() default "";
+
+  boolean cache() default true;
+
+  String namespace() default "";
 }

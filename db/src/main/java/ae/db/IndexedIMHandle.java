@@ -30,19 +30,19 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedIMHandle extends ScalarField.Indexed<IMHandle> implements IMHandleField {
 
-        private static final long serialVersionUID = -3010439325488542641L;
+  private static final long serialVersionUID = -3010439325488542641L;
 
-        public IndexedIMHandle(final String canonicalName,
-                               final String description,
-                               final String property,
-                               final String field,
-                               final boolean required,
-                               final JsonStringNode jsonName,
-                               final String jsonPath,
-                               final ImmutableList<Constraint> constraints)
-        {
-                super(canonicalName, description, property, field, required, jsonName, jsonPath,
-                      IMHandleJsonSerializer.INSTANCE,
-                      new PropertyProjection(property, IMHandle.class), constraints);
-        }
+  public IndexedIMHandle(final String canonicalName,
+                         final String description,
+                         final String property,
+                         final String field,
+                         final boolean required,
+                         final JsonStringNode jsonName,
+                         final String jsonPath,
+                         final ImmutableList<Constraint> constraints)
+  {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+          IMHandleJsonSerializer.INSTANCE,
+          new PropertyProjection(property, IMHandle.class), constraints);
+  }
 }

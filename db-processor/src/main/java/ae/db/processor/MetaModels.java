@@ -32,99 +32,99 @@ import com.google.common.collect.UnmodifiableIterator;
 
 final class MetaModels implements Iterable<MetaModel> {
 
-        final ImmutableMap<String, MetaModel> byKind;
-        final ImmutableListMultimap<String, MetaModel> byPackage;
-        final ImmutableMap<String, MetaModel> byCannonicalName;
+  final ImmutableMap<String, MetaModel> byKind;
+  final ImmutableListMultimap<String, MetaModel> byPackage;
+  final ImmutableMap<String, MetaModel> byCannonicalName;
 
-        MetaModels(final ImmutableMap<String, MetaModel> byKind,
-                   final ImmutableListMultimap<String, MetaModel> byPackage,
-                   final ImmutableMap<String, MetaModel> byCannonicalClassName)
-        {
-                this.byKind = byKind;
-                this.byPackage = byPackage;
-                this.byCannonicalName = byCannonicalClassName;
-        }
+  MetaModels(final ImmutableMap<String, MetaModel> byKind,
+             final ImmutableListMultimap<String, MetaModel> byPackage,
+             final ImmutableMap<String, MetaModel> byCannonicalClassName)
+  {
+    this.byKind = byKind;
+    this.byPackage = byPackage;
+    this.byCannonicalName = byCannonicalClassName;
+  }
 
-        static Builder builder()
-        {
-                return new Builder(new java.util.LinkedHashMap<>());
-        }
+  static Builder builder()
+  {
+    return new Builder(new java.util.LinkedHashMap<>());
+  }
 
-        @Override
-        public UnmodifiableIterator<MetaModel> iterator()
-        {
-                return byKind.values().iterator();
-        }
+  @Override
+  public UnmodifiableIterator<MetaModel> iterator()
+  {
+    return byKind.values().iterator();
+  }
 
-        ImmutableSet<String> getPackages()
-        {
-                return byPackage.keySet();
-        }
+  ImmutableSet<String> getPackages()
+  {
+    return byPackage.keySet();
+  }
 
-        ImmutableList<MetaModel> atPackage(final String packageName)
-        {
-                return byPackage.get(packageName);
-        }
+  ImmutableList<MetaModel> atPackage(final String packageName)
+  {
+    return byPackage.get(packageName);
+  }
 
-        ImmutableCollection<MetaModel> all()
-        {
-                return byKind.values();
-        }
+  ImmutableCollection<MetaModel> all()
+  {
+    return byKind.values();
+  }
 
-        int count()
-        {
-                return byKind.size();
-        }
+  int count()
+  {
+    return byKind.size();
+  }
 
-        static class Builder {
+  static class Builder {
 
-                private final java.util.Map<String, MetaModel> modelsByKind;
+    private final java.util.Map<String, MetaModel> modelsByKind;
 
-                Builder(final java.util.Map<String, MetaModel> modelsByKind)
-                {
-                        this.modelsByKind = modelsByKind;
-                }
+    Builder(final java.util.Map<String, MetaModel> modelsByKind)
+    {
+      this.modelsByKind = modelsByKind;
+    }
 
-                Builder add(final MetaModel model)
-                {
-                        modelsByKind.put(model.kind, model);
-                        return this;
-                }
+    Builder add(final MetaModel model)
+    {
+      modelsByKind.put(model.kind, model);
+      return this;
+    }
 
-                boolean containsModelWithKind(final String modelKind)
-                {
-                        return modelsByKind.containsKey(modelKind);
-                }
+    boolean containsModelWithKind(final String modelKind)
+    {
+      return modelsByKind.containsKey(modelKind);
+    }
 
-                MetaModels build()
-                {
-                        final ImmutableMap<String, MetaModel> byKind = ImmutableMap.copyOf(modelsByKind);
-                        final ImmutableListMultimap.Builder<String, MetaModel> byPackage = ImmutableListMultimap.
-                                builder();
-                        final ImmutableMap.Builder<String, MetaModel> byCanonicalName = ImmutableMap.builder();
+    MetaModels build()
+    {
+      final ImmutableMap<String, MetaModel> byKind = ImmutableMap.copyOf(modelsByKind);
+      final ImmutableListMultimap.Builder<String, MetaModel> byPackage = ImmutableListMultimap.
+          builder();
+      final ImmutableMap.Builder<String, MetaModel> byCanonicalName = ImmutableMap.builder();
 
-                        for (final MetaModel model : byKind.values()) {
-                                byPackage.put(model.packageName, model);
-                                byCanonicalName.put(model.canonicalName, model);
-                        }
+      for (final MetaModel model : byKind.values()) {
+        byPackage.put(model.packageName, model);
+        byCanonicalName.put(model.canonicalName, model);
+      }
 
-                        return new MetaModels(byKind, byPackage.build(), byCanonicalName.build());
-                }
+      return new MetaModels(byKind, byPackage.build(), byCanonicalName.build());
+    }
 
-                Builder addAll(final MetaModel... models)
-                {
-                        for (final MetaModel m : models) {
-                                this.modelsByKind.put(m.kind, m);
-                        }
-                        return this;
-                }
+    Builder addAll(final MetaModel... models)
+    {
+      for (final MetaModel m : models) {
+        this.modelsByKind.put(m.kind, m);
+      }
+      return this;
+    }
 
-                Builder addAll(final Iterable<MetaModel> models)
-                {
-                        for (final MetaModel m : models) {
-                                this.modelsByKind.put(m.kind, m);
-                        }
-                        return this;
-                }
-        }
+    Builder addAll(final Iterable<MetaModel> models)
+    {
+      for (final MetaModel m : models) {
+        this.modelsByKind.put(m.kind, m);
+      }
+      return this;
+    }
+  }
 }

@@ -27,59 +27,59 @@ import com.google.appengine.api.datastore.Text;
 
 public final class NotBlankConstraint {
 
-        private NotBlankConstraint()
-        {
-                throw new UnsupportedOperationException();
-        }
+  private NotBlankConstraint()
+  {
+    throw new UnsupportedOperationException();
+  }
 
-        private static final String NAME = "notBlank";
+  private static final String NAME = "notBlank";
 
-        private static String makeMessageFor(final Attr attr)
-        {
-                return attr.description() + " no debe ser vacio o solo blancos";
-        }
+  private static String makeMessageFor(final Attr attr)
+  {
+    return attr.description() + " no debe ser vacio o solo blancos";
+  }
 
-        public enum ForString implements Constraint<String> {
-                INSTANCE;
+  public enum ForString implements Constraint<String> {
+    INSTANCE;
 
-                @Override
-                public boolean isInvalid(final String value)
-                {
-                        return value.trim().isEmpty();
-                }
+    @Override
+    public boolean isInvalid(final String value)
+    {
+      return value.trim().isEmpty();
+    }
 
-                @Override
-                public String messageFor(final Attr attr, final String value)
-                {
-                        return makeMessageFor(attr);
-                }
+    @Override
+    public String messageFor(final Attr attr, final String value)
+    {
+      return makeMessageFor(attr);
+    }
 
-                @Override
-                public String getName()
-                {
-                        return NAME;
-                }
-        }
+    @Override
+    public String getName()
+    {
+      return NAME;
+    }
+  }
 
-        public enum ForText implements Constraint<Text> {
-                INSTANCE;
+  public enum ForText implements Constraint<Text> {
+    INSTANCE;
 
-                @Override
-                public boolean isInvalid(final Text value)
-                {
-                        return value.getValue().trim().isEmpty();
-                }
+    @Override
+    public boolean isInvalid(final Text value)
+    {
+      return value.getValue().trim().isEmpty();
+    }
 
-                @Override
-                public String messageFor(final Attr attr, final Text value)
-                {
-                        return makeMessageFor(attr);
-                }
+    @Override
+    public String messageFor(final Attr attr, final Text value)
+    {
+      return makeMessageFor(attr);
+    }
 
-                @Override
-                public String getName()
-                {
-                        return NAME;
-                }
-        }
+    @Override
+    public String getName()
+    {
+      return NAME;
+    }
+  }
 }

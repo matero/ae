@@ -34,100 +34,100 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class RootWithName extends RootActiveEntity implements WithName {
 
-        private static final long serialVersionUID = -5374806570138213003L;
+  private static final long serialVersionUID = -5374806570138213003L;
 
-        protected RootWithName()
-        {
-                // nothing more to do
-        }
-        
-        public final Entity make(final String name)
-        {
-                final Entity data = newEntity(name);
-                init(data);
-                return data;
-        }
+  protected RootWithName()
+  {
+    // nothing more to do
+  }
 
-        public final Entity newEntity(final String name)
-        {
-                if (name == null) {
-                        throw new NullPointerException("name");
-                }
-                return new Entity(kind(), name);
-        }
+  public final Entity make(final String name)
+  {
+    final Entity data = newEntity(name);
+    init(data);
+    return data;
+  }
 
-        public final Key makeKey(final String name)
-        {
-                if (name == null) {
-                        throw new NullPointerException("name");
-                }
-                return KeyFactory.createKey(kind(), name);
-        }
+  public final Entity newEntity(final String name)
+  {
+    if (name == null) {
+      throw new NullPointerException("name");
+    }
+    return new Entity(kind(), name);
+  }
 
-        public Entity findByName(final String name)
-        {
-                final Key key = makeKey(name);
-                try {
-                        return getEntity(key);
-                } catch (final EntityNotFoundException e) {
-                        return null;
-                }
-        }
+  public final Key makeKey(final String name)
+  {
+    if (name == null) {
+      throw new NullPointerException("name");
+    }
+    return KeyFactory.createKey(kind(), name);
+  }
 
-        public Entity getByName(final String name) throws EntityNotFoundException
-        {
-                final Key key = makeKey(name);
-                return getEntity(key);
-        }
+  public Entity findByName(final String name)
+  {
+    final Key key = makeKey(name);
+    try {
+      return getEntity(key);
+    } catch (final EntityNotFoundException e) {
+      return null;
+    }
+  }
 
-        public void deleteByName(final String name)
-        {
-                final Key key = makeKey(name);
-                try {
-                        deleteEntity(key).get();
-                } catch (final InterruptedException | ExecutionException e) {
-                        throw new PersistenceException("could not delete entity", e);
-                }
-        }
+  public Entity getByName(final String name) throws EntityNotFoundException
+  {
+    final Key key = makeKey(name);
+    return getEntity(key);
+  }
 
-        public boolean existsByName(final String name)
-        {
-                final Key key = makeKey(name);
-                return checkExists(key);
-        }
-        
-        @Override
-        protected final Iterable<JsonField> jsonKeyFields(final Key key)
-        {
-                return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
-        }
+  public void deleteByName(final String name)
+  {
+    final Key key = makeKey(name);
+    try {
+      deleteEntity(key).get();
+    } catch (final InterruptedException | ExecutionException e) {
+      throw new PersistenceException("could not delete entity", e);
+    }
+  }
 
-        @Override
-        public final Key keyFromJson(final JsonNode json)
-        {
-                if (json == null || json.isNullNode()) {
-                        return null;
-                }
-                final String name = modelIdentifier().interpretJson(json);
-                if (name == null) {
-                        return null;
-                } else {
-                        return makeKey(name);
-                }
-        }
+  public boolean existsByName(final String name)
+  {
+    final Key key = makeKey(name);
+    return checkExists(key);
+  }
 
-        @Override
-        public Entity fromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                }
-                final String name = modelIdentifier().interpretJson(json);
-                if (name == null) {
-                        throw new IllegalArgumentException("no " + modelIdentifier().field() + " defined.");
-                }
-                final Entity data = make(name);
-                updatePropertiesWithJsonContents(data, json);
-                return data;
-        }
+  @Override
+  protected final Iterable<JsonField> jsonKeyFields(final Key key)
+  {
+    return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
+  }
+
+  @Override
+  public final Key keyFromJson(final JsonNode json)
+  {
+    if (json == null || json.isNullNode()) {
+      return null;
+    }
+    final String name = modelIdentifier().interpretJson(json);
+    if (name == null) {
+      return null;
+    } else {
+      return makeKey(name);
+    }
+  }
+
+  @Override
+  public Entity fromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    }
+    final String name = modelIdentifier().interpretJson(json);
+    if (name == null) {
+      throw new IllegalArgumentException("no " + modelIdentifier().field() + " defined.");
+    }
+    final Entity data = make(name);
+    updatePropertiesWithJsonContents(data, json);
+    return data;
+  }
 }

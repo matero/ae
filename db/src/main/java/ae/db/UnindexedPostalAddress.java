@@ -29,18 +29,18 @@ import com.google.common.collect.ImmutableList;
 
 public final class UnindexedPostalAddress extends ScalarField.Unindexed<PostalAddress> implements PostalAddressField {
 
-        private static final long serialVersionUID = 4276803540835462632L;
+  private static final long serialVersionUID = 4276803540835462632L;
 
-        public UnindexedPostalAddress(final String canonicalName,
-                                      final String description,
-                                      final String property,
-                                      final String field,
-                                      final boolean required,
-                                      final JsonStringNode jsonName,
-                                      final String jsonPath,
-                                      final ImmutableList<Constraint> constraints)
-        {
-                super(canonicalName, description, property, field, required, jsonName, jsonPath,
-                      PostalAddressJsonSerializer.INSTANCE, constraints);
-        }
+  public UnindexedPostalAddress(final String canonicalName,
+                                final String description,
+                                final String property,
+                                final String field,
+                                final boolean required,
+                                final JsonStringNode jsonName,
+                                final String jsonPath,
+                                final ImmutableList<Constraint> constraints)
+  {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+          PostalAddressJsonSerializer.INSTANCE, constraints);
+  }
 }
