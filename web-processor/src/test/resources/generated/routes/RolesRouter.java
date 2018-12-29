@@ -19,10 +19,6 @@ abstract class RolesRouter extends RouterServlet {
 
   private final Route GET_processor_test_FooController_index = new Route("/app/api/v1/foo");
 
-  private final Route GET_processor_test_FooController_htmlIndex = new Route("/app/foo");
-
-  private final Route GET_processor_test_FooController_create = new Route("/app/foo/create");
-
   private final Route POST_processor_test_FooController_save = new Route("/app/api/v1/foo");
 
   @Override
@@ -32,23 +28,6 @@ abstract class RolesRouter extends RouterServlet {
     if (GET_processor_test_FooController_index.matches(request)) {
       useNamespace("M");
       handle(new FooController(request, response, userData), (controller) -> controller.index());
-      return;
-    }
-    if (GET_processor_test_FooController_htmlIndex.matches(request)) {
-      if (!loggedUserRoleIs(userData, "r1")) {
-        notAuthorized(response);
-        return;
-      }
-      handle(new FooController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.htmlIndex());
-      return;
-    }
-    if (GET_processor_test_FooController_create.matches(request)) {
-      if (!loggedUserRoleIsIn(userData, "r1", "r2")) {
-        notAuthorized(response);
-        return;
-      }
-      useNamespace("otro");
-      handle(new FooController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.create());
       return;
     }
     unhandledGet(request, response);

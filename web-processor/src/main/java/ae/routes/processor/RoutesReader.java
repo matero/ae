@@ -23,7 +23,6 @@
  */
 package ae.routes.processor;
 
-import ae.web.ControllerWithThymeleafSupport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -45,19 +44,10 @@ import javax.lang.model.element.Name;
 class RoutesReader {
         private static final String UNDEFINED_PATH = "<UNDEFINED>";
         private static final String API_CONSTRUCTOR_ARGS = "request, response, userData";
-        private static final String THYMELEAF_CONSTRUCTOR_ARGS
-                = "request, response, webContext(request, response), templateEngine(), userData";
-        private static final String CONTROLLER_MUST_SUPPORT_THYMELEAF
-                = "Controller must extend "
-                + ControllerWithThymeleafSupport.class
-                + " to be able to use @GET(template=true).";
         private static final String[] NO_ROLES = {};
 
-        private final Elements elements;
         private final Types types;
         private final Messager messager;
-
-        private final TypeMirror controllerWithThymeleafSupportClass;
 
         final String routerAppPath;
         final String routerAppApiPath;
@@ -80,16 +70,9 @@ class RoutesReader {
                 this.routerAppApiPath = makePath(this.routerAppPath, routerApiPath);
                 this.routerAdmPath = routerAdmPath;
                 this.routerAdmApiPath = makePath(this.routerAdmPath, routerApiPath);
-                this.elements = elements;
                 this.types = types;
                 this.messager = messager;
-                this.controllerWithThymeleafSupportClass = getControllerWithThymeleafSupportClass();
                 this.routes = routes;
-        }
-
-        private TypeMirror getControllerWithThymeleafSupportClass()
-        {
-                return elements.getTypeElement(ControllerWithThymeleafSupport.class.getCanonicalName()).asType();
         }
 
         /**
@@ -115,35 +98,10 @@ class RoutesReader {
                         return;
                 }
 
-                final String actionPath;
-                final String ctorArgs;
-
-                final boolean template = templateOf(action, controller);
-                if (template) {
-                        if (supportsThymeleaf(controller)) {
-                                if (isAdmin(action, controller)) {
-                                        actionPath = makePath(controllerAdminPath(controller), with(action, path));
-                                } else {
-                                        actionPath = makePath(controllerAppPath(controller), with(action, path));
-                                }
-                                ctorArgs = THYMELEAF_CONSTRUCTOR_ARGS;
-                        } else {
-                                error(CONTROLLER_MUST_SUPPORT_THYMELEAF, action);
-                                return;
-                        }
-                } else {
-                        if (isAdmin(action, controller)) {
-                                actionPath = makePath(controllerAdminApiPath(controller), with(action, path));
-                        } else {
-                                actionPath = makePath(controllerAppApiPath(controller), with(action, path));
-                        }
-                        ctorArgs = API_CONSTRUCTOR_ARGS;
-                }
-
                 makeRoute(httpVerb,
-                          actionPath,
+                          actionPathFor(controller, action, path),
                           controller,
-                          ctorArgs,
+                          API_CONSTRUCTOR_ARGS,
                           oauth2Of(action, controller),
                           rolesOf(action, controller),
                           isAdmin(action, controller),
@@ -151,16 +109,12 @@ class RoutesReader {
                           action);
         }
 
-        boolean templateOf(final ExecutableElement action, final TypeElement controller)
+        private String actionPathFor(final TypeElement controller, final ExecutableElement action, final String path)
         {
-                ae.template template = action.getAnnotation(ae.template.class);
-                if (template == null) {
-                        template = controller.getAnnotation(ae.template.class);
-                }
-                if (template == null) {
-                        return false;
+                if (isAdmin(action, controller)) {
+                        return makePath(controllerAdminApiPath(controller), with(action, path));
                 } else {
-                        return template.value();
+                        return makePath(controllerAppApiPath(controller), with(action, path));
                 }
         }
 
@@ -315,11 +269,6 @@ class RoutesReader {
                 }
         }
 
-        private boolean supportsThymeleaf(final TypeElement controller)
-        {
-                return this.types.isSubtype(controller.asType(), this.controllerWithThymeleafSupportClass);
-        }
-
         private void error(final String message, final Element e)
         {
                 this.messager.printMessage(Diagnostic.Kind.ERROR, message, e);
@@ -389,16 +338,6 @@ class RoutesReader {
         {
                 final controller metadata = controllerClass.getAnnotation(controller.class);
                 return metadata.value();
-        }
-
-        private String controllerAdminPath(final TypeElement controller)
-        {
-                return makeControllerPath(this.routerAdmPath, controller);
-        }
-
-        private String controllerAppPath(final TypeElement controller)
-        {
-                return makeControllerPath(this.routerAppPath, controller);
         }
 
         private String controllerAdminApiPath(TypeElement controller)

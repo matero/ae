@@ -31,15 +31,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-
 public abstract class RouterServlet extends HttpServlet {
 
         private static final long serialVersionUID = -8511948712493790911L;
-
-        @SuppressWarnings("initialization.fields.uninitialized")
-        private TemplateEngine templateEngine;
 
         protected RouterServlet()
         {
@@ -97,23 +91,6 @@ public abstract class RouterServlet extends HttpServlet {
                 } finally {
                         controller.teardown();
                 }
-        }
-
-        @Override
-        public void init() throws ServletException
-        {
-                super.init();
-                templateEngine = ThymeleafTemplateEngine.get(getServletContext());
-        }
-
-        protected TemplateEngine templateEngine()
-        {
-                return templateEngine;
-        }
-
-        protected WebContext webContext(final HttpServletRequest request, final HttpServletResponse response)
-        {
-                return new WebContext(request, response, getServletContext());
         }
 
         protected void notAuthorized(final HttpServletResponse response)

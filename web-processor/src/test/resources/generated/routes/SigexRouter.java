@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 abstract class SigexRouter extends RouterServlet {
   private static final long serialVersionUID = 1487851200000L;
 
-  private final Route GET_processor_test_ClientController_htmlIndex = new Route("/app");
-
   private final Route GET_processor_test_ClientController_index = new Route("/app/api/v1");
 
   private final Route GET_processor_test_BookController_index = new Route("/app/api/v1/book");
@@ -39,18 +37,6 @@ abstract class SigexRouter extends RouterServlet {
   private final Route GET_processor_test_Gym_create = new Route("/app/api/v1/gym/create");
 
   private final ParameterizedRoute GET_processor_test_Gym_show = new ParameterizedRoute("/app/api/v1/gym/{id}", Pattern.compile("/app/api/v1/gym/(?<p0>[^/]+)"));
-
-  private final Route GET_processor_test_BookController_htmlIndex = new Route("/app/book");
-
-  private final ParameterizedRoute GET_processor_test_BookController_show = new ParameterizedRoute("/app/book/{id}", Pattern.compile("/app/book/(?<p0>[^/]+)"));
-
-  private final ParameterizedRoute GET_processor_test_BookController_edit = new ParameterizedRoute("/app/book/{id}/edit", Pattern.compile("/app/book/(?<p0>[^/]+)/edit"));
-
-  private final Route GET_processor_test_ClientController_create = new Route("/app/create");
-
-  private final Route GET_processor_test_Gym_htmlIndex = new Route("/app/gym");
-
-  private final ParameterizedRoute GET_processor_test_Gym_edit = new ParameterizedRoute("/app/gym/{id}/edit", Pattern.compile("/app/gym/(?<p0>[^/]+)/edit"));
 
   private final Route POST_processor_test_ClientController_save = new Route("/app/api/v1");
 
@@ -71,10 +57,6 @@ abstract class SigexRouter extends RouterServlet {
       ServletException, IOException {
     final Entity userData = getLoggedUser();
     final String[] routeParameters = new String[]{null, null, null};
-    if (GET_processor_test_ClientController_htmlIndex.matches(request)) {
-      handle(new ClientController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.htmlIndex());
-      return;
-    }
     if (GET_processor_test_ClientController_index.matches(request)) {
       useNamespace("test");
       handle(new ClientController(request, response, userData), (controller) -> controller.index());
@@ -114,35 +96,6 @@ abstract class SigexRouter extends RouterServlet {
       final long id = Interpret.asPrimitiveLong(routeParameters[0]);
       useLoggedUserNamespace(userData);
       handle(new Gym(request, response, userData), (controller) -> controller.show(id));
-      return;
-    }
-    if (GET_processor_test_BookController_htmlIndex.matches(request)) {
-      handle(new BookController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.htmlIndex());
-      return;
-    }
-    if (GET_processor_test_BookController_show.matches(request, routeParameters)) {
-      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new BookController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.show(id));
-      return;
-    }
-    if (GET_processor_test_BookController_edit.matches(request, routeParameters)) {
-      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      handle(new BookController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.edit(id));
-      return;
-    }
-    if (GET_processor_test_ClientController_create.matches(request)) {
-      handle(new ClientController(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.create());
-      return;
-    }
-    if (GET_processor_test_Gym_htmlIndex.matches(request)) {
-      useNamespace("namespace");
-      handle(new Gym(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.htmlIndex());
-      return;
-    }
-    if (GET_processor_test_Gym_edit.matches(request, routeParameters)) {
-      final long id = Interpret.asPrimitiveLong(routeParameters[0]);
-      useLoggedUserNamespace(userData);
-      handle(new Gym(request, response, webContext(request, response), templateEngine(), userData), (controller) -> controller.edit(id));
       return;
     }
     unhandledGet(request, response);

@@ -8,8 +8,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 import ae.web.OAuth2Flow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
@@ -17,8 +15,6 @@ import ae.controller;
 import ae.namespace;
 import ae.oauth2;
 import ae.router;
-import ae.template;
-import ae.web.ControllerWithThymeleafSupport;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.Entity;
 import javax.servlet.annotation.WebServlet;
@@ -33,21 +29,12 @@ class AppRouter extends SigexRouter {
 
 @controller("")
 @namespace(namespace.GLOBAL)
-class ClientController extends ae.web.ControllerWithThymeleafSupport {
+class ClientController extends ae.web.Controller {
         public ClientController(final HttpServletRequest request,
                                 final HttpServletResponse response,
                                 final Entity userData)
         {
                 super(request, response, userData);
-        }
-
-        public ClientController(final HttpServletRequest request,
-                                final HttpServletResponse response,
-                                final WebContext templateContext,
-                                final TemplateEngine templateEngine,
-                                final Entity userData)
-        {
-                super(request, response, templateContext, templateEngine, userData);
         }
 
         @Override
@@ -57,20 +44,8 @@ class ClientController extends ae.web.ControllerWithThymeleafSupport {
         }
 
         @GET
-        @template
-        public void htmlIndex() throws IOException, ServletException
-        {
-        }
-
-        @GET
         @namespace("test")
         public void index() throws IOException, ServletException
-        {
-        }
-
-        @GET("create")
-        @template
-        public void create() throws IOException, ServletException
         {
         }
 
@@ -83,19 +58,10 @@ class ClientController extends ae.web.ControllerWithThymeleafSupport {
 
 @controller
 @namespace(namespace.MULTITENANT)
-final class Gym extends ControllerWithThymeleafSupport {
+final class Gym extends ae.web.Controller {
         public Gym(final HttpServletRequest request, final HttpServletResponse response, final Entity userData)
         {
                 super(request, response, userData);
-        }
-
-        public Gym(final HttpServletRequest request,
-                   final HttpServletResponse response,
-                   final WebContext templateContext,
-                   final TemplateEngine templateEngine,
-                   final Entity userData)
-        {
-                super(request, response, templateContext, templateEngine, userData);
         }
 
         @Override
@@ -107,13 +73,6 @@ final class Gym extends ControllerWithThymeleafSupport {
         @GET
         @namespace(namespace.GLOBAL)
         public void index()
-        {
-        }
-
-        @GET
-        @template
-        @namespace("namespace")
-        public void htmlIndex()
         {
         }
 
@@ -132,12 +91,6 @@ final class Gym extends ControllerWithThymeleafSupport {
         {
         }
 
-        @GET("{id}/edit")
-        @template
-        public void edit(final long id)
-        {
-        }
-
         @PUT("{id}")
         public void update(final long id)
         {
@@ -150,21 +103,12 @@ final class Gym extends ControllerWithThymeleafSupport {
 }
 
 @controller
-class BookController extends ControllerWithThymeleafSupport implements OAuth2Flow {
+class BookController extends ae.web.Controller implements OAuth2Flow {
         public BookController(final HttpServletRequest request,
                               final HttpServletResponse response,
                               final Entity userData)
         {
                 super(request, response, userData);
-        }
-
-        public BookController(final HttpServletRequest request,
-                              final HttpServletResponse response,
-                              final WebContext templateContext,
-                              final TemplateEngine templateEngine,
-                              final Entity userData)
-        {
-                super(request, response, templateContext, templateEngine, userData);
         }
 
         @Override
@@ -202,30 +146,12 @@ class BookController extends ControllerWithThymeleafSupport implements OAuth2Flo
         }
 
         @GET
-        @template
-        public void htmlIndex()
-        {
-        }
-
-        @GET
         public void create()
         {
         }
 
         @POST
         public void save()
-        {
-        }
-
-        @GET("{id}")
-        @template
-        public void show(final long id)
-        {
-        }
-
-        @GET("{id}/edit")
-        @template
-        public void edit(final long id)
         {
         }
 
