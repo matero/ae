@@ -8,7 +8,7 @@
   </parent>
   <artifactId>web</artifactId>
   <name>AE/web</name>
-  <description>Facilities to work with servlets providing simple routing of requests (and its handlingd) + template support (with thymeleaf) + json (de)serialization.</description>
+  <description>Facilities to work with servlets providing simple routing of requests (and its handling) + json (de)serialization.</description>
 
   <dependencies>
     <!-- ================================================================ -->

@@ -101,15 +101,7 @@ import java.lang.annotation.Target;
  *
  * @DELETE @template public void del() { // given: // @template suppport -> it is considered a web-application action // no @admin defined -> it is
  * considered a regular application action // then: // base path = "/app/sample2" // action name = "del" // action path = "/app/sample2" + "/del" =
- * "/app/sample2/del" }
- *
- * @DELETE @template("{id}") public void del(final long id) { // given: // @template suppport -> it is considered a web-application action // no
- * @admin defined -> it is considered a regular application action // then: // base path = "/app/sample2" // action name = "/{id}" // action path =
- * "/app/sample2" + "/{id}" = "/app/sample2/{id}" }
- *
- * @DELETE @template("del/{id}") public void del(final long id) { // given: // @template suppport -> it is considered a web-application action // no
- * @admin defined -> it is considered a regular application action // then: // base path = "/app/sample2" // action name = "/del/{id}" // action path
- * = "/app/sample2" + "/{id}" = "/app/sample2/{id}" }
+ * "/app/sample2/del" 
  *
  * @DELETE("{name}") @admin public void del(final String name) { // given: // no @template suppport -> it is considered an API action // no @admin
  * defined -> it is considered a regular application action // then: // base path = "/adm/api/sample2" // action name = "/del/{id}" // action path =

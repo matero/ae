@@ -81,33 +81,17 @@ public class ControllerAndRoutesCompiler extends AnnotationProcessor {
   private void readRoutes(final TypeElement routerClass, final RoundEnvironment roundEnvironment)
   {
     final ae.router router = routerClass.getAnnotation(ae.router.class);
-    final String appPath;
     final String apiPath;
-    final String admPath;
-    if (router.application() == null) {
-      appPath = "/"; // to allow reading the controllers and try to find more errors
-      error(routerClass, "@router.application can't be null");
-    } else {
-      appPath = router.application();
-    }
     if (router.api() == null) {
       apiPath = ""; // to allow reading the controllers and try to find more errors
       error(routerClass, "@router.api can't be null");
     } else {
       apiPath = router.api();
     }
-    if (router.administration() == null) {
-      admPath = ""; // to allow reading the controllers and try to find more errors
-      error(routerClass, "@router.administration can't be null");
-    } else {
-      admPath = router.administration();
-    }
 
     final RoutesDeclarations.Builder declarations = RoutesDeclarations.builder(this.today);
 
-    final RoutesReader interpreter = new RoutesReader(appPath,
-                                                      apiPath,
-                                                      admPath,
+    final RoutesReader interpreter = new RoutesReader(apiPath,
                                                       this.elements,
                                                       this.types,
                                                       this.messager,

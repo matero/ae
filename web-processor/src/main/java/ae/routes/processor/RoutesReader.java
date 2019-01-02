@@ -49,27 +49,21 @@ class RoutesReader {
   private final Types types;
   private final Messager messager;
 
-  final String routerAppPath;
   final String routerAppApiPath;
-  final String routerAdmPath;
   final String routerAdmApiPath;
 
   private final RoutesDeclarations.Builder routes;
 
   private boolean success;
 
-  RoutesReader(final String routerAppPath,
-               final String routerApiPath,
-               final String routerAdmPath,
+  RoutesReader(final String routerApiPath,
                final Elements elements,
                final Types types,
                final Messager messager,
                final RoutesDeclarations.Builder routes)
   {
-    this.routerAppPath = routerAppPath;
-    this.routerAppApiPath = makePath(this.routerAppPath, routerApiPath);
-    this.routerAdmPath = routerAdmPath;
-    this.routerAdmApiPath = makePath(this.routerAdmPath, routerApiPath);
+    this.routerAppApiPath = makePath("/app", routerApiPath);
+    this.routerAdmApiPath = makePath("/adm", routerApiPath);
     this.types = types;
     this.messager = messager;
     this.routes = routes;

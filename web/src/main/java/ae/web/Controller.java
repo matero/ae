@@ -66,6 +66,11 @@ public abstract class Controller {
   protected final HttpServletResponse response;
   protected final Entity user;
 
+  protected Controller(final HttpServletRequest request, final HttpServletResponse response)
+  {
+    this(request, response, null);
+  }
+  
   protected Controller(final HttpServletRequest request, final HttpServletResponse response, final Entity user)
   {
     this.request = request;
