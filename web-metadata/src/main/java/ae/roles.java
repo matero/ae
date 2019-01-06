@@ -32,12 +32,14 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates if a controller or an action requires an authenticated user accomplishing a rol.
- * 
+ *
  * An empty array means 'no role'.
  */
 @Retention(SOURCE)
 @Target({METHOD, TYPE})
 public @interface roles {
-        /** @return the required roles names. */
-        String[] value();
+  /**
+   * @return the required roles names.
+   */
+  String[] value();
 }

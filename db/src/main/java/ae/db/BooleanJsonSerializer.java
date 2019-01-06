@@ -27,36 +27,36 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 
 enum BooleanJsonSerializer implements JsonSerializer<Boolean> {
-        INSTANCE;
+  INSTANCE;
 
-        static final JsonArraySerializer<Boolean> ARRAY = new JsonArraySerializer<>(INSTANCE);
+  static final JsonArraySerializer<Boolean> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-        @Override
-        public JsonNode toJson(final Boolean value)
-        {
-                if (value == null) {
-                        return JsonNodeFactories.nullNode();
-                }
-                return JsonNodeFactories.booleanNode(value);
-        }
+  @Override
+  public JsonNode toJson(final Boolean value)
+  {
+    if (value == null) {
+      return JsonNodeFactories.nullNode();
+    }
+    return JsonNodeFactories.booleanNode(value);
+  }
 
-        @Override
-        public Boolean fromJson(final JsonNode json, final String jsonPath)
-        {
-                if (json.isNullNode(jsonPath)) {
-                        return null;
-                } else {
-                        return json.getBooleanValue(jsonPath);
-                }
-        }
+  @Override
+  public Boolean fromJson(final JsonNode json, final String jsonPath)
+  {
+    if (json.isNullNode(jsonPath)) {
+      return null;
+    } else {
+      return json.getBooleanValue(jsonPath);
+    }
+  }
 
-        @Override
-        public Boolean fromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                } else {
-                        return json.getBooleanValue();
-                }
-        }
+  @Override
+  public Boolean fromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    } else {
+      return json.getBooleanValue();
+    }
+  }
 }

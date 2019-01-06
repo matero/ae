@@ -8,8 +8,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 import ae.web.OAuth2Flow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
@@ -17,8 +15,6 @@ import ae.controller;
 import ae.namespace;
 import ae.oauth2;
 import ae.router;
-import ae.template;
-import ae.web.ControllerWithThymeleafSupport;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.Entity;
 import javax.servlet.annotation.WebServlet;
@@ -28,225 +24,155 @@ import org.slf4j.LoggerFactory;
 @router
 @WebServlet("/*")
 class AppRouter extends SigexRouter {
-        // nothing to define
+  // nothing to define
 }
 
 @controller("")
 @namespace(namespace.GLOBAL)
-class ClientController extends ae.web.ControllerWithThymeleafSupport {
-        public ClientController(final HttpServletRequest request,
-                                final HttpServletResponse response,
-                                final Entity userData)
-        {
-                super(request, response, userData);
-        }
+class ClientController extends ae.web.Controller {
+  public ClientController(final HttpServletRequest request,
+                          final HttpServletResponse response,
+                          final Entity userData)
+  {
+    super(request, response, userData);
+  }
 
-        public ClientController(final HttpServletRequest request,
-                                final HttpServletResponse response,
-                                final WebContext templateContext,
-                                final TemplateEngine templateEngine,
-                                final Entity userData)
-        {
-                super(request, response, templateContext, templateEngine, userData);
-        }
+  @Override
+  protected Logger logger()
+  {
+    return LoggerFactory.getLogger(getClass());
+  }
 
-        @Override
-        protected Logger logger()
-        {
-                return LoggerFactory.getLogger(getClass());
-        }
+  @GET
+  @namespace("test")
+  public void index() throws IOException, ServletException
+  {
+  }
 
-        @GET
-        @template
-        public void htmlIndex() throws IOException, ServletException
-        {
-        }
-
-        @GET
-        @namespace("test")
-        public void index() throws IOException, ServletException
-        {
-        }
-
-        @GET("create")
-        @template
-        public void create() throws IOException, ServletException
-        {
-        }
-
-        @POST
-        @namespace(namespace.MULTITENANT)
-        public void save() throws IOException, ServletException
-        {
-        }
+  @POST
+  @namespace(namespace.MULTITENANT)
+  public void save() throws IOException, ServletException
+  {
+  }
 }
 
 @controller
 @namespace(namespace.MULTITENANT)
-final class Gym extends ControllerWithThymeleafSupport {
-        public Gym(final HttpServletRequest request, final HttpServletResponse response, final Entity userData)
-        {
-                super(request, response, userData);
-        }
+final class Gym extends ae.web.Controller {
+  public Gym(final HttpServletRequest request, final HttpServletResponse response, final Entity userData)
+  {
+    super(request, response, userData);
+  }
 
-        public Gym(final HttpServletRequest request,
-                   final HttpServletResponse response,
-                   final WebContext templateContext,
-                   final TemplateEngine templateEngine,
-                   final Entity userData)
-        {
-                super(request, response, templateContext, templateEngine, userData);
-        }
+  @Override
+  protected Logger logger()
+  {
+    return LoggerFactory.getLogger(getClass());
+  }
 
-        @Override
-        protected Logger logger()
-        {
-                return LoggerFactory.getLogger(getClass());
-        }
+  @GET
+  @namespace(namespace.GLOBAL)
+  public void index()
+  {
+  }
 
-        @GET
-        @namespace(namespace.GLOBAL)
-        public void index()
-        {
-        }
+  @GET
+  public void create()
+  {
+  }
 
-        @GET
-        @template
-        @namespace("namespace")
-        public void htmlIndex()
-        {
-        }
+  @POST
+  public void save()
+  {
+  }
 
-        @GET
-        public void create()
-        {
-        }
+  @GET("{id}")
+  public void show(final long id)
+  {
+  }
 
-        @POST
-        public void save()
-        {
-        }
+  @PUT("{id}")
+  public void update(final long id)
+  {
+  }
 
-        @GET("{id}")
-        public void show(final long id)
-        {
-        }
-
-        @GET("{id}/edit")
-        @template
-        public void edit(final long id)
-        {
-        }
-
-        @PUT("{id}")
-        public void update(final long id)
-        {
-        }
-
-        @DELETE("{id}")
-        public void delete(final long id)
-        {
-        }
+  @DELETE("{id}")
+  public void delete(final long id)
+  {
+  }
 }
 
 @controller
-class BookController extends ControllerWithThymeleafSupport implements OAuth2Flow {
-        public BookController(final HttpServletRequest request,
-                              final HttpServletResponse response,
-                              final Entity userData)
-        {
-                super(request, response, userData);
-        }
+class BookController extends ae.web.Controller implements OAuth2Flow {
+  public BookController(final HttpServletRequest request,
+                        final HttpServletResponse response,
+                        final Entity userData)
+  {
+    super(request, response, userData);
+  }
 
-        public BookController(final HttpServletRequest request,
-                              final HttpServletResponse response,
-                              final WebContext templateContext,
-                              final TemplateEngine templateEngine,
-                              final Entity userData)
-        {
-                super(request, response, templateContext, templateEngine, userData);
-        }
+  @Override
+  protected Logger logger()
+  {
+    return LoggerFactory.getLogger(getClass());
+  }
 
-        @Override
-        protected Logger logger()
-        {
-                return LoggerFactory.getLogger(getClass());
-        }
+  @Override
+  public AuthorizationCodeFlow flow()
+  {
+    return null;
+  }
 
-        @Override
-        public AuthorizationCodeFlow flow()
-        {
-                return null;
-        }
+  @Override
+  public AuthorizationCodeRequestUrl authorizationUrl()
+  {
+    return null;
+  }
 
-        @Override
-        public AuthorizationCodeRequestUrl authorizationUrl()
-        {
-                return null;
-        }
+  @Override
+  public String redirectUri() throws ServletException, IOException
+  {
+    return null;
+  }
 
-        @Override
-        public String redirectUri() throws ServletException, IOException
-        {
-                return null;
-        }
+  @Override
+  public void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) throws ServletException, IOException
+  {
+  }
 
-        @Override
-        public void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) throws ServletException, IOException
-        {
-        }
+  @GET
+  public void index()
+  {
+  }
 
-        @GET
-        public void index()
-        {
-        }
+  @GET
+  public void create()
+  {
+  }
 
-        @GET
-        @template
-        public void htmlIndex()
-        {
-        }
+  @POST
+  public void save()
+  {
+  }
 
-        @GET
-        public void create()
-        {
-        }
+  @PUT("{id}")
+  public void update(final long id)
+  {
+  }
 
-        @POST
-        public void save()
-        {
-        }
+  @DELETE("{id}")
+  public void delete(final long id)
+  {
+  }
 
-        @GET("{id}")
-        @template
-        public void show(final long id)
-        {
-        }
+  @GET("foo/{id}/{arg}")
+  @oauth2
+  public void foo(final long id, final String arg)
+  {
+  }
 
-        @GET("{id}/edit")
-        @template
-        public void edit(final long id)
-        {
-        }
-
-        @PUT("{id}")
-        public void update(final long id)
-        {
-        }
-
-        @DELETE("{id}")
-        public void delete(final long id)
-        {
-        }
-
-        @GET("foo/{id}/{arg}")
-        @oauth2
-        public void foo(final long id, final String arg)
-        {
-        }
-
-        @GET("bar/{id}/{cursor}/{arg}")
-        public void bar(final long id, final Cursor c, final String arg)
-        {
-        }
+  @GET("bar/{id}/{cursor}/{arg}")
+  public void bar(final long id, final Cursor c, final String arg)
+  {
+  }
 }

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>ae</groupId>
-        <artifactId>ae</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>web-metadata</artifactId>
-    <name>AE/web-metadata</name>
-    <description>Annotations used to describe te metadata of routers, configuring AE to generate the required code.</description>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>ae</groupId>
+    <artifactId>ae</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>web-metadata</artifactId>
+  <name>AE/web-metadata</name>
+  <description>Annotations used to describe te metadata of routers, configuring AE to generate the required code.</description>
     
-    <dependencies>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ae</groupId>
-            <artifactId>web</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ae</groupId>
+      <artifactId>web</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>

@@ -37,58 +37,58 @@ import com.google.common.collect.ImmutableList;
 import java.util.Map;
 
 enum GeoPtJsonSerializer implements JsonSerializer<GeoPt> {
-        INSTANCE;
+  INSTANCE;
 
-        static final JsonArraySerializer<GeoPt> ARRAY = new JsonArraySerializer<>(INSTANCE);
+  static final JsonArraySerializer<GeoPt> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-        private final JsonStringNode latitude = string("lat");
-        private final JsonStringNode longitude = string("lon");
+  private final JsonStringNode latitude = string("lat");
+  private final JsonStringNode longitude = string("lon");
 
-        @Override
-        public JsonNode toJson(final GeoPt value)
-        {
-                if (value == null) {
-                        return nullNode();
-                }
-                return object(ImmutableList.of(field(latitude, JsonNodeFactories.number(Float.toString(value.
-                                                     getLatitude()))),
-                                               field(longitude, JsonNodeFactories.number(Float.toString(value.
-                                                     getLongitude())))));
-        }
+  @Override
+  public JsonNode toJson(final GeoPt value)
+  {
+    if (value == null) {
+      return nullNode();
+    }
+    return object(ImmutableList.of(field(latitude, JsonNodeFactories.number(Float.toString(value.
+                                         getLatitude()))),
+                                   field(longitude, JsonNodeFactories.number(Float.toString(value.
+                                         getLongitude())))));
+  }
 
-        @Override
-        public GeoPt fromJson(final JsonNode json, final String jsonPath)
-        {
-                if (json.isNullNode(jsonPath)) {
-                        return null;
-                } else {
-                        final Map<JsonStringNode, JsonNode> value = json.getObjectNode(jsonPath);
-                        return makeGeoPt(value);
-                }
-        }
+  @Override
+  public GeoPt fromJson(final JsonNode json, final String jsonPath)
+  {
+    if (json.isNullNode(jsonPath)) {
+      return null;
+    } else {
+      final Map<JsonStringNode, JsonNode> value = json.getObjectNode(jsonPath);
+      return makeGeoPt(value);
+    }
+  }
 
-        @Override
-        public GeoPt fromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                } else {
-                        final Map<JsonStringNode, JsonNode> value = json.getObjectNode();
-                        return makeGeoPt(value);
-                }
-        }
+  @Override
+  public GeoPt fromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    } else {
+      final Map<JsonStringNode, JsonNode> value = json.getObjectNode();
+      return makeGeoPt(value);
+    }
+  }
 
-        GeoPt makeGeoPt(final Map<JsonStringNode, JsonNode> value)
-        {
-                return new GeoPt(number(value, latitude, "lat"), number(value, longitude, "lon"));
-        }
+  GeoPt makeGeoPt(final Map<JsonStringNode, JsonNode> value)
+  {
+    return new GeoPt(number(value, latitude, "lat"), number(value, longitude, "lon"));
+  }
 
-        float number(final Map<JsonStringNode, JsonNode> value, final JsonStringNode node, final String field)
-        {
-                final JsonNode json = value.get(node);
-                if (json == null || json.isNullNode()) {
-                        throw new NullPointerException(field);
-                }
-                return Float.parseFloat(json.getNumberValue());
-        }
+  float number(final Map<JsonStringNode, JsonNode> value, final JsonStringNode node, final String field)
+  {
+    final JsonNode json = value.get(node);
+    if (json == null || json.isNullNode()) {
+      throw new NullPointerException(field);
+    }
+    return Float.parseFloat(json.getNumberValue());
+  }
 }

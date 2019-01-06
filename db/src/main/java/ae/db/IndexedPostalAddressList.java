@@ -30,19 +30,19 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedPostalAddressList extends ListField.Indexed<PostalAddress> implements PostalAddressListField {
 
-        private static final long serialVersionUID = -3747675491216202915L;
+  private static final long serialVersionUID = -3747675491216202915L;
 
-        public IndexedPostalAddressList(final String canonicalName,
-                                        final String description,
-                                        final String property,
-                                        final String field,
-                                        final boolean required,
-                                        final JsonStringNode jsonName,
-                                        final String jsonPath,
-                                        final ImmutableList<Constraint> constraints)
-        {
-                super(canonicalName, description, property, field, required, jsonName, jsonPath,
-                      PostalAddressJsonSerializer.ARRAY,
-                      new PropertyProjection(property, PostalAddress.class), constraints);
-        }
+  public IndexedPostalAddressList(final String canonicalName,
+                                  final String description,
+                                  final String property,
+                                  final String field,
+                                  final boolean required,
+                                  final JsonStringNode jsonName,
+                                  final String jsonPath,
+                                  final ImmutableList<Constraint> constraints)
+  {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+          PostalAddressJsonSerializer.ARRAY,
+          new PropertyProjection(property, PostalAddress.class), constraints);
+  }
 }

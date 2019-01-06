@@ -33,76 +33,75 @@ import ae.Record;
 import com.google.appengine.api.datastore.Key;
 import ae.model;
 
-@model
+@model(cache = false, namespace = "otro_namespace")
 class Competencia extends __Competencia {
+  static class R extends Record {
 
-    static class R extends Record {
+    @id
+    String nombre;
+  }
 
-        @id
-        String nombre;
-    }
-
-    Competencia()
-    {
-    }
+  Competencia()
+  {
+  }
 }
 
 @model(kind = "competidores")
 public class Competidor extends __Competidor {
 
-    static class R extends Record {
+  static class R extends Record {
 
-        @id
-        long personId;   // Google+ ID of the person
-        @parent
-        Competencia competencia; // solo para probar que se pueden definir chils models
+    @id
+    long personId;   // Google+ ID of the person
+    @parent
+    Competencia competencia; // solo para probar que se pueden definir chils models
 
-        @notBlank
-        String nombreVisible;  // nombre del competidor, preparado para ser presentado
-        @notBlank
-        @required
-        String nombres;
-        @notBlank
-        @required
-        String apellidos;
-        String prefijo;
-        String sufijo;
-        @notBlank
-        @indexed
-        String apodo;
-        @required
-        java.util.Date nacimiento;
-        @required
-        String sexo; // MASCULINO, FEMENINO, OTRO;
-        @indexed
-        @property("fono")
-        @description("Telefono")
-        PhoneNumber telefonoPersonal;
-        @property("emergencia")
-        @description("Telefono de Emergencia")
-        PhoneNumber telefonoEmergencias;
-        @required
-        @indexed
-        Email email;
-        Email emailEmergencias;
-        @notBlank
-        Text info;
-        List<Key> participaciones;
-    };
+    @notBlank
+    String nombreVisible;  // nombre del competidor, preparado para ser presentado
+    @notBlank
+    @required
+    String nombres;
+    @notBlank
+    @required
+    String apellidos;
+    String prefijo;
+    String sufijo;
+    @notBlank
+    @indexed
+    String apodo;
+    @required
+    java.util.Date nacimiento;
+    @required
+    String sexo; // MASCULINO, FEMENINO, OTRO;
+    @indexed
+    @property("fono")
+    @description("Telefono")
+    PhoneNumber telefonoPersonal;
+    @property("emergencia")
+    @description("Telefono de Emergencia")
+    PhoneNumber telefonoEmergencias;
+    @required
+    @indexed
+    Email email;
+    Email emailEmergencias;
+    @notBlank
+    Text info;
+    List<Key> participaciones;
+  };
 
-    List<Entity> findByApodo(final String valor)
-    {
-        return selectAll()
-                .where(apodo.eq(valor))
-                .sortedBy(apodo.asc())
-                .limit(10)
-                .asList();
-    }
+  List<Entity> findByApodo(final String valor)
+  {
+    return selectAll()
+        .where(apodo.eq(valor))
+        .sortedBy(apodo.asc())
+        .limit(10)
+        .asList();
+  }
 
-    List<String> findNombresByApodo(final String valor)
-    {
-        return findByApodo(valor).stream()
-                .map((data) -> nombres(data))
-                .collect(Collectors.toList());
-    }
+  List<String> findNombresByApodo(final String valor)
+  {
+    return findByApodo(valor).stream()
+        .map((data) -> nombres(data))
+        .collect(Collectors.toList());
+  }
 }

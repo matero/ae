@@ -6,13 +6,9 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 import ae.controller;
 import ae.namespace;
-import ae.roles;
 import ae.router;
-import ae.template;
 import com.google.appengine.api.datastore.Entity;
 import javax.servlet.annotation.WebServlet;
 import org.slf4j.Logger;
@@ -26,53 +22,28 @@ class RolesConstraintsController extends RolesRouter {
 
 @controller
 @namespace(namespace.MULTITENANT)
-class FooController extends ae.web.ControllerWithThymeleafSupport {
-        public FooController(final HttpServletRequest request,
-                             final HttpServletResponse response,
-                             final Entity userData)
-        {
-                super(request, response, userData);
-        }
+class FooController extends ae.web.Controller {
+  public FooController(final HttpServletRequest request,
+                       final HttpServletResponse response,
+                       final Entity userData)
+  {
+    super(request, response, userData);
+  }
 
-        public FooController(final HttpServletRequest request,
-                             final HttpServletResponse response,
-                             final WebContext templateContext,
-                             final TemplateEngine templateEngine,
-                             final Entity userData)
-        {
-                super(request, response, templateContext, templateEngine, userData);
-        }
+  @Override
+  protected Logger logger()
+  {
+    return LoggerFactory.getLogger(getClass());
+  }
 
-        @Override
-        protected Logger logger()
-        {
-                return LoggerFactory.getLogger(getClass());
-        }
+  @GET
+  @namespace("M")
+  public void index() throws IOException, ServletException
+  {
+  }
 
-        @GET
-        @template
-        @roles("r1")
-        @namespace(namespace.GLOBAL)
-        public void htmlIndex() throws IOException, ServletException
-        {
-        }
-
-        @GET
-        @namespace("M")
-        public void index() throws IOException, ServletException
-        {
-        }
-
-        @GET
-        @template
-        @roles({"r1", "r2"})
-        @namespace("otro")
-        public void create() throws IOException, ServletException
-        {
-        }
-
-        @POST
-        public void save() throws IOException, ServletException
-        {
-        }
+  @POST
+  public void save() throws IOException, ServletException
+  {
+  }
 }

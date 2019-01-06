@@ -30,52 +30,53 @@ import java.lang.annotation.Target;
 
 public abstract class Record {
 
-        @Retention(SOURCE)
-        @Target(FIELD)
-        public @interface id {
-        }
+  @Retention(SOURCE)
+  @Target(FIELD)
+  public @interface id {
+  }
 
-        @Retention(SOURCE)
-        @Target(FIELD)
-        public @interface parent {
-        }
+  @Retention(SOURCE)
+  @Target(FIELD)
+  public @interface parent {
+  }
 
-        @Retention(SOURCE)
-        @Target(FIELD)
-        public @interface indexed {
-        }
+  @Retention(SOURCE)
+  @Target(FIELD)
+  public @interface indexed {
+  }
 
-        @Retention(SOURCE)
-        @Target(FIELD)
-        public @interface property {
-                String value();
-        }
+  @Retention(SOURCE)
+  @Target(FIELD)
+  public @interface property {
+    String value();
+  }
 
-        @Retention(SOURCE)
-        @Target(FIELD)
-        public @interface description {
-                String value();
-        }
+  @Retention(SOURCE)
+  @Target(FIELD)
+  public @interface description {
+    String value();
+  }
 
-        @Retention(SOURCE)
-        @Target(FIELD)
-        public @interface required {
-        }
+  @Retention(SOURCE)
+  @Target(FIELD)
+  public @interface required {
+  }
 
-        @Retention(SOURCE)
-        @Target(FIELD)
-        public @interface notBlank {
-        }
+  @Retention(SOURCE)
+  @Target(FIELD)
+  public @interface notBlank {
+  }
 
-        @Retention(SOURCE)
-        @Target(FIELD)
-        public @interface email {
-        }
+  @Retention(SOURCE)
+  @Target(FIELD)
+  public @interface email {
+  }
 
-        @Retention(SOURCE)
-        @Target(FIELD)
-        public @interface json {
-                boolean ignore() default false;
-                String format() default "";
-        }
+  @Retention(SOURCE)
+  @Target(FIELD)
+  public @interface json {
+    boolean ignore() default false;
+
+    String format() default "";
+  }
 }

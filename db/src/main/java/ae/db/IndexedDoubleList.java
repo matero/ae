@@ -29,19 +29,19 @@ import com.google.common.collect.ImmutableList;
 
 public final class IndexedDoubleList extends ListField.Indexed<Double> implements DoubleListField {
 
-        private static final long serialVersionUID = -7393390811356407268L;
+  private static final long serialVersionUID = -7393390811356407268L;
 
-        public IndexedDoubleList(final String canonicalName,
-                                 final String description,
-                                 final String property,
-                                 final String field,
-                                 final boolean required,
-                                 final JsonStringNode jsonName,
-                                 final String jsonPath,
-                                 final ImmutableList<Constraint> constraints)
-        {
-                super(canonicalName, description, property, field, required, jsonName, jsonPath,
-                      DoubleJsonSerializer.ARRAY,
-                      new PropertyProjection(property, Double.class), constraints);
-        }
+  public IndexedDoubleList(final String canonicalName,
+                           final String description,
+                           final String property,
+                           final String field,
+                           final boolean required,
+                           final JsonStringNode jsonName,
+                           final String jsonPath,
+                           final ImmutableList<Constraint> constraints)
+  {
+    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+          DoubleJsonSerializer.ARRAY,
+          new PropertyProjection(property, Double.class), constraints);
+  }
 }

@@ -25,135 +25,122 @@ package ae.db;
 
 import argo.jdom.JsonField;
 import argo.jdom.JsonNode;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
+import java.util.concurrent.ExecutionException;
 
 public abstract class RootWithId extends RootActiveEntity implements WithId {
 
-        private static final long serialVersionUID = -4301518873000440300L;
+  private static final long serialVersionUID = -4301518873000440300L;
 
-        /**
-         * Constructs an ROOT active entity with ID defining its kind.
-         *
-         * @param kind Kind of the active entity.
-         */
-        protected RootWithId(final String kind)
-        {
-                super(kind);
-        }
+  protected RootWithId()
+  {
+    // nothing more to do
+  }
 
-        /* **************************************************************************
-   * entity construction facilities
-         */
-        @Override
-        public Entity make()
-        {
-                final Entity data = newEntity();
-                init(data);
-                return data;
-        }
+  @Override
+  public Entity make()
+  {
+    final Entity data = newEntity();
+    init(data);
+    return data;
+  }
 
-        @Override
-        public final Entity newEntity()
-        {
-                return new Entity(this.kind);
-        }
+  @Override
+  public final Entity newEntity()
+  {
+    return new Entity(kind());
+  }
 
-        @Override
-        public Entity make(final long id)
-        {
-                final Entity data = newEntity(id);
-                init(data);
-                return data;
-        }
+  @Override
+  public Entity make(final long id)
+  {
+    final Entity data = newEntity(id);
+    init(data);
+    return data;
+  }
 
-        @Override
-        public final Entity newEntity(final long id)
-        {
-                return new Entity(this.kind, id);
-        }
+  @Override
+  public final Entity newEntity(final long id)
+  {
+    return new Entity(kind(), id);
+  }
 
-        @Override
-        public Key makeKey(final long id)
-        {
-                return KeyFactory.createKey(this.kind, id);
-        }
+  @Override
+  public Key makeKey(final long id)
+  {
+    return KeyFactory.createKey(kind(), id);
+  }
 
-        /* **************************************************************************
-   * persistence methods
-         */
-        public void deleteById(final long id)
-        {
-                DatastoreServiceFactory.getDatastoreService().delete(makeKey(id));
-        }
+  public void deleteById(final long id)
+  {
+    final Key key = makeKey(id);
+    try {
+      deleteEntity(key).get();
+    } catch (final InterruptedException | ExecutionException e) {
+      throw new PersistenceException("could not delete entity", e);
+    }
+  }
 
-        public Entity findById(final long id)
-        {
-                try {
-                        return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
-                } catch (final EntityNotFoundException e) {
-                        return null;
-                }
-        }
+  public Entity findById(final long id)
+  {
+    final Key key = makeKey(id);
+    try {
+      return getEntity(key);
+    } catch (final EntityNotFoundException e) {
+      return null;
+    }
+  }
 
-        public Entity getById(final long id) throws EntityNotFoundException
-        {
-                return DatastoreServiceFactory.getDatastoreService().get(makeKey(id));
-        }
+  public Entity getById(final long id) throws EntityNotFoundException
+  {
+    final Key key = makeKey(id);
+    return getEntity(key);
+  }
 
-        public boolean existsById(final long id)
-        {
-                final Query exists = makeQuery()
-                        .setKeysOnly()
-                        .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, makeKey(id)));
-                final Entity data = DatastoreServiceFactory.getDatastoreService().prepare(exists).asSingleEntity();
-                return data != null;
-        }
+  public boolean existsById(final long id)
+  {
+    final Key key = makeKey(id);
+    return checkExists(key);
+  }
 
-        /* **************************************************************************
-   * JSON Serialization
-         */
-        @Override
-        protected final Iterable<JsonField> jsonKeyFields(final Key key)
-        {
-                return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
-        }
+  @Override
+  protected final Iterable<JsonField> jsonKeyFields(final Key key)
+  {
+    return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
+  }
 
-        @Override
-        public final Key keyFromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                }
-                final Long id = modelIdentifier().interpretJson(json);
-                if (id == null) {
-                        return newEntity().getKey();
-                } else {
-                        return makeKey(id);
-                }
-        }
+  @Override
+  public final Key keyFromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    }
+    final Long id = modelIdentifier().interpretJson(json);
+    if (id == null) {
+      return newEntity().getKey();
+    } else {
+      return makeKey(id);
+    }
+  }
 
-        @Override
-        public Entity fromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                }
-                final Long id = modelIdentifier().interpretJson(json);
-                final Entity data;
-                if (id == null) {
-                        data = make();
-                } else {
-                        data = make(id);
-                }
-                updatePropertiesWithJsonContents(data, json);
-                return data;
-        }
+  @Override
+  public Entity fromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    }
+    final Long id = modelIdentifier().interpretJson(json);
+    final Entity data;
+    if (id == null) {
+      data = make();
+    } else {
+      data = make(id);
+    }
+    updatePropertiesWithJsonContents(data, json);
+    return data;
+  }
 }

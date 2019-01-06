@@ -29,9 +29,9 @@ import ae.model;
 @model
 class NoSuperClass {
 
-    static final class R extends Record {
+  static final class R extends Record {
 
-        @id
-        String id;
-    }
+    @id
+    String id;
+  }
 }

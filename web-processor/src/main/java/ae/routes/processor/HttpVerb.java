@@ -27,63 +27,63 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
 enum HttpVerb {
-        GET("doGet", "unhandledGet") {
-                @Override
-                String getPath(final ExecutableElement method)
-                {
-                        final ae.GET metadata = method.getAnnotation(ae.GET.class);
-                        if (metadata == null) {
-                                return null;
-                        } else {
-                                return metadata.value();
-                        }
-                }
-        },
-        POST("doPost", "unhandledPost") {
-                @Override
-                String getPath(final ExecutableElement method)
-                {
-                        final ae.POST metadata = method.getAnnotation(ae.POST.class);
-                        if (metadata == null) {
-                                return null;
-                        } else {
-                                return metadata.value();
-                        }
-                }
-        },
-        PUT("doPut", "unhandledPut") {
-                @Override
-                String getPath(final ExecutableElement method)
-                {
-                        final ae.PUT metadata = method.getAnnotation(ae.PUT.class);
-                        if (metadata == null) {
-                                return null;
-                        } else {
-                                return metadata.value();
-                        }
-                }
-        },
-        DELETE("doDelete", "unhandledDelete") {
-                @Override
-                String getPath(final ExecutableElement method)
-                {
-                        final ae.DELETE metadata = method.getAnnotation(ae.DELETE.class);
-                        if (metadata == null) {
-                                return null;
-                        } else {
-                                return metadata.value();
-                        }
-                }
-        };
+  GET("doGet", "unhandledGet") {
+    @Override
+    String getPath(final ExecutableElement method)
+    {
+      final ae.GET metadata = method.getAnnotation(ae.GET.class);
+      if (metadata == null) {
+        return null;
+      } else {
+        return metadata.value();
+      }
+    }
+  },
+  POST("doPost", "unhandledPost") {
+    @Override
+    String getPath(final ExecutableElement method)
+    {
+      final ae.POST metadata = method.getAnnotation(ae.POST.class);
+      if (metadata == null) {
+        return null;
+      } else {
+        return metadata.value();
+      }
+    }
+  },
+  PUT("doPut", "unhandledPut") {
+    @Override
+    String getPath(final ExecutableElement method)
+    {
+      final ae.PUT metadata = method.getAnnotation(ae.PUT.class);
+      if (metadata == null) {
+        return null;
+      } else {
+        return metadata.value();
+      }
+    }
+  },
+  DELETE("doDelete", "unhandledDelete") {
+    @Override
+    String getPath(final ExecutableElement method)
+    {
+      final ae.DELETE metadata = method.getAnnotation(ae.DELETE.class);
+      if (metadata == null) {
+        return null;
+      } else {
+        return metadata.value();
+      }
+    }
+  };
 
-        final String handler;
-        final String unhandled;
+  final String handler;
+  final String unhandled;
 
-        HttpVerb(final String handler, final String unhandled)
-        {
-                this.handler = handler;
-                this.unhandled = unhandled;
-        }
+  HttpVerb(final String handler, final String unhandled)
+  {
+    this.handler = handler;
+    this.unhandled = unhandled;
+  }
 
-        abstract String getPath(ExecutableElement method);
+  abstract String getPath(ExecutableElement method);
 }

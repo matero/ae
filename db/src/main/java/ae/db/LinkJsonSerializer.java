@@ -28,36 +28,36 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Link;
 
 enum LinkJsonSerializer implements JsonSerializer<Link> {
-        INSTANCE;
+  INSTANCE;
 
-        static final JsonArraySerializer<Link> ARRAY = new JsonArraySerializer<>(INSTANCE);
+  static final JsonArraySerializer<Link> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-        @Override
-        public JsonNode toJson(final Link value)
-        {
-                if (value == null) {
-                        return JsonNodeFactories.nullNode();
-                }
-                return JsonNodeFactories.string(value.getValue());
-        }
+  @Override
+  public JsonNode toJson(final Link value)
+  {
+    if (value == null) {
+      return JsonNodeFactories.nullNode();
+    }
+    return JsonNodeFactories.string(value.getValue());
+  }
 
-        @Override
-        public Link fromJson(final JsonNode json, final String jsonPath)
-        {
-                if (json.isNullNode(jsonPath)) {
-                        return null;
-                } else {
-                        return new Link(json.getStringValue(jsonPath));
-                }
-        }
+  @Override
+  public Link fromJson(final JsonNode json, final String jsonPath)
+  {
+    if (json.isNullNode(jsonPath)) {
+      return null;
+    } else {
+      return new Link(json.getStringValue(jsonPath));
+    }
+  }
 
-        @Override
-        public Link fromJson(final JsonNode json)
-        {
-                if (json.isNullNode()) {
-                        return null;
-                } else {
-                        return new Link(json.getStringValue());
-                }
-        }
+  @Override
+  public Link fromJson(final JsonNode json)
+  {
+    if (json.isNullNode()) {
+      return null;
+    } else {
+      return new Link(json.getStringValue());
+    }
+  }
 }

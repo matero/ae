@@ -29,134 +29,134 @@ import com.google.common.collect.ImmutableList;
 
 public final class DSL {
 
-        private DSL()
-        {
-                throw new UnsupportedOperationException();
-        }
+  private DSL()
+  {
+    throw new UnsupportedOperationException();
+  }
 
-        /* methods to improve redeability on generated code */
-        public static String canonicalName(final String value)
-        {
-                return value;
-        }
+  /* methods to improve redeability on generated code */
+  public static String canonicalName(final String value)
+  {
+    return value;
+  }
 
-        public static String description(final String value)
-        {
-                return value;
-        }
+  public static String description(final String value)
+  {
+    return value;
+  }
 
-        public static String propertyName(final String value)
-        {
-                return value;
-        }
+  public static String propertyName(final String value)
+  {
+    return value;
+  }
 
-        public static String fieldName(final String value)
-        {
-                return value;
-        }
-        public static final boolean required = true;
-        public static final boolean nullable = false;
+  public static String fieldName(final String value)
+  {
+    return value;
+  }
+  public static final boolean required = true;
+  public static final boolean nullable = false;
 
-        public static JsonStringNode jsonName(final String value)
-        {
-                return JsonNodeFactories.string(value);
-        }
+  public static JsonStringNode jsonName(final String value)
+  {
+    return JsonNodeFactories.string(value);
+  }
 
-        public static String jsonPath(final String value)
-        {
-                return value;
-        }
-        public static final ImmutableList<Constraint> noConstraints = ImmutableList.of();
+  public static String jsonPath(final String value)
+  {
+    return value;
+  }
+  public static final ImmutableList<Constraint> noConstraints = ImmutableList.of();
 
-        public static final ImmutableList<Constraint> constraints(final Constraint constraint)
-        {
-                return ImmutableList.of(constraint);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint constraint)
+  {
+    return ImmutableList.of(constraint);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2)
-        {
-                return ImmutableList.of(c1, c2);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2)
+  {
+    return ImmutableList.of(c1, c2);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3)
-        {
-                return ImmutableList.of(c1, c2, c3);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3)
+  {
+    return ImmutableList.of(c1, c2, c3);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3, final Constraint c4)
-        {
-                return ImmutableList.of(c1, c2, c3, c4);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3, final Constraint c4)
+  {
+    return ImmutableList.of(c1, c2, c3, c4);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3, final Constraint c4,
-                                                                  final Constraint c5)
-        {
-                return ImmutableList.of(c1, c2, c3, c4, c5);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3, final Constraint c4,
+                                                            final Constraint c5)
+  {
+    return ImmutableList.of(c1, c2, c3, c4, c5);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3, final Constraint c4,
-                                                                  final Constraint c5, final Constraint c6)
-        {
-                return ImmutableList.of(c1, c2, c3, c4, c5, c6);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3, final Constraint c4,
+                                                            final Constraint c5, final Constraint c6)
+  {
+    return ImmutableList.of(c1, c2, c3, c4, c5, c6);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3, final Constraint c4,
-                                                                  final Constraint c5, final Constraint c6,
-                                                                  final Constraint c7)
-        {
-                return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3, final Constraint c4,
+                                                            final Constraint c5, final Constraint c6,
+                                                            final Constraint c7)
+  {
+    return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3, final Constraint c4,
-                                                                  final Constraint c5, final Constraint c6,
-                                                                  final Constraint c7, final Constraint c8)
-        {
-                return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3, final Constraint c4,
+                                                            final Constraint c5, final Constraint c6,
+                                                            final Constraint c7, final Constraint c8)
+  {
+    return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3, final Constraint c4,
-                                                                  final Constraint c5, final Constraint c6,
-                                                                  final Constraint c7, final Constraint c8,
-                                                                  final Constraint c9)
-        {
-                return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8, c9);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3, final Constraint c4,
+                                                            final Constraint c5, final Constraint c6,
+                                                            final Constraint c7, final Constraint c8,
+                                                            final Constraint c9)
+  {
+    return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8, c9);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3, final Constraint c4,
-                                                                  final Constraint c5, final Constraint c6,
-                                                                  final Constraint c7, final Constraint c8,
-                                                                  final Constraint c9, final Constraint c10)
-        {
-                return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3, final Constraint c4,
+                                                            final Constraint c5, final Constraint c6,
+                                                            final Constraint c7, final Constraint c8,
+                                                            final Constraint c9, final Constraint c10)
+  {
+    return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10);
+  }
 
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3, final Constraint c4,
-                                                                  final Constraint c5, final Constraint c6,
-                                                                  final Constraint c7, final Constraint c8,
-                                                                  final Constraint c9, final Constraint c10,
-                                                                  final Constraint c11)
-        {
-                return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11);
-        }
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3, final Constraint c4,
+                                                            final Constraint c5, final Constraint c6,
+                                                            final Constraint c7, final Constraint c8,
+                                                            final Constraint c9, final Constraint c10,
+                                                            final Constraint c11)
+  {
+    return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11);
+  }
 
-        @SafeVarargs
-        public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
-                                                                  final Constraint c3, final Constraint c4,
-                                                                  final Constraint c5, final Constraint c6,
-                                                                  final Constraint c7, final Constraint c8,
-                                                                  final Constraint c9, final Constraint c10,
-                                                                  final Constraint c11, final Constraint c12,
-                                                                  final Constraint... otherConstraints)
-        {
-                return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, otherConstraints);
-        }
+  @SafeVarargs
+  public static final ImmutableList<Constraint> constraints(final Constraint c1, final Constraint c2,
+                                                            final Constraint c3, final Constraint c4,
+                                                            final Constraint c5, final Constraint c6,
+                                                            final Constraint c7, final Constraint c8,
+                                                            final Constraint c9, final Constraint c10,
+                                                            final Constraint c11, final Constraint c12,
+                                                            final Constraint... otherConstraints)
+  {
+    return ImmutableList.of(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, otherConstraints);
+  }
 }

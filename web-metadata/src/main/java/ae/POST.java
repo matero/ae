@@ -31,5 +31,5 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target(METHOD)
 public @interface POST {
-        String value() default "<UNDEFINED>";
+  String value() default "<UNDEFINED>";
 }

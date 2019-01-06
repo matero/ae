@@ -33,251 +33,253 @@ import javax.lang.model.element.Modifier;
 
 abstract class MetaModel extends MetaData {
 
-        final String packageName;
+  final String packageName;
+  final String canonicalName;
+  final String kind;
+  final String baseClass;
+  final MetaModelId id;
+  final Fields fields;
+  final boolean cached;
+  final String namespace;
 
-        final String canonicalName;
+  MetaModel(final String packageName,
+            final String className,
+            final String canonicalName,
+            final String kind,
+            final String baseClass,
+            final MetaModelId id,
+            final Fields modelFields,
+            final ImmutableSet<Modifier> modifiers,
+            final boolean cached,
+            final String namespace)
+  {
+    super(className, modifiers);
+    this.packageName = packageName;
+    this.canonicalName = canonicalName;
+    this.kind = kind;
+    this.baseClass = baseClass;
+    this.id = id;
+    this.fields = modelFields;
+    this.cached = cached;
+    this.namespace = namespace;
+  }
 
-        final String kind;
+  final boolean isPublic()
+  {
+    return visibility == Modifier.PUBLIC;
+  }
 
-        final String baseClass;
+  final boolean isAbstract()
+  {
+    return modifiers.stream().anyMatch((modifier) -> (Modifier.ABSTRACT == modifier));
+  }
 
-        final MetaModelId id;
+  abstract boolean hasParent();
 
-        final Fields fields;
+  abstract MetaParent parent();
 
-        final boolean configuresDatastore;
+  final boolean hasFields()
+  {
+    return !fields.isEmpty();
+  }
 
-        MetaModel(final String packageName,
-                  final String className,
-                  final String canonicalName,
-                  final String kind,
-                  final String baseClass,
-                  final MetaModelId id,
-                  final Fields modelFields,
-                  final ImmutableSet<Modifier> modifiers,
-                  final boolean configuresDatastore)
-        {
-                super(className, modifiers);
-                this.packageName = packageName;
-                this.canonicalName = canonicalName;
-                this.kind = kind;
-                this.baseClass = baseClass;
-                this.id = id;
-                this.fields = modelFields;
-                this.configuresDatastore = configuresDatastore;
-        }
+  final boolean useId()
+  {
+    return id.isId();
+  }
 
-        final boolean isPublic()
-        {
-                return visibility == Modifier.PUBLIC;
-        }
+  final boolean useName()
+  {
+    return id.isName();
+  }
 
-        final boolean isAbstract()
-        {
-                return modifiers.stream().anyMatch((modifier) -> (Modifier.ABSTRACT == modifier));
-        }
+  List<String> fieldsNames()
+  {
+    final ArrayList<String> result = new ArrayList<>(fields.size());
+    for (final MetaField field : fields) {
+      result.add(field.name);
+    }
+    return result;
+  }
 
-        abstract boolean hasParent();
+  abstract List<String> attributesNames();
 
-        abstract MetaParent parent();
+  static final Fields NO_FIELDS = new Fields();
 
-        final boolean hasFields()
-        {
-                return !fields.isEmpty();
-        }
+  final static Fields fields(final MetaField... fields)
+  {
+    synchronized (fields) {
+      if (fields.length == 0) {
+        return NO_FIELDS;
+      } else {
+        return new Fields(ImmutableList.copyOf(fields));
+      }
+    }
+  }
 
-        final boolean useId()
-        {
-                return id.isId();
-        }
+  final static Fields fields(final Collection<MetaField> fields)
+  {
+    synchronized (fields) {
+      if (fields.isEmpty()) {
+        return NO_FIELDS;
+      } else {
+        return new Fields(ImmutableList.copyOf(fields));
+      }
 
-        final boolean useName()
-        {
-                return id.isName();
-        }
+    }
+  }
 
-        List<String> fieldsNames()
-        {
-                final ArrayList<String> result = new ArrayList<>(fields.size());
-                for (final MetaField field : fields) {
-                        result.add(field.name);
-                }
-                return result;
-        }
+  static final class Fields implements Iterable<MetaField> {
 
-        abstract List<String> attributesNames();
+    private final ImmutableList<MetaField> data;
 
-        static final Fields NO_FIELDS = new Fields();
+    private Fields(final ImmutableList<MetaField> fields)
+    {
+      data = fields;
+    }
 
-        final static Fields fields(final MetaField... fields)
-        {
-                synchronized (fields) {
-                        if (fields.length == 0) {
-                                return NO_FIELDS;
-                        } else {
-                                return new Fields(ImmutableList.copyOf(fields));
-                        }
-                }
-        }
+    private Fields()
+    {
+      data = ImmutableList.of();
+    }
 
-        final static Fields fields(final Collection<MetaField> fields)
-        {
-                synchronized (fields) {
-                        if (fields.isEmpty()) {
-                                return NO_FIELDS;
-                        } else {
-                                return new Fields(ImmutableList.copyOf(fields));
-                        }
+    @Override
+    public Iterator<MetaField> iterator()
+    {
+      return data.iterator();
+    }
 
-                }
-        }
+    boolean isEmpty()
+    {
+      return data.isEmpty();
+    }
 
-        static final class Fields implements Iterable<MetaField> {
+    int size()
+    {
+      return data.size();
+    }
+  }
 
-                private final ImmutableList<MetaField> data;
-
-                private Fields(final ImmutableList<MetaField> fields)
-                {
-                        data = fields;
-                }
-
-                private Fields()
-                {
-                        data = ImmutableList.of();
-                }
-
-                @Override
-                public Iterator<MetaField> iterator()
-                {
-                        return data.iterator();
-                }
-
-                boolean isEmpty()
-                {
-                        return data.isEmpty();
-                }
-
-                int size()
-                {
-                        return data.size();
-                }
-        }
-
-        static MetaModel withSpec(final String packageName,
-                                  final String className,
-                                  final String classQualifiedName,
-                                  final String kind,
-                                  final String baseClass,
-                                  final MetaModelId id,
-                                  final MetaParent parent,
-                                  final Fields fields,
-                                  final Iterable<Modifier> modifiers,
-                                  final boolean configuresDatastore)
-        {
-                if (parent == null) {
-                        return new RootModel(packageName,
-                                             className,
-                                             classQualifiedName,
-                                             kind,
-                                             baseClass,
-                                             id,
-                                             fields,
-                                             ImmutableSet.copyOf(modifiers),
-                                             configuresDatastore);
-                } else {
-                        return new ChildModel(packageName,
-                                              className,
-                                              classQualifiedName,
-                                              kind,
-                                              baseClass,
-                                              id,
-                                              parent,
-                                              fields,
-                                              ImmutableSet.copyOf(modifiers),
-                                              configuresDatastore);
-                }
-        }
+  static MetaModel withSpec(final String packageName,
+                            final String className,
+                            final String classQualifiedName,
+                            final String kind,
+                            final String baseClass,
+                            final MetaModelId id,
+                            final MetaParent parent,
+                            final Fields fields,
+                            final Iterable<Modifier> modifiers,
+                            final boolean cached,
+                            final String namespace)
+  {
+    if (parent == null) {
+      return new RootModel(packageName,
+                           className,
+                           classQualifiedName,
+                           kind,
+                           baseClass,
+                           id,
+                           fields,
+                           ImmutableSet.copyOf(modifiers),
+                           cached,
+                           namespace);
+    } else {
+      return new ChildModel(packageName,
+                            className,
+                            classQualifiedName,
+                            kind,
+                            baseClass,
+                            id,
+                            parent,
+                            fields,
+                            ImmutableSet.copyOf(modifiers),
+                            cached,
+                            namespace);
+    }
+  }
 }
 
 final class RootModel extends MetaModel {
 
-        RootModel(final String packageName,
-                  final String className,
-                  final String canonicalName,
-                  final String kind,
-                  final String baseClass,
-                  final MetaModelId id,
-                  final Fields fields,
-                  final ImmutableSet<Modifier> modifiers,
-                  final boolean configuresDatastore)
-        {
-                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, configuresDatastore);
-        }
+  RootModel(final String packageName,
+            final String className,
+            final String canonicalName,
+            final String kind,
+            final String baseClass,
+            final MetaModelId id,
+            final Fields fields,
+            final ImmutableSet<Modifier> modifiers,
+            final boolean cached,
+            final String namespace)
+  {
+    super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, cached, namespace);
+  }
 
-        @Override
-        boolean hasParent()
-        {
-                return false;
-        }
+  @Override
+  boolean hasParent()
+  {
+    return false;
+  }
 
-        @Override
-        MetaParent parent()
-        {
-                throw new UnsupportedOperationException();
-        }
+  @Override
+  MetaParent parent()
+  {
+    throw new UnsupportedOperationException();
+  }
 
-        @Override
-        List<String> attributesNames()
-        {
-                final ArrayList<String> result = new ArrayList<>(fields.size() + 1);
-                result.add(this.id.name);
-                for (final MetaField field : fields) {
-                        result.add(field.name);
-                }
-                return result;
-        }
+  @Override
+  List<String> attributesNames()
+  {
+    final ArrayList<String> result = new ArrayList<>(fields.size() + 1);
+    result.add(this.id.name);
+    for (final MetaField field : fields) {
+      result.add(field.name);
+    }
+    return result;
+  }
 }
 
 final class ChildModel extends MetaModel {
 
-        final MetaParent parent;
+  final MetaParent parent;
 
-        ChildModel(final String packageName,
-                   final String className,
-                   final String canonicalName,
-                   final String kind,
-                   final String baseClass,
-                   final MetaModelId id,
-                   final MetaParent parent,
-                   final Fields fields,
-                   final ImmutableSet<Modifier> modifiers,
-                   final boolean configuresDatastore)
-        {
-                super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, configuresDatastore);
-                this.parent = parent;
-        }
+  ChildModel(final String packageName,
+             final String className,
+             final String canonicalName,
+             final String kind,
+             final String baseClass,
+             final MetaModelId id,
+             final MetaParent parent,
+             final Fields fields,
+             final ImmutableSet<Modifier> modifiers,
+             final boolean cached,
+             final String namespace)
+  {
+    super(packageName, className, canonicalName, kind, baseClass, id, fields, modifiers, cached, namespace);
+    this.parent = parent;
+  }
 
-        @Override
-        boolean hasParent()
-        {
-                return true;
-        }
+  @Override
+  boolean hasParent()
+  {
+    return true;
+  }
 
-        @Override
-        MetaParent parent()
-        {
-                return parent;
-        }
+  @Override
+  MetaParent parent()
+  {
+    return parent;
+  }
 
-        @Override
-        List<String> attributesNames()
-        {
-                final ArrayList<String> result = new ArrayList<>(fields.size() + 2);
-                result.add(this.id.name);
-                result.add(this.parent.name);
-                for (final MetaField field : fields) {
-                        result.add(field.name);
-                }
-                return result;
-        }
+  @Override
+  List<String> attributesNames()
+  {
+    final ArrayList<String> result = new ArrayList<>(fields.size() + 2);
+    result.add(this.id.name);
+    result.add(this.parent.name);
+    for (final MetaField field : fields) {
+      result.add(field.name);
+    }
+    return result;
+  }
 }

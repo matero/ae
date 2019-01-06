@@ -27,9 +27,9 @@ import com.google.appengine.api.users.User;
 
 public interface UserListField extends ListField<User> {
 
-        @Override
-        default Class<User> elementType()
-        {
-                return User.class;
-        }
+  @Override
+  default Class<User> elementType()
+  {
+    return User.class;
+  }
 }

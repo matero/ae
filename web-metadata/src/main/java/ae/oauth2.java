@@ -36,6 +36,8 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target({METHOD, TYPE})
 public @interface oauth2 {
-        /** @return if the elements required authentication using oauth2. */
-        boolean value() default true;
+  /**
+   * @return if the elements required authentication using oauth2.
+   */
+  boolean value() default true;
 }

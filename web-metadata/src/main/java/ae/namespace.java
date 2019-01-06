@@ -36,9 +36,11 @@ import java.lang.annotation.Target;
 @Retention(SOURCE)
 @Target({METHOD, TYPE})
 public @interface namespace {
-        public static final String GLOBAL = "";
-        public static final String MULTITENANT = "#multitenant";
+  public static final String GLOBAL = "";
+  public static final String MULTITENANT = "#multitenant";
 
-        /** @return if the elements required authentication using oauth2. */
-        String value();
+  /**
+   * @return if the elements required authentication using oauth2.
+   */
+  String value();
 }

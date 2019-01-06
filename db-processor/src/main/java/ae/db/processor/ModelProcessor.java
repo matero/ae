@@ -44,82 +44,82 @@ import ae.model;
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ModelProcessor extends AnnotationProcessor {
 
-        public ModelProcessor()
-        {
-                this(new Date());
-        }
+  public ModelProcessor()
+  {
+    this(new Date());
+  }
 
-        ModelProcessor(final Date today)
-        {
-                super(today);
-        }
+  ModelProcessor(final Date today)
+  {
+    super(today);
+  }
 
-        @Override
-        public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment)
-        {
-                info("START @ae.db.Model processing");
-                final Set<? extends Element> annotatedElements = roundEnvironment.getElementsAnnotatedWith(model.class);
-                if (annotatedElements.isEmpty()) {
-                        info("DONE, no classes annotated  with @ae.db.Model to process");
-                } else {
-                        final MetaModels metamodels;
-                        try {
-                                metamodels = metaModelFor(annotatedElements);
-                        } catch (final ModelException e) {
-                                error(e);
-                                info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
-                                return true;
-                        } catch (final RuntimeException e) {
-                                error(e);
-                                info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
-                                return true;
-                        }
-                        generateCode(metamodels);
-                        info("DONE processing %d classes annotated with @ae.db.Model", annotatedElements.size());
-                }
-                return true;
-        }
+  @Override
+  public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment)
+  {
+    info("START @ae.db.Model processing");
+    final Set<? extends Element> annotatedElements = roundEnvironment.getElementsAnnotatedWith(model.class);
+    if (annotatedElements.isEmpty()) {
+      info("DONE, no classes annotated  with @ae.db.Model to process");
+    } else {
+      final MetaModels metamodels;
+      try {
+        metamodels = metaModelFor(annotatedElements);
+      } catch (final ModelException e) {
+        error(e);
+        info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+        return true;
+      } catch (final RuntimeException e) {
+        error(e);
+        info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+        return true;
+      }
+      generateCode(metamodels);
+      info("DONE processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+    }
+    return true;
+  }
 
-        MetaModels metaModelFor(final Set<? extends Element> annotatedElements)
-        {
-                final MetaModels.Builder modelsBuilder = MetaModels.builder();
-                final ModelInterpreter interpreter = new ModelInterpreter(processingEnv);
+  MetaModels metaModelFor(final Set<? extends Element> annotatedElements)
+  {
+    final MetaModels.Builder modelsBuilder = MetaModels.builder();
+    final ModelInterpreter interpreter = new ModelInterpreter(processingEnv);
 
-                for (final Element modelElement : annotatedElements) {
-                        final TypeElement model = (TypeElement) modelElement;
-                        final String modelQualifiedName = model.getQualifiedName().toString();
+    for (final Element modelElement : annotatedElements) {
+      final TypeElement model = (TypeElement) modelElement;
+      final String modelQualifiedName = model.getQualifiedName().toString();
 
-                        info("reading meta-data of [%s].", modelQualifiedName);
-                        modelsBuilder.add(interpreter.read(modelElement));
-                        info("meta-data of [%s] read.", modelQualifiedName);
-                }
+      info("reading meta-data of [%s].", modelQualifiedName);
+      modelsBuilder.add(interpreter.read(modelElement));
+      info("meta-data of [%s] read.", modelQualifiedName);
+    }
 
-                return modelsBuilder.build();
-        }
+    return modelsBuilder.build();
+  }
 
-        void generateCode(final MetaModels models)
-        {
-                generateCode("'base models'", models, new ModelBaseClassCodeGenerator());
-        }
+  void generateCode(final MetaModels models)
+  {
+    generateCode("'base models'", models, new ModelBaseClassCodeGenerator());
+  }
 
-        void generateCode(final String name, final MetaModels models, final CodeGenerator codeGenerator)
-        {
-                info("generating [%s]", name);
-                for (final JavaFile generatedCode : codeGenerator.generateCode(models, today)) {
-                        try {
-                                generatedCode.writeTo(filer);
-                        } catch (final IOException e) {
-                                throw new IllegalStateException("could not generate " + name, e);
-                        }
-                }
-        }
+  void generateCode(final String name, final MetaModels models, final CodeGenerator codeGenerator)
+  {
+    info("generating [%s]", name);
+    for (final JavaFile generatedCode : codeGenerator.generateCode(models, today)) {
+      try {
+        generatedCode.writeTo(filer);
+      } catch (final IOException e) {
+        throw new IllegalStateException("could not generate " + name, e);
+      }
+    }
+  }
 
-        final void error(final ModelException failure)
-        {
-                if (failure.element == null) {
-                        error(message(failure));
-                } else {
-                        message(Diagnostic.Kind.ERROR, message(failure), failure.element);
-                }
-        }
+  final void error(final ModelException failure)
+  {
+    if (failure.element == null) {
+      error(message(failure));
+    } else {
+      message(Diagnostic.Kind.ERROR, message(failure), failure.element);
+    }
+  }
 }
