@@ -67,13 +67,14 @@ public final class ParameterizedRoute implements java.io.Serializable {
 
   public boolean matches(final HttpServletRequest request, final String[] routeParameters)
   {
-    if (request.getPathInfo() == null) {
+    final String requestUri = request.getRequestURI();
+    if (requestUri == null) {
       return false;
     }
-    if (request.getPathInfo().isEmpty()) {
+    if (requestUri.isEmpty()) {
       return false;
     }
-    final Matcher matcher = regex.matcher(request.getPathInfo());
+    final Matcher matcher = regex.matcher(requestUri);
     if (matcher.matches()) {
       for (int i = 0; i < matcher.groupCount(); i++) {
         routeParameters[i] = matcher.group(getPathParameterRegexGroupName(i));
