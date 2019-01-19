@@ -63,16 +63,16 @@ public final class Route implements java.io.Serializable {
 
   public final boolean matches(final HttpServletRequest request)
   {
-    final String pathInfo = request.getPathInfo();
-    if (pathInfo == null) {
+    final String requestUri = request.getRequestURI();
+    if (requestUri == null) {
       return false;
     }
-    if ("".equals(this.uri) && "/".equals(pathInfo)) {
+    if ("".equals(this.uri) && "/".equals(requestUri)) {
       return true;
     }
-    if ("/".equals(this.uri) && "".equals(pathInfo)) {
+    if ("/".equals(this.uri) && "".equals(requestUri)) {
       return true;
     }
-    return this.uri.equals(pathInfo);
+    return this.uri.equals(requestUri);
   }
 }
