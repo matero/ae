@@ -325,5 +325,6 @@
     <module>web-metadata</module>
     <module>web-processor</module>
     <module>web-test</module>
+    <module>todolist</module>
   </modules>
 </project>

@@ -1,7 +1,7 @@
-/* 
+/*
  * The MIT License
  *
- * Copyright (c) 2018 ActiveEngine.
+ * Copyright 2018 juanjo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,12 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package ae.db.processor;
+package ae;
 
-import com.google.common.collect.ImmutableList;
-import com.squareup.javapoet.JavaFile;
-import java.util.Date;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-interface CodeGenerator {
-  ImmutableList<JavaFile> generateCode(MetaModels models, Date date);
+import static java.lang.annotation.ElementType.PACKAGE;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
+
+@Retention(SOURCE)
+@Target(PACKAGE)
+public @interface WebApp
+{
+  String administration() default "<DEFAULT>"; // "/adm"
+
+  String application() default "<DEFAULT>"; // "/app"
+
+  String api() default "<DEFAULT>"; // "api/v1"
 }

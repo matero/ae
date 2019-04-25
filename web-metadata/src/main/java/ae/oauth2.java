@@ -31,7 +31,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates if a controller or an action requires appengine oauth2 authentication.
+ * Indicates if a endpoint or an action requires appengine oauth2 authentication.
  */
 @Retention(SOURCE)
 @Target({METHOD, TYPE})

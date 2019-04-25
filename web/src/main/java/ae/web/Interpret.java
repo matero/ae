@@ -24,9 +24,11 @@
 package ae.web;
 
 import com.google.appengine.api.datastore.Cursor;
+import com.google.common.collect.ImmutableList;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public final class Interpret {
 
@@ -212,6 +214,16 @@ public final class Interpret {
       return null;
     } else {
       return Cursor.fromWebSafeString(raw);
+    }
+  }
+
+  public static List<String> asStringList(final String raw)
+  {
+    if (raw == null) {
+      return null;
+    } else {
+      final String[] strings = raw.split(",");
+      return ImmutableList.copyOf(strings);
     }
   }
 }

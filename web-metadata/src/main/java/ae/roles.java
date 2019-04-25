@@ -31,7 +31,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates if a controller or an action requires an authenticated user accomplishing a rol.
+ * Indicates if a endpoint or an action requires an authenticated user accomplishing a rol.
  *
  * An empty array means 'no role'.
  */

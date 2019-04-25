@@ -37,8 +37,8 @@ import java.lang.annotation.Target;
  * <ol>
  * <li>determine the base path:</li>
  * <ul>
- * <li>{@code uses template ==> <router.application_path>/<controller_path>}</li>
- * <li>{@code it doesn't use template ==> <router.administration_path>/<controller_path>}</li>
+ * <li>{@code uses template ==> <WebApp.application_path>/<controller_path>}</li>
+ * <li>{@code it doesn't use template ==> <WebApp.administration_path>/<controller_path>}</li>
  * </ul>
  * <li>determine the action name:</li>
  * <ul>
@@ -56,11 +56,11 @@ import java.lang.annotation.Target;
  * @WebServlet("/*") public final class Router extends ApplicationRouter { }
  *
  * @controller public final Sample1Controller extends extends ae.web.ControllerWithThymeleafSupport { private static final Logger LOGGER =
- * LoggerFactory.getLogger(Controller.class);
+ * LoggerFactory.getLogger(AppEngineEndPointServlet.class);
  *
- * public Controller(final HttpServletRequest request, final HttpServletResponse response) { super(request, response); }
+ * public AppEngineEndPointServlet(final HttpServletRequest request, final HttpServletResponse response) { super(request, response); }
  *
- * public Controller(final HttpServletRequest request, final HttpServletResponse response, final WebContext templateContext, final TemplateEngine
+ * public AppEngineEndPointServlet(final HttpServletRequest request, final HttpServletResponse response, final WebContext templateContext, final TemplateEngine
  * templateEngine) { super(request, response, templateContext, templateEngine); }
  *
  * @Override protected Logger logger() { return LOGGER; }
@@ -116,7 +116,7 @@ import java.lang.annotation.Target;
  * "/adm/api/sample2/del" + "/{name}" = "/adm/api/sample2/del/{name}" } }
  * </code></pre>
  * <em>note</em>: an action is considered to use template when it is annotated with {@code @ae.template(true)} or it is not annotated with
- * {@code @ae.template(false)} and the controller is annotated with {@code @ae.template(true)}.
+ * {@code @ae.template(false)} and the endpoint is annotated with {@code @ae.template(true)}.
  */
 @Retention(SOURCE)
 @Target(METHOD)

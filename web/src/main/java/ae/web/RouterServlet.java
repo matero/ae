@@ -23,21 +23,40 @@
  */
 package ae.web;
 
-import com.google.appengine.api.NamespaceManager;
-import com.google.appengine.api.datastore.Entity;
-import java.io.IOException;
+import ae.web.RouterServlet.Path;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public abstract class RouterServlet extends HttpServlet {
-
-  private static final long serialVersionUID = -8511948712493790911L;
+public abstract class RouterServlet extends javax.servlet.http.HttpServlet
+{
+  protected interface Path extends Serializable
+  {
+    boolean matches(final HttpServletRequest request);
+  }
 
   protected RouterServlet()
   {
     // nothing more to do
+  }
+
+  /**
+   * @return the logger to be used at the controller.
+   */
+  protected abstract Logger logger();
+
+  protected void unhandledGet(final HttpServletRequest request, final HttpServletResponse response)
+      throws ServletException, IOException
+  {
+    super.doGet(request, response);
   }
 
   protected void unhandledDelete(final HttpServletRequest request, final HttpServletResponse response)
@@ -58,12 +77,6 @@ public abstract class RouterServlet extends HttpServlet {
     super.doPost(request, response);
   }
 
-  protected void unhandledGet(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException
-  {
-    super.doGet(request, response);
-  }
-
   protected void unhandledHead(final HttpServletRequest request, final HttpServletResponse response)
       throws ServletException, IOException
   {
@@ -82,77 +95,132 @@ public abstract class RouterServlet extends HttpServlet {
     super.doTrace(request, response);
   }
 
-  protected <C extends Controller> void handle(final C controller, final HttpRequestHandler<C> handler)
-      throws ServletException, IOException
-  {
-    try {
-      controller.setup();
-      handler.accept(controller);
-    } finally {
-      controller.teardown();
-    }
-  }
-
   protected void notAuthorized(final HttpServletResponse response)
   {
     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
   }
 
-  protected boolean loggedUserRoleIs(final Entity userData, final String role)
+  protected static Path indexPath = IndexPath.INSTANCE;
+
+  protected static Path staticPath(final String uri, final String path)
   {
-    final String r = getLoggedUserRole(userData);
-    return r.equals(role);
+    return new StaticPath(uri, path);
   }
 
-  protected boolean loggedUserRoleIsIn(final Entity userData, final String r1, final String r2)
+  protected static Path parameterizedPath(final String uri,
+                                          final String pattern,
+                                          final ImmutableList<String> parameters,
+                                          final Pattern regex)
   {
-    final String r = getLoggedUserRole(userData);
-    return r.equals(r1) || r.equals(r2);
+    return new ParameterizedPath(uri, pattern, parameters, regex);
+  }
+}
+
+enum IndexPath implements Path
+{
+  INSTANCE;
+
+  @Override public boolean matches(final HttpServletRequest request)
+  {
+    final String pathInfo = request.getPathInfo();
+    return null == pathInfo || "".equals(pathInfo) || "/".equals(pathInfo);
   }
 
-  protected boolean loggedUserRoleIsIn(final Entity userData, final String r1, final String r2, final String r3)
+  @Override public String toString()
   {
-    final String r = getLoggedUserRole(userData);
-    return r.equals(r1) || r.equals(r2) || r.equals(r3);
+    return "Path{'/'}";
+  }
+}
+
+final class StaticPath implements Path
+{
+  private final String uri;
+  private final String path;
+
+  StaticPath(final String uri, final String path)
+  {
+    this.uri = uri;
+    this.path = path;
   }
 
-  protected boolean loggedUserRoleIsIn(final Entity userData,
-                                       final String r1,
-                                       final String r2,
-                                       final String r3,
-                                       final String r4)
+  @Override public String toString()
   {
-    final String r = getLoggedUserRole(userData);
-    return r.equals(r1) || r.equals(r2) || r.equals(r3) || r.equals(r4);
+    return "Path{'" + uri + "'}";
   }
 
-  protected String getLoggedUserRole(final Entity userData)
+  @Override public int hashCode()
   {
-    throw new UnsupportedOperationException();
+    return uri.hashCode();
   }
 
-  protected void useLoggedUserNamespace(final Entity userData)
+  @Override public boolean equals(final Object that)
   {
-    if (NamespaceManager.get() == null) {
-      final String currentUserNamespace = getLoggedUserNamespace(userData);
-      NamespaceManager.set(currentUserNamespace);
+    if (this == that) {
+      return true;
     }
-  }
-
-  protected String getLoggedUserNamespace(final Entity userData)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  protected void useNamespace(final String namespace)
-  {
-    if (NamespaceManager.get() == null) {
-      NamespaceManager.set(namespace);
+    if (that instanceof StaticPath) {
+      final StaticPath other = (StaticPath) that;
+      return uri.equals(other.uri);
     }
+    return false;
   }
 
-  protected Entity getLoggedUser()
+  @Override public boolean matches(final HttpServletRequest request)
   {
-    throw new UnsupportedOperationException();
+    return uri.equals(request.getPathInfo());
+  }
+}
+
+final class ParameterizedPath implements Path
+{
+  private final String uri;
+  private final String pattern;
+  private final Pattern regex;
+  private final ImmutableList<String> parameters;
+
+  ParameterizedPath(final String uri, final String pattern, final ImmutableList<String> parameters, final Pattern regex)
+  {
+    this.uri = uri;
+    this.pattern = pattern;
+    this.regex = regex;
+    this.parameters = parameters;
+  }
+
+  @Override public String toString()
+  {
+    return "Path{'" + pattern + "'}";
+  }
+
+  @Override public int hashCode()
+  {
+    return pattern.hashCode();
+  }
+
+  @Override public boolean equals(final Object that)
+  {
+    if (this == that) {
+      return true;
+    }
+    if (that instanceof ParameterizedPath) {
+      final ParameterizedPath other = (ParameterizedPath) that;
+      return uri.equals(other.uri);
+    }
+    return false;
+  }
+
+  public boolean matches(final HttpServletRequest request)
+  {
+    if (request.getPathInfo() == null) {
+      return false;
+    }
+    final Matcher matcher = regex.matcher(request.getPathInfo());
+    if (matcher.matches()) {
+      for (final String parameter : parameters) {
+        request.setAttribute(parameter, matcher.group(parameter));
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 }

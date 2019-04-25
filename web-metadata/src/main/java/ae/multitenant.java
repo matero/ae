@@ -1,7 +1,7 @@
-/* 
+/*
  * The MIT License
  *
- * Copyright (c) 2018 ActiveEngine.
+ * Copyright 2018 juanjo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,12 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package ae.db.processor;
+package ae;
 
-import com.google.common.collect.ImmutableList;
-import com.squareup.javapoet.JavaFile;
-import java.util.Date;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
-interface CodeGenerator {
-  ImmutableList<JavaFile> generateCode(MetaModels models, Date date);
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+/**
+ * Indicates if a endpoint or an action requires appengine oauth2 authentication.
+ */
+@Retention(SOURCE)
+@Target({METHOD, TYPE})
+public @interface multitenant
+{
+  /**
+   * @return if the elements required authentication using oauth2.
+   */
+  String value() default "#";
 }

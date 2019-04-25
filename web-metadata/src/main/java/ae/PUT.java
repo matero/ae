@@ -36,10 +36,10 @@ public @interface PUT {
    * Configures the path to the action.
    *
    * If it starts with {@code '/'} then its considered absolute, an it does not consider if its a template action, nor the relative path of the
-   * controller or anything else, is used 'as is'.
+   * endpoint or anything else, is used 'as is'.
    *
    * If it is undefined (or if its using its default value {@code "<UNDEFINED>"}) then it use the name of the method annotated, unless it's named
-   * {@code save()} then it use the complete path of the controller:
+   * {@code save()} then it use the complete path of the endpoint:
    * <pre>
    * <ul>
    * <li>(<router_path>/(<application>|<administration>)/<controller_path>}), with

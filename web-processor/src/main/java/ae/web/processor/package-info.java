@@ -21,12 +21,4 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package ae.db.processor;
-
-import com.google.common.collect.ImmutableList;
-import com.squareup.javapoet.JavaFile;
-import java.util.Date;
-
-interface CodeGenerator {
-  ImmutableList<JavaFile> generateCode(MetaModels models, Date date);
-}
+package ae.web.processor;
