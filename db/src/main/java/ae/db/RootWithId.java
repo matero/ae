@@ -30,9 +30,11 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.common.collect.ImmutableList;
+
 import java.util.concurrent.ExecutionException;
 
-public abstract class RootWithId extends RootActiveEntity implements WithId {
+public abstract class RootWithId extends RootActiveEntity implements WithId
+{
 
   private static final long serialVersionUID = -4301518873000440300L;
 
@@ -95,7 +97,8 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     }
   }
 
-  public Entity getById(final long id) throws EntityNotFoundException
+  public Entity getById(final long id)
+      throws EntityNotFoundException
   {
     final Key key = makeKey(id);
     return getEntity(key);
@@ -133,12 +136,12 @@ public abstract class RootWithId extends RootActiveEntity implements WithId {
     if (json.isNullNode()) {
       return null;
     }
-    final Long id = modelIdentifier().interpretJson(json);
     final Entity data;
-    if (id == null) {
-      data = make();
-    } else {
+    if (modelIdentifier().isDefinedAt(json)) {
+      final Long id = modelIdentifier().interpretJson(json);
       data = make(id);
+    } else {
+      data = make();
     }
     updatePropertiesWithJsonContents(data, json);
     return data;
