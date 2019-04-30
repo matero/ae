@@ -167,7 +167,7 @@ final class StaticPath implements Path
 
   @Override public boolean matches(final HttpServletRequest request)
   {
-    return uri.equals(request.getPathInfo());
+    return path.equals(request.getPathInfo());
   }
 }
 
