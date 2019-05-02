@@ -94,4 +94,17 @@ public class ModelAnnotationProcessorIntegrationTest {
         .generatedSourceFile("processor.test.__Competidor")
         .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/__Competidor.java"));
   }
+
+  @Test
+  public void should_be_able_to_generate_indexed_and_unindexed_properties()
+  {
+    final Compilation compilation = javac()
+                                        .withProcessors(new ModelProcessor(new GregorianCalendar(2017, Calendar.FEBRUARY, 23).getTime()))
+                                        .compile(JavaFileObjects.forResource("ae/db/processor/Provincia.java"));
+    assertThat(compilation)
+        .succeeded();
+    assertThat(compilation)
+        .generatedSourceFile("ae.db.processor.__Provincia")
+        .hasSourceEquivalentTo(JavaFileObjects.forResource("generated/__Provincia.java"));
+  }
 }

@@ -28,21 +28,19 @@ import com.google.appengine.api.datastore.Category;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 
-public final class IndexedIMHandleList extends ListField.Indexed<Category> implements CategoryListField {
-
+public final class UnindexedIMHandleList extends ListField.Unindexed<Category> implements CategoryListField
+{
   private static final long serialVersionUID = -2130075684828667423L;
 
-  public IndexedIMHandleList(final String canonicalName,
-                             final String description,
-                             final String property,
-                             final String field,
-                             final boolean required,
-                             final JsonStringNode jsonName,
-                             final String jsonPath,
-                             final ImmutableList<Constraint> constraints)
+  public UnindexedIMHandleList(final String canonicalName,
+                               final String description,
+                               final String property,
+                               final String field,
+                               final boolean required,
+                               final JsonStringNode jsonName,
+                               final String jsonPath,
+                               final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
-          CategoryJsonSerializer.ARRAY,
-          new PropertyProjection(property, Category.class), constraints);
+    super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY, constraints);
   }
 }

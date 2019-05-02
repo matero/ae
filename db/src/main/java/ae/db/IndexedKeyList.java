@@ -28,8 +28,8 @@ import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
 
-public final class IndexedKeyList extends ListField.Indexed<Key> implements KeyListField {
-
+public final class IndexedKeyList extends ListField.Indexed<Key> implements KeyListField
+{
   private static final long serialVersionUID = -5909154755297173961L;
 
   public IndexedKeyList(final String canonicalName,
