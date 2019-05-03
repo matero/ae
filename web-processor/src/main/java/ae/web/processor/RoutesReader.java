@@ -211,6 +211,8 @@ class RoutesReader
         final Name endpointClassName = endpoint.getSimpleName();
         final String classname = endpointClassName.toString();
         return makeUri(parentPath, classname.toLowerCase());
+      } else if (path.startsWith("/")) {
+        return path;
       } else {
         return makeUri(parentPath, path);
       }
