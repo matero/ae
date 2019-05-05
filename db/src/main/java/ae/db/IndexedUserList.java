@@ -10,7 +10,6 @@ public final class IndexedUserList extends ListField.Indexed<User> implements Us
   private static final long serialVersionUID = -268265786711305388L;
 
   public IndexedUserList(final String canonicalName,
-                         final String description,
                          final String property,
                          final String field,
                          final boolean required,
@@ -18,7 +17,7 @@ public final class IndexedUserList extends ListField.Indexed<User> implements Us
                          final String jsonPath,
                          final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           UserJsonSerializer.ARRAY,
           new PropertyProjection(property, User.class), constraints);
   }

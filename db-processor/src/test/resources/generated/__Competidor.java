@@ -2,7 +2,7 @@ package processor.test;
 
 import static ae.db.DSL.*;
 
-import ae.db.Attr;
+import ae.db.Attribute;
 import ae.db.ChildWithId;
 import ae.db.DateJsonSerializer;
 import ae.db.Field;
@@ -39,39 +39,39 @@ abstract class __Competidor extends ChildWithId {
 
   public static final Competidor m = new Competidor();
 
-  final Id personId = new Id(canonicalName("processor.test.Competidor.personId"), description("Person Id"), fieldName("personId"), jsonName("personId"), jsonPath("personId"), noConstraints);
+  final Id personId = new Id(canonicalName("processor.test.Competidor.personId"), fieldName("personId"), jsonName("personId"), jsonPath("personId"), noConstraints);
 
-  final Parent<Competencia> competencia = new Parent(Competencia.m, canonicalName("processor.test.Competidor.competencia"), description("Competencia"), fieldName("competencia"), nullable, jsonName("competencia"), jsonPath("competencia"), noConstraints);
+  final Parent<Competencia> competencia = new Parent(Competencia.m, canonicalName("processor.test.Competidor.competencia"), fieldName("competencia"), nullable, jsonName("competencia"), jsonPath("competencia"), noConstraints);
 
-  final UnindexedString nombreVisible = new UnindexedString(canonicalName("processor.test.Competidor.nombreVisible"), description("Nombre Visible"), propertyName("nombreVisible"), fieldName("nombreVisible"), nullable, jsonName("nombreVisible"), jsonPath("nombreVisible"), constraints(ae.db.NotBlankConstraint.ForString.INSTANCE));
+  final UnindexedString nombreVisible = new UnindexedString(canonicalName("processor.test.Competidor.nombreVisible"), propertyName("nombreVisible"), fieldName("nombreVisible"), nullable, jsonName("nombreVisible"), jsonPath("nombreVisible"), constraints(ae.db.NotBlankConstraint.ForString.INSTANCE));
 
-  final UnindexedString nombres = new UnindexedString(canonicalName("processor.test.Competidor.nombres"), description("Nombres"), propertyName("nombres"), fieldName("nombres"), required, jsonName("nombres"), jsonPath("nombres"), constraints(ae.db.NotBlankConstraint.ForString.INSTANCE));
+  final UnindexedString nombres = new UnindexedString(canonicalName("processor.test.Competidor.nombres"), propertyName("nombres"), fieldName("nombres"), required, jsonName("nombres"), jsonPath("nombres"), constraints(ae.db.NotBlankConstraint.ForString.INSTANCE));
 
-  final UnindexedString apellidos = new UnindexedString(canonicalName("processor.test.Competidor.apellidos"), description("Apellidos"), propertyName("apellidos"), fieldName("apellidos"), required, jsonName("apellidos"), jsonPath("apellidos"), constraints(ae.db.NotBlankConstraint.ForString.INSTANCE));
+  final UnindexedString apellidos = new UnindexedString(canonicalName("processor.test.Competidor.apellidos"), propertyName("apellidos"), fieldName("apellidos"), required, jsonName("apellidos"), jsonPath("apellidos"), constraints(ae.db.NotBlankConstraint.ForString.INSTANCE));
 
-  final UnindexedString prefijo = new UnindexedString(canonicalName("processor.test.Competidor.prefijo"), description("Prefijo"), propertyName("prefijo"), fieldName("prefijo"), nullable, jsonName("prefijo"), jsonPath("prefijo"), noConstraints);
+  final UnindexedString prefijo = new UnindexedString(canonicalName("processor.test.Competidor.prefijo"), propertyName("prefijo"), fieldName("prefijo"), nullable, jsonName("prefijo"), jsonPath("prefijo"), noConstraints);
 
-  final UnindexedString sufijo = new UnindexedString(canonicalName("processor.test.Competidor.sufijo"), description("Sufijo"), propertyName("sufijo"), fieldName("sufijo"), nullable, jsonName("sufijo"), jsonPath("sufijo"), noConstraints);
+  final UnindexedString sufijo = new UnindexedString(canonicalName("processor.test.Competidor.sufijo"), propertyName("sufijo"), fieldName("sufijo"), nullable, jsonName("sufijo"), jsonPath("sufijo"), noConstraints);
 
-  final IndexedString apodo = new IndexedString(canonicalName("processor.test.Competidor.apodo"), description("Apodo"), propertyName("apodo"), fieldName("apodo"), nullable, jsonName("apodo"), jsonPath("apodo"), constraints(ae.db.NotBlankConstraint.ForString.INSTANCE));
+  final IndexedString apodo = new IndexedString(canonicalName("processor.test.Competidor.apodo"), propertyName("apodo"), fieldName("apodo"), nullable, jsonName("apodo"), jsonPath("apodo"), constraints(ae.db.NotBlankConstraint.ForString.INSTANCE));
 
-  final UnindexedDate nacimiento = new UnindexedDate(canonicalName("processor.test.Competidor.nacimiento"), description("Nacimiento"), propertyName("nacimiento"), fieldName("nacimiento"), required, jsonName("nacimiento"), jsonPath("nacimiento"), new DateJsonSerializer("yyyy-MM-dd"), noConstraints);
+  final UnindexedDate nacimiento = new UnindexedDate(canonicalName("processor.test.Competidor.nacimiento"), propertyName("nacimiento"), fieldName("nacimiento"), required, jsonName("nacimiento"), jsonPath("nacimiento"), new DateJsonSerializer("yyyy-MM-dd"), noConstraints);
 
-  final UnindexedString sexo = new UnindexedString(canonicalName("processor.test.Competidor.sexo"), description("Sexo"), propertyName("sexo"), fieldName("sexo"), required, jsonName("sexo"), jsonPath("sexo"), noConstraints);
+  final UnindexedString sexo = new UnindexedString(canonicalName("processor.test.Competidor.sexo"), propertyName("sexo"), fieldName("sexo"), required, jsonName("sexo"), jsonPath("sexo"), noConstraints);
 
-  final IndexedPhoneNumber telefonoPersonal = new IndexedPhoneNumber(canonicalName("processor.test.Competidor.telefonoPersonal"), description("Telefono"), propertyName("fono"), fieldName("telefonoPersonal"), nullable, jsonName("telefonoPersonal"), jsonPath("telefonoPersonal"), noConstraints);
+  final IndexedPhoneNumber telefonoPersonal = new IndexedPhoneNumber(canonicalName("processor.test.Competidor.telefonoPersonal"), propertyName("fono"), fieldName("telefonoPersonal"), nullable, jsonName("telefonoPersonal"), jsonPath("telefonoPersonal"), noConstraints);
 
-  final UnindexedPhoneNumber telefonoEmergencias = new UnindexedPhoneNumber(canonicalName("processor.test.Competidor.telefonoEmergencias"), description("Telefono de Emergencia"), propertyName("emergencia"), fieldName("telefonoEmergencias"), nullable, jsonName("telefonoEmergencias"), jsonPath("telefonoEmergencias"), noConstraints);
+  final UnindexedPhoneNumber telefonoEmergencias = new UnindexedPhoneNumber(canonicalName("processor.test.Competidor.telefonoEmergencias"), propertyName("emergencia"), fieldName("telefonoEmergencias"), nullable, jsonName("telefonoEmergencias"), jsonPath("telefonoEmergencias"), noConstraints);
 
-  final IndexedEmail email = new IndexedEmail(canonicalName("processor.test.Competidor.email"), description("Email"), propertyName("email"), fieldName("email"), required, jsonName("email"), jsonPath("email"), noConstraints);
+  final IndexedEmail email = new IndexedEmail(canonicalName("processor.test.Competidor.email"), propertyName("email"), fieldName("email"), required, jsonName("email"), jsonPath("email"), noConstraints);
 
-  final UnindexedEmail emailEmergencias = new UnindexedEmail(canonicalName("processor.test.Competidor.emailEmergencias"), description("Email Emergencias"), propertyName("emailEmergencias"), fieldName("emailEmergencias"), nullable, jsonName("emailEmergencias"), jsonPath("emailEmergencias"), noConstraints);
+  final UnindexedEmail emailEmergencias = new UnindexedEmail(canonicalName("processor.test.Competidor.emailEmergencias"), propertyName("emailEmergencias"), fieldName("emailEmergencias"), nullable, jsonName("emailEmergencias"), jsonPath("emailEmergencias"), noConstraints);
 
-  final UnindexedText info = new UnindexedText(canonicalName("processor.test.Competidor.info"), description("Info"), propertyName("info"), fieldName("info"), nullable, jsonName("info"), jsonPath("info"), constraints(ae.db.NotBlankConstraint.ForText.INSTANCE));
+  final UnindexedText info = new UnindexedText(canonicalName("processor.test.Competidor.info"), propertyName("info"), fieldName("info"), nullable, jsonName("info"), jsonPath("info"), constraints(ae.db.NotBlankConstraint.ForText.INSTANCE));
 
-  final UnindexedKeyList participaciones = new UnindexedKeyList(canonicalName("processor.test.Competidor.participaciones"), description("Participaciones"), propertyName("participaciones"), fieldName("participaciones"), nullable, jsonName("participaciones"), jsonPath("participaciones"), noConstraints);
+  final UnindexedKeyList participaciones = new UnindexedKeyList(canonicalName("processor.test.Competidor.participaciones"), propertyName("participaciones"), fieldName("participaciones"), nullable, jsonName("participaciones"), jsonPath("participaciones"), noConstraints);
 
-  private final ImmutableList<Attr> _attrs = ImmutableList.of(personId, competencia, nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info, participaciones);
+  private final ImmutableList<Attribute> _attrs = ImmutableList.of(personId, competencia, nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info, participaciones);
 
   private final ImmutableList<Field<?>> _fields = ImmutableList.of(nombreVisible, nombres, apellidos, prefijo, sufijo, apodo, nacimiento, sexo, telefonoPersonal, telefonoEmergencias, email, emailEmergencias, info, participaciones);
 
@@ -99,7 +99,7 @@ abstract class __Competidor extends ChildWithId {
   }
 
   @Override
-  public final ImmutableList<Attr> modelAttributes() {
+  public final ImmutableList<Attribute> modelAttributes() {
     return _attrs;
   }
 

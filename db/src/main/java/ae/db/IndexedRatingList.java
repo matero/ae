@@ -10,7 +10,6 @@ public final class IndexedRatingList extends ListField.Indexed<Rating> implement
   private static final long serialVersionUID = 8457052140483648895L;
 
   public IndexedRatingList(final String canonicalName,
-                           final String description,
                            final String property,
                            final String field,
                            final boolean required,
@@ -18,7 +17,7 @@ public final class IndexedRatingList extends ListField.Indexed<Rating> implement
                            final String jsonPath,
                            final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           RatingJsonSerializer.ARRAY,
           new PropertyProjection(property, Rating.class), constraints);
   }

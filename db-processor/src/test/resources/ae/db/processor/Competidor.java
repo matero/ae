@@ -66,8 +66,8 @@ public class Competidor extends __Competidor
     @notBlank @indexed String apodo;
     @required java.util.Date nacimiento;
     @required String sexo; // MASCULINO, FEMENINO, OTRO;
-    @indexed @property("fono") @description("Telefono") PhoneNumber telefonoPersonal;
-    @property("emergencia") @description("Telefono de Emergencia") PhoneNumber telefonoEmergencias;
+    @indexed @property("fono") PhoneNumber telefonoPersonal;
+    @property("emergencia") PhoneNumber telefonoEmergencias;
     @required @indexed Email email;
     Email emailEmergencias;
     @notBlank Text info;

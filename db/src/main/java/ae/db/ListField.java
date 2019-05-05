@@ -190,7 +190,6 @@ public interface ListField<E> extends Field<List<E>> {
   abstract class Unindexed<E> extends FieldData<List<E>> implements ListField<E> {
 
     public Unindexed(final String canonicalName,
-                     final String description,
                      final String property,
                      final String field,
                      final boolean required,
@@ -199,7 +198,7 @@ public interface ListField<E> extends Field<List<E>> {
                      final JsonSerializer<List<E>> jsonSerializer,
                      final ImmutableList<Constraint> constraints)
     {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer,
+      super(canonicalName, property, field, required, jsonName, jsonPath, jsonSerializer,
             constraints);
     }
 
@@ -228,7 +227,6 @@ public interface ListField<E> extends Field<List<E>> {
     private final FilterPredicate isNotNull;
 
     protected Indexed(final String canonicalName,
-                      final String description,
                       final String property,
                       final String field,
                       final boolean required,
@@ -238,7 +236,7 @@ public interface ListField<E> extends Field<List<E>> {
                       final PropertyProjection projection,
                       final ImmutableList<Constraint> constraints)
     {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer,
+      super(canonicalName, property, field, required, jsonName, jsonPath, jsonSerializer,
             constraints);
       this.projection = projection;
       this.asc = new Query.SortPredicate(property, Query.SortDirection.ASCENDING);

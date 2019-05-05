@@ -45,7 +45,6 @@ import javax.lang.model.util.Types;
 import ae.db.EmailConstraint;
 import ae.db.NotBlankConstraint;
 import ae.Record;
-import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import javax.lang.model.type.DeclaredType;
 
@@ -109,27 +108,6 @@ abstract class ModelAttributeInterpreter {
   String nameOf(final VariableElement variable)
   {
     return variable.getSimpleName().toString();
-  }
-
-  String descriptionOf(final VariableElement variable)
-  {
-    final Record.description descr = variable.getAnnotation(Record.description.class);
-    if (descr == null) {
-      return descriptionAt(variable.getSimpleName().toString());
-    } else {
-      return descr.value();
-    }
-  }
-
-  String descriptionAt(final String text)
-  {
-    final String[] splitted = text.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
-    final StringBuilder sb = new StringBuilder().append(splitted[0].substring(0, 1).toUpperCase()).append(
-        splitted[0].substring(1));
-    for (int i = 1; i < splitted.length; i++) {
-      sb.append(' ').append(splitted[i]);
-    }
-    return sb.toString();
   }
 
   TypeName typeNameOf(final VariableElement variable)

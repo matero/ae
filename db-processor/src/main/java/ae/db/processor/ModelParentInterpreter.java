@@ -57,7 +57,6 @@ class ModelParentInterpreter extends ModelAttributeInterpreter {
     checkAnnotationsOf(variable);
     return new MetaParent(typeNameOf(variable),
                           nameOf(variable),
-                          descriptionOf(variable),
                           isRequired(variable),
                           modifiersOf(variable),
                           constraintsOf(variable));

@@ -23,7 +23,6 @@
  */
 package ae.db.processor;
 
-import ae.db.Attr;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.*;
@@ -63,6 +62,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ae.db.Attribute;
 
 class ModelBaseClassCodeGenerator implements CodeGenerator {
 
@@ -209,8 +209,7 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
   static final ParameterizedTypeName META_FIELDS_TYPE = ParameterizedTypeName.get(
       ClassName.get(ImmutableList.class),
       ParameterizedTypeName.get(ClassName.get(Field.class), WildcardTypeName.subtypeOf(Object.class)));
-  static final ParameterizedTypeName META_ATTRS_TYPE = ParameterizedTypeName.get(
-      ClassName.get(ImmutableList.class), ClassName.get(Attr.class));
+  static final ParameterizedTypeName META_ATTRS_TYPE = ParameterizedTypeName.get(ClassName.get(ImmutableList.class), ClassName.get(Attribute.class));
 
   void defineMetadataInfo()
   {

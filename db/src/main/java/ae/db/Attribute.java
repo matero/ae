@@ -30,15 +30,11 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.common.collect.ImmutableList;
 
-public interface Attr extends java.io.Serializable {
+public interface Attribute extends java.io.Serializable {
 
   String canonicalName();
 
-  String description();
-
   String field();
-
-  String property();
 
   JsonStringNode jsonName();
 
@@ -65,26 +61,23 @@ public interface Attr extends java.io.Serializable {
   void validate(Entity data, Validation validation);
 }
 
-abstract class AttrData implements Attr {
+abstract class AttrData implements Attribute {
 
   private static final long serialVersionUID = -4466778777529645459L;
 
   private final String canonicalName;
-  private final String description;
   private final String field;
   private final JsonStringNode jsonName;
   private final String jsonPath;
   private final ImmutableList<Constraint> constraints;
 
   protected AttrData(final String canonicalName,
-                     final String description,
                      final String field,
                      final JsonStringNode jsonName,
                      final String jsonPath,
                      final ImmutableList<Constraint> constraints)
   {
     this.canonicalName = canonicalName;
-    this.description = description;
     this.field = field;
     this.jsonName = jsonName;
     this.jsonPath = jsonPath;
@@ -95,12 +88,6 @@ abstract class AttrData implements Attr {
   public final String canonicalName()
   {
     return canonicalName;
-  }
-
-  @Override
-  public final String description()
-  {
-    return description;
   }
 
   @Override

@@ -2,7 +2,7 @@ package processor.test;
 
 import static ae.db.DSL.*;
 
-import ae.db.Attr;
+import ae.db.Attribute;
 import ae.db.Field;
 import ae.db.RootWithName;
 import ae.db.Validation;
@@ -30,9 +30,9 @@ abstract class __Competencia extends RootWithName {
 
   static final Competencia m = new Competencia();
 
-  final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), description("Nombre"), fieldName("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints);
+  final Name nombre = new Name(canonicalName("processor.test.Competencia.nombre"), fieldName("nombre"), jsonName("nombre"), jsonPath("nombre"), noConstraints);
 
-  private final ImmutableList<Attr> _attrs = ImmutableList.of(nombre);
+  private final ImmutableList<Attribute> _attrs = ImmutableList.of(nombre);
 
   private final ImmutableList<Field<?>> _fields = ImmutableList.of();
 
@@ -60,7 +60,7 @@ abstract class __Competencia extends RootWithName {
   }
 
   @Override
-  public final ImmutableList<Attr> modelAttributes() {
+  public final ImmutableList<Attribute> modelAttributes() {
     return _attrs;
   }
 

@@ -150,9 +150,9 @@ final class FieldGenerator extends AttributeGenerator
   {
     final String constraints = getConstraints(field);
     if (isDate()) {
-      return "new $T(canonicalName($S), description($S), propertyName($S), fieldName($S), $L, jsonName($S), jsonPath($S), new $T($S), " + constraints + ')';
+      return "new $T(canonicalName($S), propertyName($S), fieldName($S), $L, jsonName($S), jsonPath($S), new $T($S), " + constraints + ')';
     } else {
-      return "new $T(canonicalName($S), description($S), propertyName($S), fieldName($S), $L, jsonName($S), jsonPath($S), " + constraints + ')';
+      return "new $T(canonicalName($S), propertyName($S), fieldName($S), $L, jsonName($S), jsonPath($S), " + constraints + ')';
     }
   }
 
@@ -166,7 +166,6 @@ final class FieldGenerator extends AttributeGenerator
     final LinkedList<Object> args = new LinkedList<>();
     args.add(fieldClass);
     args.add(canonicalName());
-    args.add(field.description);
     args.add(field.property);
     args.add(field.name);
     args.add(required(field));

@@ -33,7 +33,6 @@ public final class IndexedPostalAddressList extends ListField.Indexed<PostalAddr
   private static final long serialVersionUID = -3747675491216202915L;
 
   public IndexedPostalAddressList(final String canonicalName,
-                                  final String description,
                                   final String property,
                                   final String field,
                                   final boolean required,
@@ -41,7 +40,7 @@ public final class IndexedPostalAddressList extends ListField.Indexed<PostalAddr
                                   final String jsonPath,
                                   final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           PostalAddressJsonSerializer.ARRAY,
           new PropertyProjection(property, PostalAddress.class), constraints);
   }

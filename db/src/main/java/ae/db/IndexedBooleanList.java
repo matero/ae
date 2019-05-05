@@ -37,7 +37,6 @@ public final class IndexedBooleanList extends ListField.Indexed<Boolean> impleme
   private final FilterPredicate isFalse;
 
   public IndexedBooleanList(final String canonicalName,
-                            final String description,
                             final String property,
                             final String field,
                             final boolean required,
@@ -45,7 +44,7 @@ public final class IndexedBooleanList extends ListField.Indexed<Boolean> impleme
                             final String jsonPath,
                             final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           BooleanJsonSerializer.ARRAY,
           new PropertyProjection(property, Boolean.class), constraints);
     this.isTrue = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.TRUE);

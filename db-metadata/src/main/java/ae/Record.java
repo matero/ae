@@ -53,12 +53,6 @@ public abstract class Record {
 
   @Retention(SOURCE)
   @Target(FIELD)
-  public @interface description {
-    String value();
-  }
-
-  @Retention(SOURCE)
-  @Target(FIELD)
   public @interface required {
   }
 

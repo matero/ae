@@ -32,7 +32,6 @@ public final class IndexedLongList extends ListField.Indexed<Long> implements Lo
   private static final long serialVersionUID = 4062753071543649563L;
 
   public IndexedLongList(final String canonicalName,
-                         final String description,
                          final String property,
                          final String field,
                          final boolean required,
@@ -40,7 +39,7 @@ public final class IndexedLongList extends ListField.Indexed<Long> implements Lo
                          final String jsonPath,
                          final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           LongJsonSerializer.ARRAY,
           new PropertyProjection(property, Long.class), constraints);
   }

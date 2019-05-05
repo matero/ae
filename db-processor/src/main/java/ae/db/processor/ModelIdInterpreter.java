@@ -47,12 +47,9 @@ class ModelIdInterpreter extends ModelAttributeInterpreter {
     checkModifiersOf(variable, Record.id.class);
     checkAnnotationsOf(variable);
     if (ClassName.LONG.equals(typeCanonicalName)) {
-      return new MetaId(nameOf(variable), descriptionOf(variable), isRequired(variable), modifiersOf(
-                        variable),
-                        constraintsOf(variable));
+      return new MetaId(nameOf(variable), isRequired(variable), modifiersOf(variable), constraintsOf(variable));
     } else {
-      return new MetaName(nameOf(variable), descriptionOf(variable), modifiersOf(variable),
-                          constraintsOf(variable));
+      return new MetaName(nameOf(variable), modifiersOf(variable), constraintsOf(variable));
     }
   }
 

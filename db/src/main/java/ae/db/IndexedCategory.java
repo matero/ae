@@ -33,7 +33,6 @@ public final class IndexedCategory extends ScalarField.Indexed<Category> impleme
   private static final long serialVersionUID = 5427175389652645621L;
 
   public IndexedCategory(final String canonicalName,
-                         final String description,
                          final String property,
                          final String field,
                          final boolean required,
@@ -41,7 +40,7 @@ public final class IndexedCategory extends ScalarField.Indexed<Category> impleme
                          final String jsonPath,
                          final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           CategoryJsonSerializer.INSTANCE,
           new PropertyProjection(property, Category.class), constraints);
   }

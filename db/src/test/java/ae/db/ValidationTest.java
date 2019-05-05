@@ -24,7 +24,6 @@
 package ae.db;
 
 import static ae.db.DSL.canonicalName;
-import static ae.db.DSL.description;
 import static ae.db.DSL.propertyName;
 import static ae.db.DSL.fieldName;
 import static ae.db.DSL.required;
@@ -75,7 +74,6 @@ public class ValidationTest {
   {
     // given, an attr
     final StringField attr = new UnindexedString(canonicalName("attr"),
-                                                 description("test attribute"),
                                                  propertyName("attr"),
                                                  fieldName("attr"),
                                                  required,
@@ -98,7 +96,6 @@ public class ValidationTest {
     final Validation validation = Validation.withSuccessMessage("Message");
     // and given, an attr
     final StringField attr = new UnindexedString(canonicalName("attr"),
-                                                 description("test attribute"),
                                                  propertyName("attr"),
                                                  fieldName("attr"),
                                                  nullable,
@@ -131,7 +128,6 @@ public class ValidationTest {
     final Validation validation = Validation.withSuccessMessage("The Success Message");
     // and given, an 3 attrs
     final StringField a = new UnindexedString(canonicalName("a"),
-                                              description("test attribute a"),
                                               propertyName("a"),
                                               fieldName("a"),
                                               nullable,
@@ -139,7 +135,6 @@ public class ValidationTest {
                                               jsonPath("a"),
                                               noConstraints);
     final StringField b = new UnindexedString(canonicalName("b"),
-                                              description("test attribute b"),
                                               propertyName("b"),
                                               fieldName("b"),
                                               nullable,

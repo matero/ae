@@ -25,7 +25,6 @@ package ae.db;
 
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.IMHandle;
-import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 
 public final class UnindexedIMHandle extends ScalarField.Unindexed<IMHandle> implements IMHandleField {
@@ -33,7 +32,6 @@ public final class UnindexedIMHandle extends ScalarField.Unindexed<IMHandle> imp
   private static final long serialVersionUID = -3010439325488542641L;
 
   public UnindexedIMHandle(final String canonicalName,
-                           final String description,
                            final String property,
                            final String field,
                            final boolean required,
@@ -41,6 +39,6 @@ public final class UnindexedIMHandle extends ScalarField.Unindexed<IMHandle> imp
                            final String jsonPath,
                            final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, IMHandleJsonSerializer.INSTANCE, constraints);
+    super(canonicalName, property, field, required, jsonName, jsonPath, IMHandleJsonSerializer.INSTANCE, constraints);
   }
 }

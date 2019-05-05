@@ -34,9 +34,9 @@ public final class NotBlankConstraint {
 
   private static final String NAME = "notBlank";
 
-  private static String makeMessageFor(final Attr attr)
+  private static String makeMessageFor(final Attribute accessor)
   {
-    return attr.description() + " no debe ser vacio o solo blancos";
+    return accessor.field() + " no debe ser vacio o solo blancos";
   }
 
   public enum ForString implements Constraint<String> {
@@ -49,7 +49,7 @@ public final class NotBlankConstraint {
     }
 
     @Override
-    public String messageFor(final Attr attr, final String value)
+    public String messageFor(final Attribute attr, final String value)
     {
       return makeMessageFor(attr);
     }
@@ -71,7 +71,7 @@ public final class NotBlankConstraint {
     }
 
     @Override
-    public String messageFor(final Attr attr, final Text value)
+    public String messageFor(final Attribute attr, final Text value)
     {
       return makeMessageFor(attr);
     }

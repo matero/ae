@@ -39,13 +39,12 @@ public interface WithName extends java.io.Serializable {
     private static final long serialVersionUID = 571659316791906248L;
 
     public Name(final String canonicalName,
-                final String description,
                 final String field,
                 final JsonStringNode jsonName,
                 final String jsonPath,
                 final ImmutableList<Constraint> constraints)
     {
-      super(canonicalName, description, field, jsonName, jsonPath, constraints);
+      super(canonicalName, field, jsonName, jsonPath, constraints);
     }
 
     public String of(final Entity data)

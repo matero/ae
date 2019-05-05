@@ -9,7 +9,6 @@ public final class UnindexedShortBlobList extends ListField.Unindexed<ShortBlob>
   private static final long serialVersionUID = -1184152658102688463L;
 
   public UnindexedShortBlobList(final String canonicalName,
-                                final String description,
                                 final String property,
                                 final String field,
                                 final boolean required,
@@ -17,7 +16,7 @@ public final class UnindexedShortBlobList extends ListField.Unindexed<ShortBlob>
                                 final String jsonPath,
                                 final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           ShortBlobJsonSerializer.ARRAY,
           constraints);
   }

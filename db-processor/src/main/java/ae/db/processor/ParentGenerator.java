@@ -53,7 +53,7 @@ final class ParentGenerator extends AttributeGenerator {
 
   protected String parentInitializerFormat()
   {
-    return "new $T($L.m, canonicalName($S), description($S), fieldName($S), $L, jsonName($S), jsonPath($S), "
+    return "new $T($L.m, canonicalName($S), fieldName($S), $L, jsonName($S), jsonPath($S), "
         + getConstraints(parent) + ')';
   }
 
@@ -66,7 +66,6 @@ final class ParentGenerator extends AttributeGenerator {
       args.add(parentClass.simpleName());
     }
     args.add(canonicalName());
-    args.add(parent.description);
     args.add(parent.name);
     args.add(required(parent));
     args.add(parent.name);

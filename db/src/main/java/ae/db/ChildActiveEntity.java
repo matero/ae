@@ -58,14 +58,13 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
     public Parent(final P parent,
                   final String canonicalName,
-                  final String description,
                   final String field,
                   final boolean required,
                   final JsonStringNode jsonName,
                   final String jsonPath,
                   final ImmutableList<Constraint> constraints)
     {
-      super(canonicalName, description, field, jsonName, jsonPath, constraints);
+      super(canonicalName, field, jsonName, jsonPath, constraints);
       this.parent = parent;
       this.required = required;
     }

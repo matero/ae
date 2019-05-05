@@ -33,7 +33,6 @@ public final class IndexedPhoneNumber extends ScalarField.Indexed<PhoneNumber> i
   private static final long serialVersionUID = 991833434614358565L;
 
   public IndexedPhoneNumber(final String canonicalName,
-                            final String description,
                             final String property,
                             final String field,
                             final boolean required,
@@ -41,7 +40,7 @@ public final class IndexedPhoneNumber extends ScalarField.Indexed<PhoneNumber> i
                             final String jsonPath,
                             final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           PhoneNumberJsonSerializer.INSTANCE,
           new PropertyProjection(property, PhoneNumber.class), constraints);
   }

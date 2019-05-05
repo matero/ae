@@ -3,7 +3,7 @@ package ae.web;
 import javax.servlet.http.HttpServletRequest;
 import java.util.function.Supplier;
 
-public final class QueryParameter<T> extends RequestValueReader<T>
+public class QueryParameter<T> extends RequestValueReader<T>
 {
   public static final class NotDefined extends RuntimeException
   {
@@ -16,7 +16,7 @@ public final class QueryParameter<T> extends RequestValueReader<T>
     }
   }
 
-  private static final <T> Supplier<T> nullDefaultValue()
+  private static <T> Supplier<T> nullDefaultValue()
   {
     return () -> null;
   }

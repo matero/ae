@@ -8,7 +8,6 @@ public final class UnindexedString extends ScalarField.Unindexed<String> impleme
   private static final long serialVersionUID = -7890466161914195419L;
 
   public UnindexedString(final String canonicalName,
-                         final String description,
                          final String property,
                          final String field,
                          final boolean required,
@@ -16,7 +15,7 @@ public final class UnindexedString extends ScalarField.Unindexed<String> impleme
                          final String jsonPath,
                          final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           StringJsonSerializer.INSTANCE,
           constraints);
   }

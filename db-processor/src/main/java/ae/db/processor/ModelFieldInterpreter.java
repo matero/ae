@@ -107,7 +107,6 @@ class ModelFieldInterpreter extends ModelAttributeInterpreter {
 
     return new MetaField(type,
                          nameOf(variable),
-                         descriptionOf(variable),
                          propertyOf(variable),
                          isIndexed(variable),
                          isRequired(variable),

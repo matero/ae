@@ -32,7 +32,6 @@ public final class UnindexedEmailList extends ListField.Unindexed<Email> impleme
   private static final long serialVersionUID = 5803950753522320539L;
 
   public UnindexedEmailList(final String canonicalName,
-                            final String description,
                             final String property,
                             final String field,
                             final boolean required,
@@ -40,7 +39,7 @@ public final class UnindexedEmailList extends ListField.Unindexed<Email> impleme
                             final String jsonPath,
                             final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           EmailJsonSerializer.ARRAY,
           constraints);
   }

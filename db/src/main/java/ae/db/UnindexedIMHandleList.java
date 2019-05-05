@@ -25,7 +25,6 @@ package ae.db;
 
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Category;
-import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 
 public final class UnindexedIMHandleList extends ListField.Unindexed<Category> implements CategoryListField
@@ -33,7 +32,6 @@ public final class UnindexedIMHandleList extends ListField.Unindexed<Category> i
   private static final long serialVersionUID = -2130075684828667423L;
 
   public UnindexedIMHandleList(final String canonicalName,
-                               final String description,
                                final String property,
                                final String field,
                                final boolean required,
@@ -41,6 +39,6 @@ public final class UnindexedIMHandleList extends ListField.Unindexed<Category> i
                                final String jsonPath,
                                final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY, constraints);
+    super(canonicalName, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.ARRAY, constraints);
   }
 }

@@ -2,7 +2,7 @@ package ae.db.processor;
 
 import static ae.db.DSL.*;
 
-import ae.db.Attr;
+import ae.db.Attribute;
 import ae.db.Field;
 import ae.db.IndexedString;
 import ae.db.RootWithName;
@@ -26,13 +26,13 @@ abstract class __Provincia extends RootWithName {
 
   static final Provincia m = new Provincia();
 
-  final Name codigo = new Name(canonicalName("ae.db.processor.Provincia.codigo"), description("Codigo"), fieldName("codigo"), jsonName("codigo"), jsonPath("codigo"), noConstraints);
+  final Name codigo = new Name(canonicalName("ae.db.processor.Provincia.codigo"), fieldName("codigo"), jsonName("codigo"), jsonPath("codigo"), noConstraints);
 
-  final IndexedString nombre = new IndexedString(canonicalName("ae.db.processor.Provincia.nombre"), description("Nombre"), propertyName("nombre"), fieldName("nombre"), nullable, jsonName("nombre"), jsonPath("nombre"), noConstraints);
+  final IndexedString nombre = new IndexedString(canonicalName("ae.db.processor.Provincia.nombre"), propertyName("nombre"), fieldName("nombre"), nullable, jsonName("nombre"), jsonPath("nombre"), noConstraints);
 
-  final UnindexedString capital = new UnindexedString(canonicalName("ae.db.processor.Provincia.capital"), description("Capital"), propertyName("capital"), fieldName("capital"), nullable, jsonName("capital"), jsonPath("capital"), noConstraints);
+  final UnindexedString capital = new UnindexedString(canonicalName("ae.db.processor.Provincia.capital"), propertyName("capital"), fieldName("capital"), nullable, jsonName("capital"), jsonPath("capital"), noConstraints);
 
-  private final ImmutableList<Attr> _attrs = ImmutableList.of(codigo, nombre, capital);
+  private final ImmutableList<Attribute> _attrs = ImmutableList.of(codigo, nombre, capital);
 
   private final ImmutableList<Field<?>> _fields = ImmutableList.of(nombre, capital);
 
@@ -60,7 +60,7 @@ abstract class __Provincia extends RootWithName {
   }
 
   @Override
-  public final ImmutableList<Attr> modelAttributes() {
+  public final ImmutableList<Attribute> modelAttributes() {
     return _attrs;
   }
 

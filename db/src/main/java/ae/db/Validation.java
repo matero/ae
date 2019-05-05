@@ -47,7 +47,7 @@ public final class Validation {
     return new Validation(successMessage);
   }
 
-  public static Validation failed(final Attr attr, final String failure)
+  public static Validation failed(final Attribute attr, final String failure)
   {
     if (failure == null) {
       throw new NullPointerException("failure");
@@ -60,7 +60,7 @@ public final class Validation {
     return validation;
   }
 
-  private final LinkedHashMap<Attr, List<String>> errors;
+  private final LinkedHashMap<Attribute, List<String>> errors;
   public final String successMessage;
 
   private Validation(final String successMessage)
@@ -79,7 +79,7 @@ public final class Validation {
     return !this.errors.isEmpty();
   }
 
-  public List<String> get(final Attr attr)
+  public List<String> get(final Attribute attr)
   {
     if (this.errors.containsKey(attr)) {
       return this.errors.get(attr);
@@ -105,7 +105,7 @@ public final class Validation {
   private JsonField failure()
   {
     final List<JsonNode> propertiesErrors = new java.util.ArrayList<>(this.errors.size());
-    for (final Attr attr : this.errors.keySet()) {
+    for (final Attribute attr : this.errors.keySet()) {
       final List<String> attrErrors = this.errors.get(attr);
       if (!attrErrors.isEmpty()) {
         final List<JsonStringNode> failureMsgs = new java.util.ArrayList<>(attrErrors.size());
@@ -118,12 +118,12 @@ public final class Validation {
     return field("failure", array(propertiesErrors));
   }
 
-  protected static JsonNode attributeFailures(final Attr attr, final List<JsonStringNode> errorMessages)
+  protected static JsonNode attributeFailures(final Attribute attr, final List<JsonStringNode> errorMessages)
   {
     return object(ImmutableList.of(field(attr.jsonName(), array(errorMessages))));
   }
 
-  public void reject(final Attr attr, final String failure)
+  public void reject(final Attribute attr, final String failure)
   {
     if (attr == null) {
       throw new NullPointerException("attr");
@@ -134,7 +134,7 @@ public final class Validation {
     registerFailure(attr, failure);
   }
 
-  private void registerFailure(final Attr attr, final String failure)
+  private void registerFailure(final Attribute attr, final String failure)
   {
     this.errors.putIfAbsent(attr, new LinkedList<>());
     this.errors.get(attr).add(failure);

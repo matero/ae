@@ -60,7 +60,7 @@ final class IdGenerator extends AttributeGenerator {
   protected String idInitializerFormat()
   {
     final String constraints = getConstraints(id);
-    return "new $T(canonicalName($S), description($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints + ')';
+    return "new $T(canonicalName($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints + ')';
   }
 
   private Object[] idInitializerArgs()
@@ -68,7 +68,6 @@ final class IdGenerator extends AttributeGenerator {
     final LinkedList<Object> args = new LinkedList<>();
     args.add(idClass);
     args.add(canonicalName());
-    args.add(id.description);
     args.add(id.name);
     args.add(id.name);
     args.add(id.name);
@@ -79,7 +78,7 @@ final class IdGenerator extends AttributeGenerator {
   protected String nameInitializerFormat()
   {
     final String constraints = getConstraints(id);
-    return "new $T(canonicalName($S), description($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints + ')';
+    return "new $T(canonicalName($S), fieldName($S), jsonName($S), jsonPath($S), " + constraints + ')';
   }
 
   private Object[] nameInitializerArgs()
@@ -87,7 +86,6 @@ final class IdGenerator extends AttributeGenerator {
     final LinkedList<Object> args = new LinkedList<>();
     args.add(idClass);
     args.add(canonicalName());
-    args.add(id.description);
     args.add(id.name);
     args.add(id.name);
     args.add(id.name);

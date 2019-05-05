@@ -179,7 +179,6 @@ public interface ScalarField<T> extends Field<T> {
   abstract class Unindexed<T> extends FieldData<T> implements ScalarField<T> {
 
     protected Unindexed(final String canonicalName,
-                        final String description,
                         final String property,
                         final String field,
                         final boolean required,
@@ -188,7 +187,7 @@ public interface ScalarField<T> extends Field<T> {
                         final JsonSerializer<T> jsonSerializer,
                         final ImmutableList<Constraint> constraints)
     {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer,
+      super(canonicalName, property, field, required, jsonName, jsonPath, jsonSerializer,
             constraints);
     }
 
@@ -217,7 +216,6 @@ public interface ScalarField<T> extends Field<T> {
     private final FilterPredicate isNotNull;
 
     protected Indexed(final String canonicalName,
-                      final String description,
                       final String property,
                       final String field,
                       final boolean required,
@@ -227,8 +225,7 @@ public interface ScalarField<T> extends Field<T> {
                       final PropertyProjection projection,
                       final ImmutableList<Constraint> constraints)
     {
-      super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer,
-            constraints);
+      super(canonicalName, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
       this.projection = projection;
       this.asc = new Query.SortPredicate(property, Query.SortDirection.ASCENDING);
       this.desc = new Query.SortPredicate(property, Query.SortDirection.DESCENDING);

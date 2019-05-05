@@ -56,7 +56,6 @@ public final class IndexedLink extends ScalarField.Indexed<Link> implements Link
   private static final long serialVersionUID = -6063364703529396962L;
 
   public IndexedLink(final String canonicalName,
-                     final String description,
                      final String property,
                      final String field,
                      final boolean required,
@@ -64,7 +63,7 @@ public final class IndexedLink extends ScalarField.Indexed<Link> implements Link
                      final String jsonPath,
                      final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           LinkJsonSerializer.INSTANCE,
           new PropertyProjection(property, Link.class), constraints);
   }

@@ -33,7 +33,6 @@ public final class IndexedGeoPt extends ScalarField.Indexed<GeoPt> implements Ge
   private static final long serialVersionUID = -9039997755445894537L;
 
   public IndexedGeoPt(final String canonicalName,
-                      final String description,
                       final String property,
                       final String field,
                       final boolean required,
@@ -41,7 +40,7 @@ public final class IndexedGeoPt extends ScalarField.Indexed<GeoPt> implements Ge
                       final String jsonPath,
                       final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           GeoPtJsonSerializer.INSTANCE,
           new PropertyProjection(property, GeoPt.class), constraints);
   }

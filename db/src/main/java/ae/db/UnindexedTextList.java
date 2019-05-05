@@ -32,7 +32,6 @@ public final class UnindexedTextList extends ListField.Unindexed<Text> {
   private static final long serialVersionUID = 3311038483823447444L;
 
   public UnindexedTextList(final String canonicalName,
-                           final String description,
                            final String property,
                            final String field,
                            final boolean required,
@@ -40,7 +39,7 @@ public final class UnindexedTextList extends ListField.Unindexed<Text> {
                            final String jsonPath,
                            final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           TextJsonSerializer.ARRAY,
           constraints);
   }

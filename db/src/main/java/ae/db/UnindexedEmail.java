@@ -32,7 +32,6 @@ public final class UnindexedEmail extends ScalarField.Unindexed<Email> implement
   private static final long serialVersionUID = 7137859202573326583L;
 
   public UnindexedEmail(final String canonicalName,
-                        final String description,
                         final String property,
                         final String field,
                         final boolean required,
@@ -40,7 +39,7 @@ public final class UnindexedEmail extends ScalarField.Unindexed<Email> implement
                         final String jsonPath,
                         final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           EmailJsonSerializer.INSTANCE,
           constraints);
   }

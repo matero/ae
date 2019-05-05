@@ -28,12 +28,13 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PhoneNumber;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.common.collect.ImmutableList;
 
-public interface Field<T> extends Attr {
+public interface Field<T> extends Attribute {
 
+  String property();
+  
   @Override
   default boolean isDefinedAt(final Entity data)
   {
@@ -121,7 +122,6 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
   private final JsonSerializer<T> jsonSerializer;
 
   protected FieldData(final String canonicalName,
-                      final String description,
                       final String property,
                       final String field,
                       final boolean required,
@@ -130,7 +130,7 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
                       final JsonSerializer<T> jsonSerializer,
                       final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, field, jsonName, jsonPath, constraints);
+    super(canonicalName, field, jsonName, jsonPath, constraints);
     this.property = property;
     this.required = required;
     this.jsonSerializer = jsonSerializer;
@@ -192,17 +192,15 @@ enum RequiredConstraint implements Constraint<Object> {
     return value == null;
   }
 
-  public String messageFor(final Attr attr)
+  public String messageFor(final Attribute attr)
   {
     return messageFor(attr, this);
   }
 
   @Override
-  public String messageFor(final Attr attr, final Object value)
+  public String messageFor(final Attribute attr, final Object value)
   {
-    final StringBuilder msg = new StringBuilder().append('\'').append(attr.description()).append(
-        "' es requerido.");
-    return msg.toString();
+    return '\'' + attr.field() + "' es requerido.";
   }
 
   @Override

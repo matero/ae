@@ -33,7 +33,6 @@ public final class IndexedEmail extends ScalarField.Indexed<Email> implements Em
   private static final long serialVersionUID = 6163788779797349171L;
 
   public IndexedEmail(final String canonicalName,
-                      final String description,
                       final String property,
                       final String field,
                       final boolean required,
@@ -41,7 +40,7 @@ public final class IndexedEmail extends ScalarField.Indexed<Email> implements Em
                       final String jsonPath,
                       final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           EmailJsonSerializer.INSTANCE,
           new PropertyProjection(property, Email.class), constraints);
   }

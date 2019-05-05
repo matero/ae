@@ -33,7 +33,6 @@ public final class IndexedDateList extends ListField.Indexed<Date> implements Da
   private static final long serialVersionUID = 5531867035605929248L;
 
   public IndexedDateList(final String canonicalName,
-                         final String description,
                          final String property,
                          final String field,
                          final boolean required,
@@ -42,7 +41,7 @@ public final class IndexedDateList extends ListField.Indexed<Date> implements Da
                          final JsonSerializer<Date> jsonElementSerializer,
                          final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           new JsonArraySerializer<>(
               jsonElementSerializer),
           new PropertyProjection(property, Date.class), constraints);

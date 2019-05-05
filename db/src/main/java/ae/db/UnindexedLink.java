@@ -9,7 +9,6 @@ public final class UnindexedLink extends ScalarField.Unindexed<Link> implements 
   private static final long serialVersionUID = -6096604411666239752L;
 
   public UnindexedLink(final String canonicalName,
-                       final String description,
                        final String property,
                        final String field,
                        final boolean required,
@@ -17,7 +16,7 @@ public final class UnindexedLink extends ScalarField.Unindexed<Link> implements 
                        final String jsonPath,
                        final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           LinkJsonSerializer.INSTANCE,
           constraints);
   }

@@ -40,11 +40,6 @@ public final class DSL {
     return value;
   }
 
-  public static String description(final String value)
-  {
-    return value;
-  }
-
   public static String propertyName(final String value)
   {
     return value;

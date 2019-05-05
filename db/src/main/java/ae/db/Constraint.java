@@ -27,12 +27,12 @@ public interface Constraint<T> extends java.io.Serializable {
 
   boolean isInvalid(T value);
 
-  default String completeName(final Attr attr)
+  default String completeName(final Attribute attr)
   {
     return attr.canonicalName() + '.' + getName();
   }
 
-  String messageFor(Attr attr, T value);
+  String messageFor(Attribute attr, T value);
 
   String getName();
 }

@@ -78,7 +78,7 @@ public interface EntityModel extends java.io.Serializable {
     throw new IllegalEntityKind(webSafeKey, getClass());
   }
 
-  ImmutableList<Attr> modelAttributes();
+  ImmutableList<Attribute> modelAttributes();
 
   Identifier modelIdentifier();
 
@@ -181,19 +181,12 @@ public interface EntityModel extends java.io.Serializable {
     private static final long serialVersionUID = -1934606419426144533L;
 
     protected Identifier(final String canonicalName,
-                         final String description,
                          final String field,
                          final JsonStringNode jsonName,
                          final String jsonPath,
                          final ImmutableList<Constraint> constraints)
     {
-      super(canonicalName, description, field, jsonName, jsonPath, constraints);
-    }
-
-    @Override
-    public final String property()
-    {
-      return field();
+      super(canonicalName, field, jsonName, jsonPath, constraints);
     }
 
     @Override

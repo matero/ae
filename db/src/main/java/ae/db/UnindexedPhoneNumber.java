@@ -32,7 +32,6 @@ public final class UnindexedPhoneNumber extends ScalarField.Unindexed<PhoneNumbe
   private static final long serialVersionUID = 5821131325535376579L;
 
   public UnindexedPhoneNumber(final String canonicalName,
-                              final String description,
                               final String property,
                               final String field,
                               final boolean required,
@@ -40,7 +39,7 @@ public final class UnindexedPhoneNumber extends ScalarField.Unindexed<PhoneNumbe
                               final String jsonPath,
                               final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           PhoneNumberJsonSerializer.INSTANCE, constraints);
   }
 }

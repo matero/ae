@@ -9,7 +9,6 @@ public final class UnindexedUserList extends ListField.Unindexed<User> implement
   private static final long serialVersionUID = 5280406182600610375L;
 
   public UnindexedUserList(final String canonicalName,
-                           final String description,
                            final String property,
                            final String field,
                            final boolean required,
@@ -17,7 +16,7 @@ public final class UnindexedUserList extends ListField.Unindexed<User> implement
                            final String jsonPath,
                            final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath,
+    super(canonicalName, property, field, required, jsonName, jsonPath,
           UserJsonSerializer.ARRAY,
           constraints);
   }

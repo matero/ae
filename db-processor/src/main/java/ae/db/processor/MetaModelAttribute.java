@@ -35,20 +35,17 @@ import javax.lang.model.element.Modifier;
 abstract class MetaModelAttribute extends MetaData {
 
   final TypeName type;
-  final String description;
   final boolean required;
   final ImmutableSet<MetaConstraint> constraints;
 
   MetaModelAttribute(final TypeName type,
                      final String name,
-                     final String description,
                      final boolean required,
                      final Iterable<Modifier> modifiers,
                      final Iterable<MetaConstraint> constraints)
   {
     super(name, modifiers);
     this.type = type;
-    this.description = description;
     this.required = required;
     this.constraints = ImmutableSet.copyOf(constraints);
   }
@@ -78,12 +75,11 @@ abstract class MetaModelId extends MetaModelAttribute {
 
   MetaModelId(final TypeName type,
               final String name,
-              final String description,
               final boolean required,
               final Iterable<Modifier> modifiers,
               final Iterable<MetaConstraint> constraints)
   {
-    super(type, name, description, required, modifiers, constraints);
+    super(type, name, required, modifiers, constraints);
   }
 
   boolean isId()
@@ -101,13 +97,9 @@ final class MetaName extends MetaModelId {
 
   private static final TypeName TYPE = ClassName.get(String.class);
 
-  MetaName(final String name,
-           final String description,
-           final Iterable<Modifier> modifiers,
-           final Iterable<MetaConstraint> constraints)
+  MetaName(final String name, final Iterable<Modifier> modifiers, final Iterable<MetaConstraint> constraints)
   {
-    super(TYPE, name, description, true /*name is always required*/, modifiers,
-          constraints);
+    super(TYPE, name, true /*name is always required*/, modifiers, constraints);
   }
 
   @Override
@@ -128,12 +120,11 @@ final class MetaId extends MetaModelId {
   private static final TypeName TYPE = ClassName.LONG;
 
   MetaId(final String name,
-         final String description,
          final boolean required,
          final Iterable<Modifier> modifiers,
          final Iterable<MetaConstraint> constraints)
   {
-    super(TYPE, name, description, required, modifiers, constraints);
+    super(TYPE, name, required, modifiers, constraints);
   }
 
   @Override
@@ -147,12 +138,11 @@ final class MetaParent extends MetaModelAttribute {
 
   MetaParent(final TypeName type,
              final String name,
-             final String description,
              final boolean required,
              final Iterable<Modifier> modifiers,
              final Iterable<MetaConstraint> constraints)
   {
-    super(type, name, description, required, modifiers, constraints);
+    super(type, name, required, modifiers, constraints);
   }
 }
 
@@ -172,7 +162,6 @@ final class MetaField extends MetaModelAttribute {
 
   MetaField(final TypeName type,
             final String name,
-            final String description,
             final String property,
             final boolean indexed,
             final boolean required,
@@ -181,7 +170,7 @@ final class MetaField extends MetaModelAttribute {
             final ImmutableSet<Modifier> modifiers,
             final Iterable<MetaConstraint> constraints)
   {
-    super(type, name, description, required, modifiers, constraints);
+    super(type, name, required, modifiers, constraints);
     this.property = property;
     this.indexed = indexed;
     this.jsonIgnore = jsonIgnore;

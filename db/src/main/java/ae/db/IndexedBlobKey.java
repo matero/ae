@@ -33,7 +33,6 @@ public final class IndexedBlobKey extends ScalarField.Indexed<BlobKey> implement
   private static final long serialVersionUID = 7711730484772186606L;
 
   public IndexedBlobKey(final String canonicalName,
-                        final String description,
                         final String property,
                         final String field,
                         final boolean required,
@@ -42,7 +41,7 @@ public final class IndexedBlobKey extends ScalarField.Indexed<BlobKey> implement
                         final JsonSerializer<BlobKey> jsonSerializer,
                         final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, description, property, field, required, jsonName, jsonPath, jsonSerializer,
+    super(canonicalName, property, field, required, jsonName, jsonPath, jsonSerializer,
           new PropertyProjection(property, BlobKey.class),
           constraints);
   }
