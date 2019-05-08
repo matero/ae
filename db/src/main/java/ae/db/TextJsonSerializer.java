@@ -28,14 +28,14 @@ import static argo.jdom.JsonNodeFactories.string;
 
 import argo.jdom.JsonNode;
 import com.google.appengine.api.datastore.Text;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum TextJsonSerializer implements JsonSerializer<Text> {
   INSTANCE;
 
   static final JsonArraySerializer<Text> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override
-  public JsonNode toJson(final Text value)
+  @Override public JsonNode toJson(final @Nullable Text value)
   {
     if (value == null) {
       return nullNode();
@@ -43,8 +43,7 @@ enum TextJsonSerializer implements JsonSerializer<Text> {
     return string(value.getValue());
   }
 
-  @Override
-  public Text fromJson(final JsonNode json, final String jsonPath)
+  @Override public @Nullable Text fromJson(final JsonNode json, final String jsonPath)
   {
     if (json.isNullNode(jsonPath)) {
       return null;
@@ -53,8 +52,7 @@ enum TextJsonSerializer implements JsonSerializer<Text> {
     }
   }
 
-  @Override
-  public Text fromJson(final JsonNode json)
+  @Override public @Nullable Text fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

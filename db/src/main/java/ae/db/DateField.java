@@ -27,9 +27,7 @@ import com.google.appengine.api.datastore.PropertyContainer;
 import java.util.Date;
 
 public interface DateField extends ScalarField<Date> {
-
-  @Override
-  default Class<Date> type()
+  @Override default Class<Date> type()
   {
     return Date.class;
   }

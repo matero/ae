@@ -30,13 +30,13 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.common.collect.ImmutableList;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface Field<T> extends Attribute {
 
   String property();
   
-  @Override
-  default boolean isDefinedAt(final Entity data)
+  @Override default boolean isDefinedAt(final Entity data)
   {
     return data.hasProperty(property());
   }
@@ -52,17 +52,17 @@ public interface Field<T> extends Attribute {
 
   boolean required();
 
-  default T of(final PropertyContainer data)
+  default @Nullable T of(final PropertyContainer data)
   {
     return read(data);
   }
 
-  default T get(final PropertyContainer data)
+  default @Nullable T get(final PropertyContainer data)
   {
     return read(data);
   }
 
-  default String str(final PropertyContainer data)
+  default @Nullable String str(final PropertyContainer data)
   {
     final Object value = read(data);
     if (value == null) {
@@ -72,34 +72,33 @@ public interface Field<T> extends Attribute {
     }
   }
 
-  T read(final PropertyContainer data);
+  @Nullable T read(final PropertyContainer data);
 
-  default void set(final PropertyContainer data, final T value)
+  default void set(final PropertyContainer data, final @Nullable T value)
   {
     write(data, value);
   }
 
-  void write(PropertyContainer data, T value);
+  void write(PropertyContainer data, @Nullable T value);
 
   default void write(final PropertyContainer data, final JsonNode json)
   {
     write(data, interpretJson(json));
   }
 
-  JsonNode makeJsonValue(T value);
+  JsonNode makeJsonValue(@Nullable T value);
 
   default JsonField makeJsonFieldFrom(final PropertyContainer data)
   {
     return makeJsonField(read(data));
   }
 
-  default JsonField makeJsonField(final T value)
+  default JsonField makeJsonField(final @Nullable T value)
   {
     return JsonNodeFactories.field(jsonName(), makeJsonValue(value));
   }
 
-  @Override
-  default JsonNode makeJsonValue(final Entity data)
+  @Override default JsonNode makeJsonValue(final Entity data)
   {
     return makeJsonValue(read(data));
   }
@@ -109,8 +108,7 @@ public interface Field<T> extends Attribute {
     return makeJsonValue(read(data));
   }
 
-  @Override
-  T interpretJson(JsonNode json);
+  @Override @Nullable T interpretJson(JsonNode json);
 }
 
 abstract class FieldData<T> extends AttrData implements Field<T> {
@@ -136,34 +134,29 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
     this.jsonSerializer = jsonSerializer;
   }
 
-  @Override
-  public final String property()
+  @Override public final String property()
   {
     return property;
   }
 
-  @Override
-  public final boolean required()
+  @Override public final boolean required()
   {
     return required;
   }
 
-  @Override
-  public final JsonNode makeJsonValue(final T value)
+  @Override public final JsonNode makeJsonValue(final @Nullable T value)
   {
     return jsonSerializer.toJson(value);
   }
 
-  @Override
-  public final T interpretJson(final JsonNode json)
+  @Override public final @Nullable T interpretJson(final JsonNode json)
   {
     return jsonSerializer.fromJson(json, jsonPath());
   }
 
-  @Override
-  public final void validate(final Entity data, final Validation validation)
+  @Override public final void validate(final Entity data, final Validation validation)
   {
-    final T value = read(data);
+    final @Nullable T value = read(data);
     if (value == null) {
       if (required()) {
         validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
@@ -186,8 +179,7 @@ abstract class FieldData<T> extends AttrData implements Field<T> {
 enum RequiredConstraint implements Constraint<Object> {
   INSTANCE;
 
-  @Override
-  public boolean isInvalid(final Object value)
+  @Override public boolean isInvalid(final @Nullable Object value)
   {
     return value == null;
   }

@@ -24,9 +24,7 @@
 package ae.db;
 
 public interface DoubleListField extends ListField<Double> {
-
-  @Override
-  default Class<Double> elementType()
+  @Override default Class<Double> elementType()
   {
     return Double.class;
   }

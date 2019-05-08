@@ -35,13 +35,16 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public abstract class AnnotationProcessor extends AbstractProcessor {
 
-  protected Messager messager;
-  protected Filer filer;
-  protected Elements elements;
-  protected Types types;
+  protected @MonotonicNonNull Messager messager;
+  protected @MonotonicNonNull Filer filer;
+  protected @MonotonicNonNull Elements elements;
+  protected @MonotonicNonNull Types types;
 
   protected final Date today;
 
@@ -51,6 +54,7 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
   }
 
   @Override
+  @EnsuresNonNull({"messager", "filer", "elements", "types"})
   public synchronized void init(final ProcessingEnvironment processingEnv)
   {
     super.init(processingEnv);
@@ -60,36 +64,43 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
     types = processingEnv.getTypeUtils();
   }
 
+  @RequiresNonNull("messager")
   protected void error(final Element element, final Throwable failure)
   {
     message(Diagnostic.Kind.ERROR, message(failure), element);
   }
 
+  @RequiresNonNull("messager")
   protected void error(final Element element, final String errorMessage)
   {
     message(Diagnostic.Kind.ERROR, errorMessage, element);
   }
 
+  @RequiresNonNull("messager")
   protected final void info(final Element element, final String infoMessage, final Object... args)
   {
     info(element, String.format(infoMessage, args));
   }
 
+  @RequiresNonNull("messager")
   protected final void info(final String infoMessage, final Object... args)
   {
     message(Diagnostic.Kind.NOTE, String.format(infoMessage, args));
   }
 
+  @RequiresNonNull("messager")
   protected final void info(final Element element, final String infoMessage)
   {
     message(Diagnostic.Kind.NOTE, String.format("[%s] %s", getClass().getSimpleName(), infoMessage), element);
   }
 
+  @RequiresNonNull("messager")
   protected void error(final Throwable failure)
   {
     error(message(failure));
   }
 
+  @RequiresNonNull("messager")
   protected void error(final String message)
   {
     message(Diagnostic.Kind.ERROR, message);
@@ -101,6 +112,7 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * @param kind the kind of message
    * @param msg the message, or an empty string if none
    */
+  @RequiresNonNull("messager")
   protected final void message(final Diagnostic.Kind kind, final CharSequence msg)
   {
     messager.printMessage(kind, msg);
@@ -113,6 +125,7 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * @param msg the message, or an empty string if none
    * @param e the element to use as a position hint
    */
+  @RequiresNonNull("messager")
   protected final void message(final Diagnostic.Kind kind, final CharSequence msg, final Element e)
   {
     messager.printMessage(kind, msg, e);
@@ -126,10 +139,8 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * @param e the annotated element
    * @param a the annotation to use as a position hint
    */
-  protected final void message(final Diagnostic.Kind kind,
-                               final CharSequence msg,
-                               final Element e,
-                               final AnnotationMirror a)
+  @RequiresNonNull("messager")
+  protected final void message(final Diagnostic.Kind kind, final CharSequence msg, final Element e, final AnnotationMirror a)
   {
     messager.printMessage(kind, msg, e, a);
   }
@@ -143,11 +154,8 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * @param a the annotation containing the annotation value
    * @param v the annotation value to use as a position hint
    */
-  protected final void message(final Diagnostic.Kind kind,
-                               final CharSequence msg,
-                               final Element e,
-                               final AnnotationMirror a,
-                               final AnnotationValue v)
+  @RequiresNonNull("messager")
+  protected final void message(final Diagnostic.Kind kind, final CharSequence msg, final Element e, final AnnotationMirror a, final AnnotationValue v)
   {
     messager.printMessage(kind, msg, e, a, v);
   }
@@ -158,6 +166,7 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
     return msg == null ? "unknown error" : msg;
   }
 
+  @RequiresNonNull("types")
   protected String readSuperClassCannonicalName(final TypeMirror superClass)
   {
     return types.asElement(superClass).getSimpleName().toString();

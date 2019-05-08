@@ -29,6 +29,7 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface WithName extends java.io.Serializable {
 
@@ -73,15 +74,16 @@ public interface WithName extends java.io.Serializable {
       return key.getName() != null;
     }
 
-    @Override
-    public String interpretJson(final JsonNode json)
+    @Override public String interpretJson(final JsonNode json)
     {
       return json.getNullableStringValue(jsonPath());
     }
 
-    @Override
-    public JsonNode makeJsonValue(final Key key)
+    @Override public JsonNode makeJsonValue(final @Nullable Key key)
     {
+      if (key == null) {
+        return JsonNodeFactories.nullNode();
+      }
       return JsonNodeFactories.string(key.getName());
     }
 

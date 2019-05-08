@@ -3,7 +3,7 @@ package ae.web;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 
-public class RequestAttribute<T> extends RequestValueReader<T>
+public final class RequestAttribute<T> extends RequestValueReader<T>
 {
   public static final class NotDefined extends RuntimeException
   {

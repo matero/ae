@@ -42,20 +42,17 @@ public final class NotBlankConstraint {
   public enum ForString implements Constraint<String> {
     INSTANCE;
 
-    @Override
-    public boolean isInvalid(final String value)
+    @Override public boolean isInvalid(final String value)
     {
       return value.trim().isEmpty();
     }
 
-    @Override
-    public String messageFor(final Attribute attr, final String value)
+    @Override public String messageFor(final Attribute attr, final String value)
     {
       return makeMessageFor(attr);
     }
 
-    @Override
-    public String getName()
+    @Override public String getName()
     {
       return NAME;
     }
@@ -64,20 +61,17 @@ public final class NotBlankConstraint {
   public enum ForText implements Constraint<Text> {
     INSTANCE;
 
-    @Override
-    public boolean isInvalid(final Text value)
+    @Override public boolean isInvalid(final Text value)
     {
       return value.getValue().trim().isEmpty();
     }
 
-    @Override
-    public String messageFor(final Attribute attr, final Text value)
+    @Override public String messageFor(final Attribute attr, final Text value)
     {
       return makeMessageFor(attr);
     }
 
-    @Override
-    public String getName()
+    @Override public String getName()
     {
       return NAME;
     }

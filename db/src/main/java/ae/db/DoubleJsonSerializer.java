@@ -25,14 +25,14 @@ package ae.db;
 
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum DoubleJsonSerializer implements JsonSerializer<Double> {
   INSTANCE;
 
   static final JsonArraySerializer<Double> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override
-  public JsonNode toJson(final Double value)
+  @Override public JsonNode toJson(final @Nullable Double value)
   {
     if (value == null) {
       return JsonNodeFactories.nullNode();
@@ -40,8 +40,7 @@ enum DoubleJsonSerializer implements JsonSerializer<Double> {
     return JsonNodeFactories.number(value.toString());
   }
 
-  @Override
-  public Double fromJson(final JsonNode json, final String jsonPath)
+  @Override public @Nullable Double fromJson(final JsonNode json, final String jsonPath)
   {
     if (json.isNullNode(jsonPath)) {
       return null;
@@ -50,8 +49,7 @@ enum DoubleJsonSerializer implements JsonSerializer<Double> {
     }
   }
 
-  @Override
-  public Double fromJson(final JsonNode json)
+  @Override public @Nullable Double fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

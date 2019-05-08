@@ -26,14 +26,14 @@ package ae.db;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.PhoneNumber;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum PhoneNumberJsonSerializer implements JsonSerializer<PhoneNumber> {
   INSTANCE;
 
   static final JsonArraySerializer<PhoneNumber> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override
-  public JsonNode toJson(final PhoneNumber value)
+  @Override public JsonNode toJson(final @Nullable PhoneNumber value)
   {
     if (value == null) {
       return JsonNodeFactories.nullNode();
@@ -41,8 +41,7 @@ enum PhoneNumberJsonSerializer implements JsonSerializer<PhoneNumber> {
     return JsonNodeFactories.string(value.getNumber());
   }
 
-  @Override
-  public PhoneNumber fromJson(final JsonNode json, final String jsonPath)
+  @Override public @Nullable PhoneNumber fromJson(final JsonNode json, final String jsonPath)
   {
     if (json.isNullNode(jsonPath)) {
       return null;
@@ -51,8 +50,7 @@ enum PhoneNumberJsonSerializer implements JsonSerializer<PhoneNumber> {
     }
   }
 
-  @Override
-  public PhoneNumber fromJson(final JsonNode json)
+  @Override public @Nullable PhoneNumber fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

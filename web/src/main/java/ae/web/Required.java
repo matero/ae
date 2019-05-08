@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2018 ActiveEngine.
+ * Copyright 2019 jj.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,48 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package ae;
+package ae.web;
 
-import static java.lang.annotation.ElementType.FIELD;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
-import java.lang.annotation.Target;
-
-public abstract class Record {
-
-  @Retention(SOURCE) @Target(FIELD)
-  public @interface id {
-  }
-
-  @Retention(SOURCE) @Target(FIELD)
-  public @interface parent {
-  }
-
-  @Retention(SOURCE) @Target(FIELD)
-  public @interface indexed {
-  }
-
-  @Retention(SOURCE) @Target(FIELD)
-  public @interface property {
-    String value();
-  }
-
-  @Retention(SOURCE) @Target(FIELD)
-  public @interface required {
-  }
-
-  @Retention(SOURCE) @Target(FIELD)
-  public @interface notBlank {
-  }
-
-  @Retention(SOURCE) @Target(FIELD)
-  public @interface email {
-  }
-
-  @Retention(SOURCE) @Target(FIELD)
-  public @interface json {
-    boolean ignore() default false;
-
-    String format() default "";
-  }
+public enum Required
+{
+  YES,
+  NO;
 }

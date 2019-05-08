@@ -29,7 +29,6 @@ import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.common.collect.ImmutableList;
 
 public final class IndexedBlobKeyList extends ListField.Indexed<BlobKey> implements BlobKeyListField {
-
   private static final long serialVersionUID = 7811099482224914153L;
 
   public IndexedBlobKeyList(final String canonicalName,
@@ -40,8 +39,7 @@ public final class IndexedBlobKeyList extends ListField.Indexed<BlobKey> impleme
                             final String jsonPath,
                             final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, property, field, required, jsonName, jsonPath,
-          BlobKeyJsonSerializer.ARRAY,
-          new PropertyProjection(property, BlobKey.class), constraints);
+    super(canonicalName, property, field, required, jsonName, jsonPath, BlobKeyJsonSerializer.ARRAY, new PropertyProjection(property, BlobKey.class),
+          constraints);
   }
 }

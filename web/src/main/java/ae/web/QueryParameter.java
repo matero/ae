@@ -3,7 +3,7 @@ package ae.web;
 import javax.servlet.http.HttpServletRequest;
 import java.util.function.Supplier;
 
-public class QueryParameter<T> extends RequestValueReader<T>
+public final class QueryParameter<T> extends RequestValueReader<T>
 {
   public static final class NotDefined extends RuntimeException
   {
@@ -16,36 +16,13 @@ public class QueryParameter<T> extends RequestValueReader<T>
     }
   }
 
-  private static <T> Supplier<T> nullDefaultValue()
-  {
-    return () -> null;
-  }
-
   private final boolean required;
   private final Supplier<T> defaultValue;
 
-  public QueryParameter(final String name, final ValueInterpreter<T> interpretValue)
+  public QueryParameter(final String name, final Required required, final ValueInterpreter<T> interpreter, final Supplier<T> defaultValue)
   {
-    this(name, false, interpretValue);
-  }
-
-  public QueryParameter(final String name, final boolean required, final ValueInterpreter<T> interpretValue)
-  {
-    this(name, required, interpretValue, nullDefaultValue());
-  }
-
-  public QueryParameter(final String name, final ValueInterpreter<T> interpretValue, final Supplier<T> defaultValue)
-  {
-    this(name, false, interpretValue, defaultValue);
-  }
-
-  public QueryParameter(final String name,
-                        final boolean required,
-                        final ValueInterpreter<T> interpretValue,
-                        final Supplier<T> defaultValue)
-  {
-    super(name, interpretValue);
-    this.required = required;
+    super(name, interpreter);
+    this.required = (required == Required.YES);
     this.defaultValue = defaultValue;
   }
 

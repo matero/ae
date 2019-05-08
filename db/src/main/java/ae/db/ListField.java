@@ -35,33 +35,39 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 
-public interface ListField<E> extends Field<List<E>> {
+public interface ListField<E> extends Field<List<@Nullable E>> {
 
-  @Override
-  default Class<List<E>> type()
+  @Override default Class<List<@Nullable E>> type()
   {
-    return (Class<List<E>>) (Class<?>) List.class;
+    return (Class<List<@Nullable E>>) (Class<?>) List.class;
   }
 
   Class<E> elementType();
 
-  default E asModelElementValue(final Object value)
+  default @PolyNull E asModelElementValue(final @PolyNull Object value)
   {
-    return elementType().cast(value);
+    if (value == null) {
+      return null;
+    } else {
+      return castNonNull(elementType().cast(value));
+    }
   }
 
-  default Object asDatastoreElementValue(final E value)
+  default @PolyNull Object asDatastoreElementValue(final @PolyNull E value)
   {
     return value;
   }
 
-  default ArrayList<Object> asDatastoreValues(final E... values)
+  default @PolyNull ArrayList<@Nullable Object> asDatastoreValues(final @Nullable E @PolyNull ... values)
   {
     if (values == null) {
       return null;
     }
-    final ArrayList<Object> result;
+    final ArrayList<@Nullable Object> result;
     if (values.length == 0) {
       result = new ArrayList<>();
     } else {
@@ -73,12 +79,12 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<Object> asDatastoreValues(final Iterable<E> values)
+  default @PolyNull List<@Nullable Object> asDatastoreValues(final @PolyNull Iterable<@Nullable E> values)
   {
     if (values == null) {
       return null;
     }
-    final ArrayList<Object> result = new ArrayList<>();
+    final ArrayList<@Nullable Object> result = new ArrayList<>();
     for (final E value : values) {
       result.add(asDatastoreElementValue(value));
     }
@@ -86,12 +92,12 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<Object> asDatastoreValues(final Iterator<E> values)
+  default @PolyNull List<@Nullable Object> asDatastoreValues(final @PolyNull Iterator<@Nullable E> values)
   {
     if (values == null) {
       return null;
     }
-    final ArrayList<Object> result = new ArrayList<>();
+    final ArrayList<@Nullable Object> result = new ArrayList<>();
     while (values.hasNext()) {
       result.add(asDatastoreElementValue(values.next()));
     }
@@ -99,12 +105,12 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<Object> asDatastoreValues(final Collection<E> values)
+  default @PolyNull List<@Nullable Object> asDatastoreValues(final @PolyNull Collection<@Nullable E> values)
   {
     if (values == null) {
       return null;
     }
-    final ArrayList<Object> result;
+    final ArrayList<@Nullable Object> result;
     if (values.isEmpty()) {
       result = new ArrayList<>();
     } else {
@@ -117,14 +123,14 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<E> asModelValues(final Object... values)
+  default @PolyNull List<@Nullable E> asModelValues(final @Nullable Object @PolyNull ... values)
   {
     if (values == null) {
       return null;
     }
-    final ArrayList<E> result;
+    final ArrayList<@Nullable E> result;
     if (values.length == 0) {
-      result = new ArrayList<>();
+      result = new ArrayList<>(1);
     } else {
       result = new ArrayList<>(values.length);
       for (final Object value : values) {
@@ -134,12 +140,12 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<E> asModelValues(final Iterable<Object> values)
+  default @PolyNull List<@Nullable E> asModelValues(final @PolyNull Iterable<@Nullable Object> values)
   {
     if (values == null) {
       return null;
     }
-    final ArrayList<E> result = new ArrayList<>();
+    final ArrayList<@Nullable E> result = new ArrayList<>();
     for (final Object value : values) {
       result.add(asModelElementValue(value));
     }
@@ -147,12 +153,12 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<E> asModelValues(final Iterator<Object> values)
+  default @PolyNull List<@Nullable E> asModelValues(final @PolyNull Iterator<@Nullable Object> values)
   {
     if (values == null) {
       return null;
     }
-    final ArrayList<E> result = new ArrayList<>();
+    final ArrayList<@Nullable E> result = new ArrayList<>();
     while (values.hasNext()) {
       result.add(asModelElementValue(values.next()));
     }
@@ -160,12 +166,12 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  default List<E> asModelValues(final Collection<Object> values)
+  default @PolyNull List<@Nullable E> asModelValues(final @PolyNull Collection<@Nullable Object> values)
   {
     if (values == null) {
       return null;
     }
-    final List<E> result;
+    final List<@Nullable E> result;
     if (values.isEmpty()) {
       result = new java.util.LinkedList<>();
     } else {
@@ -177,39 +183,34 @@ public interface ListField<E> extends Field<List<E>> {
     return result;
   }
 
-  @Override
-  default List<E> read(final PropertyContainer data)
+  @Override default @Nullable List<@Nullable E> read(final PropertyContainer data)
   {
-    final Object values = data.getProperty(property());
-    return asModelValues((Collection<Object>) values);
+    final @Nullable Object values = data.getProperty(property());
+    return asModelValues((@Nullable Collection<@Nullable Object>) values);
   }
 
   /**
    * unindexed list properties
    */
-  abstract class Unindexed<E> extends FieldData<List<E>> implements ListField<E> {
-
+  abstract class Unindexed<E> extends FieldData<List<@Nullable E>> implements ListField<E> {
     public Unindexed(final String canonicalName,
                      final String property,
                      final String field,
                      final boolean required,
                      final JsonStringNode jsonName,
                      final String jsonPath,
-                     final JsonSerializer<List<E>> jsonSerializer,
+                     final JsonSerializer<List<@Nullable E>> jsonSerializer,
                      final ImmutableList<Constraint> constraints)
     {
-      super(canonicalName, property, field, required, jsonName, jsonPath, jsonSerializer,
-            constraints);
+      super(canonicalName, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
     }
 
-    @Override
-    public final boolean indexed()
+    @Override public final boolean indexed()
     {
       return false;
     }
 
-    @Override
-    public final void write(final PropertyContainer data, final List<E> value)
+    @Override @SuppressWarnings("nullness") public final void write(final PropertyContainer data, final List<E> value)
     {
       data.setUnindexedProperty(property(), asDatastoreValues(value));
     }
@@ -218,7 +219,7 @@ public interface ListField<E> extends Field<List<E>> {
   /**
    * IndexedBooleanList List properties.
    */
-  abstract class Indexed<E> extends FieldData<List<E>> implements ListField<E>, Filterable<E> {
+  abstract class Indexed<E> extends FieldData<List<@Nullable E>> implements ListField<E>, Filterable<E> {
 
     private final PropertyProjection projection;
     private final SortPredicate asc;
@@ -232,119 +233,110 @@ public interface ListField<E> extends Field<List<E>> {
                       final boolean required,
                       final JsonStringNode jsonName,
                       final String jsonPath,
-                      final JsonSerializer<List<E>> jsonSerializer,
+                      final JsonSerializer<List<@Nullable E>> jsonSerializer,
                       final PropertyProjection projection,
                       final ImmutableList<Constraint> constraints)
     {
-      super(canonicalName, property, field, required, jsonName, jsonPath, jsonSerializer,
-            constraints);
+      super(canonicalName, property, field, required, jsonName, jsonPath, jsonSerializer, constraints);
       this.projection = projection;
       this.asc = new Query.SortPredicate(property, Query.SortDirection.ASCENDING);
       this.desc = new Query.SortPredicate(property, Query.SortDirection.DESCENDING);
-      this.isNull = new FilterPredicate(property, FilterOperator.EQUAL, null);
-      this.isNotNull = new FilterPredicate(property, FilterOperator.NOT_EQUAL, null);
+      this.isNull = makeIsNullFilter(property);
+      this.isNotNull = makeIsNotNullFilter(property);
     }
 
-    @Override
-    public final FilterPredicate isNull()
+    @SuppressWarnings("nullness") static FilterPredicate makeIsNotNullFilter(final String property)
+    {
+      return new FilterPredicate(property, FilterOperator.NOT_EQUAL, null);
+    }
+
+    @SuppressWarnings("nullness") static FilterPredicate makeIsNullFilter(final String property)
+    {
+      return new FilterPredicate(property, FilterOperator.EQUAL, null);
+    }
+
+    @Override public final FilterPredicate isNull()
     {
       return isNull;
     }
 
-    @Override
-    public final FilterPredicate isNotNull()
+    @Override public final FilterPredicate isNotNull()
     {
       return isNotNull;
     }
 
-    @Override
-    public final PropertyProjection projection()
+    @Override public final PropertyProjection projection()
     {
       return projection;
     }
 
-    @Override
-    public final SortPredicate asc()
+    @Override public final SortPredicate asc()
     {
       return asc;
     }
 
-    @Override
-    public final SortPredicate desc()
+    @Override public final SortPredicate desc()
     {
       return desc;
     }
 
-    @Override
-    public final boolean indexed()
+    @Override public final boolean indexed()
     {
       return true;
     }
 
-    @Override
-    public final void write(final PropertyContainer data, final List<E> value)
+    @Override @SuppressWarnings("nullness") public final void write(final PropertyContainer data, final List<@Nullable E> value)
     {
       data.setIndexedProperty(property(), asDatastoreValues(value));
     }
 
-    @Override
-    public final FilterPredicate eq(final E value)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate eq(final @Nullable E value)
     {
       return new FilterPredicate(field(), FilterOperator.EQUAL, asDatastoreElementValue(value));
     }
 
-    @Override
-    public final FilterPredicate ne(final E value)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate ne(final @Nullable E value)
     {
       return new FilterPredicate(field(), FilterOperator.NOT_EQUAL, asDatastoreElementValue(value));
     }
 
-    @Override
-    public final FilterPredicate lt(final E value)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate lt(final @Nullable E value)
     {
       return new FilterPredicate(field(), FilterOperator.LESS_THAN, asDatastoreElementValue(value));
     }
 
-    @Override
-    public final FilterPredicate le(final E value)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate le(final @Nullable E value)
     {
-      return new FilterPredicate(field(), FilterOperator.LESS_THAN_OR_EQUAL, asDatastoreElementValue(
-                                 value));
+      return new FilterPredicate(field(), FilterOperator.LESS_THAN_OR_EQUAL, asDatastoreElementValue(value));
     }
 
-    @Override
-    public final FilterPredicate gt(final E value)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate gt(final E value)
     {
       return new FilterPredicate(field(), FilterOperator.GREATER_THAN, asDatastoreElementValue(value));
     }
 
-    @Override
-    public final FilterPredicate ge(final E value)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate ge(final @Nullable E value)
     {
       return new FilterPredicate(field(), FilterOperator.GREATER_THAN_OR_EQUAL,
                                  asDatastoreElementValue(value));
     }
 
-    @Override
-    public final FilterPredicate in(final E... values)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate in(final @Nullable E @Nullable ... values)
     {
       return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
     }
 
-    @Override
-    public final FilterPredicate in(final Iterable<E> values)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate in(final @Nullable Iterable<@Nullable E> values)
     {
       return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
     }
 
-    @Override
-    public final FilterPredicate in(final Iterator<E> values)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate in(final @Nullable Iterator<@Nullable E> values)
     {
       return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
     }
 
-    @Override
-    public final FilterPredicate in(final Collection<E> values)
+    @Override @SuppressWarnings("nullness") public final FilterPredicate in(final @Nullable Collection<@Nullable E> values)
     {
       return new FilterPredicate(field(), FilterOperator.IN, asDatastoreValues(values));
     }

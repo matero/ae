@@ -32,10 +32,10 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.common.collect.ImmutableList;
 
 import java.util.concurrent.ExecutionException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RootWithId extends RootActiveEntity implements WithId
 {
-
   private static final long serialVersionUID = -4301518873000440300L;
 
   protected RootWithId()
@@ -43,36 +43,31 @@ public abstract class RootWithId extends RootActiveEntity implements WithId
     // nothing more to do
   }
 
-  @Override
-  public Entity make()
+  @Override public Entity make()
   {
     final Entity data = newEntity();
     init(data);
     return data;
   }
 
-  @Override
-  public final Entity newEntity()
+  @Override public final Entity newEntity()
   {
     return new Entity(kind());
   }
 
-  @Override
-  public Entity make(final long id)
+  @Override public Entity make(final long id)
   {
     final Entity data = newEntity(id);
     init(data);
     return data;
   }
 
-  @Override
-  public final Entity newEntity(final long id)
+  @Override public final Entity newEntity(final long id)
   {
     return new Entity(kind(), id);
   }
 
-  @Override
-  public Key makeKey(final long id)
+  @Override public Key makeKey(final long id)
   {
     return KeyFactory.createKey(kind(), id);
   }
@@ -87,7 +82,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId
     }
   }
 
-  public Entity findById(final long id)
+  public @Nullable Entity findById(final long id)
   {
     final Key key = makeKey(id);
     try {
@@ -110,14 +105,12 @@ public abstract class RootWithId extends RootActiveEntity implements WithId
     return checkExists(key);
   }
 
-  @Override
-  protected final Iterable<JsonField> jsonKeyFields(final Key key)
+  @Override protected final Iterable<JsonField> jsonKeyFields(final Key key)
   {
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
   }
 
-  @Override
-  public final Key keyFromJson(final JsonNode json)
+  @Override public final @Nullable Key keyFromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;
@@ -130,8 +123,7 @@ public abstract class RootWithId extends RootActiveEntity implements WithId
     }
   }
 
-  @Override
-  public Entity fromJson(final JsonNode json)
+  @Override public @Nullable Entity fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

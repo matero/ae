@@ -17,7 +17,6 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 
 public abstract class EndPointServlet extends RouterServlet
 {
@@ -532,8 +531,4 @@ public abstract class EndPointServlet extends RouterServlet
   {
     return () -> defaultValue;
   }
-
-  protected static final boolean required = true;
-
-  protected static final boolean notRequired = true;
 }

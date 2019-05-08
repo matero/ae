@@ -31,6 +31,7 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
 import com.google.common.collect.ImmutableList;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEntity {
 
@@ -43,8 +44,7 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
   public abstract Parent<P> modelParent();
 
-  @Override
-  public final boolean isKindOf(final Key key)
+  @Override public final boolean isKindOf(final Key key)
   {
     return super.isKindOf(key) && modelParent().isKindOf(key.getParent());
   }
@@ -79,8 +79,7 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
       return parent().isKindOf(key);
     }
 
-    @Override
-    public boolean isDefinedAt(final Key key)
+    @Override public boolean isDefinedAt(final Key key)
     {
       if (key == null) {
         throw new NullPointerException("key");
@@ -114,33 +113,21 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
       return key.getParent();
     }
 
-    @Override
-    public JsonNode makeJsonValue(final Key key)
+    @Override public JsonNode makeJsonValue(final @Nullable Key key)
     {
-      if (key == null) {
-        throw new NullPointerException("key");
+      if (key == null) { 
+        return JsonNodeFactories.nullNode();
       }
       return JsonNodeFactories.object(parent().jsonKeyFields(key));
     }
 
-    @Override
-    public Key interpretJson(final JsonNode json)
+    @Override public @Nullable Key interpretJson(final JsonNode json)
     {
-      if (json == null) {
-        throw new NullPointerException("json");
-      }
       return parent().keyFromJson(json.getNode(jsonPath()));
     }
 
-    @Override
-    public void validate(final Entity data, final Validation validation)
+    @Override public void validate(final Entity data, final Validation validation)
     {
-      if (data == null) {
-        throw new NullPointerException("data");
-      }
-      if (validation == null) {
-        throw new NullPointerException("validation");
-      }
       final Key value = read(data);
       if (value == null) {
         if (this.required) {
@@ -197,12 +184,8 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
     return new SelectChildEntities(projection(projectedProperties), FetchOptions.Builder.withDefaults());
   }
 
-  public final SelectChildEntities select(final FetchOptions fetchOptions,
-                                          final Filterable<?>... projectedProperties)
+  public final SelectChildEntities select(final FetchOptions fetchOptions, final Filterable<?>... projectedProperties)
   {
-    if (fetchOptions == null) {
-      throw new NullPointerException("fetchOptions");
-    }
     return new SelectChildEntities(projection(projectedProperties), fetchOptions);
   }
 
@@ -211,12 +194,8 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
     return new SelectChildEntities(projection(projectedProperties), FetchOptions.Builder.withDefaults());
   }
 
-  public final SelectChildEntities select(final FetchOptions fetchOptions,
-                                          final Iterable<Filterable<?>> projectedProperties)
+  public final SelectChildEntities select(final FetchOptions fetchOptions, final Iterable<Filterable<?>> projectedProperties)
   {
-    if (fetchOptions == null) {
-      throw new NullPointerException("fetchOptions");
-    }
     return new SelectChildEntities(projection(projectedProperties), fetchOptions);
   }
 
@@ -229,6 +208,7 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
       super(query, fetchOptions);
     }
 
+    @SuppressWarnings("nullness")
     public final SelectEntities withoutAncestor()
     {
       this.query.setAncestor(null);
@@ -237,17 +217,11 @@ public abstract class ChildActiveEntity<P extends ActiveEntity> extends ActiveEn
 
     public final SelectEntities withAncestor(final Entity ancestor)
     {
-      if (ancestor == null) {
-        throw new NullPointerException("ancestor");
-      }
       return withAncestor(ancestor.getKey());
     }
 
     public final SelectEntities withAncestor(final Key ancestorKey)
     {
-      if (ancestorKey == null) {
-        throw new NullPointerException("ancestorKey");
-      }
       this.query.setAncestor(ancestorKey);
       return this;
     }

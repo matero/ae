@@ -33,21 +33,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import argo.jdom.JsonNode;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.Test;
 
 public class StringArrayJsonSerializerTest {
 
   private final JsonArraySerializer<String> serializer = StringJsonSerializer.ARRAY;
 
-  @Test
-  public void shoud_be_able_to_serialize_null()
+  @Test public void shoud_be_able_to_serialize_null()
   {
     final JsonNode json = serializer.toJson(null);
     assertThat(json.isNullNode()).isTrue();
   }
 
-  @Test
-  public void shoud_be_able_to_serialize_non_null_strings()
+  @Test public void shoud_be_able_to_serialize_non_null_strings()
   {
     //given:
     final JsonNode json = serializer.toJson(asList("no null", "another", null));
@@ -59,35 +58,31 @@ public class StringArrayJsonSerializerTest {
     assertThat(json.getNullableStringValue(2)).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_null_nodes()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_null_nodes()
   {
-    final List<String> lst = serializer.fromJson(nullNode());
+    final @Nullable List<@Nullable String> lst = serializer.fromJson(nullNode());
     assertThat(lst).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_non_null_node()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_non_null_node()
   {
-    final List<String> lst = serializer.fromJson(array(string("no null"), nullNode(), string("another")));
+    final @Nullable List<@Nullable String> lst = serializer.fromJson(array(string("no null"), nullNode(), string("another")));
     assertThat(lst).containsExactly("no null", null, "another");
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_null_node_from_object_node()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_null_node_from_object_node()
   {
     final JsonNode object = object(field(string("attr1"), string("no null")),
                                    field(string("attr2"), nullNode()));
-    final List<String> lst = serializer.fromJson(object, "attr2");
+    final @Nullable List<@Nullable String>  lst = serializer.fromJson(object, "attr2");
     assertThat(lst).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_non_null_node_from_object_node()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_non_null_node_from_object_node()
   {
     final JsonNode object = object(field(string("attr1"), array(nullNode(), string("no null"), string("another"))),
                                    field(string("attr2"), string("no null")));
-    final List<String> lst = serializer.fromJson(object, "attr1");
+    final @Nullable List<@Nullable String>  lst = serializer.fromJson(object, "attr1");
     assertThat(lst).containsExactly(null, "no null", "another");
   }
 }

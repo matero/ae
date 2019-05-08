@@ -45,6 +45,8 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 
 public interface EntityModel extends java.io.Serializable {
 
@@ -52,25 +54,16 @@ public interface EntityModel extends java.io.Serializable {
 
   default boolean isKindOf(final Entity data)
   {
-    if (data == null) {
-      return false;
-    }
     return isKindOf(data.getKey());
   }
 
   default boolean isKindOf(final Key key)
   {
-    if (key == null) {
-      return false;
-    }
     return kind().equals(key.getKind());
   }
 
   default Key keyFrom(final String webSafeKey) throws IllegalEntityKind
   {
-    if (webSafeKey == null) {
-      return null;
-    }
     final Key key = KeyFactory.stringToKey(webSafeKey);
     if (isKindOf(key)) {
       return key;
@@ -84,9 +77,9 @@ public interface EntityModel extends java.io.Serializable {
 
   ImmutableList<Field<?>> modelFields();
 
-  JsonNode toJson(final Entity data);
+  JsonNode toJson(@Nullable Entity data);
 
-  default JsonNode toJson(final Entity... elements)
+  default JsonNode toJson(final @Nullable Entity @Nullable ... elements)
   {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
@@ -101,7 +94,7 @@ public interface EntityModel extends java.io.Serializable {
     return JsonNodeFactories.array(nodes);
   }
 
-  default JsonNode toJson(final Collection<Entity> elements)
+  default JsonNode toJson(final @Nullable Collection<@Nullable Entity> elements)
   {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
@@ -116,7 +109,7 @@ public interface EntityModel extends java.io.Serializable {
     return JsonNodeFactories.array(nodes);
   }
 
-  default JsonNode toJson(final Iterable<Entity> elements)
+  default JsonNode toJson(final @Nullable Iterable<@Nullable Entity> elements)
   {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
@@ -128,7 +121,7 @@ public interface EntityModel extends java.io.Serializable {
     return JsonNodeFactories.array(nodes);
   }
 
-  default JsonNode toJson(final Iterator<Entity> elements)
+  default JsonNode toJson(final @Nullable Iterator<@Nullable Entity> elements)
   {
     if (elements == null) {
       return JsonNodeFactories.nullNode();
@@ -144,9 +137,9 @@ public interface EntityModel extends java.io.Serializable {
     }
   }
 
-  Entity fromJson(JsonNode data);
+  @Nullable Entity fromJson(JsonNode data);
 
-  Key keyFromJson(JsonNode json);
+  @Nullable Key keyFromJson(JsonNode json);
 
   void updatePropertiesWithJsonContents(Entity data, JsonNode json);
 
@@ -159,7 +152,7 @@ public interface EntityModel extends java.io.Serializable {
    */
   void delete(Key key) throws IllegalEntityKind, NullPointerException;
 
-  Entity find(Key key) throws IllegalEntityKind, NullPointerException;
+  @Nullable Entity find(Key key) throws IllegalEntityKind, NullPointerException;
 
   Entity get(Key key) throws IllegalEntityKind, NullPointerException, EntityNotFoundException;
 
@@ -189,8 +182,7 @@ public interface EntityModel extends java.io.Serializable {
       super(canonicalName, field, jsonName, jsonPath, constraints);
     }
 
-    @Override
-    public final boolean isDefinedAt(final Entity data)
+    @Override public final boolean isDefinedAt(final Entity data)
     {
       return isDefinedAt(data.getKey());
     }
@@ -207,13 +199,12 @@ public interface EntityModel extends java.io.Serializable {
       return JsonNodeFactories.field(jsonName(), makeJsonValue(key));
     }
 
-    @Override
-    public final JsonNode makeJsonValue(final Entity data)
+    @Override public final JsonNode makeJsonValue(final Entity data)
     {
       return makeJsonValue(data.getKey());
     }
 
-    public abstract JsonNode makeJsonValue(Key key);
+    public abstract JsonNode makeJsonValue(@Nullable Key key);
   }
 
   public static abstract class Select implements java.io.Serializable {

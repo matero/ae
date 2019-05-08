@@ -40,17 +40,13 @@ public final class IndexedCategory extends ScalarField.Indexed<Category> impleme
                          final String jsonPath,
                          final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, property, field, required, jsonName, jsonPath,
-          CategoryJsonSerializer.INSTANCE,
-          new PropertyProjection(property, Category.class), constraints);
+    super(canonicalName, property, field, required, jsonName, jsonPath, CategoryJsonSerializer.INSTANCE, new PropertyProjection(property, Category.class), constraints);
   }
 
-  @Override
-  protected void validateNotNullValue(final Category value, final Validation validation)
+  @Override protected void validateNotNullValue(final Category value, final Validation validation)
   {
     if (NotBlankConstraint.ForString.INSTANCE.isInvalid(value.getCategory())) {
-      validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value.
-                                                                               getCategory()));
+      validation.reject(this, NotBlankConstraint.ForString.INSTANCE.messageFor(this, value. getCategory()));
     }
     super.validateNotNullValue(value, validation);
   }

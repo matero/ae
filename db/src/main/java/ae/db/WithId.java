@@ -29,9 +29,9 @@ import argo.jdom.JsonStringNode;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.common.collect.ImmutableList;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface WithId extends java.io.Serializable {
-
   Id modelIdentifier();
 
   Entity make();
@@ -45,7 +45,6 @@ public interface WithId extends java.io.Serializable {
   Entity newEntity(long id);
 
   final class Id extends BasicId {
-
     private static final long serialVersionUID = -4151154035733158003L;
 
     public Id(final String canonicalName,
@@ -57,8 +56,7 @@ public interface WithId extends java.io.Serializable {
       super(canonicalName, field, jsonName, jsonPath, constraints);
     }
 
-    @Override
-    void doValidate(final Long value, final Validation validation)
+    @Override void doValidate(final Long value, final Validation validation)
     {
       for (final Constraint constraint : constraints()) {
         if (constraint.isInvalid(value)) {
@@ -69,7 +67,6 @@ public interface WithId extends java.io.Serializable {
   }
 
   final class RequiredId extends BasicId {
-
     private static final long serialVersionUID = 1462527284491866413L;
 
     public RequiredId(final String canonicalName,
@@ -81,8 +78,7 @@ public interface WithId extends java.io.Serializable {
       super(canonicalName, field, jsonName, jsonPath, constraints);
     }
 
-    @Override
-    void doValidate(final Long value, final Validation validation)
+    @Override void doValidate(final Long value, final Validation validation)
     {
       if (value == 0L) {
         validation.reject(this, RequiredConstraint.INSTANCE.messageFor(this));
@@ -98,7 +94,6 @@ public interface WithId extends java.io.Serializable {
 }
 
 abstract class BasicId extends ActiveEntity.Identifier {
-
   private static final long serialVersionUID = -4697113054224153330L;
 
   BasicId(final String canonicalName,
@@ -130,25 +125,25 @@ abstract class BasicId extends ActiveEntity.Identifier {
     return key.getId();
   }
 
-  @Override
-  public boolean isDefinedAt(final Key key)
+  @Override public boolean isDefinedAt(final Key key)
   {
     return key.getId() != 0;
   }
 
-  @Override
-  public Long interpretJson(final JsonNode json)
+  @Override public Long interpretJson(final JsonNode json)
   {
     if (json.isNullNode(jsonPath())) {
-      return null;
+      return 0L;
     }
     final String id = json.getNumberValue(jsonPath());
     return Long.parseLong(id);
   }
 
-  @Override
-  public JsonNode makeJsonValue(final Key key)
+  @Override public JsonNode makeJsonValue(final @Nullable Key key)
   {
+    if (key == null) {
+      return JsonNodeFactories.nullNode();
+    }
     return JsonNodeFactories.number(key.getId());
   }
 

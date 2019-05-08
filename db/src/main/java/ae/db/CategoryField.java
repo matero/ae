@@ -25,21 +25,21 @@ package ae.db;
 
 import com.google.appengine.api.datastore.Category;
 import com.google.appengine.api.datastore.PropertyContainer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface CategoryField extends ScalarField<Category> {
 
-  @Override
-  default Class<Category> type()
+  @Override default Class<Category> type()
   {
     return Category.class;
   }
 
-  default void set(final PropertyContainer data, final CharSequence rawValue)
+  default void set(final PropertyContainer data, final @Nullable CharSequence rawValue)
   {
     write(data, rawValue);
   }
 
-  default void write(final PropertyContainer data, final CharSequence rawValue)
+  default void write(final PropertyContainer data, final @Nullable CharSequence rawValue)
   {
     if (rawValue == null) {
       write(data, (Category) null);
@@ -48,12 +48,12 @@ public interface CategoryField extends ScalarField<Category> {
     }
   }
 
-  default void set(final PropertyContainer data, final String rawValue)
+  default void set(final PropertyContainer data, final @Nullable String rawValue)
   {
     write(data, rawValue);
   }
 
-  default void write(final PropertyContainer data, final String rawValue)
+  default void write(final PropertyContainer data, final @Nullable String rawValue)
   {
     if (rawValue == null) {
       write(data, (Category) null);

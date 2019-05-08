@@ -43,21 +43,17 @@ public class IndexedBoolean extends ScalarField.Indexed<Boolean> implements Bool
                         final String jsonPath,
                         final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, property, field, required, jsonName, jsonPath,
-          BooleanJsonSerializer.INSTANCE,
-          new PropertyProjection(property, Boolean.class), constraints);
+    super(canonicalName, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.INSTANCE, new PropertyProjection(property, Boolean.class), constraints);
     this.isTrue = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.TRUE);
     this.isFalse = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.FALSE);
   }
 
-  @Override
-  public FilterPredicate isTrue()
+  @Override public FilterPredicate isTrue()
   {
     return isTrue;
   }
 
-  @Override
-  public FilterPredicate isFalse()
+  @Override public FilterPredicate isFalse()
   {
     return isFalse;
   }

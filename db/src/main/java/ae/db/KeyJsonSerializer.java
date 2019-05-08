@@ -27,14 +27,14 @@ import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum KeyJsonSerializer implements JsonSerializer<Key> {
   INSTANCE;
 
   static final JsonArraySerializer<Key> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override
-  public JsonNode toJson(final Key value)
+  @Override public JsonNode toJson(final @Nullable Key value)
   {
     if (value == null) {
       return JsonNodeFactories.nullNode();
@@ -42,8 +42,7 @@ enum KeyJsonSerializer implements JsonSerializer<Key> {
     return JsonNodeFactories.string(KeyFactory.keyToString(value));
   }
 
-  @Override
-  public Key fromJson(final JsonNode json, final String jsonPath)
+  @Override public @Nullable Key fromJson(final JsonNode json, final String jsonPath)
   {
     if (json.isNullNode(jsonPath)) {
       return null;
@@ -53,8 +52,7 @@ enum KeyJsonSerializer implements JsonSerializer<Key> {
     }
   }
 
-  @Override
-  public Key fromJson(final JsonNode json)
+  @Override public @Nullable Key fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

@@ -26,9 +26,7 @@ package ae.db;
 import com.google.appengine.api.blobstore.BlobKey;
 
 public interface BlobKeyListField extends ListField<BlobKey> {
-
-  @Override
-  default Class<BlobKey> elementType()
+  @Override default Class<BlobKey> elementType()
   {
     return BlobKey.class;
   }

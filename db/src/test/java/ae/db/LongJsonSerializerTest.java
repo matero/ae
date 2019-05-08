@@ -31,6 +31,7 @@ import static argo.jdom.JsonNodeFactories.number;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import argo.jdom.JsonNode;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.Test;
 
 public class LongJsonSerializerTest {
@@ -53,35 +54,31 @@ public class LongJsonSerializerTest {
     assertThat(json.getText()).isEqualTo("10");
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_null_nodes()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_null_nodes()
   {
-    final Long number = serializer.fromJson(nullNode());
+    final @Nullable Long number = serializer.fromJson(nullNode());
     assertThat(number).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_non_null_node()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_non_null_node()
   {
-    final Long number = serializer.fromJson(number(10));
+    final @Nullable Long number = serializer.fromJson(number(10));
     assertThat(number).isEqualTo(Long.valueOf(10));
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_null_node_from_object_node()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_null_node_from_object_node()
   {
     final JsonNode object = object(field(string("attr1"), number("10")),
                                    field(string("attr2"), nullNode()));
-    final Long number = serializer.fromJson(object, "attr2");
+    final @Nullable Long number = serializer.fromJson(object, "attr2");
     assertThat(number).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_non_null_node_from_object_node()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_non_null_node_from_object_node()
   {
     final JsonNode object = object(field(string("attr1"), number("10")),
                                    field(string("attr2"), number(20)));
-    final Long number = serializer.fromJson(object, "attr1");
+    final @Nullable Long number = serializer.fromJson(object, "attr1");
     assertThat(number).isEqualTo(Long.valueOf(10));
   }
 }

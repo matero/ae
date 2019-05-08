@@ -31,6 +31,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.memcache.MemcacheService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * ActiveRecord over google appengine datastore's {@link Entity}.
@@ -91,13 +92,12 @@ public abstract class ActiveEntity extends ActiveElement implements EntityModel 
 
   protected Future<Void> deleteEntity(final Key key)
   {
-    Future<Void> deleteDone = asyncDatastore().delete(key);
+    final Future<Void> deleteDone = asyncDatastore().delete(key);
     memcache().delete(key);
     return deleteDone;
   }
 
-  @Override
-  public Entity find(final Key key)
+  @Override public @Nullable Entity find(final Key key)
   {
     verify(key);
     try {
@@ -107,8 +107,7 @@ public abstract class ActiveEntity extends ActiveElement implements EntityModel 
     }
   }
 
-  @Override
-  public Entity get(final Key key) throws EntityNotFoundException
+  @Override public Entity get(final Key key) throws EntityNotFoundException
   {
     verify(key);
     return getEntity(key);
@@ -125,15 +124,13 @@ public abstract class ActiveEntity extends ActiveElement implements EntityModel 
     return data;
   }
 
-  @Override
-  public boolean exists(final Entity data)
+  @Override public boolean exists(final Entity data)
   {
     verify(data);
     return checkExists(data.getKey());
   }
 
-  @Override
-  public boolean exists(final Key key)
+  @Override public boolean exists(final Key key)
   {
     verify(key);
     return checkExists(key);

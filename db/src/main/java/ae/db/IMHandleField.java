@@ -26,9 +26,7 @@ package ae.db;
 import com.google.appengine.api.datastore.IMHandle;
 
 public interface IMHandleField extends ScalarField<IMHandle> {
-
-  @Override
-  default Class<IMHandle> type()
+  @Override default Class<IMHandle> type()
   {
     return IMHandle.class;
   }

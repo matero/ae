@@ -29,6 +29,7 @@ import com.google.appengine.api.datastore.Query.SortPredicate;
 
 import java.util.Collection;
 import java.util.Iterator;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface Filterable<T> extends java.io.Serializable {
 
@@ -42,23 +43,23 @@ public interface Filterable<T> extends java.io.Serializable {
 
   FilterPredicate isNotNull();
 
-  FilterPredicate eq(T value);
+  FilterPredicate eq(@Nullable T value);
 
-  FilterPredicate ne(T value);
+  FilterPredicate ne(@Nullable T value);
 
-  FilterPredicate lt(T value);
+  FilterPredicate lt(@Nullable T value);
 
-  FilterPredicate le(T value);
+  FilterPredicate le(@Nullable T value);
 
-  FilterPredicate gt(T value);
+  FilterPredicate gt(@Nullable T value);
 
-  FilterPredicate ge(T value);
+  FilterPredicate ge(@Nullable T value);
 
-  FilterPredicate in(T... values);
+  FilterPredicate in(@Nullable T @Nullable ... values);
 
-  FilterPredicate in(Iterable<T> values);
+  FilterPredicate in(@Nullable Iterable<@Nullable T> values);
 
-  FilterPredicate in(Iterator<T> values);
+  FilterPredicate in(@Nullable Iterator<@Nullable T> values);
 
-  FilterPredicate in(Collection<T> values);
+  FilterPredicate in(@Nullable Collection<@Nullable T> values);
 }

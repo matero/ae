@@ -29,4 +29,30 @@
       <version>1</version>
     </dependency>
   </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.checkerframework</groupId>
+              <artifactId>checker</artifactId>
+              <version>${checkerframework.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <annotationProcessors>
+            <!-- Add all the checkers you want to enable here -->
+            <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
+          </annotationProcessors>
+          <compilerArgs>
+            <arg>-Xbootclasspath/p:${annotatedJdk}</arg>  <!-- location of the annotated JDK, which comes from a Maven dependency -->
+            <!-- <arg>-Awarns</arg> -->                   <!-- -Awarns turns type-checking warnings into errors.                  -->
+          </compilerArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

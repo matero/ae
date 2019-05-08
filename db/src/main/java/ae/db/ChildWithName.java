@@ -26,10 +26,9 @@ package ae.db;
 import argo.jdom.JsonField;
 import argo.jdom.JsonNode;
 import com.google.appengine.api.datastore.*;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 import java.util.concurrent.ExecutionException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveEntity<P> implements WithName {
 
@@ -37,9 +36,6 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
   public Entity make(final String name)
   {
-    if (name == null) {
-      throw new NullPointerException("name");
-    }
     final Entity data = newEntity(name);
     init(data);
     return data;
@@ -54,12 +50,6 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
   public Entity make(final Entity parent, final String name)
   {
-    if (parent == null) {
-      throw new NullPointerException("parent");
-    }
-    if (name == null) {
-      throw new NullPointerException("name");
-    }
     final Entity data = newEntity(parent, name);
     init(data);
     return data;
@@ -67,9 +57,6 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
   public Entity make(final Key parentKey, final String name)
   {
-    if (name == null) {
-      throw new NullPointerException("name");
-    }
     final Entity data = newEntity(parentKey, name);
     init(data);
     return data;
@@ -77,28 +64,16 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
   public Key makeKey(final String name)
   {
-    if (name == null) {
-      throw new NullPointerException("name");
-    }
     return KeyFactory.createKey(kind(), name);
   }
 
   public Key makeKey(final Entity parent, final String name)
   {
-    if (parent == null) {
-      throw new NullPointerException("parent");
-    }
-    if (name == null) {
-      throw new NullPointerException("name");
-    }
     return KeyFactory.createKey(parent.getKey(), kind(), name);
   }
 
   public Key makeKey(final Key parentKey, final String name)
   {
-    if (name == null) {
-      throw new NullPointerException("name");
-    }
     if (!modelParent().isKindOf(parentKey)) {
       throw new IllegalParentKind(parentKey, getClass());
     }
@@ -107,9 +82,6 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
   public Entity newEntity(final String name)
   {
-    if (name == null) {
-      throw new NullPointerException("name");
-    }
     return new Entity(kind(), name);
   }
 
@@ -123,20 +95,11 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
 
   public Entity newEntity(final Entity parent, final String name)
   {
-    if (parent == null) {
-      throw new NullPointerException("parent");
-    }
-    if (name == null) {
-      throw new NullPointerException("name");
-    }
     return new Entity(kind(), name, parent.getKey());
   }
 
   public Entity newEntity(final Key parentKey, final String name)
   {
-    if (name == null) {
-      throw new NullPointerException("name");
-    }
     if (!modelParent().isKindOf(parentKey)) {
       throw new IllegalParentKind(parentKey, getClass());
     }
@@ -163,7 +126,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     }
   }
 
-  public Entity findByParentAndName(final Entity parent, final String name)
+  public @Nullable Entity findByParentAndName(final Entity parent, final String name)
   {
     final Key key = makeKey(parent, name);
     try {
@@ -173,7 +136,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     }
   }
 
-  public Entity findByParentKeyAndName(final Key parentKey, final String name)
+  public @Nullable Entity findByParentKeyAndName(final Key parentKey, final String name)
   {
     final Key key = makeKey(parentKey, name);
     try {
@@ -207,14 +170,12 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     return checkExists(key);
   }
 
-  @Override
-  protected final Iterable<JsonField> jsonKeyFields(final Key key)
+  @Override protected final Iterable<JsonField> jsonKeyFields(final Key key)
   {
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key), modelParent().makeJsonFieldFrom(key));
   }
 
-  @Override
-  public final Key keyFromJson(final JsonNode json)
+  @Override public final @Nullable Key keyFromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;
@@ -231,8 +192,7 @@ public abstract class ChildWithName<P extends ActiveEntity> extends ChildActiveE
     }
   }
 
-  @Override
-  public Entity fromJson(final JsonNode json)
+  @Override public @Nullable Entity fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

@@ -35,6 +35,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
   INSTANCE;
@@ -44,18 +45,15 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
   private final JsonStringNode address = string("addr");
   private final JsonStringNode protocol = string("prot");
 
-  @Override
-  public JsonNode toJson(final IMHandle value)
+  @Override public JsonNode toJson(final @Nullable IMHandle value)
   {
     if (value == null) {
       return nullNode();
     }
-    return object(ImmutableList.of(field(address, string(value.getAddress())),
-                                   field(protocol, string(value.getProtocol()))));
+    return object(ImmutableList.of(field(address, string(value.getAddress())), field(protocol, string(value.getProtocol()))));
   }
 
-  @Override
-  public IMHandle fromJson(final JsonNode json, final String jsonPath)
+  @Override public @Nullable IMHandle fromJson(final JsonNode json, final String jsonPath)
   {
     if (json.isNullNode(jsonPath)) {
       return null;
@@ -66,8 +64,7 @@ enum IMHandleJsonSerializer implements JsonSerializer<IMHandle> {
     }
   }
 
-  @Override
-  public IMHandle fromJson(final JsonNode json)
+  @Override public @Nullable IMHandle fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

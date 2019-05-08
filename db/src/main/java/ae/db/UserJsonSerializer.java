@@ -34,6 +34,7 @@ import com.google.appengine.api.users.User;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum UserJsonSerializer implements JsonSerializer<User> {
   INSTANCE;
@@ -45,8 +46,7 @@ enum UserJsonSerializer implements JsonSerializer<User> {
   private final JsonStringNode federatedIdentity = string("fedId");
   private final JsonStringNode authDomain = string("authDomain");
 
-  @Override
-  public JsonNode toJson(final User value)
+  @Override public JsonNode toJson(final @Nullable User value)
   {
     if (value == null) {
       return nullNode();
@@ -57,8 +57,7 @@ enum UserJsonSerializer implements JsonSerializer<User> {
                                    field(authDomain, string(value.getAuthDomain()))));
   }
 
-  @Override
-  public User fromJson(final JsonNode json, final String jsonPath)
+  @Override public @Nullable User fromJson(final JsonNode json, final String jsonPath)
   {
     if (json.isNullNode(jsonPath)) {
       return null;
@@ -68,8 +67,7 @@ enum UserJsonSerializer implements JsonSerializer<User> {
     }
   }
 
-  @Override
-  public User fromJson(final JsonNode json)
+  @Override public @Nullable User fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;
@@ -78,7 +76,7 @@ enum UserJsonSerializer implements JsonSerializer<User> {
     }
   }
 
-  User jsonToUser(final Map<JsonStringNode, JsonNode> user)
+  @Nullable User jsonToUser(final @Nullable Map<JsonStringNode, JsonNode> user)
   {
     if (user == null) {
       return null;
@@ -101,16 +99,14 @@ enum UserJsonSerializer implements JsonSerializer<User> {
   String readNonNull(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field)
   {
     final JsonNode node = user.get(field);
-    if (node == null) {
-      throw new NullPointerException(field.toString());
-    } else if (node.isNullNode()) {
+    if (node.isNullNode()) {
       throw new NullPointerException(field.toString());
     } else {
       return node.getStringValue();
     }
   }
 
-  String readNullable(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field)
+  @Nullable String readNullable(final Map<JsonStringNode, JsonNode> user, final JsonStringNode field)
   {
     final JsonNode node = user.get(field);
     if (node == null) {

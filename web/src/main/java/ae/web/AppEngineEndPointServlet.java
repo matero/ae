@@ -163,13 +163,13 @@ public abstract class AppEngineEndPointServlet extends EndPointServlet
 
   protected interface option
   {
-    QueryParameter<Integer> chunk = new QueryParameter<>("chunk", notRequired, Interpret::asInteger);
-    QueryParameter<Cursor> end = new QueryParameter<>("end", notRequired, Interpret::asCursor);
-    QueryParameter<Integer> limit = new QueryParameter<>("limit", notRequired, Interpret::asInteger);
-    QueryParameter<Integer> offset = new QueryParameter<>("offset", notRequired, Interpret::asInteger);
-    QueryParameter<Integer> prefetch = new QueryParameter<>("prefetch", notRequired, Interpret::asInteger);
-    QueryParameter<Cursor> start = new QueryParameter<>("start", notRequired, Interpret::asCursor);
-    QueryParameter<List<String>> fields = new QueryParameter("fields", notRequired, Interpret::asStringList);
+    QueryParameter<Integer> chunk = IntegerQueryParameter("chunk");
+    QueryParameter<Cursor> end = CursorQueryParameter("end");
+    QueryParameter<Integer> limit = IntegerQueryParameter("limit");
+    QueryParameter<Integer> offset = IntegerQueryParameter("offset");
+    QueryParameter<Integer> prefetch = IntegerQueryParameter("prefetch");
+    QueryParameter<Cursor> start = CursorQueryParameter("start");
+    QueryParameter<List<String>> fields = StringListQueryParameter("fields");
   }
 
   protected final FetchOptions getFetchOptions(final HttpServletRequest request)
@@ -201,7 +201,7 @@ public abstract class AppEngineEndPointServlet extends EndPointServlet
   private static final QueryParameter<String> sort;
 
   static {
-    sort = new QueryParameter<>("sort", notRequired, Interpret::asString);
+    sort = StringQueryParameter("sort");
   }
 
   protected final Iterable<Query.SortPredicate> getSorts(final HttpServletRequest request)

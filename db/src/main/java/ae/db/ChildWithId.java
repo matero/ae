@@ -28,6 +28,7 @@ import argo.jdom.JsonNode;
 import com.google.appengine.api.datastore.*;
 import com.google.common.collect.ImmutableList;
 import java.util.concurrent.ExecutionException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEntity<P> implements WithId {
 
@@ -38,16 +39,14 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     // nothing to do
   }
 
-  @Override
-  public final Entity make()
+  @Override public final Entity make()
   {
     final Entity data = newEntity();
     init(data);
     return data;
   }
 
-  @Override
-  public final Entity make(long id)
+  @Override public final Entity make(long id)
   {
     final Entity data = newEntity(id);
     init(data);
@@ -82,8 +81,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     return data;
   }
 
-  @Override
-  public final Key makeKey(long id)
+  @Override public final Key makeKey(long id)
   {
     return KeyFactory.createKey(kind(), id);
   }
@@ -109,23 +107,18 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     return KeyFactory.createKey(parentKey, kind(), id);
   }
 
-  @Override
-  public Entity newEntity()
+  @Override public Entity newEntity()
   {
     return new Entity(kind());
   }
 
-  @Override
-  public Entity newEntity(final long id)
+  @Override public Entity newEntity(final long id)
   {
     return new Entity(kind(), id);
   }
 
   public final Entity newEntity(final Entity parent, final long id)
   {
-    if (parent == null) {
-      throw new NullPointerException("parent");
-    }
     return newEntity(parent.getKey(), id);
   }
 
@@ -139,9 +132,6 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
 
   public final Entity newEntity(final Entity parent)
   {
-    if (parent == null) {
-      throw new NullPointerException("parent");
-    }
     return newEntity(parent.getKey());
   }
 
@@ -164,7 +154,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
 
   }
 
-  public Entity findById(final long id)
+  public @Nullable Entity findById(final long id)
   {
     final Key key = makeKey(id);
     try {
@@ -206,7 +196,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     }
   }
 
-  public Entity findByParentAndId(final Entity parent, final long id)
+  public @Nullable Entity findByParentAndId(final Entity parent, final long id)
   {
     final Key key = makeKey(parent, id);
     try {
@@ -216,7 +206,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     }
   }
 
-  public Entity findByParentKeyAndId(final Key parentKey, final long id)
+  public @Nullable Entity findByParentKeyAndId(final Key parentKey, final long id)
   {
     final Key key = makeKey(parentKey, id);
     try {
@@ -250,14 +240,12 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     return checkExists(key);
   }
 
-  @Override
-  protected final Iterable<JsonField> jsonKeyFields(final Key key)
+  @Override protected final Iterable<JsonField> jsonKeyFields(final Key key)
   {
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key), modelParent().makeJsonFieldFrom(key));
   }
 
-  @Override
-  public final Key keyFromJson(final JsonNode json)
+  @Override public final @Nullable Key keyFromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;
@@ -279,8 +267,7 @@ public abstract class ChildWithId<P extends ActiveEntity> extends ChildActiveEnt
     }
   }
 
-  @Override
-  public Entity fromJson(final JsonNode json)
+  @Override public @Nullable Entity fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

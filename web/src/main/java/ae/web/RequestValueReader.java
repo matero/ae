@@ -7,10 +7,10 @@ public abstract class RequestValueReader<T> implements java.io.Serializable
   protected final String name;
   protected final ValueInterpreter<T> interpretValue;
 
-  protected RequestValueReader(final String name, final ValueInterpreter<T> interpretValue)
+  protected RequestValueReader(final String name, final ValueInterpreter<T> interpreter)
   {
     this.name = name;
-    this.interpretValue = interpretValue;
+    this.interpretValue = interpreter;
   }
 
   public abstract boolean isDefinedAt(HttpServletRequest request);

@@ -25,21 +25,20 @@ package ae.db;
 
 import com.google.appengine.api.datastore.Email;
 import com.google.appengine.api.datastore.PropertyContainer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface EmailField extends ScalarField<Email> {
-
-  @Override
-  default Class<Email> type()
+  @Override default Class<Email> type()
   {
     return Email.class;
   }
 
-  default void set(final PropertyContainer data, final CharSequence rawValue)
+  default void set(final PropertyContainer data, final @Nullable CharSequence rawValue)
   {
     write(data, rawValue);
   }
 
-  default void write(final PropertyContainer data, final CharSequence rawValue)
+  default void write(final PropertyContainer data, final @Nullable CharSequence rawValue)
   {
     if (rawValue == null) {
       write(data, (Email) null);
@@ -48,12 +47,12 @@ public interface EmailField extends ScalarField<Email> {
     }
   }
 
-  default void set(final PropertyContainer data, final String rawValue)
+  default void set(final PropertyContainer data, final @Nullable String rawValue)
   {
     write(data, rawValue);
   }
 
-  default void write(final PropertyContainer data, final String rawValue)
+  default void write(final PropertyContainer data, final @Nullable String rawValue)
   {
     if (rawValue == null) {
       write(data, (Email) null);

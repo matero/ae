@@ -24,11 +24,10 @@
 package ae.db;
 
 import com.google.appengine.api.datastore.PropertyContainer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface DoubleField extends ScalarField<Double> {
-
-  @Override
-  default Class<Double> type()
+  @Override default Class<Double> type()
   {
     return Double.class;
   }
@@ -43,12 +42,12 @@ public interface DoubleField extends ScalarField<Double> {
     write(data, Double.valueOf(rawValue));
   }
 
-  default void set(final PropertyContainer data, final CharSequence rawValue)
+  default void set(final PropertyContainer data, final @Nullable CharSequence rawValue)
   {
     write(data, rawValue);
   }
 
-  default void write(final PropertyContainer data, final CharSequence rawValue)
+  default void write(final PropertyContainer data, final @Nullable CharSequence rawValue)
   {
     if (rawValue == null) {
       write(data, (Double) null);
@@ -57,12 +56,12 @@ public interface DoubleField extends ScalarField<Double> {
     }
   }
 
-  default void set(final PropertyContainer data, final String rawValue)
+  default void set(final PropertyContainer data, final @Nullable String rawValue)
   {
     write(data, rawValue);
   }
 
-  default void write(final PropertyContainer data, final String rawValue)
+  default void write(final PropertyContainer data, final @Nullable String rawValue)
   {
     if (rawValue == null) {
       write(data, (Double) null);

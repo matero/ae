@@ -26,9 +26,7 @@ package ae.db;
 import com.google.appengine.api.datastore.GeoPt;
 
 public interface GeoPtField extends ScalarField<GeoPt> {
-
-  @Override
-  default Class<GeoPt> type()
+  @Override default Class<GeoPt> type()
   {
     return GeoPt.class;
   }

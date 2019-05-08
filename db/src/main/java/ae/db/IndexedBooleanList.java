@@ -44,21 +44,17 @@ public final class IndexedBooleanList extends ListField.Indexed<Boolean> impleme
                             final String jsonPath,
                             final ImmutableList<Constraint> constraints)
   {
-    super(canonicalName, property, field, required, jsonName, jsonPath,
-          BooleanJsonSerializer.ARRAY,
-          new PropertyProjection(property, Boolean.class), constraints);
+    super(canonicalName, property, field, required, jsonName, jsonPath, BooleanJsonSerializer.ARRAY, new PropertyProjection(property, Boolean.class), constraints);
     this.isTrue = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.TRUE);
     this.isFalse = new FilterPredicate(property, FilterOperator.EQUAL, Boolean.FALSE);
   }
 
-  @Override
-  public FilterPredicate isTrue()
+  @Override public FilterPredicate isTrue()
   {
     return isTrue;
   }
 
-  @Override
-  public FilterPredicate isFalse()
+  @Override public FilterPredicate isFalse()
   {
     return isFalse;
   }

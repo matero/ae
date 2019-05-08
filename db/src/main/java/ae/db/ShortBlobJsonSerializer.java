@@ -28,6 +28,7 @@ import argo.jdom.JsonNodeFactories;
 import com.google.appengine.api.datastore.ShortBlob;
 
 import java.util.Base64;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum ShortBlobJsonSerializer implements JsonSerializer<ShortBlob> {
   INSTANCE;
@@ -35,7 +36,7 @@ enum ShortBlobJsonSerializer implements JsonSerializer<ShortBlob> {
   static final JsonArraySerializer<ShortBlob> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
   @Override
-  public JsonNode toJson(final ShortBlob value)
+  public JsonNode toJson(final @Nullable ShortBlob value)
   {
     if (value == null) {
       return JsonNodeFactories.nullNode();
@@ -43,8 +44,7 @@ enum ShortBlobJsonSerializer implements JsonSerializer<ShortBlob> {
     return JsonNodeFactories.string(Base64.getEncoder().encodeToString(value.getBytes()));
   }
 
-  @Override
-  public ShortBlob fromJson(final JsonNode json, final String jsonPath)
+  @Override public @Nullable ShortBlob fromJson(final JsonNode json, final String jsonPath)
   {
     if (json.isNullNode(jsonPath)) {
       return null;
@@ -53,8 +53,7 @@ enum ShortBlobJsonSerializer implements JsonSerializer<ShortBlob> {
     }
   }
 
-  @Override
-  public ShortBlob fromJson(final JsonNode json)
+  @Override public @Nullable ShortBlob fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

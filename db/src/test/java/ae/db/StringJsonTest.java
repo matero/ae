@@ -30,6 +30,7 @@ import static argo.jdom.JsonNodeFactories.string;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import argo.jdom.JsonNode;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.Test;
 
 public class StringJsonTest {
@@ -52,35 +53,31 @@ public class StringJsonTest {
     assertThat(json.getText()).isEqualTo("no null");
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_null_nodes()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_null_nodes()
   {
-    final String str = serializer.fromJson(nullNode());
+    final @Nullable String str = serializer.fromJson(nullNode());
     assertThat(str).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_non_null_node()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_non_null_node()
   {
-    final String str = serializer.fromJson(string("no null"));
+    final @Nullable String str = serializer.fromJson(string("no null"));
     assertThat(str).isEqualTo("no null");
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_null_node_from_object_node()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_null_node_from_object_node()
   {
     final JsonNode object = object(field(string("attr1"), string("no null")),
                                    field(string("attr2"), nullNode()));
-    final String str = serializer.fromJson(object, "attr2");
+    final @Nullable String str = serializer.fromJson(object, "attr2");
     assertThat(str).isNull();
   }
 
-  @Test
-  public void shoud_be_able_to_deserialize_non_null_node_from_object_node()
+  @Test @SuppressWarnings("nullness") public void shoud_be_able_to_deserialize_non_null_node_from_object_node()
   {
     final JsonNode object = object(field(string("attr1"), string("no null")),
                                    field(string("attr2"), string("another")));
-    final String str = serializer.fromJson(object, "attr1");
+    final @Nullable String str = serializer.fromJson(object, "attr1");
     assertThat(str).isEqualTo("no null");
   }
 }

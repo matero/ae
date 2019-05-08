@@ -31,6 +31,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.common.collect.ImmutableList;
 import java.util.concurrent.ExecutionException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RootWithName extends RootActiveEntity implements WithName {
 
@@ -64,7 +65,7 @@ public abstract class RootWithName extends RootActiveEntity implements WithName 
     return KeyFactory.createKey(kind(), name);
   }
 
-  public Entity findByName(final String name)
+  public @Nullable Entity findByName(final String name)
   {
     final Key key = makeKey(name);
     try {
@@ -96,14 +97,13 @@ public abstract class RootWithName extends RootActiveEntity implements WithName 
     return checkExists(key);
   }
 
-  @Override
-  protected final Iterable<JsonField> jsonKeyFields(final Key key)
+  @Override protected final Iterable<JsonField> jsonKeyFields(final Key key)
   {
     return ImmutableList.of(modelIdentifier().makeJsonFieldFrom(key));
   }
 
   @Override
-  public final Key keyFromJson(final JsonNode json)
+  public final @Nullable Key keyFromJson(final JsonNode json)
   {
     if (json == null || json.isNullNode()) {
       return null;
@@ -116,8 +116,7 @@ public abstract class RootWithName extends RootActiveEntity implements WithName 
     }
   }
 
-  @Override
-  public Entity fromJson(final JsonNode json)
+  @Override public @Nullable Entity fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;

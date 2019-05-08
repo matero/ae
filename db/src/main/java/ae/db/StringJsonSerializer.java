@@ -27,14 +27,14 @@ import static argo.jdom.JsonNodeFactories.string;
 import static argo.jdom.JsonNodeFactories.nullNode;
 
 import argo.jdom.JsonNode;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 enum StringJsonSerializer implements JsonSerializer<String> {
   INSTANCE;
 
   static final JsonArraySerializer<String> ARRAY = new JsonArraySerializer<>(INSTANCE);
 
-  @Override
-  public JsonNode toJson(final String value)
+  @Override public JsonNode toJson(final @Nullable String value)
   {
     if (value == null) {
       return nullNode();
@@ -42,8 +42,7 @@ enum StringJsonSerializer implements JsonSerializer<String> {
     return string(value);
   }
 
-  @Override
-  public String fromJson(final JsonNode json, final String jsonPath)
+  @Override public @Nullable String fromJson(final JsonNode json, final String jsonPath)
   {
     if (json.isNullNode(jsonPath)) {
       return null;
@@ -52,8 +51,7 @@ enum StringJsonSerializer implements JsonSerializer<String> {
     }
   }
 
-  @Override
-  public String fromJson(final JsonNode json)
+  @Override public @Nullable String fromJson(final JsonNode json)
   {
     if (json.isNullNode()) {
       return null;
