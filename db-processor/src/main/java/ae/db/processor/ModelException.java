@@ -23,18 +23,20 @@
  */
 package ae.db.processor;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import javax.lang.model.element.Element;
 
 class ModelException extends RuntimeException {
 
-  final Element element;
+  final @Nullable Element element;
 
   ModelException(final String message)
   {
     this(null, message);
   }
 
-  ModelException(final Element element, final String message)
+  ModelException(final @Nullable Element element, final String message)
   {
     super(message);
     this.element = element;
@@ -45,7 +47,7 @@ class ModelException extends RuntimeException {
     this(null, message, cause);
   }
 
-  ModelException(final Element element, final String message, final Throwable cause)
+  ModelException(final @Nullable Element element, final String message, final Throwable cause)
   {
     super(message, cause);
     this.element = element;
@@ -56,7 +58,7 @@ class ModelException extends RuntimeException {
     this((Element) null, cause);
   }
 
-  ModelException(final Element element, final Throwable cause)
+  ModelException(final @Nullable Element element, final Throwable cause)
   {
     super(cause);
     this.element = element;

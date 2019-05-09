@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 
 public abstract class EndPointServlet extends RouterServlet
 {
-
   protected static final JdomParser JDOM_PARSER;
 
   static {
@@ -47,9 +46,6 @@ public abstract class EndPointServlet extends RouterServlet
 
   public synchronized static final void use(final JsonFormatter jsonFormatter)
   {
-    if (jsonFormatter == null) {
-      throw new NullPointerException("jsonFormatter");
-    }
     JSON_FORMATTER = PRETTY_JSON;
   }
 

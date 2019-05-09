@@ -202,7 +202,7 @@ final class FieldGenerator extends AttributeGenerator
     return args.toArray();
   }
 
-  TypeName mappedFieldClass(final MetaField field)
+  private static TypeName mappedFieldClass(final MetaField field)
   {
     if (field.indexed) {
       return getFieldClass(field, INDEXED_BY_TYPE_NAME);
@@ -211,7 +211,7 @@ final class FieldGenerator extends AttributeGenerator
     }
   }
 
-  TypeName getFieldClass(final MetaField field, final ImmutableMap<TypeName, ClassName> fieldClasses)
+  private static TypeName getFieldClass(final MetaField field, final ImmutableMap<TypeName, ClassName> fieldClasses)
   {
     if (!fieldClasses.containsKey(field.type)) {
       throw new ModelException(

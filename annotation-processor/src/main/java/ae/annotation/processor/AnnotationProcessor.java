@@ -24,27 +24,24 @@
 package ae.annotation.processor;
 
 import java.util.Date;
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
+import java.util.Set;
+import javax.annotation.processing.*;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
+
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public abstract class AnnotationProcessor extends AbstractProcessor {
-
-  protected @MonotonicNonNull Messager messager;
-  protected @MonotonicNonNull Filer filer;
-  protected @MonotonicNonNull Elements elements;
-  protected @MonotonicNonNull Types types;
 
   protected final Date today;
 
@@ -53,54 +50,57 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
     this.today = today;
   }
 
-  @Override
-  @EnsuresNonNull({"messager", "filer", "elements", "types"})
-  public synchronized void init(final ProcessingEnvironment processingEnv)
-  {
-    super.init(processingEnv);
-    messager = processingEnv.getMessager();
-    filer = processingEnv.getFiler();
-    elements = processingEnv.getElementUtils();
-    types = processingEnv.getTypeUtils();
-  }
-
-  @RequiresNonNull("messager")
-  protected void error(final Element element, final Throwable failure)
+  @RequiresNonNull("processingEnv") protected void error(final Element element, final Throwable failure)
   {
     message(Diagnostic.Kind.ERROR, message(failure), element);
   }
 
-  @RequiresNonNull("messager")
+  @RequiresNonNull("processingEnv")
   protected void error(final Element element, final String errorMessage)
   {
     message(Diagnostic.Kind.ERROR, errorMessage, element);
   }
 
-  @RequiresNonNull("messager")
+  @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment)
+  {
+    if (isInitialized()) {
+      return processAnnotations(annotations, roundEnvironment);
+    }
+    return false;
+  }
+
+  @RequiresNonNull("processingEnv") protected abstract boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment);
+
+  @Override protected synchronized @EnsuresNonNullIf(expression = "this.processingEnv", result = true) boolean isInitialized()
+  {
+    return super.isInitialized() && processingEnv != null;
+  }
+
+  @RequiresNonNull("processingEnv")
   protected final void info(final Element element, final String infoMessage, final Object... args)
   {
     info(element, String.format(infoMessage, args));
   }
 
-  @RequiresNonNull("messager")
+  @RequiresNonNull("processingEnv")
   protected final void info(final String infoMessage, final Object... args)
   {
     message(Diagnostic.Kind.NOTE, String.format(infoMessage, args));
   }
 
-  @RequiresNonNull("messager")
+  @RequiresNonNull("processingEnv")
   protected final void info(final Element element, final String infoMessage)
   {
     message(Diagnostic.Kind.NOTE, String.format("[%s] %s", getClass().getSimpleName(), infoMessage), element);
   }
 
-  @RequiresNonNull("messager")
+  @RequiresNonNull("processingEnv")
   protected void error(final Throwable failure)
   {
     error(message(failure));
   }
 
-  @RequiresNonNull("messager")
+  @RequiresNonNull("processingEnv")
   protected void error(final String message)
   {
     message(Diagnostic.Kind.ERROR, message);
@@ -112,10 +112,10 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * @param kind the kind of message
    * @param msg the message, or an empty string if none
    */
-  @RequiresNonNull("messager")
+  @RequiresNonNull("processingEnv")
   protected final void message(final Diagnostic.Kind kind, final CharSequence msg)
   {
-    messager.printMessage(kind, msg);
+    processingEnv.getMessager().printMessage(kind, msg);
   }
 
   /**
@@ -125,10 +125,10 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * @param msg the message, or an empty string if none
    * @param e the element to use as a position hint
    */
-  @RequiresNonNull("messager")
+  @RequiresNonNull("processingEnv")
   protected final void message(final Diagnostic.Kind kind, final CharSequence msg, final Element e)
   {
-    messager.printMessage(kind, msg, e);
+    processingEnv.getMessager().printMessage(kind, msg, e);
   }
 
   /**
@@ -139,10 +139,10 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * @param e the annotated element
    * @param a the annotation to use as a position hint
    */
-  @RequiresNonNull("messager")
+  @RequiresNonNull("processingEnv")
   protected final void message(final Diagnostic.Kind kind, final CharSequence msg, final Element e, final AnnotationMirror a)
   {
-    messager.printMessage(kind, msg, e, a);
+    processingEnv.getMessager().printMessage(kind, msg, e, a);
   }
 
   /**
@@ -154,10 +154,10 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * @param a the annotation containing the annotation value
    * @param v the annotation value to use as a position hint
    */
-  @RequiresNonNull("messager")
+  @RequiresNonNull("processingEnv")
   protected final void message(final Diagnostic.Kind kind, final CharSequence msg, final Element e, final AnnotationMirror a, final AnnotationValue v)
   {
-    messager.printMessage(kind, msg, e, a, v);
+    processingEnv.getMessager().printMessage(kind, msg, e, a, v);
   }
 
   protected final String message(final Throwable t)
@@ -166,9 +166,9 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
     return msg == null ? "unknown error" : msg;
   }
 
-  @RequiresNonNull("types")
+  @RequiresNonNull("processingEnv")
   protected String readSuperClassCannonicalName(final TypeMirror superClass)
   {
-    return types.asElement(superClass).getSimpleName().toString();
+    return processingEnv.getTypeUtils().asElement(superClass).getSimpleName().toString();
   }
 }

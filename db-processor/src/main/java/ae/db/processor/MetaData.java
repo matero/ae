@@ -24,27 +24,29 @@
 package ae.db.processor;
 
 import com.google.common.collect.ImmutableSet;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import javax.lang.model.element.Modifier;
 
 abstract class MetaData {
 
   final String name;
   final ImmutableSet<Modifier> modifiers;
-  final Modifier visibility;
+  private final @Nullable Modifier visibility;
 
   MetaData(final String name, final Iterable<Modifier> modifiers)
   {
-    this(name, modifiers, findVisibilityAt(modifiers));
-  }
-
-  MetaData(final String name, final Iterable<Modifier> modifiers, final Modifier visibility)
-  {
     this.name = name;
     this.modifiers = ImmutableSet.copyOf(modifiers);
-    this.visibility = visibility;
+    this.visibility = findVisibilityAt(modifiers);
   }
 
-  private static Modifier findVisibilityAt(final Iterable<Modifier> elementModifiers)
+  final boolean isPublic()
+  {
+    return visibility == Modifier.PUBLIC;
+  }
+
+  private static @Nullable Modifier findVisibilityAt(final Iterable<Modifier> elementModifiers)
   {
     for (final Modifier modifier : elementModifiers) {
       switch (modifier) {

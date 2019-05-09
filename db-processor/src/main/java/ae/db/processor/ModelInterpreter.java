@@ -38,6 +38,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import ae.Record;
 import ae.model;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 class ModelInterpreter {
 
@@ -194,7 +195,7 @@ class ModelInterpreter {
     return id;
   }
 
-  MetaParent getModelParent(final List<VariableElement> modelAttributes)
+  @Nullable MetaParent getModelParent(final List<VariableElement> modelAttributes)
   {
     MetaParent parent = null;
     for (final Iterator<VariableElement> iAttr = modelAttributes.iterator(); iAttr.hasNext();) {

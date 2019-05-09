@@ -38,6 +38,9 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import ae.annotation.processor.AnnotationProcessor;
 import ae.model;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("ae.model")
@@ -54,38 +57,41 @@ public class ModelProcessor extends AnnotationProcessor {
     super(today);
   }
 
-  @Override
-  public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment)
+  @Override public @RequiresNonNull("processingEnv") boolean processAnnotations(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv)
   {
+    if (!isInitialized()) {
+      throw new IllegalStateException("not initialized!");
+    }
+
     info("START @ae.db.Model processing");
-    final Set<? extends Element> annotatedElements = roundEnvironment.getElementsAnnotatedWith(model.class);
-    if (annotatedElements.isEmpty()) {
+    final Set<? extends Element> models = roundEnv.getElementsAnnotatedWith(model.class);
+    if (models.isEmpty()) {
       info("DONE, no classes annotated  with @ae.db.Model to process");
     } else {
       final MetaModels metamodels;
       try {
-        metamodels = metaModelFor(annotatedElements);
+        metamodels = metaModelFor(models);
       } catch (final ModelException e) {
         error(e);
-        info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+        info("HALT processing %d classes annotated with @ae.db.Model", models.size());
         return true;
       } catch (final RuntimeException e) {
         error(e);
-        info("HALT processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+        info("HALT processing %d classes annotated with @ae.db.Model", models.size());
         return true;
       }
       generateCode(metamodels);
-      info("DONE processing %d classes annotated with @ae.db.Model", annotatedElements.size());
+      info("DONE processing %d classes annotated with @ae.db.Model", models.size());
     }
     return true;
   }
 
-  MetaModels metaModelFor(final Set<? extends Element> annotatedElements)
+  @RequiresNonNull("processingEnv") MetaModels metaModelFor(final Set<? extends Element> models)
   {
     final MetaModels.Builder modelsBuilder = MetaModels.builder();
     final ModelInterpreter interpreter = new ModelInterpreter(processingEnv);
 
-    for (final Element modelElement : annotatedElements) {
+    for (final Element modelElement : models) {
       final TypeElement model = (TypeElement) modelElement;
       final String modelQualifiedName = model.getQualifiedName().toString();
 
@@ -97,24 +103,24 @@ public class ModelProcessor extends AnnotationProcessor {
     return modelsBuilder.build();
   }
 
-  void generateCode(final MetaModels models)
+  @RequiresNonNull("processingEnv") void generateCode(final MetaModels models)
   {
     generateCode("'base models'", models, new ModelBaseClassCodeGenerator());
   }
 
-  void generateCode(final String name, final MetaModels models, final CodeGenerator codeGenerator)
+  @RequiresNonNull("processingEnv") void generateCode(final String name, final MetaModels models, final CodeGenerator codeGenerator)
   {
     info("generating [%s]", name);
     for (final JavaFile generatedCode : codeGenerator.generateCode(models, today)) {
       try {
-        generatedCode.writeTo(filer);
+        generatedCode.writeTo(processingEnv.getFiler());
       } catch (final IOException e) {
         throw new IllegalStateException("could not generate " + name, e);
       }
     }
   }
 
-  final void error(final ModelException failure)
+  @RequiresNonNull("processingEnv") final void error(final ModelException failure)
   {
     if (failure.element == null) {
       error(message(failure));

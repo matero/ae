@@ -25,6 +25,8 @@ package ae.db.processor;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -62,11 +64,6 @@ abstract class MetaModel extends MetaData {
     this.fields = modelFields;
     this.cached = cached;
     this.namespace = namespace;
-  }
-
-  final boolean isPublic()
-  {
-    return visibility == Modifier.PUBLIC;
   }
 
   final boolean isAbstract()
@@ -166,7 +163,7 @@ abstract class MetaModel extends MetaData {
                             final String kind,
                             final String baseClass,
                             final MetaModelId id,
-                            final MetaParent parent,
+                            final @Nullable MetaParent parent,
                             final Fields fields,
                             final Iterable<Modifier> modifiers,
                             final boolean cached,
