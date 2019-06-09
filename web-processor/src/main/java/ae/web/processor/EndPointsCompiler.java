@@ -29,10 +29,7 @@ import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 
-import javax.annotation.processing.Processor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.util.ElementFilter;
@@ -43,6 +40,7 @@ import java.util.Set;
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("ae.endpoint")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedOptions("environment")
 public class EndPointsCompiler extends AnnotationProcessor
 {
   private final RoutersCodeBuilder routerBuilder;

@@ -36,7 +36,8 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-public abstract class AnnotationProcessor extends AbstractProcessor {
+public abstract class AnnotationProcessor extends AbstractProcessor
+{
 
   protected Messager messager;
   protected Filer filer;
@@ -99,7 +100,7 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * Prints a message of the specified kind.
    *
    * @param kind the kind of message
-   * @param msg the message, or an empty string if none
+   * @param msg  the message, or an empty string if none
    */
   protected final void message(final Diagnostic.Kind kind, final CharSequence msg)
   {
@@ -110,8 +111,8 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * Prints a message of the specified kind at the location of the element.
    *
    * @param kind the kind of message
-   * @param msg the message, or an empty string if none
-   * @param e the element to use as a position hint
+   * @param msg  the message, or an empty string if none
+   * @param e    the element to use as a position hint
    */
   protected final void message(final Diagnostic.Kind kind, final CharSequence msg, final Element e)
   {
@@ -122,9 +123,9 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * Prints a message of the specified kind at the location of the annotation mirror of the annotated element.
    *
    * @param kind the kind of message
-   * @param msg the message, or an empty string if none
-   * @param e the annotated element
-   * @param a the annotation to use as a position hint
+   * @param msg  the message, or an empty string if none
+   * @param e    the annotated element
+   * @param a    the annotation to use as a position hint
    */
   protected final void message(final Diagnostic.Kind kind,
                                final CharSequence msg,
@@ -138,10 +139,10 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
    * Prints a message of the specified kind at the location of the annotation value inside the annotation mirror of the annotated element.
    *
    * @param kind the kind of message
-   * @param msg the message, or an empty string if none
-   * @param e the annotated element
-   * @param a the annotation containing the annotation value
-   * @param v the annotation value to use as a position hint
+   * @param msg  the message, or an empty string if none
+   * @param e    the annotated element
+   * @param a    the annotation containing the annotation value
+   * @param v    the annotation value to use as a position hint
    */
   protected final void message(final Diagnostic.Kind kind,
                                final CharSequence msg,
@@ -167,6 +168,12 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
   {
     if (key == null) {
       throw new NullPointerException("key");
+    }
+    if (processingEnv == null) {
+      return null;
+    }
+    if (processingEnv.getOptions() == null) {
+      return null;
     }
     return processingEnv.getOptions().get(key);
   }
