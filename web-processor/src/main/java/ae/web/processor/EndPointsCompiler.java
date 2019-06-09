@@ -61,6 +61,7 @@ public class EndPointsCompiler extends AnnotationProcessor
   @Override
   public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment)
   {
+    final boolean isDevelopmentEnvironment = "development".equals(option("environment"));
     for (final TypeElement endpointClass : getEndpoints(roundEnvironment)) {
       final EndPointSpec.Builder declarations = EndPointSpec.builder(ClassName.get(endpointClass), this.today);
       final RoutesReader interpreter = new RoutesReader(messager, declarations);
@@ -70,7 +71,7 @@ public class EndPointsCompiler extends AnnotationProcessor
         declarations.implClass(impl);
         declarations.loggerDefined(hasLogger(endpointClass));
         final EndPointSpec routes = declarations.build();
-        generateJavaCode(routes);
+        generateJavaCode(routes, isDevelopmentEnvironment);
       }
     }
     return true;
@@ -114,9 +115,9 @@ public class EndPointsCompiler extends AnnotationProcessor
     }
   }
 
-  private void generateJavaCode(final EndPointSpec routes)
+  private void generateJavaCode(final EndPointSpec routes, boolean isDevelopmentEnvironment)
   {
-    final JavaFile routerCode = this.routerBuilder.buildJavaCode(routes);
+    final JavaFile routerCode = this.routerBuilder.buildJavaCode(routes, isDevelopmentEnvironment);
     try {
       routerCode.writeTo(this.filer);
     } catch (final IOException e) {

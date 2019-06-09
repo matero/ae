@@ -24,22 +24,22 @@ public class QueryParameter<T> extends RequestValueReader<T>
   private final boolean required;
   private final Supplier<T> defaultValue;
 
-  public QueryParameter(final String name, final ValueInterpreter<T> interpretValue)
+  public QueryParameter(final Name name, final ValueInterpreter<T> interpretValue)
   {
     this(name, false, interpretValue);
   }
 
-  public QueryParameter(final String name, final boolean required, final ValueInterpreter<T> interpretValue)
+  public QueryParameter(final Name name, final boolean required, final ValueInterpreter<T> interpretValue)
   {
     this(name, required, interpretValue, nullDefaultValue());
   }
 
-  public QueryParameter(final String name, final ValueInterpreter<T> interpretValue, final Supplier<T> defaultValue)
+  public QueryParameter(final Name name, final ValueInterpreter<T> interpretValue, final Supplier<T> defaultValue)
   {
     this(name, false, interpretValue, defaultValue);
   }
 
-  public QueryParameter(final String name,
+  public QueryParameter(final Name name,
                         final boolean required,
                         final ValueInterpreter<T> interpretValue,
                         final Supplier<T> defaultValue)

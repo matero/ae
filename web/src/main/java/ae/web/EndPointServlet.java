@@ -146,7 +146,7 @@ public abstract class EndPointServlet extends RouterServlet
   }
 
   /**
-   * Trigger a browser redirectTo named specific http 3XX status code.
+   * Trigger a browser redirectTo name specific http 3XX status code.
    *
    * @param location       Where to redirectTo permanently
    * @param httpStatusCode the http status code
@@ -157,7 +157,7 @@ public abstract class EndPointServlet extends RouterServlet
   }
 
   /**
-   * Trigger a browser redirectTo named specific http 3XX status code.
+   * Trigger a browser redirectTo name specific http 3XX status code.
    *
    * @param location       Where to redirectTo permanently
    * @param httpStatusCode the http status code
@@ -535,5 +535,12 @@ public abstract class EndPointServlet extends RouterServlet
 
   protected static final boolean required = true;
 
-  protected static final boolean notRequired = true;
+  protected static final boolean notRequired = false;
+
+  protected static final Name name(final String value) {
+    if (value == null) {
+      throw new NullPointerException("value");
+    }
+    return new Name(value);
+  }
 }

@@ -163,13 +163,13 @@ public abstract class AppEngineEndPointServlet extends EndPointServlet
 
   protected interface option
   {
-    QueryParameter<Integer> chunk = new QueryParameter<>("chunk", notRequired, Interpret::asInteger);
-    QueryParameter<Cursor> end = new QueryParameter<>("end", notRequired, Interpret::asCursor);
-    QueryParameter<Integer> limit = new QueryParameter<>("limit", notRequired, Interpret::asInteger);
-    QueryParameter<Integer> offset = new QueryParameter<>("offset", notRequired, Interpret::asInteger);
-    QueryParameter<Integer> prefetch = new QueryParameter<>("prefetch", notRequired, Interpret::asInteger);
-    QueryParameter<Cursor> start = new QueryParameter<>("start", notRequired, Interpret::asCursor);
-    QueryParameter<List<String>> fields = new QueryParameter("fields", notRequired, Interpret::asStringList);
+    QueryParameter<Integer> chunk = new QueryParameter<>(name("chunk"), notRequired, Interpret::asInteger);
+    QueryParameter<Cursor> end = new QueryParameter<>(name("end"), notRequired, Interpret::asCursor);
+    QueryParameter<Integer> limit = new QueryParameter<>(name("limit"), notRequired, Interpret::asInteger);
+    QueryParameter<Integer> offset = new QueryParameter<>(name("offset"), notRequired, Interpret::asInteger);
+    QueryParameter<Integer> prefetch = new QueryParameter<>(name("prefetch"), notRequired, Interpret::asInteger);
+    QueryParameter<Cursor> start = new QueryParameter<>(name("start"), notRequired, Interpret::asCursor);
+    QueryParameter<List<String>> fields = new QueryParameter(name("fields"), notRequired, Interpret::asStringList);
   }
 
   protected final FetchOptions getFetchOptions(final HttpServletRequest request)
@@ -201,7 +201,7 @@ public abstract class AppEngineEndPointServlet extends EndPointServlet
   private static final QueryParameter<String> sort;
 
   static {
-    sort = new QueryParameter<>("sort", notRequired, Interpret::asString);
+    sort = new QueryParameter<>(name("sort"), notRequired, Interpret::asString);
   }
 
   protected final Iterable<Query.SortPredicate> getSorts(final HttpServletRequest request)

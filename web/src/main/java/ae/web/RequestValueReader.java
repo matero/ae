@@ -7,9 +7,9 @@ public abstract class RequestValueReader<T> implements java.io.Serializable
   protected final String name;
   protected final ValueInterpreter<T> interpretValue;
 
-  protected RequestValueReader(final String name, final ValueInterpreter<T> interpretValue)
+  protected RequestValueReader(final Name name, final ValueInterpreter<T> interpretValue)
   {
-    this.name = name;
+    this.name = name.value;
     this.interpretValue = interpretValue;
   }
 

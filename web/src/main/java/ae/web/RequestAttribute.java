@@ -19,7 +19,7 @@ public class RequestAttribute<T> extends RequestValueReader<T>
     }
   }
 
-  public RequestAttribute(final String name, final ValueInterpreter<T> interpretValue)
+  public RequestAttribute(final Name name, final ValueInterpreter<T> interpretValue)
   {
     super(name, interpretValue);
   }

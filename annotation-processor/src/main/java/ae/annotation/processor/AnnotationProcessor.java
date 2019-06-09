@@ -162,4 +162,12 @@ public abstract class AnnotationProcessor extends AbstractProcessor {
   {
     return types.asElement(superClass).getSimpleName().toString();
   }
+
+  protected final Object option(final String key)
+  {
+    if (key == null) {
+      throw new NullPointerException("key");
+    }
+    return processingEnv.getOptions().get(key);
+  }
 }

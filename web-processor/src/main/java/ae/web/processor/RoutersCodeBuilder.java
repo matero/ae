@@ -26,6 +26,7 @@ package ae.web.processor;
 import com.google.appengine.api.datastore.Entity;
 import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.*;
+import com.squareup.javapoet.TypeSpec.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ class RoutersCodeBuilder
     stringArray = ArrayTypeName.of(ClassName.get(String.class));
   }
 
-  JavaFile buildJavaCode(final EndPointSpec declarations)
+  JavaFile buildJavaCode(final EndPointSpec declarations, boolean isDevelopmentEnvironment)
   {
     final ClassName classname = declarations.routerClassName();
     final TypeSpec.Builder router = TypeSpec.classBuilder(classname)
@@ -77,7 +78,7 @@ class RoutersCodeBuilder
                                  .build());
     }
     addRouteFields(router, declarations);
-    addRouteHandlers(router, declarations);
+    addRouteHandlers(router, declarations, isDevelopmentEnvironment);
     return JavaFile.builder(classname.packageName(), router.build()).skipJavaLangImports(true).build();
   }
 
@@ -103,20 +104,37 @@ class RoutersCodeBuilder
     }
   }
 
-  void addRouteHandlers(final TypeSpec.Builder router, final EndPointSpec declarations)
+  void addRouteHandlers(final Builder router, final EndPointSpec declarations, boolean isDevelopmentEnvironment)
   {
     for (final HttpVerb httpVerb : HttpVerb.values()) {
       final ImmutableList<Route> routes = declarations.routesByVerb.get(httpVerb);
 
       if (routes.isEmpty()) {
-        continue;
+        if (isDevelopmentEnvironment) {
+          overrideVerbHandlerOnDevelopmentEnvironment(httpVerb);
+        }
+      } else {
+        router.addMethod(overrideVerbHandler(httpVerb, routes, isDevelopmentEnvironment));
       }
-
-      router.addMethod(overrideVerbHandler(httpVerb, routes));
     }
   }
 
-  MethodSpec overrideVerbHandler(final HttpVerb httpVerb, final ImmutableList<Route> routes)
+  MethodSpec overrideVerbHandlerOnDevelopmentEnvironment(final HttpVerb httpVerb)
+  {
+    final MethodSpec.Builder httpVerbHandler = MethodSpec
+                                                   .methodBuilder(httpVerb.handler)
+                                                   .addAnnotation(Override.class)
+                                                   .addModifiers(Modifier.PUBLIC)
+                                                   .addParameter(HttpServletRequest.class, "request", Modifier.FINAL)
+                                                   .addParameter(HttpServletResponse.class, "response", Modifier.FINAL)
+                                                   .addException(ServletException.class)
+                                                   .addException(IOException.class);
+    httpVerbHandler.addStatement("response.setHeader(\"Access-Control-Allow-Origin\", \"*\")");
+    httpVerbHandler.addStatement("super.$L(request, response)", httpVerb.handler);
+    return httpVerbHandler.build();
+  }
+
+  MethodSpec overrideVerbHandler(final HttpVerb httpVerb, final ImmutableList<Route> routes, boolean isDevelopmentEnvironment)
   {
     final MethodSpec.Builder httpVerbHandler = MethodSpec
                                                    .methodBuilder(httpVerb.handler)
@@ -135,6 +153,10 @@ class RoutersCodeBuilder
       final MethodSpec.Builder ifMatchesRoute = route.makeMatcher(httpVerbHandler);
       addHandle(ifMatchesRoute, route);
       httpVerbHandler.endControlFlow();
+    }
+
+    if (isDevelopmentEnvironment) {
+      httpVerbHandler.addStatement("response.setHeader(\"Access-Control-Allow-Origin\", \"*\")");
     }
     httpVerbHandler.addStatement("$L(request, response)", httpVerb.unhandled);
     return httpVerbHandler.build();
