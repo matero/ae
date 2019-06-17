@@ -304,7 +304,7 @@ abstract class __Competidor extends ChildWithId {
       this.entity = entity;
     }
 
-    Entity build() {
+    public final Entity build() {
       return entity;
     }
 

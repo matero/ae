@@ -456,6 +456,7 @@ abstract class BaseModelJavaClassBuilder<M extends MetaModel> {
         )
         .addMethod(
             methodBuilder("build")
+                .addModifiers(modifiers)
                 .returns(Entity.class)
                 .addStatement("return entity")
                 .build()

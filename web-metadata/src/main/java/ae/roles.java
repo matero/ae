@@ -23,6 +23,8 @@
  */
 package ae;
 
+import ae.web.UserRole;
+
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.SOURCE;

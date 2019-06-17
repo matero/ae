@@ -43,35 +43,38 @@ public abstract class AppEngineEndPointServlet extends EndPointServlet
     // nothing to do
   }
 
-  protected boolean userRoleIs(final Entity userData, final String role)
+  protected boolean userRoleIs(final Entity userData, final String roleName)
   {
-    final String r = getUserRole(userData);
-    return r.equals(role);
+    final String r = getUserRoleName(userData);
+    return r.equals(roleName);
   }
 
   protected boolean userRoleIsIn(final Entity userData, final String r1, final String r2)
   {
-    final String r = getUserRole(userData);
+    final String r = getUserRoleName(userData);
     return r.equals(r1) || r.equals(r2);
   }
 
   protected boolean userRoleIsIn(final Entity userData, final String r1, final String r2, final String r3)
   {
-    final String r = getUserRole(userData);
+    final String r = getUserRoleName(userData);
     return r.equals(r1) || r.equals(r2) || r.equals(r3);
   }
 
-  protected boolean userRoleIsIn(final Entity userData,
-                                 final String r1,
-                                 final String r2,
-                                 final String r3,
-                                 final String r4)
+  protected boolean userRoleIsIn(final Entity userData, final String r1, final String r2, final String r3, final String r4)
   {
-    final String r = getUserRole(userData);
+    final String r = getUserRoleName(userData);
     return r.equals(r1) || r.equals(r2) || r.equals(r3) || r.equals(r4);
   }
 
-  protected abstract String getUserRole(final Entity userData);
+  protected final String getUserRoleName(final Entity userData) {
+    final UserRole role = getUserRole(userData);
+    if (role == null) {
+      throw new IllegalStateException("no role assigned to user" + userData);
+    }
+    return role.name();
+  }
+  protected abstract UserRole getUserRole(final Entity userData);
 
   protected abstract String getUserNamespace(final Entity userData);
 

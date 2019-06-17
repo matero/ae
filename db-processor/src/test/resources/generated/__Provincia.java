@@ -122,7 +122,7 @@ abstract class __Provincia extends RootWithName {
       this.entity = entity;
     }
 
-    Entity build() {
+    final Entity build() {
       return entity;
     }
 
